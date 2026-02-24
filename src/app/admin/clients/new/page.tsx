@@ -87,7 +87,7 @@ export default function NewClientPage() {
           <h2 className="text-xl font-bold text-[var(--color-dark)]">새 클라이언트 추가</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="max-w-[800px] space-y-5">
+        <form onSubmit={handleSubmit} noValidate className="max-w-[800px] space-y-5">
           {error && (
             <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
               {error}
