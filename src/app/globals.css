@@ -231,6 +231,28 @@ body {
   animation-play-state: paused;
 }
 
+/* Reverse marquee for second row */
+@keyframes marquee-scroll-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.marquee-track-reverse {
+  display: inline-flex;
+  animation: marquee-scroll-reverse 35s linear infinite;
+}
+.marquee-track-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Slow rotation for geometric decorations */
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
 
 /* Input focus glow */
 .input-glow:focus {

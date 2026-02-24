@@ -11,12 +11,24 @@ export default function CTA() {
       <div className="absolute bottom-10 left-[10%] w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
       <div className="absolute top-1/3 left-[30%] w-3 h-3 bg-emerald-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "1s" }} />
       <div className="absolute bottom-1/3 right-[25%] w-2 h-2 bg-indigo-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "3s" }} />
+      {/* Geometric decorations */}
+      <div className="absolute top-[20%] left-[8%] w-12 h-12 border border-emerald-500/10 rounded-lg animate-rotate-slow pointer-events-none" />
+      <div className="absolute bottom-[15%] right-[12%] w-8 h-8 border border-indigo-500/10 rounded-full animate-float pointer-events-none" style={{ animationDelay: "4s" }} />
 
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         {/* Gradient border animated wrapper */}
         <div className="gradient-border-animated-dark">
           <div className="text-center py-16 px-6">
-            {/* Badge */}
+            {/* Urgency badge */}
+            <div className="inline-flex items-center gap-2 bg-amber-500/15 backdrop-blur-sm border border-amber-400/20 px-5 py-2.5 rounded-full text-amber-300 text-[0.85rem] font-semibold mb-4">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
+              </span>
+              이번 달 무료 상담 잔여: 3건
+            </div>
+
+            {/* Main badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-2 rounded-full text-emerald-300 text-[0.85rem] font-semibold mb-6">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               무료 상담 진행 중
@@ -27,7 +39,7 @@ export default function CTA() {
               <br />
               <span className="shimmer-text">준비가 되셨나요?</span>
             </h2>
-            <p className="text-gray-400 text-lg mb-10 max-w-[500px] mx-auto leading-relaxed">
+            <p className="text-gray-400 text-lg mb-8 max-w-[500px] mx-auto leading-relaxed">
               지금 무료 상담을 신청하시면 맞춤 견적과 전략을 제안해드립니다.
             </p>
 
@@ -50,12 +62,29 @@ export default function CTA() {
               </a>
             </div>
 
+            {/* Trust points */}
+            <div className="mt-8 flex justify-center gap-6 flex-wrap">
+              {[
+                { icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z", text: "부담 없이 결정" },
+                { icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", text: "견적 24h 이내 발송" },
+                { icon: "M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42", text: "무료 디자인 시안" },
+              ].map((tp) => (
+                <div key={tp.text} className="flex items-center gap-2 text-gray-400 text-[0.82rem]">
+                  <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={tp.icon} />
+                  </svg>
+                  {tp.text}
+                </div>
+              ))}
+            </div>
+
             {/* Mini stats */}
-            <div className="mt-14 flex justify-center gap-8 md:gap-12 flex-wrap">
+            <div className="mt-12 flex justify-center gap-8 md:gap-12 flex-wrap">
               {[
                 { num: "150+", label: "프로젝트 완료" },
                 { num: "98%", label: "고객 만족도" },
                 { num: "24h", label: "평균 응답 시간" },
+                { num: "4.9", label: "평균 평점" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="text-white font-extrabold text-xl">{s.num}</div>

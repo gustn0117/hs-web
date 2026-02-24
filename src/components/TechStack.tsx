@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const categories = [
   {
     title: "프론트엔드",
+    desc: "빠르고 인터랙티브한 사용자 경험을 구현합니다.",
     color: "from-emerald-400 to-emerald-600",
     barColor: "from-emerald-400 to-teal-500",
     badgeBg: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
@@ -19,6 +20,7 @@ const categories = [
   },
   {
     title: "백엔드",
+    desc: "안정적이고 확장 가능한 서버 아키텍처를 설계합니다.",
     color: "from-indigo-400 to-indigo-600",
     barColor: "from-indigo-400 to-violet-500",
     badgeBg: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
@@ -33,6 +35,7 @@ const categories = [
   },
   {
     title: "도구 & 플랫폼",
+    desc: "효율적인 개발 환경과 안정적인 배포를 지원합니다.",
     color: "from-amber-400 to-amber-600",
     barColor: "from-amber-400 to-orange-500",
     badgeBg: "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100",
@@ -45,6 +48,14 @@ const categories = [
       { name: "Docker", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M13 4h3v3h-3V4zm-4 0h3v3H9V4zM5 8h3v3H5V8zm4 0h3v3H9V8zm4 0h3v3h-3V8zm4 0h3v3h-3V8zM9 12h3v3H9v-3zm-4 0h3v3H5v-3z" opacity="0.35" /></svg> },
     ],
   },
+];
+
+const trendingTechs = [
+  { name: "AI 챗봇", color: "bg-violet-50 text-violet-600 border-violet-200" },
+  { name: "서버리스", color: "bg-sky-50 text-sky-600 border-sky-200" },
+  { name: "PWA", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+  { name: "마이크로프론트엔드", color: "bg-amber-50 text-amber-600 border-amber-200" },
+  { name: "Edge Computing", color: "bg-rose-50 text-rose-600 border-rose-200" },
 ];
 
 export default function TechStack() {
@@ -74,7 +85,7 @@ export default function TechStack() {
   return (
     <section className="py-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="text-center mb-14 fade-up">
+        <div className="text-center mb-10 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             TECH STACK
           </p>
@@ -87,6 +98,15 @@ export default function TechStack() {
           </p>
         </div>
 
+        {/* Tech philosophy */}
+        <div className="fade-up max-w-[700px] mx-auto mb-14">
+          <div className="border-l-[3px] border-[var(--color-accent)] pl-4 bg-indigo-50/50 py-3 pr-4 rounded-r-lg">
+            <p className="text-[var(--color-dark-2)] text-[0.88rem] leading-relaxed italic">
+              &ldquo;트렌디한 기술이 아닌, 프로젝트에 최적의 기술을 선택합니다. 안정성, 성능, 유지보수성을 종합적으로 고려하여 기술 스택을 구성합니다.&rdquo;
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((cat, ci) => (
             <div
@@ -95,7 +115,7 @@ export default function TechStack() {
               style={{ transitionDelay: `${ci * 100}ms` }}
             >
               {/* Category header */}
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
                   <span className="text-white font-bold text-sm">
                     {cat.title === "프론트엔드" ? "FE" : cat.title === "백엔드" ? "BE" : "DV"}
@@ -106,6 +126,11 @@ export default function TechStack() {
                   <span className="text-[var(--color-gray-light)] text-[0.75rem]">숙련도 {cat.level}%</span>
                 </div>
               </div>
+
+              {/* Category description */}
+              <p className="text-[var(--color-gray)] text-[0.8rem] leading-relaxed mb-5">
+                {cat.desc}
+              </p>
 
               {/* Tech badges */}
               <div className="flex flex-wrap gap-2 mb-6">
@@ -131,6 +156,23 @@ export default function TechStack() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Trending techs */}
+        <div className="mt-12 fade-up text-center">
+          <h4 className="text-[var(--color-dark)] font-bold text-[0.95rem] mb-4">
+            최근 관심 기술
+          </h4>
+          <div className="flex flex-wrap justify-center gap-3">
+            {trendingTechs.map((t) => (
+              <span
+                key={t.name}
+                className={`px-4 py-2 border rounded-full text-[0.82rem] font-medium ${t.color} transition-all duration-300 hover:scale-105`}
+              >
+                {t.name}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 "use client";
 
-const logos = [
+const logosRow1 = [
   { name: "CAFE BRAND", weight: "font-black tracking-wider" },
   { name: "FASHION Co.", weight: "font-light tracking-widest uppercase" },
   { name: "MEDICAL+", weight: "font-bold tracking-tight" },
@@ -11,6 +11,28 @@ const logos = [
   { name: "DESIGN STUDIO", weight: "font-light tracking-widest" },
 ];
 
+const logosRow2 = [
+  { name: "HEALTH CLINIC", weight: "font-bold tracking-wide" },
+  { name: "REAL ESTATE Pro", weight: "font-light italic tracking-wider" },
+  { name: "FINANCE HQ", weight: "font-extrabold tracking-tight uppercase" },
+  { name: "TRAVEL & Co.", weight: "font-medium tracking-widest" },
+  { name: "SPORTS GEAR", weight: "font-black tracking-wide uppercase" },
+  { name: "PET CARE+", weight: "font-semibold tracking-wider" },
+  { name: "AUTO MOTORS", weight: "font-bold tracking-[2px] uppercase" },
+  { name: "LEGAL FIRM", weight: "font-light tracking-widest italic" },
+];
+
+function LogoItem({ name, weight }: { name: string; weight: string }) {
+  return (
+    <div className="mx-4 px-7 py-3.5 bg-gray-50/80 border border-gray-100 rounded-xl inline-flex items-center gap-3 hover:bg-white hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/8 hover:scale-105 transition-all duration-300 cursor-default select-none group">
+      <span className="w-2 h-2 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] opacity-40 group-hover:opacity-100 transition-opacity duration-300 shrink-0" />
+      <span className={`text-gray-400 text-lg ${weight} group-hover:text-[var(--color-dark)] transition-colors duration-300 whitespace-nowrap`}>
+        {name}
+      </span>
+    </div>
+  );
+}
+
 export default function ClientLogos() {
   return (
     <section className="py-16 border-b border-gray-100 overflow-hidden relative">
@@ -18,22 +40,29 @@ export default function ClientLogos() {
       <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-      <p className="text-center text-[var(--color-gray-light)] text-sm font-medium mb-10 uppercase tracking-[2px]">
-        신뢰할 수 있는 파트너사
-      </p>
-      <div className="marquee-container">
+      <div className="text-center mb-8">
+        <p className="text-[var(--color-gray-light)] text-sm font-medium uppercase tracking-[2px]">
+          신뢰할 수 있는 파트너사
+        </p>
+        <p className="text-[var(--color-gray)] text-[0.82rem] mt-1">
+          다양한 산업군의 기업과 함께 성장합니다
+        </p>
+      </div>
+
+      {/* Row 1 - scrolls left */}
+      <div className="marquee-container mb-4">
         <div className="marquee-track">
-          {[...logos, ...logos].map((logo, i) => (
-            <div
-              key={i}
-              className="mx-5 px-8 py-4 bg-gray-50/80 border border-gray-100 rounded-xl inline-flex items-center gap-3 hover:bg-white hover:border-[var(--color-primary)]/30 hover:shadow-lg hover:shadow-emerald-500/8 hover:scale-105 transition-all duration-300 cursor-default select-none group"
-            >
-              {/* Decorative dot */}
-              <span className="w-2 h-2 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] opacity-40 group-hover:opacity-100 transition-opacity duration-300 shrink-0" />
-              <span className={`text-gray-400 text-lg ${logo.weight} group-hover:text-[var(--color-dark)] transition-colors duration-300 whitespace-nowrap`}>
-                {logo.name}
-              </span>
-            </div>
+          {[...logosRow1, ...logosRow1].map((logo, i) => (
+            <LogoItem key={`r1-${i}`} name={logo.name} weight={logo.weight} />
+          ))}
+        </div>
+      </div>
+
+      {/* Row 2 - scrolls right (reverse) */}
+      <div className="marquee-container">
+        <div className="marquee-track-reverse">
+          {[...logosRow2, ...logosRow2].map((logo, i) => (
+            <LogoItem key={`r2-${i}`} name={logo.name} weight={logo.weight} />
           ))}
         </div>
       </div>

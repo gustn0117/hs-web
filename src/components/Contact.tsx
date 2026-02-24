@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, FormEvent, useState } from "react";
+import Link from "next/link";
 
 const contactItems = [
   {
@@ -40,6 +41,12 @@ const contactItems = [
     label: "운영 시간",
     value: "평일 09:00 - 18:00",
   },
+];
+
+const quickFaqs = [
+  { q: "제작 비용은?", a: "80만원부터 시작" },
+  { q: "제작 기간은?", a: "기본 2~3주" },
+  { q: "유지보수는?", a: "1~6개월 무상 포함" },
 ];
 
 function FloatingInput({ label, type = "text", placeholder, required = false }: { label: string; type?: string; placeholder: string; required?: boolean }) {
@@ -171,9 +178,16 @@ export default function Contact() {
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             문의하기
           </h2>
-          <p className="text-[var(--color-gray)] text-lg max-w-[550px] mx-auto">
+          <p className="text-[var(--color-gray)] text-lg max-w-[550px] mx-auto mb-4">
             프로젝트에 대해 자유롭게 상담해주세요. 24시간 내 답변드립니다.
           </p>
+          {/* Response time badge */}
+          <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2 rounded-full text-[0.82rem] font-semibold">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            평균 응답 시간: 24시간 이내
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -181,11 +195,11 @@ export default function Contact() {
             <h3 className="text-[1.6rem] font-extrabold mb-4">
               HS WEB에 문의하세요
             </h3>
-            <p className="text-[var(--color-gray)] mb-9 leading-relaxed">
+            <p className="text-[var(--color-gray)] mb-8 leading-relaxed">
               홈페이지 제작, 리뉴얼, 유지보수 등 궁금하신 점이 있으시면 언제든
               연락 주세요. 친절하게 상담해드리겠습니다.
             </p>
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               {contactItems.map((item) => (
                 <div
                   key={item.label}
@@ -202,6 +216,40 @@ export default function Contact() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Map placeholder */}
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6 mb-6 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, #000 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-semibold text-[0.9rem] text-[var(--color-dark)]">서울특별시 강남구</div>
+                  <div className="text-[var(--color-gray)] text-[0.78rem]">오프라인 미팅 가능 (사전 예약)</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick FAQ */}
+            <div>
+              <h4 className="font-bold text-[0.9rem] text-[var(--color-dark)] mb-3">빠른 FAQ</h4>
+              <div className="flex flex-wrap gap-2">
+                {quickFaqs.map((faq) => (
+                  <Link
+                    key={faq.q}
+                    href="/#faq"
+                    className="inline-flex items-center gap-2 bg-white border border-gray-100 rounded-lg px-3 py-2 text-[0.8rem] no-underline text-[var(--color-dark-2)] hover:border-[var(--color-primary)]/30 transition-all duration-300"
+                  >
+                    <span className="font-semibold">{faq.q}</span>
+                    <span className="text-[var(--color-primary)] font-medium">{faq.a}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
