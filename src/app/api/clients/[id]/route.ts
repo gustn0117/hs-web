@@ -57,16 +57,24 @@ export async function PUT(
     updateData.password_hash = await bcrypt.hash(password, 12);
   }
 
-  const { data, error } = await supabase
+  const { error: updateError } = await supabase
     .from("clients")
     .update(updateData)
-    .eq("id", id)
+    .eq("id", id);
+
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 });
+  }
+
+  const { data, error: selectError } = await supabase
+    .from("clients")
     .select(
       "id, username, name, email, phone, memo, is_active, created_at, updated_at"
     )
+    .eq("id", id)
     .single();
 
-  if (error) {
+  if (selectError) {
     return NextResponse.json(
       { error: "클라이언트를 찾을 수 없습니다." },
       { status: 404 }

@@ -38,16 +38,20 @@ export async function PUT(
   const { did } = await params;
   const body = await request.json();
 
-  const { data, error } = await supabase
+  const { error: updateError } = await supabase
     .from("domains")
     .update(body)
-    .eq("id", did)
-    .select()
-    .single();
+    .eq("id", did);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
+
+  const { data } = await supabase
+    .from("domains")
+    .select("*")
+    .eq("id", did)
+    .single();
 
   return NextResponse.json({ domain: data });
 }

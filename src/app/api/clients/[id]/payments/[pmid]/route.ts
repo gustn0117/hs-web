@@ -38,16 +38,20 @@ export async function PUT(
   const { pmid } = await params;
   const body = await request.json();
 
-  const { data, error } = await supabase
+  const { error: updateError } = await supabase
     .from("payments")
     .update(body)
-    .eq("id", pmid)
-    .select()
-    .single();
+    .eq("id", pmid);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (updateError) {
+    return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
+
+  const { data } = await supabase
+    .from("payments")
+    .select("*")
+    .eq("id", pmid)
+    .single();
 
   return NextResponse.json({ payment: data });
 }

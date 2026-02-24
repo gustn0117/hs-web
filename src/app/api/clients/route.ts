@@ -39,25 +39,42 @@ export async function POST(request: Request) {
     );
   }
 
-  const password_hash = await bcrypt.hash(password, 12);
+  let password_hash: string;
+  try {
+    password_hash = await bcrypt.hash(password, 12);
+  } catch (err) {
+    console.error("bcrypt hash error:", err);
+    return NextResponse.json(
+      { error: "비밀번호 해싱에 실패했습니다." },
+      { status: 500 }
+    );
+  }
 
-  const { data, error } = await supabase
+  const { error: insertError } = await supabase.from("clients").insert({
+    username,
+    password_hash,
+    name,
+    email: email || null,
+    phone: phone || null,
+    memo: memo || null,
+  });
+
+  if (insertError) {
+    console.error("Supabase insert error:", JSON.stringify(insertError));
+    return NextResponse.json({ error: insertError.message }, { status: 500 });
+  }
+
+  const { data, error: selectError } = await supabase
     .from("clients")
-    .insert({
-      username,
-      password_hash,
-      name,
-      email: email || null,
-      phone: phone || null,
-      memo: memo || null,
-    })
     .select(
       "id, username, name, email, phone, memo, is_active, created_at, updated_at"
     )
+    .eq("username", username)
     .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (selectError) {
+    console.error("Supabase select error:", JSON.stringify(selectError));
+    return NextResponse.json({ client: { username, name } }, { status: 201 });
   }
 
   return NextResponse.json({ client: data }, { status: 201 });

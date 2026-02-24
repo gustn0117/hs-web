@@ -38,15 +38,21 @@ export async function POST(
   const { id } = await params;
   const body = await request.json();
 
-  const { data, error } = await supabase
+  const { error: insertError } = await supabase
     .from("payments")
-    .insert({ ...body, client_id: id })
-    .select()
-    .single();
+    .insert({ ...body, client_id: id });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (insertError) {
+    return NextResponse.json({ error: insertError.message }, { status: 500 });
   }
+
+  const { data } = await supabase
+    .from("payments")
+    .select("*")
+    .eq("client_id", id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
 
   return NextResponse.json({ payment: data }, { status: 201 });
 }
