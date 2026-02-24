@@ -109,9 +109,7 @@ export default function Testimonials() {
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, j) => <StarIcon key={j} />)}
             </div>
-            <span className="text-[var(--color-dark)] font-bold text-[0.9rem]">4.9 / 5.0</span>
-            <span className="w-px h-4 bg-gray-200" />
-            <span className="text-[var(--color-gray)] text-[0.82rem]">50+ 고객 리뷰</span>
+            <span className="text-[var(--color-gray)] text-[0.82rem]">실제 고객 리뷰</span>
           </div>
         </div>
 

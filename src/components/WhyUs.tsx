@@ -96,9 +96,7 @@ export default function WhyUs() {
               {[
                 { value: "24h", label: "평균 응답" },
                 { value: "100%", label: "맞춤 제작" },
-                { value: "150+", label: "완료 프로젝트" },
                 { value: "A/S", label: "무상 유지보수" },
-                { value: "4.9", label: "평균 평점" },
               ].map((s, i) => (
                 <div key={s.label} className={`flex-1 text-center min-w-[80px] py-1 ${i < 4 ? "border-r border-gray-100" : ""}`}>
                   <div className="text-lg font-extrabold gradient-text">{s.value}</div>

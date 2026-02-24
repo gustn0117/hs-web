@@ -3,37 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
-function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setStarted(true); observer.disconnect(); } },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    const duration = 2000;
-    const start = performance.now();
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(target * eased));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [started, target]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
 const TYPED_WORDS = ["홈페이지", "쇼핑몰", "CMS", "ERP 시스템", "랜딩페이지"];
 
 function TypingEffect() {
@@ -166,21 +135,12 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-5 mt-10">
-              {[
-                { num: 150, suffix: "+", label: "제작 프로젝트" },
-                { num: 98, suffix: "%", label: "고객 만족도" },
-                { num: 5, suffix: "년+", label: "업계 경력" },
-              ].map((s) => (
-                <div key={s.label} className="text-center lg:text-left border-l-2 border-[var(--color-primary)]/30 pl-4">
-                  <div className="font-extrabold text-2xl md:text-[2rem] gradient-text">
-                    <Counter target={s.num} suffix={s.suffix} />
-                  </div>
-                  <div className="text-[var(--color-gray)] text-[0.85rem] mt-1">
-                    {s.label}
-                  </div>
-                </div>
+            {/* Key points */}
+            <div className="flex flex-wrap gap-3 mt-10">
+              {["맞춤형 디자인", "반응형 웹", "SEO 최적화", "유지보수 지원"].map((tag) => (
+                <span key={tag} className="px-4 py-2 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/15 rounded-full text-[var(--color-gray)] text-[0.85rem] font-medium">
+                  {tag}
+                </span>
               ))}
             </div>
           </div>

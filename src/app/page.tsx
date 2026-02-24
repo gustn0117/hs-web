@@ -1,6 +1,5 @@
 import Hero from "@/components/Hero";
 import ClientLogos from "@/components/ClientLogos";
-import Stats from "@/components/Stats";
 import Services from "@/components/Services";
 import TechStack from "@/components/TechStack";
 import Portfolio from "@/components/Portfolio";
@@ -21,7 +20,6 @@ export default function Home() {
     <>
       <Hero />
       <ClientLogos />
-      <Stats />
       <Services />
       <TechStack />
       <Portfolio items={items} />

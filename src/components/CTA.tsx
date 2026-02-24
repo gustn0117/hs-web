@@ -81,10 +81,9 @@ export default function CTA() {
             {/* Mini stats */}
             <div className="mt-12 flex justify-center gap-8 md:gap-12 flex-wrap">
               {[
-                { num: "150+", label: "프로젝트 완료" },
-                { num: "98%", label: "고객 만족도" },
                 { num: "24h", label: "평균 응답 시간" },
-                { num: "4.9", label: "평균 평점" },
+                { num: "100%", label: "맞춤 제작" },
+                { num: "A/S", label: "무상 유지보수" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="text-white font-extrabold text-xl">{s.num}</div>
