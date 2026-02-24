@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Portfolio from "@/components/Portfolio";
+import Testimonials from "@/components/Testimonials";
+import CTA from "@/components/CTA";
 
 export const metadata: Metadata = {
   title: "포트폴리오 | HS WEB - 웹사이트 제작 전문",
@@ -8,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function PortfolioPage() {
-  return <Portfolio />;
+  return (
+    <>
+      <Portfolio />
+      <Testimonials />
+      <CTA />
+    </>
+  );
 }

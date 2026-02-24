@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 const projects = [
   {
-    bg: "bg-amber-50",
+    bg: "from-amber-100 to-amber-50",
     iconColor: "text-amber-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -16,7 +16,7 @@ const projects = [
     desc: "온라인 예약 시스템과 메뉴 관리 기능을 갖춘 카페 브랜드 사이트",
   },
   {
-    bg: "bg-pink-50",
+    bg: "from-pink-100 to-pink-50",
     iconColor: "text-pink-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -28,7 +28,7 @@ const projects = [
     desc: "결제 연동, 재고 관리, 회원 시스템을 갖춘 패션 이커머스 플랫폼",
   },
   {
-    bg: "bg-sky-50",
+    bg: "from-sky-100 to-sky-50",
     iconColor: "text-sky-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -40,7 +40,7 @@ const projects = [
     desc: "온라인 예약과 진료 안내를 위한 의료기관 전용 웹사이트",
   },
   {
-    bg: "bg-violet-50",
+    bg: "from-violet-100 to-violet-50",
     iconColor: "text-violet-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -52,7 +52,7 @@ const projects = [
     desc: "아파트 분양 마케팅을 위한 고전환율 랜딩페이지",
   },
   {
-    bg: "bg-emerald-50",
+    bg: "from-emerald-100 to-emerald-50",
     iconColor: "text-emerald-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -64,7 +64,7 @@ const projects = [
     desc: "실시간 데이터 시각화와 관리 기능을 갖춘 B2B SaaS 플랫폼",
   },
   {
-    bg: "bg-orange-50",
+    bg: "from-orange-100 to-orange-50",
     iconColor: "text-orange-600",
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -103,6 +103,7 @@ export default function Portfolio() {
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             PORTFOLIO
           </p>
+          <div className="section-divider" />
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             최근 작업물
           </h2>
@@ -115,19 +116,25 @@ export default function Portfolio() {
           {projects.map((p, i) => (
             <div
               key={i}
-              className="fade-up rounded-2xl overflow-hidden bg-white border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+              className="fade-up rounded-2xl overflow-hidden bg-white border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-gray-200/50 group"
               style={{ transitionDelay: `${i * 60}ms` }}
             >
-              <div className={`h-[200px] ${p.bg} flex items-center justify-center ${p.iconColor}`}>
-                <div className="w-16 h-16 bg-white/80 rounded-2xl flex items-center justify-center shadow-sm">
+              <div className={`h-[200px] bg-gradient-to-br ${p.bg} flex items-center justify-center ${p.iconColor} relative`}>
+                <div className="w-16 h-16 bg-white/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   {p.icon}
+                </div>
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="px-6 py-2 border-2 border-white text-white rounded-full text-sm font-semibold scale-75 group-hover:scale-100 transition-transform duration-300">
+                    자세히 보기
+                  </span>
                 </div>
               </div>
               <div className="p-6">
-                <div className="text-[0.8rem] text-[var(--color-primary)] font-semibold uppercase tracking-[1px]">
+                <span className="text-[0.75rem] text-[var(--color-primary)] font-semibold uppercase tracking-[1px] bg-emerald-50 px-2.5 py-1 rounded-full">
                   {p.category}
-                </div>
-                <h3 className="text-[1.1rem] font-bold mt-1.5">{p.title}</h3>
+                </span>
+                <h3 className="text-[1.1rem] font-bold mt-2.5">{p.title}</h3>
                 <p className="text-[var(--color-gray)] text-[0.9rem] mt-2">
                   {p.desc}
                 </p>

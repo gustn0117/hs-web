@@ -48,6 +48,13 @@ const plans = [
   },
 ];
 
+const commonFeatures = [
+  "SSL 보안 인증서",
+  "Google Analytics 연동",
+  "반응형 모바일 최적화",
+  "크로스 브라우저 테스트",
+];
+
 export default function Pricing() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -63,7 +70,7 @@ export default function Pricing() {
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -74,6 +81,7 @@ export default function Pricing() {
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             PRICING
           </p>
+          <div className="section-divider" />
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             가격 안내
           </h2>
@@ -86,55 +94,84 @@ export default function Pricing() {
           {plans.map((p, i) => (
             <div
               key={i}
-              className={`fade-up bg-white p-9 rounded-2xl transition-all duration-300 relative ${
+              className={`fade-scale bg-white p-9 rounded-2xl transition-all duration-300 relative overflow-hidden ${
                 p.popular
-                  ? "border-2 border-[var(--color-primary)] lg:scale-105 shadow-lg"
-                  : "border border-gray-100 hover:-translate-y-1 hover:shadow-lg"
+                  ? "border-2 border-[var(--color-primary)] lg:scale-105 shadow-xl shadow-emerald-500/10"
+                  : "border border-gray-100 hover:-translate-y-2 hover:shadow-xl"
               }`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
+              {/* Top gradient bar for popular */}
               {p.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-white px-4 py-1 rounded-full text-[0.8rem] font-semibold">
-                  인기
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
+              )}
+              {p.popular && (
+                <div className="absolute -top-0 left-1/2 -translate-x-1/2 mt-4">
+                  <span className="bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white px-5 py-1.5 rounded-full text-[0.8rem] font-semibold shadow-lg shadow-emerald-500/20">
+                    가장 인기
+                  </span>
                 </div>
               )}
-              <div className="text-sm font-semibold text-[var(--color-gray)] mb-2">
-                {p.name}
+              <div className={`${p.popular ? "mt-8" : ""}`}>
+                <div className="text-sm font-bold text-[var(--color-gray)] uppercase tracking-[1px] mb-2">
+                  {p.name}
+                </div>
+                <div className="mb-1 flex items-end gap-1">
+                  <span className={`text-[2.8rem] font-extrabold leading-none ${p.popular ? "gradient-text" : "text-[var(--color-dark)]"}`}>
+                    {p.price}
+                  </span>
+                  <span className="text-base font-medium text-[var(--color-gray)] mb-1">
+                    {p.unit}
+                  </span>
+                </div>
+                <div className="text-[var(--color-gray)] text-sm mb-7 pb-7 border-b border-gray-100">
+                  {p.desc}
+                </div>
+                <ul className="list-none mb-8 space-y-3">
+                  {p.features.map((f) => (
+                    <li
+                      key={f}
+                      className="text-[var(--color-dark-2)] text-[0.95rem] flex items-center gap-3"
+                    >
+                      <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/contact"
+                  className={`block w-full text-center py-3.5 rounded-xl font-semibold no-underline transition-all duration-300 ${
+                    p.popular
+                      ? "bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.02]"
+                      : "border border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-emerald-50/50"
+                  }`}
+                >
+                  {p.name === "Enterprise" ? "견적 문의" : "상담 신청"}
+                </Link>
               </div>
-              <div className="text-[2.5rem] font-extrabold text-[var(--color-dark)] mb-1">
-                {p.price}
-                <span className="text-base font-medium text-[var(--color-gray)]">
-                  {p.unit}
-                </span>
-              </div>
-              <div className="text-[var(--color-gray)] text-sm mb-7 pb-7 border-b border-gray-100">
-                {p.desc}
-              </div>
-              <ul className="list-none mb-8 space-y-2">
-                {p.features.map((f) => (
-                  <li
-                    key={f}
-                    className="py-2 text-[var(--color-gray)] text-[0.95rem] flex items-center gap-2.5"
-                  >
-                    <span className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center text-[var(--color-primary)] text-xs font-bold shrink-0">
-                      ✓
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/contact"
-                className={`block w-full text-center py-3.5 rounded-lg font-semibold no-underline transition-all ${
-                  p.popular
-                    ? "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
-                    : "border border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
-                }`}
-              >
-                {p.popular ? "상담 신청" : p.name === "Enterprise" ? "견적 문의" : "상담 신청"}
-              </Link>
             </div>
           ))}
+        </div>
+
+        {/* Common features */}
+        <div className="mt-12 fade-up">
+          <div className="bg-[var(--color-light)] rounded-2xl p-8 border border-gray-100">
+            <h3 className="text-center font-bold text-[var(--color-dark)] mb-5">
+              모든 플랜 공통 포함 사항
+            </h3>
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+              {commonFeatures.map((f) => (
+                <div key={f} className="flex items-center gap-2 text-[var(--color-gray)] text-[0.9rem]">
+                  <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Process from "@/components/Process";
+import FAQ from "@/components/FAQ";
+import CTA from "@/components/CTA";
 
 export const metadata: Metadata = {
   title: "제작 과정 | HS WEB - 웹사이트 제작 전문",
@@ -8,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function ProcessPage() {
-  return <Process />;
+  return (
+    <>
+      <Process />
+      <FAQ />
+      <CTA />
+    </>
+  );
 }

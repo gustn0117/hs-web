@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Pricing from "@/components/Pricing";
+import FAQ from "@/components/FAQ";
+import CTA from "@/components/CTA";
 
 export const metadata: Metadata = {
   title: "가격 안내 | HS WEB - 웹사이트 제작 전문",
@@ -8,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function PricingPage() {
-  return <Pricing />;
+  return (
+    <>
+      <Pricing />
+      <FAQ />
+      <CTA />
+    </>
+  );
 }

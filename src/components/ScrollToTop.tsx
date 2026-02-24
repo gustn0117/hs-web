@@ -14,12 +14,14 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed bottom-7 right-7 w-11 h-11 bg-[var(--color-primary)] text-white border-none rounded-xl text-lg cursor-pointer shadow-md z-[999] transition-all hover:-translate-y-1 hover:shadow-lg ${
-        visible ? "opacity-100 visible" : "opacity-0 invisible"
+      className={`fixed bottom-7 right-7 w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl cursor-pointer shadow-lg shadow-emerald-500/20 z-[999] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/30 flex items-center justify-center ${
+        visible ? "opacity-100 visible scale-100" : "opacity-0 invisible scale-75"
       }`}
       aria-label="맨 위로"
     >
-      ↑
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+      </svg>
     </button>
   );
 }

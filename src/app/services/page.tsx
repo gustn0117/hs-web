@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Services from "@/components/Services";
+import TechStack from "@/components/TechStack";
+import CTA from "@/components/CTA";
 
 export const metadata: Metadata = {
   title: "서비스 | HS WEB - 웹사이트 제작 전문",
@@ -8,5 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default function ServicesPage() {
-  return <Services />;
+  return (
+    <>
+      <Services />
+      <TechStack />
+      <CTA />
+    </>
+  );
 }

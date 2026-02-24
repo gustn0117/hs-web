@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Testimonials from "@/components/Testimonials";
+import CTA from "@/components/CTA";
 
 export const metadata: Metadata = {
   title: "고객 후기 | HS WEB - 웹사이트 제작 전문",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function TestimonialsPage() {
-  return <Testimonials />;
+  return (
+    <>
+      <Testimonials />
+      <CTA />
+    </>
+  );
 }

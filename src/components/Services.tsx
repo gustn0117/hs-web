@@ -80,17 +80,19 @@ export default function Services() {
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section className="pt-32 pb-24 bg-[var(--color-light)]" ref={ref}>
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="pt-32 pb-24 bg-[var(--color-light)] relative overflow-hidden" ref={ref}>
+      <div className="absolute inset-0 dot-pattern pointer-events-none" />
+      <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             SERVICES
           </p>
+          <div className="section-divider" />
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             제공 서비스
           </h2>
@@ -104,10 +106,13 @@ export default function Services() {
           {services.map((s, i) => (
             <div
               key={i}
-              className="fade-up bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-[var(--color-primary-light)] group"
+              className="fade-scale bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-500/5 group relative overflow-hidden"
               style={{ transitionDelay: `${i * 60}ms` }}
             >
-              <div className="w-12 h-12 bg-emerald-50 text-[var(--color-primary)] rounded-xl flex items-center justify-center mb-5 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
+              {/* Top gradient bar on hover */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+
+              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-xl flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
                 {s.icon}
               </div>
               <h3 className="text-lg font-bold mb-2">{s.title}</h3>
@@ -118,7 +123,7 @@ export default function Services() {
                 {s.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-[0.78rem] px-3 py-1 bg-[var(--color-light)] text-[var(--color-gray)] rounded-full font-medium"
+                    className="text-[0.78rem] px-3 py-1 bg-[var(--color-light)] text-[var(--color-gray)] rounded-full font-medium group-hover:bg-emerald-50 group-hover:text-[var(--color-primary)] transition-colors duration-300"
                   >
                     {tag}
                   </span>

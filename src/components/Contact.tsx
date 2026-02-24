@@ -57,7 +57,7 @@ export default function Contact() {
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll(".fade-up, .fade-left, .fade-right").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -68,15 +68,19 @@ export default function Contact() {
   };
 
   const inputClass =
-    "w-full px-4 py-3.5 border border-gray-200 rounded-lg text-[0.95rem] transition-all focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-emerald-100";
+    "w-full px-4 py-3.5 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-emerald-100 bg-white";
 
   return (
-    <section className="pt-32 pb-24" ref={ref}>
-      <div className="max-w-[1200px] mx-auto px-6">
+    <section className="pt-32 pb-24 relative overflow-hidden" ref={ref}>
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50/20 to-indigo-50/10 pointer-events-none" />
+
+      <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             CONTACT
           </p>
+          <div className="section-divider" />
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             문의하기
           </h2>
@@ -86,7 +90,7 @@ export default function Contact() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="fade-up">
+          <div className="fade-left">
             <h3 className="text-[1.6rem] font-extrabold mb-4">
               HS WEB에 문의하세요
             </h3>
@@ -94,10 +98,13 @@ export default function Contact() {
               홈페이지 제작, 리뉴얼, 유지보수 등 궁금하신 점이 있으시면 언제든
               연락 주세요. 친절하게 상담해드리겠습니다.
             </p>
-            <div className="space-y-5">
+            <div className="space-y-4">
               {contactItems.map((item) => (
-                <div key={item.label} className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 text-[var(--color-primary)] rounded-lg flex items-center justify-center shrink-0">
+                <div
+                  key={item.label}
+                  className="flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-[var(--color-primary)]/30 hover:shadow-md transition-all duration-300"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/15">
                     {item.icon}
                   </div>
                   <div>
@@ -112,7 +119,7 @@ export default function Contact() {
           </div>
 
           <form
-            className="fade-up bg-[var(--color-light)] p-9 rounded-2xl border border-gray-100"
+            className="fade-right bg-white p-9 rounded-2xl border border-gray-100 shadow-lg shadow-gray-100/50"
             onSubmit={handleSubmit}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -150,7 +157,7 @@ export default function Contact() {
             </div>
             <button
               type="submit"
-              className="w-full py-3.5 bg-[var(--color-primary)] text-white border-none rounded-lg text-base font-bold cursor-pointer transition-all hover:bg-[var(--color-primary-dark)]"
+              className="w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl text-base font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.01]"
             >
               상담 신청하기
             </button>
