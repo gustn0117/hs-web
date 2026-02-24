@@ -1,24 +1,49 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 const categories = [
   {
     title: "프론트엔드",
-    techs: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
+    color: "from-emerald-400 to-emerald-600",
+    level: 95,
+    techs: [
+      { name: "React", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="2.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></svg> },
+      { name: "Next.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1.5 14.5V7.5l8 9h-2.5L10.5 10v6.5h-1z" opacity="0.6" /></svg> },
+      { name: "Vue.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2 3h3.5L12 14.5 18.5 3H22L12 21 2 3z" opacity="0.5" /></svg> },
+      { name: "TypeScript", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="3" opacity="0.15" /><text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="bold">TS</text></svg> },
+      { name: "Tailwind CSS", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C13.35 10.82 14.5 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C15.65 7.18 14.5 6 12 6zM7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C8.35 16.82 9.5 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C10.65 13.18 9.5 12 7 12z" opacity="0.5" /></svg> },
+    ],
   },
   {
     title: "백엔드",
-    techs: ["Node.js", "Express", "Python", "PostgreSQL", "MongoDB"],
+    color: "from-indigo-400 to-indigo-600",
+    level: 90,
+    techs: [
+      { name: "Node.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.85l9 5.2v10.4l-9 5.2-9-5.2V7.05l9-5.2z" opacity="0.3" /></svg> },
+      { name: "Express", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="20" height="12" rx="2" opacity="0.15" /><text x="12" y="15" textAnchor="middle" fontSize="8" fontWeight="bold">Ex</text></svg> },
+      { name: "Python", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 2C8.46 2 8 3.37 8 5v2h4v1H5.5C3.57 8 2 9.74 2 12s1.57 4 3.5 4h2v-2.5c0-1.93 1.57-3.5 3.5-3.5h4c1.1 0 2-.9 2-2V5c0-1.1-.9-3-2-3h-3.5zM9.5 4a.75.75 0 110 1.5.75.75 0 010-1.5zM12.5 22c3.04 0 3.5-1.37 3.5-3v-2h-4v-1h6.5c1.93 0 3.5-1.74 3.5-4s-1.57-4-3.5-4h-2v2.5c0 1.93-1.57 3.5-3.5 3.5h-4c-1.1 0-2 .9-2 2v3c0 1.1.9 3 2 3h3.5zm2 -3.5a.75.75 0 110-1.5.75.75 0 010 1.5z" opacity="0.4" /></svg> },
+      { name: "PostgreSQL", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="3" opacity="0.15" /><text x="12" y="15" textAnchor="middle" fontSize="8" fontWeight="bold">PG</text></svg> },
+      { name: "MongoDB", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-.5 4-3 7-4.5 9.5C6 14 5.5 16 5.5 18c0 3 3 5 6.5 5s6.5-2 6.5-5c0-2-.5-4-2-6.5C15 9 12.5 6 12 2z" opacity="0.3" /></svg> },
+    ],
   },
   {
     title: "도구 & 플랫폼",
-    techs: ["Figma", "AWS", "Vercel", "Git", "Docker"],
+    color: "from-amber-400 to-amber-600",
+    level: 88,
+    techs: [
+      { name: "Figma", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2.5" opacity="0.4" /><rect x="6.5" y="3" width="5" height="8" rx="2.5" opacity="0.25" /><rect x="12.5" y="3" width="5" height="5" rx="2.5" opacity="0.3" /></svg> },
+      { name: "AWS", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="4" width="20" height="16" rx="3" opacity="0.15" /><text x="12" y="15" textAnchor="middle" fontSize="7" fontWeight="bold">AWS</text></svg> },
+      { name: "Vercel", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 20h20L12 3z" opacity="0.4" /></svg> },
+      { name: "Git", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21.62 11.11l-8.73-8.73a1.29 1.29 0 00-1.83 0L9.09 4.35l2.32 2.32a1.53 1.53 0 011.94 1.95l2.24 2.24a1.53 1.53 0 11-.92.86l-2.09-2.09v5.5a1.53 1.53 0 11-1.26-.06V9.37a1.53 1.53 0 01-.83-2.01L8.2 5.06 2.38 10.88a1.29 1.29 0 000 1.83l8.73 8.73a1.29 1.29 0 001.83 0l8.68-8.68a1.29 1.29 0 000-1.65z" opacity="0.4" /></svg> },
+      { name: "Docker", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M13 4h3v3h-3V4zm-4 0h3v3H9V4zM5 8h3v3H5V8zm4 0h3v3H9V8zm4 0h3v3h-3V8zm4 0h3v3h-3V8zM9 12h3v3H9v-3zm-4 0h3v3H5v-3z" opacity="0.35" /></svg> },
+    ],
   },
 ];
 
 export default function TechStack() {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -26,14 +51,24 @@ export default function TechStack() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
+            if (entry.target === ref.current) setVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    if (ref.current) {
+      observer.observe(ref.current);
+      ref.current.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    }
     return () => observer.disconnect();
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
   }, []);
 
   return (
@@ -55,18 +90,33 @@ export default function TechStack() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((cat, ci) => (
             <div key={cat.title} className="fade-up" style={{ transitionDelay: `${ci * 100}ms` }}>
-              <h3 className="text-sm font-bold text-[var(--color-gray)] uppercase tracking-[2px] mb-5 text-center">
-                {cat.title}
-              </h3>
+              <div className="text-center mb-5">
+                <h3 className="text-sm font-bold text-[var(--color-gray)] uppercase tracking-[2px] inline-block relative pb-2">
+                  {cat.title}
+                  <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r ${cat.color} rounded`} />
+                </h3>
+              </div>
               <div className="flex flex-wrap justify-center gap-3">
                 {cat.techs.map((tech) => (
                   <div
-                    key={tech}
-                    className="px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-[0.9rem] font-medium text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 cursor-default"
+                    key={tech.name}
+                    className="card-glow hover-tilt px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-[0.9rem] font-medium text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:shadow-md transition-all duration-300 cursor-default flex items-center gap-2 relative overflow-hidden"
+                    onMouseMove={handleMouseMove}
                   >
-                    {tech}
+                    <span className="text-[var(--color-primary)] relative z-10">{tech.icon}</span>
+                    <span className="relative z-10">{tech.name}</span>
                   </div>
                 ))}
+              </div>
+              {/* Skill bar */}
+              <div className="mt-5 px-4">
+                <div className="skill-bar">
+                  <div
+                    className={`skill-bar-fill ${visible ? 'visible' : ''}`}
+                    style={{ transform: visible ? `scaleX(${cat.level / 100})` : 'scaleX(0)' }}
+                  />
+                </div>
+                <div className="text-right text-[0.75rem] text-[var(--color-gray-light)] mt-1">{cat.level}%</div>
               </div>
             </div>
           ))}

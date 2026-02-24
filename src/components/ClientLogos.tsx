@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 const logos = [
   { name: "CAFE BRAND", weight: "font-black tracking-wider" },
   { name: "FASHION Co.", weight: "font-light tracking-widest uppercase" },
@@ -9,40 +7,26 @@ const logos = [
   { name: "Tech Startup", weight: "font-medium italic" },
   { name: "F&B GROUP", weight: "font-extrabold tracking-wide" },
   { name: "BEAUTY LAB", weight: "font-semibold tracking-[3px] uppercase" },
+  { name: "EDU PLUS", weight: "font-black tracking-tight" },
+  { name: "DESIGN STUDIO", weight: "font-light tracking-widest" },
 ];
 
 export default function ClientLogos() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section className="py-14 border-b border-gray-100" ref={ref}>
-      <div className="max-w-[1200px] mx-auto px-6">
-        <p className="fade-up text-center text-[var(--color-gray-light)] text-sm font-medium mb-8 uppercase tracking-[2px]">
-          신뢰할 수 있는 파트너사
-        </p>
-        <div className="fade-up flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
-          {logos.map((logo) => (
+    <section className="py-14 border-b border-gray-100 overflow-hidden">
+      <p className="text-center text-[var(--color-gray-light)] text-sm font-medium mb-8 uppercase tracking-[2px]">
+        신뢰할 수 있는 파트너사
+      </p>
+      <div className="marquee-container">
+        <div className="marquee-track">
+          {[...logos, ...logos].map((logo, i) => (
             <div
-              key={logo.name}
-              className={`text-gray-300 text-lg ${logo.weight} select-none hover:text-gray-400 transition-colors duration-300`}
+              key={i}
+              className="glass-colored mx-4 px-8 py-4 rounded-xl inline-flex items-center gap-3 hover:shadow-lg hover:shadow-emerald-500/10 hover:scale-105 transition-all duration-300 cursor-default select-none"
             >
-              {logo.name}
+              <span className={`text-gray-400 text-lg ${logo.weight} hover:text-[var(--color-primary)] transition-colors whitespace-nowrap`}>
+                {logo.name}
+              </span>
             </div>
           ))}
         </div>

@@ -35,15 +35,35 @@ function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
 }
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const scrollY = window.scrollY;
+      const blobs = sectionRef.current.querySelectorAll('.parallax-slow');
+      blobs.forEach((blob) => {
+        (blob as HTMLElement).style.transform = `translateY(${scrollY * 0.15}px)`;
+      });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <section className="min-h-screen bg-gradient-to-br from-white via-emerald-50/30 to-indigo-50/20 flex items-center pt-[72px] relative overflow-hidden">
+    <section ref={sectionRef} className="min-h-screen bg-gradient-to-br from-white via-emerald-50/30 to-indigo-50/20 flex items-center pt-[72px] relative overflow-hidden">
       <div className="absolute inset-0 dot-pattern pointer-events-none" />
 
-      {/* Floating decorations */}
-      <div className="absolute top-32 right-[15%] w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 left-[10%] w-56 h-56 bg-indigo-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
+      {/* Floating decorations with parallax */}
+      <div className="parallax-slow absolute top-32 right-[15%] w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl animate-float" />
+      <div className="parallax-slow absolute bottom-20 left-[10%] w-56 h-56 bg-indigo-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
       <div className="absolute top-1/2 right-[5%] w-4 h-4 bg-[var(--color-primary)] rounded-full opacity-20 animate-float" style={{ animationDelay: "0.8s" }} />
       <div className="absolute top-[20%] left-[20%] w-3 h-3 bg-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2s" }} />
+      {/* Extra particles */}
+      <div className="absolute top-[40%] right-[30%] w-2 h-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2.5s", animationDuration: "4s" }} />
+      <div className="absolute bottom-[30%] right-[8%] w-6 h-6 border border-emerald-300/20 rounded-full animate-float" style={{ animationDelay: "1.2s", animationDuration: "5s" }} />
+      <div className="absolute top-[60%] left-[5%] w-3 h-3 border border-indigo-300/15 rounded-full animate-float" style={{ animationDelay: "3s", animationDuration: "4.5s" }} />
+      <div className="absolute top-[15%] right-[40%] w-1.5 h-1.5 bg-emerald-400 rounded-full opacity-25 animate-float" style={{ animationDelay: "0.5s", animationDuration: "3.5s" }} />
 
       <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -56,19 +76,19 @@ export default function Hero() {
             <h1 className="text-4xl md:text-[3.2rem] font-black text-[var(--color-dark)] leading-[1.2] mb-5 tracking-tight">
               당신의 비즈니스를
               <br />
-              <span className="gradient-text">빛나게 할 웹사이트</span>
+              <span className="shimmer-text">빛나게 할 웹사이트</span>
             </h1>
 
             <p className="text-lg text-[var(--color-gray)] mb-9 max-w-[480px] leading-relaxed mx-auto lg:mx-0">
-              HS WEB은 감각적인 디자인과 최신 기술력으로 고객 맞춤형 홈페이지를
-              제작합니다. 반응형 웹, 쇼핑몰, 랜딩페이지까지 모든 웹 솔루션을
+              HS WEB은 감각적인 디자인과 최신 기술력으로 홈페이지부터 쇼핑몰,
+              CMS, 기업 관리 시스템까지 비즈니스에 필요한 모든 웹 솔루션을
               제공합니다.
             </p>
 
             <div className="flex gap-4 flex-wrap justify-center lg:justify-start">
               <Link
                 href="/contact"
-                className="group inline-flex items-center gap-2 px-8 py-[14px] rounded-lg font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 no-underline hover:scale-[1.02]"
+                className="btn-ripple group inline-flex items-center gap-2 px-8 py-[14px] rounded-lg font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 no-underline hover:scale-[1.02]"
               >
                 무료 상담 받기
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -123,6 +143,11 @@ export default function Hero() {
                   <div className="h-3 w-[70%] bg-[var(--color-dark)] opacity-20 rounded mb-2" />
                   <div className="h-2 w-[50%] bg-gray-300 rounded mb-3" />
                   <div className="h-6 w-20 bg-gradient-to-r from-[var(--color-primary)] to-emerald-400 rounded" />
+                  {/* Blinking cursor */}
+                  <div className="mt-2 flex items-center gap-1">
+                    <div className="h-2 w-[40%] bg-gray-200 rounded" />
+                    <div className="w-[2px] h-3 bg-[var(--color-primary)] animate-[blink-cursor_0.75s_step-end_infinite]" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[1, 2, 3].map((n) => (

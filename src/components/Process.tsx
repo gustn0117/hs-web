@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const steps = [
   {
@@ -47,6 +47,7 @@ const steps = [
 
 export default function Process() {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -54,13 +55,17 @@ export default function Process() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
+            if (entry.target === ref.current) setVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    if (ref.current) {
+      observer.observe(ref.current);
+      ref.current.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    }
     return () => observer.disconnect();
   }, []);
 
@@ -81,14 +86,29 @@ export default function Process() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 relative">
-          {/* Connecting line */}
-          <div className="hidden lg:block absolute top-[52px] left-[15%] right-[15%] h-0.5 bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-accent)] to-[var(--color-primary)] opacity-30" />
+          {/* Animated connecting line */}
+          <div className="hidden lg:block absolute top-[52px] left-[15%] right-[15%] h-0.5 overflow-hidden">
+            <div
+              className={`h-full bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-accent)] to-[var(--color-primary)] ${visible ? 'animate-[draw-line_2s_ease-out_forwards]' : 'w-0'}`}
+            />
+          </div>
 
           {steps.map((s, i) => (
             <div key={i} className="fade-up text-center relative" style={{ transitionDelay: `${i * 100}ms` }}>
-              <div className="w-[104px] h-[104px] bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 rounded-full flex flex-col items-center justify-center text-white mx-auto mb-5 relative z-10 ring-4 ring-emerald-100 shadow-lg shadow-emerald-500/20">
-                <div className="mb-0.5">{s.icon}</div>
-                <span className="text-[0.7rem] font-bold opacity-80">{s.num}</span>
+              <div className="relative mx-auto mb-5 w-[104px] h-[104px]">
+                {/* Pulse ring */}
+                <div
+                  className={`absolute inset-0 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 ${visible ? 'animate-[pulse-ring_2.5s_ease-out_infinite]' : 'opacity-0'}`}
+                  style={{ animationDelay: `${i * 0.5}s` }}
+                />
+                {/* Step circle */}
+                <div
+                  className={`w-[104px] h-[104px] bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 rounded-full flex flex-col items-center justify-center text-white relative z-10 ring-4 ring-emerald-100 shadow-lg shadow-emerald-500/20 ${visible ? 'animate-bounce-in' : 'scale-0'}`}
+                  style={{ animationDelay: `${i * 200}ms` }}
+                >
+                  <div className="mb-0.5">{s.icon}</div>
+                  <span className="text-[0.7rem] font-bold opacity-80">{s.num}</span>
+                </div>
               </div>
               <h3 className="text-[1.1rem] font-bold mb-2">{s.title}</h3>
               <p className="text-[var(--color-gray)] text-[0.9rem] leading-relaxed">

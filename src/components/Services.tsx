@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 const services = [
   {
@@ -46,22 +46,22 @@ const services = [
   {
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
       </svg>
     ),
-    title: "UI/UX 디자인",
-    desc: "사용자 경험을 최우선으로 고려한 직관적이고 세련된 디자인을 제공합니다.",
-    tags: ["Figma", "프로토타입", "디자인 시스템"],
+    title: "CMS 시스템",
+    desc: "콘텐츠를 직접 관리할 수 있는 맞춤형 CMS를 구축합니다. 비개발자도 쉽게 운영 가능합니다.",
+    tags: ["콘텐츠 관리", "관리자 페이지", "권한 설정"],
   },
   {
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.96-5.96a2.12 2.12 0 113-3l5.96 5.96m0 0l5.96 5.96a2.12 2.12 0 01-3 3l-5.96-5.96zm0 0L9 12m2.42 3.17L15 12" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
       </svg>
     ),
-    title: "유지보수 & 관리",
-    desc: "제작 후에도 안정적인 운영을 위한 정기 유지보수와 기술 지원을 제공합니다.",
-    tags: ["보안 업데이트", "성능 모니터링", "콘텐츠 수정"],
+    title: "기업 관리 시스템",
+    desc: "ERP, CRM, 인사관리 등 기업 맞춤형 관리 시스템을 설계하고 개발합니다.",
+    tags: ["ERP / CRM", "업무 자동화", "데이터 분석"],
   },
 ];
 
@@ -82,6 +82,12 @@ export default function Services() {
     );
     ref.current?.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
   }, []);
 
   return (
@@ -106,20 +112,18 @@ export default function Services() {
           {services.map((s, i) => (
             <div
               key={i}
-              className="fade-scale bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-500/5 group relative overflow-hidden"
+              className="fade-scale service-card-border card-glow hover-tilt bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-emerald-500/5 group relative overflow-hidden"
               style={{ transitionDelay: `${i * 60}ms` }}
+              onMouseMove={handleMouseMove}
             >
-              {/* Top gradient bar on hover */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-
-              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-xl flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-xl flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-300 relative z-10">
                 {s.icon}
               </div>
-              <h3 className="text-lg font-bold mb-2">{s.title}</h3>
-              <p className="text-[var(--color-gray)] text-[0.9rem] leading-relaxed">
+              <h3 className="text-lg font-bold mb-2 relative z-10">{s.title}</h3>
+              <p className="text-[var(--color-gray)] text-[0.9rem] leading-relaxed relative z-10">
                 {s.desc}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-2 relative z-10">
                 {s.tags.map((tag) => (
                   <span
                     key={tag}

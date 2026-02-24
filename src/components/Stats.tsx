@@ -70,20 +70,19 @@ const stats = [
 
 export default function Stats() {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
@@ -93,21 +92,22 @@ export default function Stats() {
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((s, i) => (
-            <div
-              key={s.label}
-              className="fade-up text-center"
-              style={{ transitionDelay: `${i * 100}ms` }}
-            >
-              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/10 flex items-center justify-center text-[var(--color-primary)]">
-                {s.icon}
+            <div key={s.label} className="gradient-border-animated-dark">
+              <div className="p-6 text-center group hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] transition-shadow duration-500 rounded-[calc(1rem-2px)]">
+                <div
+                  className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-white/10 flex items-center justify-center text-[var(--color-primary)] ${visible ? 'animate-bounce-in' : 'opacity-0'}`}
+                  style={{ animationDelay: `${i * 150}ms` }}
+                >
+                  {s.icon}
+                </div>
+                <div className="text-3xl md:text-4xl font-extrabold text-white mb-1">
+                  <AnimatedCounter target={s.num} suffix={s.suffix} />
+                </div>
+                <div className="text-[var(--color-gray-light)] text-sm">
+                  {s.label}
+                </div>
+                <div className="w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded mx-auto mt-3" />
               </div>
-              <div className="text-3xl md:text-4xl font-extrabold text-white mb-1">
-                <AnimatedCounter target={s.num} suffix={s.suffix} />
-              </div>
-              <div className="text-[var(--color-gray-light)] text-sm">
-                {s.label}
-              </div>
-              <div className="w-8 h-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded mx-auto mt-3" />
             </div>
           ))}
         </div>

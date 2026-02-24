@@ -18,6 +18,8 @@ const CATEGORY_STYLES: Record<string, { bg: string; iconColor: string }> = {
   "기업 홈페이지": { bg: "from-sky-100 to-sky-50", iconColor: "text-sky-600" },
   "랜딩페이지": { bg: "from-violet-100 to-violet-50", iconColor: "text-violet-600" },
   "웹 애플리케이션": { bg: "from-emerald-100 to-emerald-50", iconColor: "text-emerald-600" },
+  "CMS": { bg: "from-orange-100 to-orange-50", iconColor: "text-orange-600" },
+  "기업 관리 시스템": { bg: "from-indigo-100 to-indigo-50", iconColor: "text-indigo-600" },
   "기타": { bg: "from-gray-100 to-gray-50", iconColor: "text-gray-600" },
 };
 
