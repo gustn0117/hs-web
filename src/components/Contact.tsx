@@ -98,7 +98,7 @@ function FloatingSelect({ label, options }: { label: string; options: string[] }
         onFocus={() => setFocused(true)}
         onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
         onChange={(e) => setHasValue(e.target.value.length > 0)}
-        className={`input-glow w-full px-4 pt-5 pb-2 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none bg-white ${isActive ? 'border-[var(--color-primary)]' : ''}`}
+        className={`input-glow w-full px-4 pt-5 pb-2 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%2394a3b8"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>')] bg-[length:1.25rem] bg-[position:right_0.75rem_center] bg-no-repeat pr-10 ${isActive ? 'border-[var(--color-primary)]' : ''}`}
       >
         <option value="">{isActive ? "선택해주세요" : ""}</option>
         {options.map((opt) => <option key={opt}>{opt}</option>)}
