@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { sanitizeForDb } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export async function PUT(
 
   const { error: updateError } = await supabase
     .from("payments")
-    .update(body)
+    .update(sanitizeForDb(body))
     .eq("id", pmid);
 
   if (updateError) {

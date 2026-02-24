@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
       });
 
       if (res.ok) {
-        router.push("/admin/portfolio");
+        router.push("/admin/dashboard");
       } else {
         const data = await res.json();
         setError(data.error || "로그인에 실패했습니다.");

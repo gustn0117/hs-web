@@ -13,6 +13,7 @@ export default function AdminHeader() {
   };
 
   const navItems = [
+    { label: "대시보드", href: "/admin/dashboard" },
     { label: "포트폴리오", href: "/admin/portfolio" },
     { label: "클라이언트", href: "/admin/clients" },
   ];

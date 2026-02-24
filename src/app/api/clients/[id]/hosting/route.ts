@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { sanitizeForDb } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export async function POST(
 
   const { error: insertError } = await supabase
     .from("hosting")
-    .insert({ ...body, client_id: id });
+    .insert({ ...sanitizeForDb(body), client_id: id });
 
   if (insertError) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
