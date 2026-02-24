@@ -68,7 +68,7 @@ export default function Navbar() {
           <li>
             <Link
               href="/contact"
-              className="px-6 py-2.5 rounded-lg font-semibold text-[0.95rem] no-underline bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-[1.02]"
+              className="px-6 py-2.5 rounded-lg font-semibold text-[0.95rem] no-underline bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 text-white hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 hover:scale-[1.02]"
             >
               견적문의
             </Link>
@@ -105,7 +105,7 @@ export default function Navbar() {
         ))}
         <Link
           href="/contact"
-          className="bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white px-8 py-3 rounded-lg font-semibold no-underline"
+          className="bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold no-underline"
           style={{ transitionDelay: mobileOpen ? `${links.length * 50}ms` : "0ms" }}
         >
           견적문의

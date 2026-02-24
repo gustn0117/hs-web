@@ -6,9 +6,9 @@ const categories = [
   {
     title: "프론트엔드",
     desc: "빠르고 인터랙티브한 사용자 경험을 구현합니다.",
-    color: "from-emerald-400 to-emerald-600",
-    barColor: "from-emerald-400 to-teal-500",
-    badgeBg: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
+    color: "from-indigo-400 to-indigo-600",
+    barColor: "from-indigo-400 to-blue-500",
+    badgeBg: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
     level: 95,
     techs: [
       { name: "React", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="2.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></svg> },
@@ -53,7 +53,7 @@ const categories = [
 const trendingTechs = [
   { name: "AI 챗봇", color: "bg-violet-50 text-violet-600 border-violet-200" },
   { name: "서버리스", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  { name: "PWA", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+  { name: "PWA", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   { name: "마이크로프론트엔드", color: "bg-amber-50 text-amber-600 border-amber-200" },
   { name: "Edge Computing", color: "bg-rose-50 text-rose-600 border-rose-200" },
 ];

@@ -167,7 +167,7 @@ export default function Contact() {
   return (
     <section className="pt-32 pb-24 relative overflow-hidden" ref={ref}>
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-emerald-50/20 to-indigo-50/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-indigo-50/20 to-indigo-50/10 pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         <div className="text-center mb-14 fade-up">
@@ -182,7 +182,7 @@ export default function Contact() {
             프로젝트에 대해 자유롭게 상담해주세요. 24시간 내 답변드립니다.
           </p>
           {/* Response time badge */}
-          <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-2 rounded-full text-[0.82rem] font-semibold">
+          <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 text-indigo-700 px-4 py-2 rounded-full text-[0.82rem] font-semibold">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -205,7 +205,7 @@ export default function Contact() {
                   key={item.label}
                   className="flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-[var(--color-primary)]/30 hover:shadow-md transition-all duration-300 group"
                 >
-                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/15 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-indigo-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/15 group-hover:scale-110 transition-transform duration-300">
                     {item.icon}
                   </div>
                   <div>
@@ -273,7 +273,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={sending}
-              className="btn-ripple w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl text-base font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.01] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="btn-ripple w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 text-white border-none rounded-xl text-base font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-[1.01] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {sending ? (
                 <>

@@ -24,7 +24,7 @@ const logosRow2 = [
 
 function LogoItem({ name, weight }: { name: string; weight: string }) {
   return (
-    <div className="mx-4 px-7 py-3.5 bg-gray-50/80 border border-gray-100 rounded-xl inline-flex items-center gap-3 hover:bg-white hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/8 hover:scale-105 transition-all duration-300 cursor-default select-none group">
+    <div className="mx-4 px-7 py-3.5 bg-gray-50/80 border border-gray-100 rounded-xl inline-flex items-center gap-3 hover:bg-white hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/8 hover:scale-105 transition-all duration-300 cursor-default select-none group">
       <span className="w-2 h-2 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] opacity-40 group-hover:opacity-100 transition-opacity duration-300 shrink-0" />
       <span className={`text-gray-400 text-lg ${weight} group-hover:text-[var(--color-dark)] transition-colors duration-300 whitespace-nowrap`}>
         {name}

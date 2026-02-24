@@ -14,7 +14,7 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed bottom-7 right-7 w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl cursor-pointer shadow-lg shadow-emerald-500/20 z-[999] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/30 hover:rotate-12 flex items-center justify-center ${
+      className={`fixed bottom-7 right-7 w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-indigo-600 text-white border-none rounded-xl cursor-pointer shadow-lg shadow-indigo-500/20 z-[999] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/30 hover:rotate-12 flex items-center justify-center ${
         visible ? "opacity-100 visible scale-100 animate-pulse-glow" : "opacity-0 invisible scale-75"
       }`}
       aria-label="맨 위로"

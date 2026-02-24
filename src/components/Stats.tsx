@@ -40,7 +40,7 @@ const stats = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z" />
       </svg>
     ),
-    num: 150, suffix: "+", label: "완료 프로젝트", subtext: "다양한 산업군에서 성공적 수행", color: "from-emerald-400 to-teal-300",
+    num: 150, suffix: "+", label: "완료 프로젝트", subtext: "다양한 산업군에서 성공적 수행", color: "from-indigo-400 to-blue-300",
   },
   {
     icon: (
@@ -89,12 +89,12 @@ export default function Stats() {
   return (
     <section className="py-20 bg-[var(--color-dark)] relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 dot-pattern opacity-50 pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
+      <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
       {/* Decorative geometric shapes */}
-      <div className="absolute top-[15%] right-[10%] w-16 h-16 border border-emerald-500/10 rounded-lg animate-rotate-slow pointer-events-none" />
+      <div className="absolute top-[15%] right-[10%] w-16 h-16 border border-indigo-500/10 rounded-lg animate-rotate-slow pointer-events-none" />
       <div className="absolute bottom-[20%] left-[8%] w-10 h-10 border border-indigo-500/10 rounded-full animate-float pointer-events-none" style={{ animationDelay: "1s" }} />
-      <div className="absolute top-[50%] right-[25%] w-3 h-3 bg-emerald-400/20 rounded-full animate-float pointer-events-none" style={{ animationDelay: "2s" }} />
+      <div className="absolute top-[50%] right-[25%] w-3 h-3 bg-indigo-400/20 rounded-full animate-float pointer-events-none" style={{ animationDelay: "2s" }} />
 
       <div className="max-w-[1100px] mx-auto px-6 relative z-10">
         {/* Section title */}
@@ -109,13 +109,13 @@ export default function Stats() {
           {stats.map((s, i) => (
             <div
               key={s.label}
-              className={`text-center p-8 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] hover:ring-1 hover:ring-emerald-400/10 transition-all duration-500 group ${visible ? 'animate-bounce-in' : 'opacity-0'}`}
+              className={`text-center p-8 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12] hover:ring-1 hover:ring-indigo-400/10 transition-all duration-500 group ${visible ? 'animate-bounce-in' : 'opacity-0'}`}
               style={{ animationDelay: `${i * 120}ms` }}
             >
               <div className={`w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}
                 style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))` }}
               >
-                <div className="text-emerald-400 group-hover:text-white transition-colors duration-300">
+                <div className="text-indigo-400 group-hover:text-white transition-colors duration-300">
                   {s.icon}
                 </div>
               </div>

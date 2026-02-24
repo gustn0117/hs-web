@@ -45,7 +45,7 @@ const reasons = [
     title: "사후 관리",
     desc: "런칭 후에도 지속적인 유지보수와 성능 모니터링을 제공합니다.",
     stat: "평균 응답 시간 24시간 이내",
-    color: "from-emerald-500 to-teal-400",
+    color: "from-indigo-500 to-blue-400",
   },
 ];
 
@@ -85,7 +85,7 @@ export default function WhyUs() {
             </p>
 
             {/* Philosophy quote */}
-            <div className="border-l-[3px] border-[var(--color-primary)] pl-4 mb-8 bg-emerald-50/50 py-3 pr-4 rounded-r-lg">
+            <div className="border-l-[3px] border-[var(--color-primary)] pl-4 mb-8 bg-indigo-50/50 py-3 pr-4 rounded-r-lg">
               <p className="text-[var(--color-dark-2)] text-[0.9rem] leading-relaxed italic">
                 &ldquo;우리는 단순한 외주 업체가 아닙니다. 고객의 비즈니스를 깊이 이해하고, 웹을 통해 실질적인 성장을 이끌어내는 전략적 파트너입니다.&rdquo;
               </p>
@@ -118,7 +118,7 @@ export default function WhyUs() {
                   className="fade-right bg-white p-6 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
-                  <span className="absolute -top-2 -right-1 text-[4rem] font-black text-gray-50 group-hover:text-emerald-50 transition-colors duration-500 select-none leading-none">
+                  <span className="absolute -top-2 -right-1 text-[4rem] font-black text-gray-50 group-hover:text-indigo-50 transition-colors duration-500 select-none leading-none">
                     {num}
                   </span>
 

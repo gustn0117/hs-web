@@ -129,7 +129,7 @@ export default function Pricing() {
               key={i}
               className={`fade-scale rounded-2xl transition-all duration-300 relative overflow-hidden ${
                 p.popular
-                  ? "lg:scale-105 shadow-2xl shadow-emerald-500/15"
+                  ? "lg:scale-105 shadow-2xl shadow-indigo-500/15"
                   : "border border-gray-100 hover:-translate-y-2 hover:shadow-xl bg-white"
               }`}
               style={{ transitionDelay: `${i * 100}ms` }}
@@ -141,7 +141,7 @@ export default function Pricing() {
                   <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
                   {/* Badge */}
                   <div className="relative z-10">
-                    <span className="shimmer-badge bg-gradient-to-r from-[var(--color-primary)] to-emerald-400 text-white px-4 py-1 rounded-full text-[0.75rem] font-semibold shadow-lg shadow-emerald-500/30 relative overflow-hidden inline-block mb-5">
+                    <span className="shimmer-badge bg-gradient-to-r from-[var(--color-primary)] to-indigo-400 text-white px-4 py-1 rounded-full text-[0.75rem] font-semibold shadow-lg shadow-indigo-500/30 relative overflow-hidden inline-block mb-5">
                       가장 인기
                     </span>
                     <div className="text-sm font-bold text-gray-400 uppercase tracking-[1px] mb-2">
@@ -153,12 +153,12 @@ export default function Pricing() {
                     </div>
                     <div className="text-gray-400 text-sm mb-2">{p.desc}</div>
                     {/* Audience */}
-                    <div className="text-emerald-400/80 text-[0.78rem] font-medium mb-4">
+                    <div className="text-indigo-400/80 text-[0.78rem] font-medium mb-4">
                       추천: {p.audience}
                     </div>
                     {/* Guarantee */}
                     {"guarantee" in p && p.guarantee && (
-                      <div className="inline-flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-400/20 text-emerald-300 text-[0.75rem] font-semibold px-3 py-1.5 rounded-full mb-6">
+                      <div className="inline-flex items-center gap-1.5 bg-indigo-500/15 border border-indigo-400/20 text-indigo-300 text-[0.75rem] font-semibold px-3 py-1.5 rounded-full mb-6">
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
                         </svg>
@@ -176,7 +176,7 @@ export default function Pricing() {
                     </ul>
                     <Link
                       href="/contact"
-                      className="btn-ripple block w-full text-center py-4 rounded-xl font-semibold no-underline transition-all duration-300 bg-gradient-to-r from-[var(--color-primary)] to-emerald-400 text-white hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-[1.02] text-[0.95rem]"
+                      className="btn-ripple block w-full text-center py-4 rounded-xl font-semibold no-underline transition-all duration-300 bg-gradient-to-r from-[var(--color-primary)] to-indigo-400 text-white hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-[1.02] text-[0.95rem]"
                     >
                       상담 신청
                     </Link>
@@ -212,7 +212,7 @@ export default function Pricing() {
                   </ul>
                   <Link
                     href="/contact"
-                    className="btn-ripple block w-full text-center py-3.5 rounded-xl font-semibold no-underline transition-all duration-300 border-2 border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-emerald-50/50"
+                    className="btn-ripple block w-full text-center py-3.5 rounded-xl font-semibold no-underline transition-all duration-300 border-2 border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-indigo-50/50"
                   >
                     {p.name === "Enterprise" ? "견적 문의" : "상담 신청"}
                   </Link>

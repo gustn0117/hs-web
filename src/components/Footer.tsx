@@ -124,7 +124,7 @@ export default function Footer() {
                 />
                 <button
                   type="submit"
-                  className="btn-ripple px-4 py-2 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white rounded-lg text-[0.85rem] font-semibold border-none cursor-pointer hover:shadow-md hover:shadow-emerald-500/20 transition-all"
+                  className="btn-ripple px-4 py-2 bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 text-white rounded-lg text-[0.85rem] font-semibold border-none cursor-pointer hover:shadow-md hover:shadow-indigo-500/20 transition-all"
                 >
                   구독
                 </button>
