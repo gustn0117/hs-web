@@ -35,21 +35,21 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4">
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-extrabold text-white mb-2">
+          <h1 className="text-2xl font-extrabold text-[var(--color-dark)] mb-2">
             HS <span className="gradient-text">WEB</span>
           </h1>
-          <p className="text-[var(--color-gray-light)] text-sm">관리자 로그인</p>
+          <p className="text-[var(--color-gray)] text-sm">관리자 로그인</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white/[0.04] backdrop-blur-sm border border-white/10 rounded-2xl p-8"
+          className="bg-white shadow-lg shadow-gray-200/50 border border-gray-100 rounded-2xl p-8"
         >
           <div className="mb-5">
-            <label className="block text-[var(--color-gray-light)] text-sm font-medium mb-2">
+            <label className="block text-[var(--color-dark-2)] text-sm font-medium mb-2">
               비밀번호
             </label>
             <input
@@ -59,12 +59,12 @@ export default function AdminLoginPage() {
               placeholder="비밀번호를 입력하세요"
               required
               autoFocus
-              className="w-full px-4 py-3 bg-white/[0.06] border border-white/10 rounded-xl text-white text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] transition-colors placeholder:text-gray-500"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400"
             />
           </div>
 
           {error && (
-            <div className="mb-4 px-4 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
               {error}
             </div>
           )}

@@ -145,13 +145,13 @@ export default function PortfolioForm({ initialData, editId }: Props) {
   };
 
   const inputClass =
-    "w-full px-4 py-3 bg-white/[0.06] border border-white/10 rounded-xl text-white text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] transition-colors placeholder:text-gray-500";
-  const labelClass = "block text-[var(--color-gray-light)] text-sm font-medium mb-2";
+    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
+  const labelClass = "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
 
   return (
     <form onSubmit={handleSubmit} className="max-w-[800px] space-y-5">
       {error && (
-        <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
           {error}
         </div>
       )}
@@ -236,7 +236,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
         <label className={labelClass}>썸네일 이미지</label>
         <div className="flex items-start gap-4">
           {form.thumbnail && (
-            <div className="w-32 h-20 rounded-lg overflow-hidden border border-white/10 shrink-0">
+            <div className="w-32 h-20 rounded-lg overflow-hidden border border-gray-200 shrink-0">
               <img src={form.thumbnail} alt="썸네일" className="w-full h-full object-cover" />
             </div>
           )}
@@ -244,7 +244,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="px-4 py-2.5 bg-white/[0.06] border border-white/10 rounded-xl text-[var(--color-gray-light)] text-sm hover:bg-white/10 hover:border-[var(--color-primary)] transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
           >
             {uploading ? "업로드 중..." : form.thumbnail ? "변경" : "이미지 선택"}
           </button>
@@ -263,7 +263,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
         <label className={labelClass}>갤러리 이미지</label>
         <div className="flex flex-wrap gap-3 mb-3">
           {form.images.map((img, i) => (
-            <div key={i} className="relative w-24 h-16 rounded-lg overflow-hidden border border-white/10 group">
+            <div key={i} className="relative w-24 h-16 rounded-lg overflow-hidden border border-gray-200 group">
               <img src={img} alt={`갤러리 ${i + 1}`} className="w-full h-full object-cover" />
               <button
                 type="button"
@@ -279,7 +279,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
           type="button"
           onClick={() => galleryInputRef.current?.click()}
           disabled={uploading}
-          className="px-4 py-2.5 bg-white/[0.06] border border-white/10 rounded-xl text-[var(--color-gray-light)] text-sm hover:bg-white/10 hover:border-[var(--color-primary)] transition-all cursor-pointer disabled:opacity-50"
+          className="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
         >
           {uploading ? "업로드 중..." : "+ 이미지 추가"}
         </button>
@@ -334,7 +334,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
               onChange={(e) => setForm((p) => ({ ...p, featured: e.target.checked }))}
               className="w-5 h-5 accent-[var(--color-primary)] cursor-pointer"
             />
-            <span className="text-[var(--color-gray-light)] text-sm font-medium">추천 프로젝트</span>
+            <span className="text-[var(--color-dark-2)] text-sm font-medium">추천 프로젝트</span>
           </label>
         </div>
       </div>
@@ -362,7 +362,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
         <button
           type="button"
           onClick={() => router.push("/admin/portfolio")}
-          className="px-8 py-3 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-white/10"
+          className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-gray-200"
         >
           취소
         </button>

@@ -18,11 +18,11 @@ export default function AdminHeader() {
   ];
 
   return (
-    <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-6">
-        <h1 className="text-lg font-bold text-white">
+        <h1 className="text-lg font-bold text-[var(--color-dark)]">
           HS <span className="gradient-text">WEB</span>
-          <span className="text-[var(--color-gray-light)] font-normal text-sm ml-2">
+          <span className="text-[var(--color-gray)] font-normal text-sm ml-2">
             Admin
           </span>
         </h1>
@@ -35,8 +35,8 @@ export default function AdminHeader() {
                 href={item.href}
                 className={`text-sm no-underline transition-colors ${
                   isActive
-                    ? "text-white font-semibold"
-                    : "text-[var(--color-gray-light)] hover:text-white"
+                    ? "text-[var(--color-dark)] font-semibold"
+                    : "text-[var(--color-gray)] hover:text-[var(--color-dark)]"
                 }`}
               >
                 {item.label}
@@ -48,13 +48,13 @@ export default function AdminHeader() {
       <div className="flex items-center gap-3">
         <Link
           href="/"
-          className="text-[var(--color-gray-light)] text-sm no-underline hover:text-white transition-colors"
+          className="text-[var(--color-gray)] text-sm no-underline hover:text-[var(--color-dark)] transition-colors"
         >
           사이트 보기
         </Link>
         <button
           onClick={handleLogout}
-          className="px-4 py-2 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] text-sm rounded-lg cursor-pointer hover:bg-white/10 transition-all"
+          className="px-4 py-2 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-sm rounded-lg cursor-pointer hover:bg-gray-200 transition-all"
         >
           로그아웃
         </button>

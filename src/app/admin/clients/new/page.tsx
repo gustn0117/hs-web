@@ -55,19 +55,19 @@ export default function NewClientPage() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 bg-white/[0.06] border border-white/10 rounded-xl text-white text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] transition-colors placeholder:text-gray-500";
+    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
   const labelClass =
-    "block text-[var(--color-gray-light)] text-sm font-medium mb-2";
+    "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
       <div className="max-w-[1200px] mx-auto px-6 py-8">
         <div className="mb-8">
           <Link
             href="/admin/clients"
-            className="text-[var(--color-gray-light)] no-underline hover:text-white transition-colors flex items-center gap-1 text-sm mb-4"
+            className="text-[var(--color-gray)] no-underline hover:text-[var(--color-dark)] transition-colors flex items-center gap-1 text-sm mb-4"
           >
             <svg
               className="w-4 h-4"
@@ -84,12 +84,12 @@ export default function NewClientPage() {
             </svg>
             클라이언트 목록으로
           </Link>
-          <h2 className="text-xl font-bold text-white">새 클라이언트 추가</h2>
+          <h2 className="text-xl font-bold text-[var(--color-dark)]">새 클라이언트 추가</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="max-w-[800px] space-y-5">
           {error && (
-            <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+            <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
               {error}
             </div>
           )}
@@ -214,7 +214,7 @@ export default function NewClientPage() {
             <button
               type="button"
               onClick={() => router.push("/admin/clients")}
-              className="px-8 py-3 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-white/10"
+              className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-gray-200"
             >
               취소
             </button>

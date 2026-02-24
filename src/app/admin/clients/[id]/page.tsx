@@ -70,23 +70,23 @@ interface Payment {
 type TabKey = "projects" | "hosting" | "domains" | "payments";
 
 // ---------------------------------------------------------------------------
-// Shared style constants
+// Shared style constants (light theme)
 // ---------------------------------------------------------------------------
 
 const inputClass =
-  "w-full px-4 py-3 bg-white/[0.06] border border-white/10 rounded-xl text-white text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] transition-colors placeholder:text-gray-500";
+  "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
 const labelClass =
-  "block text-[var(--color-gray-light)] text-sm font-medium mb-2";
+  "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
 const cardClass =
-  "bg-white/[0.04] border border-white/10 rounded-xl p-5";
+  "bg-white border border-gray-200 rounded-xl p-5 shadow-sm";
 const btnPrimary =
   "px-6 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed";
 const btnSecondary =
-  "px-6 py-2.5 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] rounded-xl text-sm font-semibold cursor-pointer transition-all hover:bg-white/10";
+  "px-6 py-2.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl text-sm font-semibold cursor-pointer transition-all hover:bg-gray-200";
 const btnDanger =
-  "px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg cursor-pointer hover:bg-red-500/20 transition-all";
+  "px-4 py-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg cursor-pointer hover:bg-red-100 transition-all";
 const btnSmall =
-  "px-4 py-2 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] text-sm rounded-lg cursor-pointer hover:bg-white/10 hover:text-white transition-all";
+  "px-4 py-2 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-sm rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -101,16 +101,16 @@ function isWithin30Days(dateStr: string): boolean {
 }
 
 const PROJECT_STATUS_COLORS: Record<string, string> = {
-  "상담중": "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20",
-  "진행중": "bg-blue-500/15 text-blue-400 border border-blue-500/20",
-  "완료": "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20",
-  "유지보수": "bg-purple-500/15 text-purple-400 border border-purple-500/20",
+  "상담중": "bg-yellow-50 text-yellow-700 border border-yellow-200",
+  "진행중": "bg-blue-50 text-blue-700 border border-blue-200",
+  "완료": "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  "유지보수": "bg-purple-50 text-purple-700 border border-purple-200",
 };
 
 const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  paid: { label: "완료", cls: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20" },
-  pending: { label: "대기", cls: "bg-yellow-500/15 text-yellow-400 border border-yellow-500/20" },
-  overdue: { label: "미납", cls: "bg-red-500/15 text-red-400 border border-red-500/20" },
+  paid: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  pending: { label: "대기", cls: "bg-yellow-50 text-yellow-700 border border-yellow-200" },
+  overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-200" },
 };
 
 // ---------------------------------------------------------------------------
@@ -234,7 +234,7 @@ export default function ClientDetailPage() {
     try {
       const res = await fetch(`/api/clients/${clientId}/projects`);
       const data = await res.json();
-      setProjects(data.projects ?? data ?? []);
+      setProjects(data.projects ?? []);
     } catch {
       console.error("프로젝트 목록을 불러오는데 실패했습니다.");
     } finally {
@@ -247,7 +247,7 @@ export default function ClientDetailPage() {
     try {
       const res = await fetch(`/api/clients/${clientId}/hosting`);
       const data = await res.json();
-      setHostings(data.hostings ?? data ?? []);
+      setHostings(data.hosting ?? []);
     } catch {
       console.error("호스팅 목록을 불러오는데 실패했습니다.");
     } finally {
@@ -260,7 +260,7 @@ export default function ClientDetailPage() {
     try {
       const res = await fetch(`/api/clients/${clientId}/domains`);
       const data = await res.json();
-      setDomains(data.domains ?? data ?? []);
+      setDomains(data.domains ?? []);
     } catch {
       console.error("도메인 목록을 불러오는데 실패했습니다.");
     } finally {
@@ -273,7 +273,7 @@ export default function ClientDetailPage() {
     try {
       const res = await fetch(`/api/clients/${clientId}/payments`);
       const data = await res.json();
-      setPayments(data.payments ?? data ?? []);
+      setPayments(data.payments ?? []);
     } catch {
       console.error("결제 목록을 불러오는데 실패했습니다.");
     } finally {
@@ -301,10 +301,10 @@ export default function ClientDetailPage() {
   const startEditClient = () => {
     if (!client) return;
     setClientForm({
-      name: client.name,
-      email: client.email,
-      phone: client.phone,
-      memo: client.memo,
+      name: client.name || "",
+      email: client.email || "",
+      phone: client.phone || "",
+      memo: client.memo || "",
       is_active: client.is_active,
       password: "",
     });
@@ -350,14 +350,14 @@ export default function ClientDetailPage() {
 
   const openProjectEdit = (p: Project) => {
     setProjectForm({
-      name: p.name,
-      website_url: p.website_url,
-      tech_stack: p.tech_stack,
-      admin_url: p.admin_url,
-      admin_id: p.admin_id,
-      admin_pw: p.admin_pw,
-      status: p.status,
-      description: p.description,
+      name: p.name || "",
+      website_url: p.website_url || "",
+      tech_stack: p.tech_stack || "",
+      admin_url: p.admin_url || "",
+      admin_id: p.admin_id || "",
+      admin_pw: p.admin_pw || "",
+      status: p.status || "상담중",
+      description: p.description || "",
       started_at: p.started_at ?? "",
       completed_at: p.completed_at ?? "",
     });
@@ -410,14 +410,14 @@ export default function ClientDetailPage() {
 
   const openHostingEdit = (h: Hosting) => {
     setHostingForm({
-      provider: h.provider,
-      plan: h.plan,
+      provider: h.provider || "",
+      plan: h.plan || "",
       amount: h.amount,
-      billing_cycle: h.billing_cycle,
+      billing_cycle: h.billing_cycle || "monthly",
       start_date: h.start_date ?? "",
       end_date: h.end_date ?? "",
       auto_renew: h.auto_renew,
-      memo: h.memo,
+      memo: h.memo || "",
     });
     setEditingHostingId(h.id);
     setShowHostingForm(true);
@@ -468,13 +468,13 @@ export default function ClientDetailPage() {
 
   const openDomainEdit = (d: Domain) => {
     setDomainForm({
-      domain_name: d.domain_name,
-      registrar: d.registrar,
+      domain_name: d.domain_name || "",
+      registrar: d.registrar || "",
       registered_date: d.registered_date ?? "",
       expires_date: d.expires_date ?? "",
       auto_renew: d.auto_renew,
-      nameservers: d.nameservers,
-      memo: d.memo,
+      nameservers: d.nameservers || "",
+      memo: d.memo || "",
     });
     setEditingDomainId(d.id);
     setShowDomainForm(true);
@@ -526,11 +526,11 @@ export default function ClientDetailPage() {
   const openPaymentEdit = (p: Payment) => {
     setPaymentForm({
       payment_date: p.payment_date ?? "",
-      type: p.type,
-      description: p.description,
+      type: p.type || "제작비",
+      description: p.description || "",
       amount: p.amount,
-      status: p.status,
-      memo: p.memo,
+      status: p.status || "pending",
+      memo: p.memo || "",
     });
     setEditingPaymentId(p.id);
     setShowPaymentForm(true);
@@ -576,16 +576,15 @@ export default function ClientDetailPage() {
   const renderProjectsTab = () => (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white font-semibold">프로젝트 ({projects.length})</h3>
+        <h3 className="text-[var(--color-dark)] font-semibold">프로젝트 ({projects.length})</h3>
         <button onClick={openProjectAdd} className={btnPrimary}>
           프로젝트 추가
         </button>
       </div>
 
-      {/* Add / Edit form */}
       {showProjectForm && (
         <div className={`${cardClass} mb-5`}>
-          <h4 className="text-white font-semibold mb-4">
+          <h4 className="text-[var(--color-dark)] font-semibold mb-4">
             {editingProjectId ? "프로젝트 수정" : "프로젝트 추가"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -697,11 +696,10 @@ export default function ClientDetailPage() {
         </div>
       )}
 
-      {/* Project list */}
       {projectsLoading ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">로딩 중...</div>
+        <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
       ) : projects.length === 0 ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">
+        <div className="text-center py-10 text-[var(--color-gray)]">
           등록된 프로젝트가 없습니다.
         </div>
       ) : (
@@ -709,10 +707,10 @@ export default function ClientDetailPage() {
           {projects.map((p) => (
             <div key={p.id} className={cardClass}>
               <div className="flex items-start justify-between mb-3">
-                <h4 className="text-white font-semibold text-[0.95rem]">{p.name}</h4>
+                <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{p.name}</h4>
                 <span
                   className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full whitespace-nowrap ${
-                    PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-500/15 text-gray-400 border border-gray-500/20"
+                    PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"
                   }`}
                 >
                   {p.status}
@@ -721,12 +719,12 @@ export default function ClientDetailPage() {
 
               {p.website_url && (
                 <div className="mb-2">
-                  <span className="text-[var(--color-gray-light)] text-xs">웹사이트: </span>
+                  <span className="text-[var(--color-gray)] text-xs">웹사이트: </span>
                   <a
                     href={p.website_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-primary)] text-sm no-underline hover:underline break-all"
+                    className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all"
                   >
                     {p.website_url}
                   </a>
@@ -734,18 +732,18 @@ export default function ClientDetailPage() {
               )}
               {p.tech_stack && (
                 <div className="mb-2">
-                  <span className="text-[var(--color-gray-light)] text-xs">기술 스택: </span>
-                  <span className="text-white/80 text-sm">{p.tech_stack}</span>
+                  <span className="text-[var(--color-gray)] text-xs">기술 스택: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{p.tech_stack}</span>
                 </div>
               )}
               {p.admin_url && (
                 <div className="mb-2">
-                  <span className="text-[var(--color-gray-light)] text-xs">관리자 URL: </span>
+                  <span className="text-[var(--color-gray)] text-xs">관리자 URL: </span>
                   <a
                     href={p.admin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[var(--color-primary)] text-sm no-underline hover:underline break-all"
+                    className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all"
                   >
                     {p.admin_url}
                   </a>
@@ -753,24 +751,24 @@ export default function ClientDetailPage() {
               )}
               {p.admin_id && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">관리자 ID: </span>
-                  <span className="text-white/80 text-sm">{p.admin_id}</span>
+                  <span className="text-[var(--color-gray)] text-xs">관리자 ID: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{p.admin_id}</span>
                 </div>
               )}
               {p.admin_pw && (
                 <div className="mb-2">
-                  <span className="text-[var(--color-gray-light)] text-xs">관리자 PW: </span>
-                  <span className="text-white/80 text-sm">{p.admin_pw}</span>
+                  <span className="text-[var(--color-gray)] text-xs">관리자 PW: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{p.admin_pw}</span>
                 </div>
               )}
               {p.description && (
                 <div className="mb-2">
-                  <span className="text-[var(--color-gray-light)] text-xs">설명: </span>
-                  <span className="text-white/60 text-sm">{p.description}</span>
+                  <span className="text-[var(--color-gray)] text-xs">설명: </span>
+                  <span className="text-[var(--color-gray)] text-sm">{p.description}</span>
                 </div>
               )}
 
-              <div className="flex gap-2 mt-4 pt-3 border-t border-white/5">
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
                 <button onClick={() => openProjectEdit(p)} className={btnSmall}>수정</button>
                 <button onClick={() => deleteProject(p.id)} className={btnDanger}>삭제</button>
               </div>
@@ -784,7 +782,7 @@ export default function ClientDetailPage() {
   const renderHostingTab = () => (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white font-semibold">호스팅 ({hostings.length})</h3>
+        <h3 className="text-[var(--color-dark)] font-semibold">호스팅 ({hostings.length})</h3>
         <button onClick={openHostingAdd} className={btnPrimary}>
           호스팅 추가
         </button>
@@ -792,7 +790,7 @@ export default function ClientDetailPage() {
 
       {showHostingForm && (
         <div className={`${cardClass} mb-5`}>
-          <h4 className="text-white font-semibold mb-4">
+          <h4 className="text-[var(--color-dark)] font-semibold mb-4">
             {editingHostingId ? "호스팅 수정" : "호스팅 추가"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -872,7 +870,7 @@ export default function ClientDetailPage() {
                 onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))}
                 className="w-4 h-4 rounded accent-[var(--color-primary)]"
               />
-              <span className="text-[var(--color-gray-light)] text-sm">자동 갱신</span>
+              <span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span>
             </label>
           </div>
           <div className="flex gap-3">
@@ -888,9 +886,9 @@ export default function ClientDetailPage() {
       )}
 
       {hostingLoading ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">로딩 중...</div>
+        <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
       ) : hostings.length === 0 ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">
+        <div className="text-center py-10 text-[var(--color-gray)]">
           등록된 호스팅 정보가 없습니다.
         </div>
       ) : (
@@ -898,9 +896,9 @@ export default function ClientDetailPage() {
           {hostings.map((h) => (
             <div key={h.id} className={cardClass}>
               <div className="flex items-start justify-between mb-3">
-                <h4 className="text-white font-semibold text-[0.95rem]">{h.provider}</h4>
+                <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{h.provider}</h4>
                 {h.auto_renew && (
-                  <span className="px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  <span className="px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
                     자동갱신
                   </span>
                 )}
@@ -908,48 +906,48 @@ export default function ClientDetailPage() {
 
               {h.plan && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">플랜: </span>
-                  <span className="text-white/80 text-sm">{h.plan}</span>
+                  <span className="text-[var(--color-gray)] text-xs">플랜: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{h.plan}</span>
                 </div>
               )}
               <div className="mb-1">
-                <span className="text-[var(--color-gray-light)] text-xs">금액: </span>
-                <span className="text-white font-semibold text-sm">
+                <span className="text-[var(--color-gray)] text-xs">금액: </span>
+                <span className="text-[var(--color-dark)] font-semibold text-sm">
                   {Number(h.amount).toLocaleString()}원
                 </span>
-                <span className="text-[var(--color-gray-light)] text-xs ml-1">
+                <span className="text-[var(--color-gray)] text-xs ml-1">
                   / {h.billing_cycle === "monthly" ? "월" : "년"}
                 </span>
               </div>
               {h.start_date && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">시작일: </span>
-                  <span className="text-white/80 text-sm">{h.start_date}</span>
+                  <span className="text-[var(--color-gray)] text-xs">시작일: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{h.start_date}</span>
                 </div>
               )}
               {h.end_date && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">만료일: </span>
+                  <span className="text-[var(--color-gray)] text-xs">만료일: </span>
                   <span
                     className={`text-sm font-medium ${
-                      isWithin30Days(h.end_date) ? "text-red-400" : "text-white/80"
+                      isWithin30Days(h.end_date) ? "text-red-600" : "text-[var(--color-dark-2)]"
                     }`}
                   >
                     {h.end_date}
                     {isWithin30Days(h.end_date) && (
-                      <span className="ml-1 text-[0.7rem] text-red-400">(만료 임박)</span>
+                      <span className="ml-1 text-[0.7rem] text-red-600">(만료 임박)</span>
                     )}
                   </span>
                 </div>
               )}
               {h.memo && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">메모: </span>
-                  <span className="text-white/60 text-sm">{h.memo}</span>
+                  <span className="text-[var(--color-gray)] text-xs">메모: </span>
+                  <span className="text-[var(--color-gray)] text-sm">{h.memo}</span>
                 </div>
               )}
 
-              <div className="flex gap-2 mt-4 pt-3 border-t border-white/5">
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
                 <button onClick={() => openHostingEdit(h)} className={btnSmall}>수정</button>
                 <button onClick={() => deleteHosting(h.id)} className={btnDanger}>삭제</button>
               </div>
@@ -963,7 +961,7 @@ export default function ClientDetailPage() {
   const renderDomainsTab = () => (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white font-semibold">도메인 ({domains.length})</h3>
+        <h3 className="text-[var(--color-dark)] font-semibold">도메인 ({domains.length})</h3>
         <button onClick={openDomainAdd} className={btnPrimary}>
           도메인 추가
         </button>
@@ -971,7 +969,7 @@ export default function ClientDetailPage() {
 
       {showDomainForm && (
         <div className={`${cardClass} mb-5`}>
-          <h4 className="text-white font-semibold mb-4">
+          <h4 className="text-[var(--color-dark)] font-semibold mb-4">
             {editingDomainId ? "도메인 수정" : "도메인 추가"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -1039,7 +1037,7 @@ export default function ClientDetailPage() {
                 onChange={(e) => setDomainForm((p) => ({ ...p, auto_renew: e.target.checked }))}
                 className="w-4 h-4 rounded accent-[var(--color-primary)]"
               />
-              <span className="text-[var(--color-gray-light)] text-sm">자동 갱신</span>
+              <span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span>
             </label>
           </div>
           <div className="flex gap-3">
@@ -1055,9 +1053,9 @@ export default function ClientDetailPage() {
       )}
 
       {domainsLoading ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">로딩 중...</div>
+        <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
       ) : domains.length === 0 ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">
+        <div className="text-center py-10 text-[var(--color-gray)]">
           등록된 도메인이 없습니다.
         </div>
       ) : (
@@ -1065,9 +1063,9 @@ export default function ClientDetailPage() {
           {domains.map((d) => (
             <div key={d.id} className={cardClass}>
               <div className="flex items-start justify-between mb-3">
-                <h4 className="text-white font-semibold text-[0.95rem]">{d.domain_name}</h4>
+                <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{d.domain_name}</h4>
                 {d.auto_renew && (
-                  <span className="px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  <span className="px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
                     자동갱신
                   </span>
                 )}
@@ -1075,45 +1073,45 @@ export default function ClientDetailPage() {
 
               {d.registrar && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">등록기관: </span>
-                  <span className="text-white/80 text-sm">{d.registrar}</span>
+                  <span className="text-[var(--color-gray)] text-xs">등록기관: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{d.registrar}</span>
                 </div>
               )}
               {d.registered_date && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">등록일: </span>
-                  <span className="text-white/80 text-sm">{d.registered_date}</span>
+                  <span className="text-[var(--color-gray)] text-xs">등록일: </span>
+                  <span className="text-[var(--color-dark-2)] text-sm">{d.registered_date}</span>
                 </div>
               )}
               {d.expires_date && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">만료일: </span>
+                  <span className="text-[var(--color-gray)] text-xs">만료일: </span>
                   <span
                     className={`text-sm font-medium ${
-                      isWithin30Days(d.expires_date) ? "text-red-400" : "text-white/80"
+                      isWithin30Days(d.expires_date) ? "text-red-600" : "text-[var(--color-dark-2)]"
                     }`}
                   >
                     {d.expires_date}
                     {isWithin30Days(d.expires_date) && (
-                      <span className="ml-1 text-[0.7rem] text-red-400">(만료 임박)</span>
+                      <span className="ml-1 text-[0.7rem] text-red-600">(만료 임박)</span>
                     )}
                   </span>
                 </div>
               )}
               {d.nameservers && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">네임서버: </span>
-                  <span className="text-white/60 text-sm">{d.nameservers}</span>
+                  <span className="text-[var(--color-gray)] text-xs">네임서버: </span>
+                  <span className="text-[var(--color-gray)] text-sm">{d.nameservers}</span>
                 </div>
               )}
               {d.memo && (
                 <div className="mb-1">
-                  <span className="text-[var(--color-gray-light)] text-xs">메모: </span>
-                  <span className="text-white/60 text-sm">{d.memo}</span>
+                  <span className="text-[var(--color-gray)] text-xs">메모: </span>
+                  <span className="text-[var(--color-gray)] text-sm">{d.memo}</span>
                 </div>
               )}
 
-              <div className="flex gap-2 mt-4 pt-3 border-t border-white/5">
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
                 <button onClick={() => openDomainEdit(d)} className={btnSmall}>수정</button>
                 <button onClick={() => deleteDomain(d.id)} className={btnDanger}>삭제</button>
               </div>
@@ -1127,7 +1125,7 @@ export default function ClientDetailPage() {
   const renderPaymentsTab = () => (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <h3 className="text-white font-semibold">결제 내역 ({payments.length})</h3>
+        <h3 className="text-[var(--color-dark)] font-semibold">결제 내역 ({payments.length})</h3>
         <button onClick={openPaymentAdd} className={btnPrimary}>
           결제 추가
         </button>
@@ -1135,7 +1133,7 @@ export default function ClientDetailPage() {
 
       {showPaymentForm && (
         <div className={`${cardClass} mb-5`}>
-          <h4 className="text-white font-semibold mb-4">
+          <h4 className="text-[var(--color-dark)] font-semibold mb-4">
             {editingPaymentId ? "결제 수정" : "결제 추가"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -1217,36 +1215,36 @@ export default function ClientDetailPage() {
       )}
 
       {paymentsLoading ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">로딩 중...</div>
+        <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
       ) : payments.length === 0 ? (
-        <div className="text-center py-10 text-[var(--color-gray-light)]">
+        <div className="text-center py-10 text-[var(--color-gray)]">
           등록된 결제 내역이 없습니다.
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left py-3 px-4 text-[var(--color-gray-light)] font-medium">결제일</th>
-                <th className="text-left py-3 px-4 text-[var(--color-gray-light)] font-medium">유형</th>
-                <th className="text-left py-3 px-4 text-[var(--color-gray-light)] font-medium">설명</th>
-                <th className="text-right py-3 px-4 text-[var(--color-gray-light)] font-medium">금액</th>
-                <th className="text-center py-3 px-4 text-[var(--color-gray-light)] font-medium">상태</th>
-                <th className="text-right py-3 px-4 text-[var(--color-gray-light)] font-medium">작업</th>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">결제일</th>
+                <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">유형</th>
+                <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">설명</th>
+                <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium">금액</th>
+                <th className="text-center py-3 px-4 text-[var(--color-gray)] font-medium">상태</th>
+                <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium">작업</th>
               </tr>
             </thead>
             <tbody>
               {payments.map((p) => {
                 const statusInfo = PAYMENT_STATUS_MAP[p.status] ?? {
                   label: p.status,
-                  cls: "bg-gray-500/15 text-gray-400 border border-gray-500/20",
+                  cls: "bg-gray-100 text-gray-600 border border-gray-200",
                 };
                 return (
-                  <tr key={p.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3 px-4 text-white/80">{p.payment_date}</td>
-                    <td className="py-3 px-4 text-white/80">{p.type}</td>
-                    <td className="py-3 px-4 text-white/80">{p.description}</td>
-                    <td className="py-3 px-4 text-white font-semibold text-right">
+                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4 text-[var(--color-dark-2)]">{p.payment_date}</td>
+                    <td className="py-3 px-4 text-[var(--color-dark-2)]">{p.type}</td>
+                    <td className="py-3 px-4 text-[var(--color-dark-2)]">{p.description}</td>
+                    <td className="py-3 px-4 text-[var(--color-dark)] font-semibold text-right">
                       {Number(p.amount).toLocaleString()}원
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -1302,22 +1300,22 @@ export default function ClientDetailPage() {
 
   if (clientLoading) {
     return (
-      <div className="min-h-screen bg-[var(--color-dark)]">
+      <div className="min-h-screen bg-[var(--color-light)]">
         <AdminHeader />
-        <div className="text-center py-20 text-[var(--color-gray-light)]">로딩 중...</div>
+        <div className="text-center py-20 text-[var(--color-gray)]">로딩 중...</div>
       </div>
     );
   }
 
   if (!client) {
     return (
-      <div className="min-h-screen bg-[var(--color-dark)]">
+      <div className="min-h-screen bg-[var(--color-light)]">
         <AdminHeader />
         <div className="text-center py-20">
-          <p className="text-[var(--color-gray-light)] mb-4">클라이언트를 찾을 수 없습니다.</p>
+          <p className="text-[var(--color-gray)] mb-4">클라이언트를 찾을 수 없습니다.</p>
           <Link
             href="/admin/clients"
-            className="text-[var(--color-primary)] no-underline font-semibold hover:underline"
+            className="text-[var(--color-accent)] no-underline font-semibold hover:underline"
           >
             목록으로 돌아가기
           </Link>
@@ -1327,14 +1325,14 @@ export default function ClientDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
       <div className="max-w-[1200px] mx-auto px-6 py-8">
         {/* Back link */}
         <Link
           href="/admin/clients"
-          className="text-[var(--color-gray-light)] no-underline hover:text-white transition-colors flex items-center gap-1 text-sm mb-6"
+          className="text-[var(--color-gray)] no-underline hover:text-[var(--color-dark)] transition-colors flex items-center gap-1 text-sm mb-6"
         >
           <svg
             className="w-4 h-4"
@@ -1355,9 +1353,8 @@ export default function ClientDetailPage() {
         {/* ===== Client info card ===== */}
         <div className={`${cardClass} mb-8`}>
           {editingClient ? (
-            /* ---------- Edit mode ---------- */
             <div>
-              <h3 className="text-white font-semibold mb-5">클라이언트 정보 수정</h3>
+              <h3 className="text-[var(--color-dark)] font-semibold mb-5">클라이언트 정보 수정</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className={labelClass}>이름</label>
@@ -1413,7 +1410,7 @@ export default function ClientDetailPage() {
                     onChange={(e) => setClientForm((p) => ({ ...p, is_active: e.target.checked }))}
                     className="w-4 h-4 rounded accent-[var(--color-primary)]"
                   />
-                  <span className="text-[var(--color-gray-light)] text-sm">활성 계정</span>
+                  <span className="text-[var(--color-dark-2)] text-sm">활성 계정</span>
                 </label>
               </div>
               <div className="flex gap-3">
@@ -1422,23 +1419,22 @@ export default function ClientDetailPage() {
               </div>
             </div>
           ) : (
-            /* ---------- View mode ---------- */
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-3 mb-1">
-                    <h2 className="text-xl font-bold text-white">{client.name}</h2>
+                    <h2 className="text-xl font-bold text-[var(--color-dark)]">{client.name}</h2>
                     <span
                       className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full ${
                         client.is_active
-                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                          : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                          : "bg-red-50 text-red-600 border border-red-200"
                       }`}
                     >
                       {client.is_active ? "활성" : "비활성"}
                     </span>
                   </div>
-                  <p className="text-[var(--color-gray-light)] text-sm">@{client.username}</p>
+                  <p className="text-[var(--color-gray)] text-sm">@{client.username}</p>
                 </div>
                 <button onClick={startEditClient} className={btnSmall}>수정</button>
               </div>
@@ -1446,20 +1442,20 @@ export default function ClientDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {client.email && (
                   <div>
-                    <span className="text-[var(--color-gray-light)] text-xs block mb-0.5">이메일</span>
-                    <span className="text-white text-sm">{client.email}</span>
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">이메일</span>
+                    <span className="text-[var(--color-dark)] text-sm">{client.email}</span>
                   </div>
                 )}
                 {client.phone && (
                   <div>
-                    <span className="text-[var(--color-gray-light)] text-xs block mb-0.5">전화번호</span>
-                    <span className="text-white text-sm">{client.phone}</span>
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">전화번호</span>
+                    <span className="text-[var(--color-dark)] text-sm">{client.phone}</span>
                   </div>
                 )}
                 {client.created_at && (
                   <div>
-                    <span className="text-[var(--color-gray-light)] text-xs block mb-0.5">등록일</span>
-                    <span className="text-white text-sm">
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span>
+                    <span className="text-[var(--color-dark)] text-sm">
                       {new Date(client.created_at).toLocaleDateString("ko-KR")}
                     </span>
                   </div>
@@ -1467,9 +1463,9 @@ export default function ClientDetailPage() {
               </div>
 
               {client.memo && (
-                <div className="mt-4 pt-4 border-t border-white/5">
-                  <span className="text-[var(--color-gray-light)] text-xs block mb-1">메모</span>
-                  <p className="text-white/70 text-sm whitespace-pre-wrap">{client.memo}</p>
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-[var(--color-gray)] text-xs block mb-1">메모</span>
+                  <p className="text-[var(--color-dark-2)] text-sm whitespace-pre-wrap">{client.memo}</p>
                 </div>
               )}
             </div>
@@ -1477,15 +1473,15 @@ export default function ClientDetailPage() {
         </div>
 
         {/* ===== Tab bar ===== */}
-        <div className="flex gap-1 border-b border-white/10 mb-6">
+        <div className="flex gap-1 border-b border-gray-200 mb-6">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent ${
                 activeTab === tab.key
-                  ? "border-[var(--color-primary)] text-white"
-                  : "border-transparent text-[var(--color-gray-light)] hover:text-white hover:border-white/20"
+                  ? "border-[var(--color-accent)] text-[var(--color-dark)]"
+                  : "border-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)] hover:border-gray-300"
               }`}
             >
               {tab.label}

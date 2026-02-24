@@ -47,14 +47,14 @@ export default function AdminClientsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
+    <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
       <div className="max-w-[1200px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-xl font-bold text-white mb-1">클라이언트 관리</h2>
-            <p className="text-[var(--color-gray-light)] text-sm">
+            <h2 className="text-xl font-bold text-[var(--color-dark)] mb-1">클라이언트 관리</h2>
+            <p className="text-[var(--color-gray)] text-sm">
               {clients.length}명의 클라이언트
             </p>
           </div>
@@ -80,17 +80,17 @@ export default function AdminClientsPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[var(--color-gray-light)]">
+          <div className="text-center py-20 text-[var(--color-gray)]">
             로딩 중...
           </div>
         ) : clients.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-[var(--color-gray-light)] mb-4">
+            <p className="text-[var(--color-gray)] mb-4">
               아직 등록된 클라이언트가 없습니다.
             </p>
             <Link
               href="/admin/clients/new"
-              className="text-[var(--color-primary)] no-underline font-semibold hover:underline"
+              className="text-[var(--color-accent)] no-underline font-semibold hover:underline"
             >
               첫 번째 클라이언트를 추가해보세요
             </Link>
@@ -100,36 +100,36 @@ export default function AdminClientsPage() {
             {clients.map((client) => (
               <div
                 key={client.id}
-                className="bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden hover:border-white/20 transition-all group"
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-all group"
               >
                 <div
                   className="p-5 cursor-pointer"
                   onClick={() => router.push(`/admin/clients/${client.id}`)}
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-white font-semibold text-[0.95rem]">
+                    <h3 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">
                       {client.name}
                     </h3>
                     <span
                       className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full ${
                         client.is_active
-                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                          : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                          : "bg-red-50 text-red-600 border border-red-200"
                       }`}
                     >
                       {client.is_active ? "활성" : "비활성"}
                     </span>
                   </div>
-                  <div className="text-[var(--color-gray-light)] text-[0.8rem] mb-1">
+                  <div className="text-[var(--color-gray)] text-[0.8rem] mb-1">
                     @{client.username}
                   </div>
                   {client.email && (
-                    <div className="text-[var(--color-gray-light)] text-[0.8rem] mb-1">
+                    <div className="text-[var(--color-gray)] text-[0.8rem] mb-1">
                       {client.email}
                     </div>
                   )}
                   {client.phone && (
-                    <div className="text-[var(--color-gray-light)] text-[0.8rem]">
+                    <div className="text-[var(--color-gray)] text-[0.8rem]">
                       {client.phone}
                     </div>
                   )}
@@ -141,13 +141,13 @@ export default function AdminClientsPage() {
                       onClick={() =>
                         router.push(`/admin/clients/${client.id}`)
                       }
-                      className="flex-1 text-center py-2 bg-white/[0.06] border border-white/10 text-[var(--color-gray-light)] text-sm rounded-lg cursor-pointer hover:bg-white/10 hover:text-white transition-all"
+                      className="flex-1 text-center py-2 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-sm rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all"
                     >
                       상세보기
                     </button>
                     <button
                       onClick={() => handleDelete(client.id, client.name)}
-                      className="flex-1 py-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg cursor-pointer hover:bg-red-500/20 transition-all"
+                      className="flex-1 py-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg cursor-pointer hover:bg-red-100 transition-all"
                     >
                       삭제
                     </button>

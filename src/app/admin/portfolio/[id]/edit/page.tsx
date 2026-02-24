@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import Link from "next/link";
+import AdminHeader from "../../../components/AdminHeader";
 import PortfolioForm from "../../../components/PortfolioForm";
 
 interface PortfolioItem {
@@ -38,25 +38,16 @@ export default function EditPortfolioPage({ params }: { params: Promise<{ id: st
   }, [id]);
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)]">
-      <header className="border-b border-white/10 px-6 py-4 flex items-center gap-4">
-        <Link
-          href="/admin/portfolio"
-          className="text-[var(--color-gray-light)] no-underline hover:text-white transition-colors flex items-center gap-1"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
-          돌아가기
-        </Link>
-        <h1 className="text-lg font-bold text-white">포트폴리오 수정</h1>
-      </header>
+    <div className="min-h-screen bg-[var(--color-light)]">
+      <AdminHeader />
 
       <div className="max-w-[1200px] mx-auto px-6 py-8">
+        <h2 className="text-xl font-bold text-[var(--color-dark)] mb-6">포트폴리오 수정</h2>
+
         {loading ? (
-          <div className="text-[var(--color-gray-light)] text-center py-20">로딩 중...</div>
+          <div className="text-[var(--color-gray)] text-center py-20">로딩 중...</div>
         ) : error ? (
-          <div className="text-red-400 text-center py-20">{error}</div>
+          <div className="text-red-600 text-center py-20">{error}</div>
         ) : item ? (
           <PortfolioForm
             editId={id}
