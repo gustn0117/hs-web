@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -12,12 +15,16 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   const links = [
-    { href: "#services", label: "서비스" },
-    { href: "#portfolio", label: "포트폴리오" },
-    { href: "#process", label: "제작 과정" },
-    { href: "#pricing", label: "가격 안내" },
-    { href: "#testimonials", label: "고객 후기" },
+    { href: "/services", label: "서비스" },
+    { href: "/portfolio", label: "포트폴리오" },
+    { href: "/process", label: "제작 과정" },
+    { href: "/pricing", label: "가격 안내" },
+    { href: "/testimonials", label: "고객 후기" },
   ];
 
   return (
@@ -27,28 +34,32 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex justify-between items-center">
-        <a href="#" className="text-[1.5rem] font-extrabold tracking-tight no-underline text-[var(--color-dark)]">
+        <Link href="/" className="text-[1.5rem] font-extrabold tracking-tight no-underline text-[var(--color-dark)]">
           HS <span className="text-[var(--color-primary)]">WEB</span>
-        </a>
+        </Link>
 
         <ul className="hidden md:flex gap-8 items-center list-none">
           {links.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
-                className="no-underline font-medium text-[0.95rem] text-[var(--color-gray)] hover:text-[var(--color-dark)] transition-colors"
+                className={`no-underline font-medium text-[0.95rem] transition-colors ${
+                  pathname === link.href
+                    ? "text-[var(--color-primary)]"
+                    : "text-[var(--color-gray)] hover:text-[var(--color-dark)]"
+                }`}
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
           <li>
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="px-6 py-2.5 rounded-lg font-semibold text-[0.95rem] no-underline bg-[var(--color-dark)] text-white hover:bg-[var(--color-dark-2)] transition-colors"
             >
               견적문의
-            </a>
+            </Link>
           </li>
         </ul>
 
@@ -72,22 +83,22 @@ export default function Navbar() {
             ✕
           </button>
           {links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              className="text-[var(--color-dark)] text-xl no-underline font-medium"
-              onClick={() => setMobileOpen(false)}
+              className={`text-xl no-underline font-medium ${
+                pathname === link.href ? "text-[var(--color-primary)]" : "text-[var(--color-dark)]"
+              }`}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#contact"
+          <Link
+            href="/contact"
             className="bg-[var(--color-dark)] text-white px-8 py-3 rounded-lg font-semibold no-underline"
-            onClick={() => setMobileOpen(false)}
           >
             견적문의
-          </a>
+          </Link>
         </div>
       )}
     </nav>
