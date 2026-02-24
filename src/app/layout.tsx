@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "HS WEB | 웹사이트 제작 전문",
     description:
       "고품질 홈페이지 제작, 반응형 웹디자인, 쇼핑몰 구축 전문 웹에이전시",
-    url: "https://hsweb.co.kr",
+    url: "https://hsweb.pics",
     siteName: "HS WEB",
     locale: "ko_KR",
   },
@@ -49,7 +49,7 @@ export default function RootLayout({
               name: "HS WEB",
               description:
                 "고품질 홈페이지 제작, 반응형 웹디자인, 쇼핑몰 구축 전문 웹에이전시",
-              url: "https://hsweb.co.kr",
+              url: "https://hsweb.pics",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "서울",
