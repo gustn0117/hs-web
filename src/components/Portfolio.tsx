@@ -17,9 +17,9 @@ const CATEGORY_STYLES: Record<string, { bg: string; iconColor: string; badge: st
   "쇼핑몰": { bg: "from-pink-100 to-pink-50", iconColor: "text-pink-600", badge: "bg-pink-500" },
   "기업 홈페이지": { bg: "from-sky-100 to-sky-50", iconColor: "text-sky-600", badge: "bg-sky-500" },
   "랜딩페이지": { bg: "from-violet-100 to-violet-50", iconColor: "text-violet-600", badge: "bg-violet-500" },
-  "웹 애플리케이션": { bg: "from-indigo-100 to-indigo-50", iconColor: "text-indigo-600", badge: "bg-indigo-500" },
+  "웹 애플리케이션": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-500" },
   "CMS": { bg: "from-orange-100 to-orange-50", iconColor: "text-orange-600", badge: "bg-orange-500" },
-  "기업 관리 시스템": { bg: "from-indigo-100 to-indigo-50", iconColor: "text-indigo-600", badge: "bg-indigo-500" },
+  "기업 관리 시스템": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-500" },
   "기타": { bg: "from-gray-100 to-gray-50", iconColor: "text-gray-600", badge: "bg-gray-500" },
 };
 
@@ -73,15 +73,15 @@ export default function Portfolio({ items }: { items?: PortfolioItem[] }) {
           <div className="fade-up text-center py-16">
             <div className="w-32 h-32 mx-auto mb-8 relative">
               {/* CSS illustration */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-indigo-50 rounded-2xl border-2 border-dashed border-gray-200" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-50 rounded-2xl border-2 border-dashed border-gray-200" />
               <div className="absolute top-4 left-4 right-4 space-y-2">
-                <div className="h-2.5 bg-indigo-200 rounded w-[80%]" />
-                <div className="h-2 bg-indigo-200 rounded w-[60%]" />
+                <div className="h-2.5 bg-blue-200 rounded w-[80%]" />
+                <div className="h-2 bg-blue-200 rounded w-[60%]" />
                 <div className="h-2 bg-gray-200 rounded w-[70%]" />
               </div>
               <div className="absolute bottom-4 left-4 right-4 flex gap-1.5">
-                <div className="w-6 h-6 bg-indigo-100 rounded" />
-                <div className="w-6 h-6 bg-indigo-100 rounded" />
+                <div className="w-6 h-6 bg-blue-100 rounded" />
+                <div className="w-6 h-6 bg-blue-100 rounded" />
                 <div className="w-6 h-6 bg-amber-100 rounded" />
               </div>
               {/* Decorative sparkles */}
@@ -98,7 +98,7 @@ export default function Portfolio({ items }: { items?: PortfolioItem[] }) {
             </p>
             <Link
               href="/contact"
-              className="btn-ripple inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 no-underline hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
+              className="btn-ripple inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-blue-600 no-underline hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
             >
               프로젝트 문의하기
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -7,13 +7,13 @@ export default function CTA() {
     <section className="relative overflow-hidden py-24 bg-[var(--color-dark)]">
       {/* Background effects */}
       <div className="absolute inset-0 dot-pattern pointer-events-none opacity-30" />
-      <div className="absolute top-10 right-[15%] w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-10 left-[10%] w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-      <div className="absolute top-1/3 left-[30%] w-3 h-3 bg-indigo-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "1s" }} />
-      <div className="absolute bottom-1/3 right-[25%] w-2 h-2 bg-indigo-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "3s" }} />
+      <div className="absolute top-10 right-[15%] w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-10 left-[10%] w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+      <div className="absolute top-1/3 left-[30%] w-3 h-3 bg-blue-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "1s" }} />
+      <div className="absolute bottom-1/3 right-[25%] w-2 h-2 bg-blue-400 rounded-full opacity-20 animate-float" style={{ animationDelay: "3s" }} />
       {/* Geometric decorations */}
-      <div className="absolute top-[20%] left-[8%] w-12 h-12 border border-indigo-500/10 rounded-lg animate-rotate-slow pointer-events-none" />
-      <div className="absolute bottom-[15%] right-[12%] w-8 h-8 border border-indigo-500/10 rounded-full animate-float pointer-events-none" style={{ animationDelay: "4s" }} />
+      <div className="absolute top-[20%] left-[8%] w-12 h-12 border border-blue-500/10 rounded-lg animate-rotate-slow pointer-events-none" />
+      <div className="absolute bottom-[15%] right-[12%] w-8 h-8 border border-blue-500/10 rounded-full animate-float pointer-events-none" style={{ animationDelay: "4s" }} />
 
       <div className="max-w-[1200px] mx-auto px-6 relative z-10">
         {/* Gradient border animated wrapper */}
@@ -29,8 +29,8 @@ export default function CTA() {
             </div>
 
             {/* Main badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-2 rounded-full text-indigo-300 text-[0.85rem] font-semibold mb-6">
-              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-2 rounded-full text-blue-300 text-[0.85rem] font-semibold mb-6">
+              <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
               무료 상담 진행 중
             </div>
 
@@ -46,7 +46,7 @@ export default function CTA() {
             <div className="flex gap-4 justify-center flex-wrap">
               <Link
                 href="/contact"
-                className="btn-ripple group inline-flex items-center gap-2 bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 text-white px-9 py-4 rounded-xl font-bold text-[1.05rem] hover:shadow-xl hover:shadow-indigo-500/25 hover:scale-[1.02] transition-all duration-300 no-underline"
+                className="btn-ripple group inline-flex items-center gap-2 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white px-9 py-4 rounded-xl font-bold text-[1.05rem] hover:shadow-xl hover:shadow-blue-500/25 hover:scale-[1.02] transition-all duration-300 no-underline"
               >
                 무료 상담 신청
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -70,7 +70,7 @@ export default function CTA() {
                 { icon: "M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42", text: "무료 디자인 시안" },
               ].map((tp) => (
                 <div key={tp.text} className="flex items-center gap-2 text-gray-400 text-[0.82rem]">
-                  <svg className="w-4 h-4 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={tp.icon} />
                   </svg>
                   {tp.text}

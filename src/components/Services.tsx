@@ -3,12 +3,12 @@
 import { useEffect, useRef } from "react";
 
 const ICON_COLORS = [
-  { from: "from-indigo-500", to: "to-blue-400", shadow: "shadow-indigo-500/20" },
+  { from: "from-blue-500", to: "to-blue-400", shadow: "shadow-blue-500/20" },
   { from: "from-pink-500", to: "to-rose-400", shadow: "shadow-pink-500/20" },
   { from: "from-violet-500", to: "to-purple-400", shadow: "shadow-violet-500/20" },
   { from: "from-sky-500", to: "to-cyan-400", shadow: "shadow-sky-500/20" },
   { from: "from-orange-500", to: "to-amber-400", shadow: "shadow-orange-500/20" },
-  { from: "from-indigo-500", to: "to-blue-400", shadow: "shadow-indigo-500/20" },
+  { from: "from-blue-500", to: "to-blue-400", shadow: "shadow-blue-500/20" },
 ];
 
 const services = [
@@ -163,14 +163,14 @@ export default function Services() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-[0.95rem] font-bold text-[var(--color-dark)]">{s.title}</h3>
-                    <span className="text-[0.68rem] px-2 py-0.5 bg-indigo-50 text-[var(--color-primary)] rounded-full font-semibold hidden sm:inline-block">
+                    <span className="text-[0.68rem] px-2 py-0.5 bg-blue-50 text-[var(--color-primary)] rounded-full font-semibold hidden sm:inline-block">
                       {s.metric}
                     </span>
                   </div>
                   <p className="text-[var(--color-gray)] text-[0.82rem] leading-snug mt-0.5">{s.desc}</p>
                   {/* Tags + metric - mobile */}
                   <div className="flex flex-wrap gap-1.5 mt-2 md:hidden">
-                    <span className="text-[0.68rem] px-2 py-0.5 bg-indigo-50 text-[var(--color-primary)] rounded-full font-semibold">
+                    <span className="text-[0.68rem] px-2 py-0.5 bg-blue-50 text-[var(--color-primary)] rounded-full font-semibold">
                       {s.metric}
                     </span>
                     {s.tags.map((tag) => (
@@ -186,7 +186,7 @@ export default function Services() {
                   {s.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[0.72rem] px-2.5 py-1 bg-gray-50 text-[var(--color-gray)] rounded-full font-medium group-hover:bg-indigo-50 group-hover:text-[var(--color-primary)] transition-colors duration-300"
+                      className="text-[0.72rem] px-2.5 py-1 bg-gray-50 text-[var(--color-gray)] rounded-full font-medium group-hover:bg-blue-50 group-hover:text-[var(--color-primary)] transition-colors duration-300"
                     >
                       {tag}
                     </span>

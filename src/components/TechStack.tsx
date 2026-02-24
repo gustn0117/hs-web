@@ -6,9 +6,9 @@ const categories = [
   {
     title: "프론트엔드",
     desc: "빠르고 인터랙티브한 사용자 경험을 구현합니다.",
-    color: "from-indigo-400 to-indigo-600",
-    barColor: "from-indigo-400 to-blue-500",
-    badgeBg: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
+    color: "from-blue-400 to-blue-600",
+    barColor: "from-blue-400 to-blue-500",
+    badgeBg: "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100",
     level: 95,
     techs: [
       { name: "React", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="2.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></svg> },
@@ -21,9 +21,9 @@ const categories = [
   {
     title: "백엔드",
     desc: "안정적이고 확장 가능한 서버 아키텍처를 설계합니다.",
-    color: "from-indigo-400 to-indigo-600",
-    barColor: "from-indigo-400 to-violet-500",
-    badgeBg: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
+    color: "from-blue-400 to-blue-600",
+    barColor: "from-blue-400 to-violet-500",
+    badgeBg: "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100",
     level: 90,
     techs: [
       { name: "Node.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.85l9 5.2v10.4l-9 5.2-9-5.2V7.05l9-5.2z" opacity="0.3" /></svg> },
@@ -53,7 +53,7 @@ const categories = [
 const trendingTechs = [
   { name: "AI 챗봇", color: "bg-violet-50 text-violet-600 border-violet-200" },
   { name: "서버리스", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  { name: "PWA", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
+  { name: "PWA", color: "bg-blue-50 text-blue-600 border-blue-200" },
   { name: "마이크로프론트엔드", color: "bg-amber-50 text-amber-600 border-amber-200" },
   { name: "Edge Computing", color: "bg-rose-50 text-rose-600 border-rose-200" },
 ];
@@ -100,7 +100,7 @@ export default function TechStack() {
 
         {/* Tech philosophy */}
         <div className="fade-up max-w-[700px] mx-auto mb-14">
-          <div className="border-l-[3px] border-[var(--color-accent)] pl-4 bg-indigo-50/50 py-3 pr-4 rounded-r-lg">
+          <div className="border-l-[3px] border-[var(--color-accent)] pl-4 bg-blue-50/50 py-3 pr-4 rounded-r-lg">
             <p className="text-[var(--color-dark-2)] text-[0.88rem] leading-relaxed italic">
               &ldquo;트렌디한 기술이 아닌, 프로젝트에 최적의 기술을 선택합니다. 안정성, 성능, 유지보수성을 종합적으로 고려하여 기술 스택을 구성합니다.&rdquo;
             </p>

@@ -86,30 +86,30 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="min-h-screen bg-gradient-to-br from-white via-indigo-50/30 to-indigo-50/20 flex items-center pt-[72px] relative overflow-hidden">
+    <section ref={sectionRef} className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-blue-50/20 flex items-center pt-[72px] relative overflow-hidden">
       <div className="absolute inset-0 dot-pattern pointer-events-none" />
 
       {/* Floating decorations with parallax */}
-      <div className="parallax-slow absolute top-32 right-[15%] w-72 h-72 bg-indigo-400/10 rounded-full blur-3xl animate-float" />
-      <div className="parallax-slow absolute bottom-20 left-[10%] w-56 h-56 bg-indigo-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
+      <div className="parallax-slow absolute top-32 right-[15%] w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-float" />
+      <div className="parallax-slow absolute bottom-20 left-[10%] w-56 h-56 bg-blue-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
       <div className="absolute top-1/2 right-[5%] w-4 h-4 bg-[var(--color-primary)] rounded-full opacity-20 animate-float" style={{ animationDelay: "0.8s" }} />
       <div className="absolute top-[20%] left-[20%] w-3 h-3 bg-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2s" }} />
       <div className="absolute top-[40%] right-[30%] w-2 h-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2.5s", animationDuration: "4s" }} />
-      <div className="absolute bottom-[30%] right-[8%] w-6 h-6 border border-indigo-300/20 rounded-full animate-float" style={{ animationDelay: "1.2s", animationDuration: "5s" }} />
-      <div className="absolute top-[60%] left-[5%] w-3 h-3 border border-indigo-300/15 rounded-full animate-float" style={{ animationDelay: "3s", animationDuration: "4.5s" }} />
+      <div className="absolute bottom-[30%] right-[8%] w-6 h-6 border border-blue-300/20 rounded-full animate-float" style={{ animationDelay: "1.2s", animationDuration: "5s" }} />
+      <div className="absolute top-[60%] left-[5%] w-3 h-3 border border-blue-300/15 rounded-full animate-float" style={{ animationDelay: "3s", animationDuration: "4.5s" }} />
 
       {/* Geometric decorations */}
-      <div className="absolute top-[25%] right-[6%] w-14 h-14 border border-indigo-400/10 rounded-lg animate-rotate-slow pointer-events-none" />
-      <div className="absolute bottom-[18%] left-[3%] w-20 h-[2px] bg-gradient-to-r from-transparent via-indigo-300/20 to-transparent pointer-events-none" />
-      <div className="absolute top-[70%] right-[18%] w-16 h-[2px] bg-gradient-to-r from-transparent via-indigo-300/20 to-transparent pointer-events-none" />
+      <div className="absolute top-[25%] right-[6%] w-14 h-14 border border-blue-400/10 rounded-lg animate-rotate-slow pointer-events-none" />
+      <div className="absolute bottom-[18%] left-[3%] w-20 h-[2px] bg-gradient-to-r from-transparent via-blue-300/20 to-transparent pointer-events-none" />
+      <div className="absolute top-[70%] right-[18%] w-16 h-[2px] bg-gradient-to-r from-transparent via-blue-300/20 to-transparent pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="text-center lg:text-left">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-indigo-200/60 px-4 py-2 rounded-full text-[var(--color-primary)] text-[0.85rem] font-semibold mb-6 shadow-sm shadow-indigo-100/50">
+            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-blue-200/60 px-4 py-2 rounded-full text-[var(--color-primary)] text-[0.85rem] font-semibold mb-6 shadow-sm shadow-blue-100/50">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-primary)]" />
               </span>
               웹 제작 전문 에이전시
@@ -135,7 +135,7 @@ export default function Hero() {
             <div className="flex gap-4 flex-wrap justify-center lg:justify-start">
               <Link
                 href="/contact"
-                className="btn-ripple group inline-flex items-center gap-2 px-8 py-[14px] rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-indigo-600 hover:shadow-xl hover:shadow-indigo-500/25 transition-all duration-300 no-underline hover:scale-[1.02]"
+                className="btn-ripple group inline-flex items-center gap-2 px-8 py-[14px] rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-blue-600 hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 no-underline hover:scale-[1.02]"
               >
                 무료 상담 받기
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -151,17 +151,17 @@ export default function Hero() {
             {/* Trust indicators */}
             <div className="flex items-center gap-3 mt-6 justify-center lg:justify-start text-[0.8rem] text-[var(--color-gray-light)]">
               <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                 무료 상담
               </div>
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
               <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                 빠른 제작
               </div>
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
               <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                 유지보수 포함
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function Hero() {
 
           {/* Browser Mockup */}
           <div className="flex justify-center items-center">
-            <div className="w-full max-w-[500px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-2xl shadow-indigo-500/10 animate-float" style={{ animationDuration: "5s" }}>
+            <div className="w-full max-w-[500px] bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-2xl shadow-blue-500/10 animate-float" style={{ animationDuration: "5s" }}>
               {/* Browser chrome */}
               <div className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-gray-50 to-gray-100/80 border-b border-gray-100">
                 <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -202,7 +202,7 @@ export default function Hero() {
               <div className="p-6 space-y-4">
                 {/* Nav */}
                 <div className="flex items-center justify-between">
-                  <div className="h-3 w-16 bg-gradient-to-r from-[var(--color-primary)] to-indigo-400 rounded" />
+                  <div className="h-3 w-16 bg-gradient-to-r from-[var(--color-primary)] to-blue-400 rounded" />
                   <div className="flex gap-2">
                     <div className="h-2 w-8 bg-gray-200 rounded" />
                     <div className="h-2 w-8 bg-gray-200 rounded" />
@@ -210,10 +210,10 @@ export default function Hero() {
                   </div>
                 </div>
                 {/* Hero area */}
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-50 rounded-lg p-5">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-50 rounded-lg p-5">
                   <div className="h-3 w-[70%] bg-[var(--color-dark)] opacity-20 rounded mb-2" />
                   <div className="h-2 w-[50%] bg-gray-300 rounded mb-3" />
-                  <div className="h-6 w-20 bg-gradient-to-r from-[var(--color-primary)] to-indigo-400 rounded" />
+                  <div className="h-6 w-20 bg-gradient-to-r from-[var(--color-primary)] to-blue-400 rounded" />
                   {/* Typing effect area */}
                   <div className="mt-3 flex items-center gap-1 text-[0.7rem] text-[var(--color-gray)]">
                     <span>제작 중: </span>
@@ -226,7 +226,7 @@ export default function Hero() {
                     <span className="text-gray-600 w-4 text-right">1</span>
                     <span className="text-violet-400">import</span>
                     <span className="text-gray-300">{" { "}</span>
-                    <span className="text-indigo-400">useState</span>
+                    <span className="text-blue-400">useState</span>
                     <span className="text-gray-300">{" } "}</span>
                     <span className="text-violet-400">from</span>
                     <span className="text-amber-400">{" 'react'"}</span>
@@ -240,15 +240,15 @@ export default function Hero() {
                   <div className="flex items-center gap-2">
                     <span className="text-gray-600 w-4 text-right">3</span>
                     <span className="text-gray-500 pl-4">return</span>
-                    <span className="text-indigo-400"> &lt;Layout&gt;</span>
+                    <span className="text-blue-400"> &lt;Layout&gt;</span>
                     <span className="text-gray-400">...</span>
                   </div>
                 </div>
                 {/* Cards */}
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { color: "bg-indigo-100", border: "border-indigo-50" },
-                    { color: "bg-indigo-100", border: "border-indigo-50" },
+                    { color: "bg-blue-100", border: "border-blue-50" },
+                    { color: "bg-blue-100", border: "border-blue-50" },
                     { color: "bg-amber-100", border: "border-amber-50" },
                   ].map((c, n) => (
                     <div key={n} className={`bg-gray-50 rounded-lg p-2.5 border ${c.border}`}>

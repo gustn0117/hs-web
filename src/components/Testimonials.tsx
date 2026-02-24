@@ -10,7 +10,7 @@ const testimonials = [
     project: "카페 홈페이지",
     metric: "문의 3배 증가",
     initial: "김",
-    gradient: "from-indigo-400 to-indigo-600",
+    gradient: "from-blue-400 to-blue-600",
   },
   {
     text: "쇼핑몰 구축을 맡겼는데, 기대 이상의 결과물이었습니다. 특히 모바일 최적화가 잘 되어있어 매출 상승에 큰 도움이 됐습니다.",
@@ -19,7 +19,7 @@ const testimonials = [
     project: "패션 쇼핑몰",
     metric: "모바일 매출 45%↑",
     initial: "박",
-    gradient: "from-indigo-400 to-indigo-600",
+    gradient: "from-blue-400 to-blue-600",
   },
   {
     text: "납기일을 정확히 지켜주시고, 수정 요청도 신속하게 반영해주셔서 정말 감사했습니다. 다음 프로젝트도 함께하고 싶습니다.",
@@ -128,7 +128,7 @@ export default function Testimonials() {
               {/* Quote + Stars row */}
               <div className="flex items-center justify-between mb-4">
                 <svg
-                  className={`w-8 h-8 text-indigo-100 group-hover:text-indigo-200 transition-all duration-500 ${visible ? 'scale-100' : 'scale-50'}`}
+                  className={`w-8 h-8 text-blue-100 group-hover:text-blue-200 transition-all duration-500 ${visible ? 'scale-100' : 'scale-50'}`}
                   style={{ transitionDelay: `${i * 100 + 300}ms` }}
                   fill="currentColor"
                   viewBox="0 0 24 24"
