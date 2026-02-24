@@ -136,3 +136,332 @@ body {
   background-image: radial-gradient(circle, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* ===== PHASE 2: PREMIUM KEYFRAMES ===== */
+
+@keyframes shimmer-text {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.08); }
+  70% { transform: scale(0.96); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+  50% { transform: translateY(-3px); }
+  70% { transform: translateY(-1px); }
+}
+
+@keyframes blink-cursor {
+  0%, 100% { border-right-color: var(--color-primary); }
+  50% { border-right-color: transparent; }
+}
+
+@keyframes typewriter-reveal {
+  from { max-width: 0; }
+  to { max-width: 100%; }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes draw-check {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bg-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== PREMIUM UTILITY CLASSES ===== */
+
+/* Shimmer gradient text */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-accent-light) 25%,
+    var(--color-primary-light) 50%,
+    var(--color-accent) 75%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 3s linear infinite;
+}
+
+/* Glass variants */
+.glass-dark {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-colored {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.06),
+    rgba(99, 102, 241, 0.06)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 185, 129, 0.12);
+}
+
+/* Cursor-following glow on cards */
+.card-glow {
+  position: relative;
+  overflow: hidden;
+}
+.card-glow::before {
+  content: "";
+  position: absolute;
+  top: var(--mouse-y, -100px);
+  left: var(--mouse-x, -100px);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity 0.3s;
+  opacity: 0;
+  z-index: 1;
+}
+.card-glow:hover::before {
+  opacity: 1;
+}
+
+/* 3D perspective tilt on hover */
+.hover-tilt {
+  transition: transform 0.3s ease;
+  transform-style: preserve-3d;
+}
+.hover-tilt:hover {
+  transform: perspective(800px) rotateX(2deg) rotateY(-3deg) translateZ(10px);
+}
+
+/* Marquee scroll system */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex;
+  animation: marquee-scroll 30s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Typewriter text */
+.typewriter-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--color-primary);
+  animation:
+    typewriter-reveal 3s steps(30, end) forwards,
+    blink-cursor 0.75s step-end infinite;
+}
+
+/* Skill level bar */
+.skill-bar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.skill-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.skill-bar-fill.visible {
+  transform: scaleX(1);
+}
+
+/* Input focus glow */
+.input-glow:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), 0 0 15px rgba(16, 185, 129, 0.08);
+}
+
+/* Link underline slide animation */
+.link-underline-slide {
+  position: relative;
+  display: inline-block;
+}
+.link-underline-slide::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+.link-underline-slide:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Button ripple effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 10%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+.btn-ripple:active::after {
+  transform: scale(0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* FAQ +/x icon morph */
+.faq-icon-morph {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.faq-icon-morph::before,
+.faq-icon-morph::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+.faq-icon-morph::before {
+  top: 50%;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  transform: translateY(-50%);
+}
+.faq-icon-morph::after {
+  top: 20%;
+  left: 50%;
+  width: 2px;
+  height: 60%;
+  transform: translateX(-50%);
+}
+.faq-icon-morph.open::after {
+  transform: translateX(-50%) rotate(90deg);
+  opacity: 0;
+}
+
+/* Service card animated gradient border on hover */
+.service-card-border {
+  position: relative;
+}
+.service-card-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));
+  background-size: 300% 300%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: gradient-shift 3s ease infinite;
+  pointer-events: none;
+}
+.service-card-border:hover::before {
+  opacity: 1;
+}
+
+/* Gradient border animated wrapper */
+.gradient-border-animated {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));
+  background-size: 300% 300%;
+  animation: gradient-shift 3s ease infinite;
+  padding: 2px;
+  border-radius: 1rem;
+}
+.gradient-border-animated > * {
+  background: white;
+  border-radius: calc(1rem - 2px);
+}
+
+/* Dark variant */
+.gradient-border-animated-dark {
+  position: relative;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));
+  background-size: 300% 300%;
+  animation: gradient-shift 3s ease infinite;
+  padding: 2px;
+  border-radius: 1rem;
+}
+.gradient-border-animated-dark > * {
+  background: var(--color-dark);
+  border-radius: calc(1rem - 2px);
+}
+
+/* Shimmer badge (pricing popular) */
+.shimmer-badge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer-badge-sweep 2.5s ease-in-out infinite;
+}
+@keyframes shimmer-badge-sweep {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}

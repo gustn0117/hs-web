@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, FormEvent } from "react";
+import { useEffect, useRef, FormEvent, useState } from "react";
 
 const contactItems = [
   {
@@ -42,8 +42,94 @@ const contactItems = [
   },
 ];
 
+function FloatingInput({ label, type = "text", placeholder, required = false }: { label: string; type?: string; placeholder: string; required?: boolean }) {
+  const [focused, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+  const isActive = focused || hasValue;
+
+  return (
+    <div className="relative">
+      <label
+        className={`absolute left-4 transition-all duration-300 pointer-events-none ${
+          isActive
+            ? "top-1.5 text-[0.7rem] font-semibold text-[var(--color-primary)]"
+            : "top-3.5 text-[0.95rem] text-[var(--color-gray-light)]"
+        }`}
+      >
+        {label}
+      </label>
+      <input
+        type={type}
+        placeholder={isActive ? placeholder : ""}
+        required={required}
+        onFocus={() => setFocused(true)}
+        onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
+        onChange={(e) => setHasValue(e.target.value.length > 0)}
+        className={`input-glow w-full px-4 pt-5 pb-2 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none bg-white ${isActive ? 'border-[var(--color-primary)]' : ''}`}
+      />
+    </div>
+  );
+}
+
+function FloatingSelect({ label, options }: { label: string; options: string[] }) {
+  const [focused, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+  const isActive = focused || hasValue;
+
+  return (
+    <div className="relative">
+      <label
+        className={`absolute left-4 transition-all duration-300 pointer-events-none z-10 ${
+          isActive
+            ? "top-1.5 text-[0.7rem] font-semibold text-[var(--color-primary)]"
+            : "top-3.5 text-[0.95rem] text-[var(--color-gray-light)]"
+        }`}
+      >
+        {label}
+      </label>
+      <select
+        onFocus={() => setFocused(true)}
+        onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
+        onChange={(e) => setHasValue(e.target.value.length > 0)}
+        className={`input-glow w-full px-4 pt-5 pb-2 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none bg-white ${isActive ? 'border-[var(--color-primary)]' : ''}`}
+      >
+        <option value="">{isActive ? "선택해주세요" : ""}</option>
+        {options.map((opt) => <option key={opt}>{opt}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function FloatingTextarea({ label, placeholder }: { label: string; placeholder: string }) {
+  const [focused, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+  const isActive = focused || hasValue;
+
+  return (
+    <div className="relative">
+      <label
+        className={`absolute left-4 transition-all duration-300 pointer-events-none ${
+          isActive
+            ? "top-1.5 text-[0.7rem] font-semibold text-[var(--color-primary)]"
+            : "top-3.5 text-[0.95rem] text-[var(--color-gray-light)]"
+        }`}
+      >
+        {label}
+      </label>
+      <textarea
+        placeholder={isActive ? placeholder : ""}
+        onFocus={() => setFocused(true)}
+        onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
+        onChange={(e) => setHasValue(e.target.value.length > 0)}
+        className={`input-glow w-full px-4 pt-5 pb-2 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none bg-white min-h-[120px] resize-y ${isActive ? 'border-[var(--color-primary)]' : ''}`}
+      />
+    </div>
+  );
+}
+
 export default function Contact() {
   const ref = useRef<HTMLDivElement>(null);
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -63,12 +149,13 @@ export default function Contact() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    alert("상담 신청이 완료되었습니다!\n빠른 시일 내에 연락드리겠습니다.");
-    (e.target as HTMLFormElement).reset();
+    setSending(true);
+    setTimeout(() => {
+      setSending(false);
+      alert("상담 신청이 완료되었습니다!\n빠른 시일 내에 연락드리겠습니다.");
+      (e.target as HTMLFormElement).reset();
+    }, 1500);
   };
-
-  const inputClass =
-    "w-full px-4 py-3.5 border border-gray-200 rounded-xl text-[0.95rem] transition-all focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-emerald-100 bg-white";
 
   return (
     <section className="pt-32 pb-24 relative overflow-hidden" ref={ref}>
@@ -102,9 +189,9 @@ export default function Contact() {
               {contactItems.map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-[var(--color-primary)]/30 hover:shadow-md transition-all duration-300"
+                  className="flex items-start gap-4 bg-white p-4 rounded-xl border border-gray-100 hover:border-[var(--color-primary)]/30 hover:shadow-md transition-all duration-300 group"
                 >
-                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/15">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary)] to-emerald-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/15 group-hover:scale-110 transition-transform duration-300">
                     {item.icon}
                   </div>
                   <div>
@@ -123,43 +210,34 @@ export default function Contact() {
             onSubmit={handleSubmit}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block font-semibold text-sm mb-2">이름</label>
-                <input type="text" placeholder="홍길동" required className={inputClass} />
-              </div>
-              <div>
-                <label className="block font-semibold text-sm mb-2">연락처</label>
-                <input type="tel" placeholder="010-0000-0000" required className={inputClass} />
-              </div>
+              <FloatingInput label="이름" placeholder="홍길동" required />
+              <FloatingInput label="연락처" type="tel" placeholder="010-0000-0000" required />
             </div>
             <div className="mb-4">
-              <label className="block font-semibold text-sm mb-2">이메일</label>
-              <input type="email" placeholder="example@email.com" className={inputClass} />
+              <FloatingInput label="이메일" type="email" placeholder="example@email.com" />
             </div>
             <div className="mb-4">
-              <label className="block font-semibold text-sm mb-2">문의 유형</label>
-              <select className={`${inputClass} bg-white`}>
-                <option value="">선택해주세요</option>
-                <option>홈페이지 제작</option>
-                <option>쇼핑몰 구축</option>
-                <option>랜딩페이지</option>
-                <option>웹 애플리케이션</option>
-                <option>유지보수</option>
-                <option>기타</option>
-              </select>
+              <FloatingSelect label="문의 유형" options={["홈페이지 제작", "쇼핑몰 구축", "랜딩페이지", "웹 애플리케이션", "유지보수", "기타"]} />
             </div>
             <div className="mb-5">
-              <label className="block font-semibold text-sm mb-2">문의 내용</label>
-              <textarea
-                placeholder="프로젝트에 대해 자유롭게 설명해주세요."
-                className={`${inputClass} min-h-[120px] resize-y`}
-              />
+              <FloatingTextarea label="문의 내용" placeholder="프로젝트에 대해 자유롭게 설명해주세요." />
             </div>
             <button
               type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl text-base font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.01]"
+              disabled={sending}
+              className="btn-ripple w-full py-3.5 bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white border-none rounded-xl text-base font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.01] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              상담 신청하기
+              {sending ? (
+                <>
+                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                    <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                  전송 중...
+                </>
+              ) : (
+                "상담 신청하기"
+              )}
             </button>
           </form>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const testimonials = [
   {
@@ -48,6 +48,7 @@ const StarIcon = () => (
 
 export default function Testimonials() {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -55,15 +56,52 @@ export default function Testimonials() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
+            if (entry.target === ref.current) setVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
+    if (ref.current) {
+      observer.observe(ref.current);
+      ref.current.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
+    }
     return () => observer.disconnect();
   }, []);
+
+  const renderCard = (t: typeof testimonials[0], i: number) => (
+    <div
+      key={i}
+      className="fade-scale service-card-border bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-3 hover:rotate-[0.5deg] hover:shadow-xl relative group overflow-hidden"
+      style={{ transitionDelay: `${i * 80}ms` }}
+    >
+      {/* Quote icon with scale animation */}
+      <svg
+        className={`w-10 h-10 text-emerald-100 mb-4 transition-transform duration-700 ${visible ? 'scale-100' : 'scale-50'}`}
+        style={{ transitionDelay: `${i * 120 + 300}ms` }}
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
+      </svg>
+      <div className="flex gap-0.5 mb-4">
+        {[...Array(5)].map((_, j) => <StarIcon key={j} />)}
+      </div>
+      <p className="text-[var(--color-dark-2)] text-[0.95rem] leading-relaxed mb-6">
+        &ldquo;{t.text}&rdquo;
+      </p>
+      <div className="flex items-center gap-3">
+        <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white font-bold text-sm ring-2 ring-white shadow-md group-hover:scale-110 transition-transform duration-300`}>
+          {t.initial}
+        </div>
+        <div>
+          <div className="font-semibold text-[0.95rem]">{t.name}</div>
+          <div className="text-[var(--color-gray)] text-[0.8rem]">{t.role}</div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section className="pt-32 pb-24 bg-[var(--color-light)] relative overflow-hidden" ref={ref}>
@@ -83,63 +121,12 @@ export default function Testimonials() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.slice(0, 3).map((t, i) => (
-            <div
-              key={i}
-              className="fade-scale bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl relative group"
-              style={{ transitionDelay: `${i * 80}ms` }}
-            >
-              {/* Quote icon */}
-              <svg className="w-10 h-10 text-emerald-100 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
-              </svg>
-              <div className="flex gap-0.5 mb-4">
-                {[...Array(5)].map((_, j) => <StarIcon key={j} />)}
-              </div>
-              <p className="text-[var(--color-dark-2)] text-[0.95rem] leading-relaxed mb-6">
-                &ldquo;{t.text}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white font-bold text-sm ring-2 ring-white shadow-md`}>
-                  {t.initial}
-                </div>
-                <div>
-                  <div className="font-semibold text-[0.95rem]">{t.name}</div>
-                  <div className="text-[var(--color-gray)] text-[0.8rem]">{t.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+          {testimonials.slice(0, 3).map((t, i) => renderCard(t, i))}
         </div>
 
         {/* Second row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-[800px] mx-auto">
-          {testimonials.slice(3).map((t, i) => (
-            <div
-              key={i + 3}
-              className="fade-scale bg-white p-8 rounded-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl relative group"
-              style={{ transitionDelay: `${(i + 3) * 80}ms` }}
-            >
-              <svg className="w-10 h-10 text-emerald-100 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10H14.017zM0 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151C7.546 6.068 5.983 8.789 5.983 11h4v10H0z" />
-              </svg>
-              <div className="flex gap-0.5 mb-4">
-                {[...Array(5)].map((_, j) => <StarIcon key={j} />)}
-              </div>
-              <p className="text-[var(--color-dark-2)] text-[0.95rem] leading-relaxed mb-6">
-                &ldquo;{t.text}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white font-bold text-sm ring-2 ring-white shadow-md`}>
-                  {t.initial}
-                </div>
-                <div>
-                  <div className="font-semibold text-[0.95rem]">{t.name}</div>
-                  <div className="text-[var(--color-gray)] text-[0.8rem]">{t.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
+          {testimonials.slice(3).map((t, i) => renderCard(t, i + 3))}
         </div>
       </div>
     </section>

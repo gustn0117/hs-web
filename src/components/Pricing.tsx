@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 const plans = [
@@ -55,8 +55,24 @@ const commonFeatures = [
   "크로스 브라우저 테스트",
 ];
 
+function DrawCheck({ delay, visible }: { delay: number; visible: boolean }) {
+  return (
+    <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.5 12.75l6 6 9-13.5"
+        strokeDasharray="24"
+        strokeDashoffset={visible ? "0" : "24"}
+        style={{ transition: `stroke-dashoffset 0.5s ease ${delay}ms` }}
+      />
+    </svg>
+  );
+}
+
 export default function Pricing() {
   const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -64,13 +80,17 @@ export default function Pricing() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
+            if (entry.target === ref.current) setVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    ref.current?.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
+    if (ref.current) {
+      observer.observe(ref.current);
+      ref.current.querySelectorAll(".fade-up, .fade-scale").forEach((el) => observer.observe(el));
+    }
     return () => observer.disconnect();
   }, []);
 
@@ -107,7 +127,7 @@ export default function Pricing() {
               )}
               {p.popular && (
                 <div className="absolute -top-0 left-1/2 -translate-x-1/2 mt-4">
-                  <span className="bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white px-5 py-1.5 rounded-full text-[0.8rem] font-semibold shadow-lg shadow-emerald-500/20">
+                  <span className="shimmer-badge bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white px-5 py-1.5 rounded-full text-[0.8rem] font-semibold shadow-lg shadow-emerald-500/20 relative overflow-hidden inline-block">
                     가장 인기
                   </span>
                 </div>
@@ -128,21 +148,19 @@ export default function Pricing() {
                   {p.desc}
                 </div>
                 <ul className="list-none mb-8 space-y-3">
-                  {p.features.map((f) => (
+                  {p.features.map((f, fi) => (
                     <li
                       key={f}
                       className="text-[var(--color-dark-2)] text-[0.95rem] flex items-center gap-3"
                     >
-                      <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
+                      <DrawCheck delay={fi * 120 + i * 200 + 400} visible={visible} />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/contact"
-                  className={`block w-full text-center py-3.5 rounded-xl font-semibold no-underline transition-all duration-300 ${
+                  className={`btn-ripple block w-full text-center py-3.5 rounded-xl font-semibold no-underline transition-all duration-300 ${
                     p.popular
                       ? "bg-gradient-to-r from-[var(--color-primary)] to-emerald-600 text-white hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-[1.02]"
                       : "border border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:bg-emerald-50/50"
@@ -162,11 +180,9 @@ export default function Pricing() {
               모든 플랜 공통 포함 사항
             </h3>
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
-              {commonFeatures.map((f) => (
+              {commonFeatures.map((f, fi) => (
                 <div key={f} className="flex items-center gap-2 text-[var(--color-gray)] text-[0.9rem]">
-                  <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
+                  <DrawCheck delay={fi * 150 + 800} visible={visible} />
                   {f}
                 </div>
               ))}
