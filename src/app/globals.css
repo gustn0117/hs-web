@@ -122,6 +122,7 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+
 /* Section divider */
 .section-divider {
   width: 60px;
@@ -216,56 +217,6 @@ body {
   animation: shimmer-text 3s linear infinite;
 }
 
-/* Glass variants */
-.glass-dark {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-colored {
-  background: linear-gradient(
-    135deg,
-    rgba(16, 185, 129, 0.06),
-    rgba(99, 102, 241, 0.06)
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(16, 185, 129, 0.12);
-}
-
-/* Cursor-following glow on cards */
-.card-glow {
-  position: relative;
-  overflow: hidden;
-}
-.card-glow::before {
-  content: "";
-  position: absolute;
-  top: var(--mouse-y, -100px);
-  left: var(--mouse-x, -100px);
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  transition: opacity 0.3s;
-  opacity: 0;
-  z-index: 1;
-}
-.card-glow:hover::before {
-  opacity: 1;
-}
-
-/* 3D perspective tilt on hover */
-.hover-tilt {
-  transition: transform 0.3s ease;
-  transform-style: preserve-3d;
-}
-.hover-tilt:hover {
-  transform: perspective(800px) rotateX(2deg) rotateY(-3deg) translateZ(10px);
-}
 
 /* Marquee scroll system */
 .marquee-container {
@@ -280,35 +231,6 @@ body {
   animation-play-state: paused;
 }
 
-/* Typewriter text */
-.typewriter-text {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid var(--color-primary);
-  animation:
-    typewriter-reveal 3s steps(30, end) forwards,
-    blink-cursor 0.75s step-end infinite;
-}
-
-/* Skill level bar */
-.skill-bar {
-  height: 6px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.skill-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  border-radius: 3px;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.skill-bar-fill.visible {
-  transform: scaleX(1);
-}
 
 /* Input focus glow */
 .input-glow:focus {
@@ -397,46 +319,7 @@ body {
   opacity: 0;
 }
 
-/* Service card animated gradient border on hover */
-.service-card-border {
-  position: relative;
-}
-.service-card-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));
-  background-size: 300% 300%;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  animation: gradient-shift 3s ease infinite;
-  pointer-events: none;
-}
-.service-card-border:hover::before {
-  opacity: 1;
-}
-
-/* Gradient border animated wrapper */
-.gradient-border-animated {
-  position: relative;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));
-  background-size: 300% 300%;
-  animation: gradient-shift 3s ease infinite;
-  padding: 2px;
-  border-radius: 1rem;
-}
-.gradient-border-animated > * {
-  background: white;
-  border-radius: calc(1rem - 2px);
-}
-
-/* Dark variant */
+/* Gradient border animated (dark) */
 .gradient-border-animated-dark {
   position: relative;
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary-light), var(--color-primary));

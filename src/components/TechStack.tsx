@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const categories = [
   {
     title: "프론트엔드",
     color: "from-emerald-400 to-emerald-600",
+    barColor: "from-emerald-400 to-teal-500",
+    badgeBg: "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100",
     level: 95,
     techs: [
       { name: "React", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="2.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></svg> },
@@ -18,6 +20,8 @@ const categories = [
   {
     title: "백엔드",
     color: "from-indigo-400 to-indigo-600",
+    barColor: "from-indigo-400 to-violet-500",
+    badgeBg: "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100",
     level: 90,
     techs: [
       { name: "Node.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.85l9 5.2v10.4l-9 5.2-9-5.2V7.05l9-5.2z" opacity="0.3" /></svg> },
@@ -30,6 +34,8 @@ const categories = [
   {
     title: "도구 & 플랫폼",
     color: "from-amber-400 to-amber-600",
+    barColor: "from-amber-400 to-orange-500",
+    badgeBg: "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100",
     level: 88,
     techs: [
       { name: "Figma", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2.5" opacity="0.4" /><rect x="6.5" y="3" width="5" height="8" rx="2.5" opacity="0.25" /><rect x="12.5" y="3" width="5" height="5" rx="2.5" opacity="0.3" /></svg> },
@@ -65,12 +71,6 @@ export default function TechStack() {
     return () => observer.disconnect();
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-  }, []);
-
   return (
     <section className="py-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
@@ -89,34 +89,45 @@ export default function TechStack() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((cat, ci) => (
-            <div key={cat.title} className="fade-up" style={{ transitionDelay: `${ci * 100}ms` }}>
-              <div className="text-center mb-5">
-                <h3 className="text-sm font-bold text-[var(--color-gray)] uppercase tracking-[2px] inline-block relative pb-2">
-                  {cat.title}
-                  <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r ${cat.color} rounded`} />
-                </h3>
+            <div
+              key={cat.title}
+              className="fade-up bg-white rounded-2xl border border-gray-100 p-7 hover:shadow-xl hover:shadow-gray-200/40 hover:-translate-y-1 transition-all duration-300 group"
+              style={{ transitionDelay: `${ci * 100}ms` }}
+            >
+              {/* Category header */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                  <span className="text-white font-bold text-sm">
+                    {cat.title === "프론트엔드" ? "FE" : cat.title === "백엔드" ? "BE" : "DV"}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-[var(--color-dark)] text-[1rem]">{cat.title}</h3>
+                  <span className="text-[var(--color-gray-light)] text-[0.75rem]">숙련도 {cat.level}%</span>
+                </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-3">
+
+              {/* Tech badges */}
+              <div className="flex flex-wrap gap-2 mb-6">
                 {cat.techs.map((tech) => (
                   <div
                     key={tech.name}
-                    className="card-glow hover-tilt px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-[0.9rem] font-medium text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:shadow-md transition-all duration-300 cursor-default flex items-center gap-2 relative overflow-hidden"
-                    onMouseMove={handleMouseMove}
+                    className={`px-3.5 py-2 border rounded-xl text-[0.85rem] font-medium transition-all duration-300 cursor-default flex items-center gap-2 ${cat.badgeBg}`}
                   >
-                    <span className="text-[var(--color-primary)] relative z-10">{tech.icon}</span>
-                    <span className="relative z-10">{tech.name}</span>
+                    <span className="opacity-70">{tech.icon}</span>
+                    <span>{tech.name}</span>
                   </div>
                 ))}
               </div>
+
               {/* Skill bar */}
-              <div className="mt-5 px-4">
-                <div className="skill-bar">
+              <div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className={`skill-bar-fill ${visible ? 'visible' : ''}`}
+                    className={`h-full bg-gradient-to-r ${cat.barColor} rounded-full transition-transform duration-1000 ease-out origin-left`}
                     style={{ transform: visible ? `scaleX(${cat.level / 100})` : 'scaleX(0)' }}
                   />
                 </div>
-                <div className="text-right text-[0.75rem] text-[var(--color-gray-light)] mt-1">{cat.level}%</div>
               </div>
             </div>
           ))}
