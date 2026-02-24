@@ -8,8 +8,9 @@ import ScrollToTop from "@/components/ScrollToTop";
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
+  const isClientPortal = pathname.startsWith("/client");
 
-  if (isAdmin) {
+  if (isAdmin || isClientPortal) {
     return <>{children}</>;
   }
 

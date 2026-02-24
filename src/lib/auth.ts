@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import crypto from "crypto";
 
-const ADMIN_PASSWORD = "1234";
-const AUTH_SECRET = "hs-web-admin-secret-key-2024";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "1234";
+const AUTH_SECRET = process.env.AUTH_SECRET || "hs-web-admin-secret-key-2024";
 const AUTH_COOKIE_NAME = "hs-admin-token";
 
 export function generateToken(): string {
