@@ -195,6 +195,23 @@ function Toast({ message, type, onClose }: { message: string; type: "success" | 
 }
 
 // ===========================================================================
+// FormCard (module-level to prevent remount on state changes)
+// ===========================================================================
+
+function FormCard({ title, onSave, onCancel, saving, children }: { title: string; onSave: () => void; onCancel: () => void; saving?: boolean; children: React.ReactNode }) {
+  return (
+    <div className={`${cardClass} mb-5 border-[var(--color-primary)]/20`}>
+      <h4 className="text-[var(--color-dark)] font-semibold mb-4">{title}</h4>
+      {children}
+      <div className="flex gap-3 mt-5">
+        <button onClick={onSave} disabled={saving} className={btnPrimary}>{saving ? "저장 중..." : "저장"}</button>
+        <button onClick={onCancel} className={btnSecondary}>취소</button>
+      </div>
+    </div>
+  );
+}
+
+// ===========================================================================
 // Main component
 // ===========================================================================
 
@@ -430,21 +447,6 @@ export default function ClientDetailPage() {
     await saveEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments`, editingPaymentId, paymentForm as unknown as Record<string, unknown>, setPayments, "payment", setPaymentSaving, setShowPaymentForm, setEditingPaymentId);
   };
   const deletePayment = (id: string) => deleteEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments/${id}`, id, setPayments);
-
-  // =========================================================================
-  // Inline form
-  // =========================================================================
-
-  const FormCard = ({ title, onSave, onCancel, saving, children }: { title: string; onSave: () => void; onCancel: () => void; saving?: boolean; children: React.ReactNode }) => (
-    <div className={`${cardClass} mb-5 border-[var(--color-primary)]/20`}>
-      <h4 className="text-[var(--color-dark)] font-semibold mb-4">{title}</h4>
-      {children}
-      <div className="flex gap-3 mt-5">
-        <button onClick={onSave} disabled={saving} className={btnPrimary}>{saving ? "저장 중..." : "저장"}</button>
-        <button onClick={onCancel} className={btnSecondary}>취소</button>
-      </div>
-    </div>
-  );
 
   // =========================================================================
   // Tab renderers
