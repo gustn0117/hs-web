@@ -67,47 +67,46 @@ export default function Pricing() {
   }, []);
 
   return (
-    <section id="pricing" className="py-[100px]" ref={ref}>
+    <section id="pricing" className="py-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="text-center mb-[60px] fade-up">
-          <div className="inline-flex items-center gap-2 text-[var(--color-primary)] font-semibold text-[0.9rem] uppercase tracking-[2px] mb-4">
-            <span className="w-[30px] h-[2px] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
+        <div className="text-center mb-14 fade-up">
+          <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             PRICING
-          </div>
-          <h2 className="text-[2.5rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
+          </p>
+          <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             가격 안내
           </h2>
-          <p className="text-[var(--color-gray)] text-lg max-w-[600px] mx-auto">
+          <p className="text-[var(--color-gray)] text-lg max-w-[550px] mx-auto">
             프로젝트 규모와 요구사항에 맞는 합리적인 가격을 제안합니다.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {plans.map((p, i) => (
             <div
               key={i}
-              className={`fade-up bg-white p-10 rounded-[20px] transition-all duration-400 relative ${
+              className={`fade-up bg-white p-9 rounded-2xl transition-all duration-300 relative ${
                 p.popular
-                  ? "border-2 border-[var(--color-primary)] lg:scale-105 shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:lg:scale-105 hover:-translate-y-2"
-                  : "border border-black/[0.06] hover:-translate-y-2 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
+                  ? "border-2 border-[var(--color-primary)] lg:scale-105 shadow-lg"
+                  : "border border-gray-100 hover:-translate-y-1 hover:shadow-lg"
               }`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               {p.popular && (
-                <div className="absolute -top-[14px] left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white px-5 py-1.5 rounded-full text-[0.8rem] font-semibold">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-white px-4 py-1 rounded-full text-[0.8rem] font-semibold">
                   인기
                 </div>
               )}
-              <div className="text-[1.1rem] font-semibold text-[var(--color-gray)] mb-2">
+              <div className="text-sm font-semibold text-[var(--color-gray)] mb-2">
                 {p.name}
               </div>
-              <div className="text-[2.8rem] font-extrabold text-[var(--color-dark)] mb-1">
+              <div className="text-[2.5rem] font-extrabold text-[var(--color-dark)] mb-1">
                 {p.price}
                 <span className="text-base font-medium text-[var(--color-gray)]">
                   {p.unit}
                 </span>
               </div>
-              <div className="text-[var(--color-gray)] text-[0.9rem] mb-7 pb-7 border-b border-[var(--color-light)]">
+              <div className="text-[var(--color-gray)] text-sm mb-7 pb-7 border-b border-gray-100">
                 {p.desc}
               </div>
               <ul className="list-none mb-8 space-y-2">
@@ -116,7 +115,7 @@ export default function Pricing() {
                     key={f}
                     className="py-2 text-[var(--color-gray)] text-[0.95rem] flex items-center gap-2.5"
                   >
-                    <span className="w-5 h-5 bg-[rgba(37,99,235,0.1)] rounded-full flex items-center justify-center text-[var(--color-primary)] text-[0.85rem] font-bold shrink-0">
+                    <span className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center text-[var(--color-primary)] text-xs font-bold shrink-0">
                       ✓
                     </span>
                     {f}
@@ -125,10 +124,10 @@ export default function Pricing() {
               </ul>
               <a
                 href="#contact"
-                className={`block w-full text-center py-[14px] rounded-xl font-semibold no-underline transition-all ${
+                className={`block w-full text-center py-3.5 rounded-lg font-semibold no-underline transition-all ${
                   p.popular
-                    ? "bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white hover:shadow-[0_4px_20px_rgba(37,99,235,0.4)] hover:-translate-y-0.5"
-                    : "border-[1.5px] border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white"
+                    ? "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
+                    : "border border-gray-200 text-[var(--color-dark)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                 }`}
               >
                 {p.popular ? "상담 신청" : p.name === "Enterprise" ? "견적 문의" : "상담 신청"}

@@ -43,43 +43,42 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section id="testimonials" className="py-[100px] bg-[var(--color-dark)]" ref={ref}>
+    <section id="testimonials" className="py-24 bg-[var(--color-light)]" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="text-center mb-[60px] fade-up">
-          <div className="inline-flex items-center gap-2 text-[var(--color-accent)] font-semibold text-[0.9rem] uppercase tracking-[2px] mb-4">
-            <span className="w-[30px] h-[2px] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
+        <div className="text-center mb-14 fade-up">
+          <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             TESTIMONIALS
-          </div>
-          <h2 className="text-[2.5rem] font-extrabold text-white mb-4 tracking-tight">
+          </p>
+          <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             고객 후기
           </h2>
-          <p className="text-[var(--color-gray-light)] text-lg max-w-[600px] mx-auto">
+          <p className="text-[var(--color-gray)] text-lg max-w-[550px] mx-auto">
             HS WEB과 함께한 고객님들의 이야기를 들어보세요.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <div
               key={i}
-              className="fade-up bg-[var(--color-dark-2)] p-9 rounded-[20px] border border-white/[0.06] transition-all hover:border-[rgba(37,99,235,0.3)] hover:-translate-y-1"
+              className="fade-up bg-white p-8 rounded-2xl border border-gray-100 transition-all hover:-translate-y-1 hover:shadow-lg"
               style={{ transitionDelay: `${i * 100}ms` }}
             >
-              <div className="text-amber-400 text-[0.9rem] tracking-[3px] mb-[18px]">
+              <div className="text-amber-400 text-sm tracking-[3px] mb-4">
                 ★★★★★
               </div>
-              <p className="text-white/80 text-[0.95rem] leading-relaxed mb-6">
+              <p className="text-[var(--color-dark-2)] text-[0.95rem] leading-relaxed mb-6">
                 &ldquo;{t.text}&rdquo;
               </p>
-              <div className="flex items-center gap-[14px]">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center text-white font-bold text-base">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
                   {t.initial}
                 </div>
                 <div>
-                  <div className="text-white font-semibold text-[0.95rem]">
+                  <div className="font-semibold text-[0.95rem]">
                     {t.name}
                   </div>
-                  <div className="text-[var(--color-gray-light)] text-[0.8rem]">
+                  <div className="text-[var(--color-gray)] text-[0.8rem]">
                     {t.role}
                   </div>
                 </div>

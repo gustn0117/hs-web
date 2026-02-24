@@ -29,31 +29,29 @@ export default function Process() {
   }, []);
 
   return (
-    <section id="process" className="py-[100px] bg-[var(--color-light)]" ref={ref}>
+    <section id="process" className="py-24 bg-[var(--color-light)]" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="text-center mb-[60px] fade-up">
-          <div className="inline-flex items-center gap-2 text-[var(--color-primary)] font-semibold text-[0.9rem] uppercase tracking-[2px] mb-4">
-            <span className="w-[30px] h-[2px] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
+        <div className="text-center mb-14 fade-up">
+          <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
             PROCESS
-          </div>
-          <h2 className="text-[2.5rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
+          </p>
+          <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] mb-4 tracking-tight">
             제작 과정
           </h2>
-          <p className="text-[var(--color-gray)] text-lg max-w-[600px] mx-auto">
+          <p className="text-[var(--color-gray)] text-lg max-w-[550px] mx-auto">
             체계적인 프로세스로 최상의 결과물을 만들어냅니다.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7 relative">
-          {/* Connection line */}
-          <div className="hidden lg:block absolute top-[50px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] opacity-20" />
+          <div className="hidden lg:block absolute top-[42px] left-[15%] right-[15%] h-px bg-gray-200" />
 
           {steps.map((s, i) => (
             <div key={i} className="fade-up text-center relative" style={{ transitionDelay: `${i * 100}ms` }}>
-              <div className="w-16 h-16 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full flex items-center justify-center text-[1.3rem] font-extrabold text-white mx-auto mb-5 relative z-10 shadow-[0_4px_20px_rgba(37,99,235,0.3)]">
+              <div className="w-[84px] h-[84px] bg-white border-2 border-[var(--color-primary)] rounded-full flex items-center justify-center text-[1.2rem] font-extrabold text-[var(--color-primary)] mx-auto mb-5 relative z-10">
                 {s.num}
               </div>
-              <h3 className="text-[1.15rem] font-bold mb-2.5">{s.title}</h3>
+              <h3 className="text-[1.1rem] font-bold mb-2">{s.title}</h3>
               <p className="text-[var(--color-gray)] text-[0.9rem] leading-relaxed">
                 {s.desc}
               </p>

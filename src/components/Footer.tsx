@@ -15,27 +15,27 @@ const footerSections = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-dark)] pt-[60px] pb-[30px]">
+    <footer className="bg-[var(--color-dark)] pt-14 pb-8">
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div>
             <a
               href="#"
-              className="text-[1.4rem] font-extrabold text-white no-underline inline-block mb-4"
+              className="text-[1.3rem] font-extrabold text-white no-underline inline-block mb-4"
             >
-              HS <span className="text-[var(--color-accent)]">WEB</span>
+              HS <span className="text-[var(--color-primary)]">WEB</span>
             </a>
-            <p className="text-[var(--color-gray-light)] text-[0.9rem] leading-relaxed max-w-[280px]">
+            <p className="text-[var(--color-gray-light)] text-[0.9rem] leading-relaxed max-w-[260px]">
               감각적인 디자인과 최신 기술력으로 비즈니스 성장을 돕는 웹 전문
               에이전시입니다.
             </p>
           </div>
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h4 className="text-white font-semibold mb-5 text-base">
+              <h4 className="text-white font-semibold mb-4 text-[0.95rem]">
                 {section.title}
               </h4>
-              <ul className="list-none space-y-3">
+              <ul className="list-none space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link}>
                     <a
@@ -51,24 +51,19 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="border-t border-white/[0.08] pt-7 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-[var(--color-gray-light)] text-[0.85rem]">
             &copy; 2026 HS WEB. All rights reserved.
           </p>
           <div className="flex gap-3">
-            {[
-              { icon: "📷", label: "Instagram" },
-              { icon: "📝", label: "Blog" },
-              { icon: "💬", label: "KakaoTalk" },
-              { icon: "▶", label: "YouTube" },
-            ].map((s) => (
+            {["Instagram", "Blog", "KakaoTalk", "YouTube"].map((s) => (
               <a
-                key={s.label}
+                key={s}
                 href="#"
-                title={s.label}
-                className="w-10 h-10 bg-white/[0.06] rounded-[10px] flex items-center justify-center text-[var(--color-gray-light)] no-underline text-lg hover:bg-[var(--color-primary)] hover:text-white transition-all"
+                title={s}
+                className="w-9 h-9 bg-white/[0.06] rounded-lg flex items-center justify-center text-[var(--color-gray-light)] no-underline text-xs font-semibold hover:bg-[var(--color-primary)] hover:text-white transition-all"
               >
-                {s.icon}
+                {s[0]}
               </a>
             ))}
           </div>
