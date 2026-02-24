@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ScrollToTop from "@/components/ScrollToTop";
+import LayoutShell from "@/components/LayoutShell";
 
 const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
@@ -63,10 +61,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${notoSansKR.variable} font-sans antialiased`}>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <ScrollToTop />
+        <LayoutShell>{children}</LayoutShell>
       </body>
     </html>
   );

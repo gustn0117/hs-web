@@ -10,8 +10,13 @@ import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
+import { getPortfolioItems } from "@/lib/portfolio";
+
+export const dynamic = "force-dynamic";
 
 export default function Home() {
+  const items = getPortfolioItems();
+
   return (
     <>
       <Hero />
@@ -19,7 +24,7 @@ export default function Home() {
       <Stats />
       <Services />
       <TechStack />
-      <Portfolio />
+      <Portfolio items={items} />
       <WhyUs />
       <Process />
       <Pricing />

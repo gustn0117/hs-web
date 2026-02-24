@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Portfolio from "@/components/Portfolio";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
+import { getPortfolioItems } from "@/lib/portfolio";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "포트폴리오 | HS WEB - 웹사이트 제작 전문",
@@ -10,9 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default function PortfolioPage() {
+  const items = getPortfolioItems();
+
   return (
     <>
-      <Portfolio />
+      <Portfolio items={items} />
       <Testimonials />
       <CTA />
     </>
