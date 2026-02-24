@@ -2,12 +2,12 @@
 
 @theme inline {
   --font-sans: var(--font-noto-sans-kr), "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
-  --color-primary: #1d4ed8;
-  --color-primary-dark: #1e40af;
-  --color-primary-light: #3b82f6;
-  --color-accent: #6366f1;
-  --color-accent-dark: #4f46e5;
-  --color-accent-light: #818cf8;
+  --color-primary: #0f1a2d;
+  --color-primary-dark: #0a1220;
+  --color-primary-light: #1d3557;
+  --color-accent: #2563eb;
+  --color-accent-dark: #1d4ed8;
+  --color-accent-light: #3b82f6;
   --color-dark: #0f172a;
   --color-dark-2: #1e293b;
   --color-gray: #64748b;
@@ -80,8 +80,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.3); }
-  50% { box-shadow: 0 0 20px 6px rgba(29, 78, 216, 0.15); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(15, 26, 45, 0.3); }
+  50% { box-shadow: 0 0 20px 6px rgba(15, 26, 45, 0.15); }
 }
 .animate-pulse-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
@@ -134,7 +134,7 @@ body {
 
 /* Dot pattern overlay */
 .dot-pattern {
-  background-image: radial-gradient(circle, rgba(29, 78, 216, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(15, 26, 45, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -257,7 +257,7 @@ body {
 /* Input focus glow */
 .input-glow:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1), 0 0 15px rgba(29, 78, 216, 0.08);
+  box-shadow: 0 0 0 3px rgba(15, 26, 45, 0.1), 0 0 15px rgba(15, 26, 45, 0.08);
 }
 
 /* Link underline slide animation */
