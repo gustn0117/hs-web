@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 const plans = [
   {
@@ -67,7 +68,7 @@ export default function Pricing() {
   }, []);
 
   return (
-    <section id="pricing" className="py-24" ref={ref}>
+    <section className="pt-32 pb-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
@@ -122,8 +123,8 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className={`block w-full text-center py-3.5 rounded-lg font-semibold no-underline transition-all ${
                   p.popular
                     ? "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
@@ -131,7 +132,7 @@ export default function Pricing() {
                 }`}
               >
                 {p.popular ? "상담 신청" : p.name === "Enterprise" ? "견적 문의" : "상담 신청"}
-              </a>
+              </Link>
             </div>
           ))}
         </div>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section className="min-h-screen bg-white flex items-center pt-[72px]">
@@ -22,18 +24,18 @@ export default function Hero() {
             </p>
 
             <div className="flex gap-4 flex-wrap justify-center lg:justify-start">
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className="inline-flex items-center gap-2 px-8 py-[14px] rounded-lg font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] transition-all no-underline"
               >
                 무료 상담 받기 →
-              </a>
-              <a
-                href="#portfolio"
+              </Link>
+              <Link
+                href="/portfolio"
                 className="inline-flex items-center gap-2 px-8 py-[14px] rounded-lg font-semibold text-[var(--color-dark)] border border-gray-200 hover:border-gray-400 transition-all no-underline"
               >
                 포트폴리오 보기
-              </a>
+              </Link>
             </div>
 
             <div className="grid grid-cols-3 gap-5 mt-12">

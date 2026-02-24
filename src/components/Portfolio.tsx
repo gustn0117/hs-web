@@ -97,7 +97,7 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <section id="portfolio" className="py-24" ref={ref}>
+    <section className="pt-32 pb-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">

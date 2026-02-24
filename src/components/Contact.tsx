@@ -71,7 +71,7 @@ export default function Contact() {
     "w-full px-4 py-3.5 border border-gray-200 rounded-lg text-[0.95rem] transition-all focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-emerald-100";
 
   return (
-    <section id="contact" className="py-24" ref={ref}>
+    <section className="pt-32 pb-24" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">

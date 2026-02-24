@@ -1,15 +1,32 @@
+import Link from "next/link";
+
 const footerSections = [
   {
     title: "서비스",
-    links: ["반응형 홈페이지", "쇼핑몰 구축", "랜딩페이지", "웹 애플리케이션"],
+    links: [
+      { label: "반응형 홈페이지", href: "/services" },
+      { label: "쇼핑몰 구축", href: "/services" },
+      { label: "랜딩페이지", href: "/services" },
+      { label: "웹 애플리케이션", href: "/services" },
+    ],
   },
   {
     title: "회사",
-    links: ["포트폴리오", "제작 과정", "가격 안내", "문의하기"],
+    links: [
+      { label: "포트폴리오", href: "/portfolio" },
+      { label: "제작 과정", href: "/process" },
+      { label: "가격 안내", href: "/pricing" },
+      { label: "문의하기", href: "/contact" },
+    ],
   },
   {
     title: "고객지원",
-    links: ["개인정보처리방침", "이용약관", "FAQ", "블로그"],
+    links: [
+      { label: "개인정보처리방침", href: "#" },
+      { label: "이용약관", href: "#" },
+      { label: "FAQ", href: "#" },
+      { label: "블로그", href: "#" },
+    ],
   },
 ];
 
@@ -19,12 +36,12 @@ export default function Footer() {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div>
-            <a
-              href="#"
+            <Link
+              href="/"
               className="text-[1.3rem] font-extrabold text-white no-underline inline-block mb-4"
             >
               HS <span className="text-[var(--color-primary)]">WEB</span>
-            </a>
+            </Link>
             <p className="text-[var(--color-gray-light)] text-[0.9rem] leading-relaxed max-w-[260px]">
               감각적인 디자인과 최신 기술력으로 비즈니스 성장을 돕는 웹 전문
               에이전시입니다.
@@ -37,13 +54,13 @@ export default function Footer() {
               </h4>
               <ul className="list-none space-y-2.5">
                 {section.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
                       className="text-[var(--color-gray-light)] no-underline text-[0.9rem] hover:text-white transition-colors"
                     >
-                      {link}
-                    </a>
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

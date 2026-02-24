@@ -85,7 +85,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section id="services" className="py-24 bg-[var(--color-light)]" ref={ref}>
+    <section className="pt-32 pb-24 bg-[var(--color-light)]" ref={ref}>
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-14 fade-up">
           <p className="text-[var(--color-primary)] font-semibold text-sm uppercase tracking-[2px] mb-3">
