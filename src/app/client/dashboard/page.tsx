@@ -20,6 +20,8 @@ interface Project {
   description: string | null;
   started_at: string | null;
   completed_at: string | null;
+  unit_price: number | null;
+  platform: string | null;
 }
 
 interface Hosting {
@@ -484,6 +486,11 @@ export default function ClientDashboardPage() {
                       <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
                         {p.status}
                       </span>
+                      {p.platform && (
+                        <span className="px-2.5 py-1 text-[0.7rem] font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
+                          {p.platform}
+                        </span>
+                      )}
                     </div>
                     {p.website_url && (
                       <p className="text-[var(--color-accent)] text-sm break-all inline-flex items-center gap-1">

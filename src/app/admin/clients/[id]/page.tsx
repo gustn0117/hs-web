@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import AdminHeader from "@/app/admin/components/AdminHeader";
@@ -32,6 +32,8 @@ interface Project {
   description: string;
   started_at: string;
   completed_at: string;
+  unit_price: number;
+  platform: string;
 }
 
 interface Hosting {
@@ -145,7 +147,7 @@ const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
 
 const defaultProjectForm = (): Omit<Project, "id"> => ({
   name: "", website_url: "", tech_stack: "", admin_url: "", admin_id: "", admin_pw: "",
-  status: "상담중", description: "", started_at: "", completed_at: "",
+  status: "상담중", description: "", started_at: "", completed_at: "", unit_price: 0, platform: "",
 });
 
 const defaultHostingForm = (): Omit<Hosting, "id"> => ({
@@ -195,6 +197,301 @@ function Toast({ message, type, onClose }: { message: string; type: "success" | 
 }
 
 // ===========================================================================
+// Custom Select component
+// ===========================================================================
+
+interface SelectOption {
+  value: string;
+  label: string;
+  color?: string;
+}
+
+function CustomSelect({
+  options,
+  value,
+  onChange,
+  placeholder = "선택하세요",
+}: {
+  options: SelectOption[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}
+      >
+        <span className={`flex items-center gap-2 ${!selected ? "text-gray-400" : ""}`}>
+          {selected?.color && (
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${selected.color}`} />
+          )}
+          {selected?.label || placeholder}
+        </span>
+        <svg
+          className={`w-4 h-4 text-[var(--color-gray)] shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden animate-[fadeSlideDown_0.15s_ease]">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-[0.95rem] flex items-center gap-2.5 cursor-pointer transition-colors border-none ${
+                opt.value === value
+                  ? "bg-[var(--color-primary)]/5 text-[var(--color-primary)] font-medium"
+                  : "bg-white text-[var(--color-dark)] hover:bg-gray-50"
+              }`}
+            >
+              {opt.color && <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${opt.color}`} />}
+              {opt.label}
+              {opt.value === value && (
+                <svg className="w-4 h-4 ml-auto text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ===========================================================================
+// Custom DatePicker component
+// ===========================================================================
+
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+const MONTHS_KR = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function DatePicker({
+  value,
+  onChange,
+  placeholder = "날짜 선택",
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const today = new Date();
+  const parsed = value ? new Date(value + "T00:00:00") : null;
+
+  const [viewYear, setViewYear] = useState(parsed?.getFullYear() ?? today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(parsed?.getMonth() ?? today.getMonth());
+  const [showYearPicker, setShowYearPicker] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        setShowYearPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  useEffect(() => {
+    if (open && parsed) {
+      setViewYear(parsed.getFullYear());
+      setViewMonth(parsed.getMonth());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const daysInMonth = getDaysInMonth(viewYear, viewMonth);
+  const firstDow = new Date(viewYear, viewMonth, 1).getDay();
+
+  const prevMonth = () => {
+    if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); }
+    else setViewMonth((m) => m - 1);
+  };
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewYear((y) => y + 1); setViewMonth(0); }
+    else setViewMonth((m) => m + 1);
+  };
+
+  const selectDate = (day: number) => {
+    const mm = String(viewMonth + 1).padStart(2, "0");
+    const dd = String(day).padStart(2, "0");
+    onChange(`${viewYear}-${mm}-${dd}`);
+    setOpen(false);
+    setShowYearPicker(false);
+  };
+
+  const clearDate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onChange("");
+    setOpen(false);
+  };
+
+  const isToday = (day: number) =>
+    viewYear === today.getFullYear() && viewMonth === today.getMonth() && day === today.getDate();
+  const isSelected = (day: number) =>
+    parsed && viewYear === parsed.getFullYear() && viewMonth === parsed.getMonth() && day === parsed.getDate();
+
+  const years = Array.from({ length: 21 }, (_, i) => today.getFullYear() - 10 + i);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => { setOpen(!open); setShowYearPicker(false); }}
+        className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}
+      >
+        <span className={`flex items-center gap-2 ${!value ? "text-gray-400" : ""}`}>
+          <svg className="w-4 h-4 text-[var(--color-gray)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+          </svg>
+          {parsed ? formatDate(value) : placeholder}
+        </span>
+        <div className="flex items-center gap-1">
+          {value && (
+            <span onClick={clearDate} className="p-0.5 hover:bg-gray-200 rounded-full transition-colors">
+              <svg className="w-3.5 h-3.5 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          )}
+        </div>
+      </button>
+      {open && (
+        <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
+          {showYearPicker ? (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <button type="button" onClick={() => setShowYearPicker(false)} className="text-[var(--color-gray)] hover:text-[var(--color-dark)] bg-transparent border-none cursor-pointer p-1">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </button>
+                <span className="text-sm font-semibold text-[var(--color-dark)]">연도 선택</span>
+                <div className="w-6" />
+              </div>
+              <div className="grid grid-cols-3 gap-1.5 max-h-[220px] overflow-y-auto">
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    type="button"
+                    onClick={() => { setViewYear(y); setShowYearPicker(false); }}
+                    className={`py-2 rounded-lg text-sm cursor-pointer border-none transition-colors ${
+                      y === viewYear
+                        ? "bg-[var(--color-primary)] text-white font-semibold"
+                        : y === today.getFullYear()
+                        ? "bg-blue-50 text-blue-600 font-medium hover:bg-blue-100"
+                        : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"
+                    }`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <button type="button" onClick={prevMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowYearPicker(true)}
+                  className="text-sm font-bold text-[var(--color-dark)] bg-transparent border-none cursor-pointer hover:text-[var(--color-accent)] transition-colors px-2 py-1 rounded-lg hover:bg-gray-50"
+                >
+                  {viewYear}년 {MONTHS_KR[viewMonth]}
+                </button>
+                <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                </button>
+              </div>
+              <div className="grid grid-cols-7 mb-1">
+                {WEEKDAYS.map((d, i) => (
+                  <div key={d} className={`text-center text-[0.7rem] font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7">
+                {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+                  const dow = (firstDow + day - 1) % 7;
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => selectDate(day)}
+                      className={`py-1.5 text-[0.85rem] rounded-lg cursor-pointer border-none transition-all ${
+                        isSelected(day)
+                          ? "bg-[var(--color-primary)] text-white font-bold"
+                          : isToday(day)
+                          ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100"
+                          : dow === 0
+                          ? "bg-transparent text-red-400 hover:bg-red-50"
+                          : dow === 6
+                          ? "bg-transparent text-blue-400 hover:bg-blue-50"
+                          : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setViewYear(today.getFullYear());
+                    setViewMonth(today.getMonth());
+                    selectDate(today.getDate());
+                  }}
+                  className="text-[0.8rem] text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium"
+                >
+                  오늘
+                </button>
+                {value && (
+                  <button
+                    type="button"
+                    onClick={clearDate}
+                    className="text-[0.8rem] text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline"
+                  >
+                    초기화
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ===========================================================================
 // FormCard (module-level to prevent remount on state changes)
 // ===========================================================================
 
@@ -210,6 +507,47 @@ function FormCard({ title, onSave, onCancel, saving, children }: { title: string
     </div>
   );
 }
+
+// ===========================================================================
+// Select option configs
+// ===========================================================================
+
+const projectStatusOptions: SelectOption[] = [
+  { value: "상담중", label: "상담중", color: "bg-yellow-400" },
+  { value: "진행중", label: "진행중", color: "bg-blue-400" },
+  { value: "완료", label: "완료", color: "bg-emerald-400" },
+  { value: "유지보수", label: "유지보수", color: "bg-purple-400" },
+];
+
+const billingCycleOptions: SelectOption[] = [
+  { value: "monthly", label: "월간" },
+  { value: "yearly", label: "연간" },
+];
+
+const paymentTypeOptions: SelectOption[] = [
+  { value: "제작비", label: "제작비" },
+  { value: "호스팅", label: "호스팅" },
+  { value: "도메인", label: "도메인" },
+  { value: "유지보수", label: "유지보수" },
+  { value: "기타", label: "기타" },
+];
+
+const paymentStatusOptions: SelectOption[] = [
+  { value: "paid", label: "완료", color: "bg-emerald-400" },
+  { value: "pending", label: "대기", color: "bg-yellow-400" },
+  { value: "overdue", label: "미납", color: "bg-red-400" },
+];
+
+const platformOptions: SelectOption[] = [
+  { value: "", label: "선택 안함" },
+  { value: "크몽", label: "크몽" },
+  { value: "숨고", label: "숨고" },
+  { value: "프리모아", label: "프리모아" },
+  { value: "위시켓", label: "위시켓" },
+  { value: "직접 의뢰", label: "직접 의뢰" },
+  { value: "소개", label: "소개" },
+  { value: "기타", label: "기타" },
+];
 
 // ===========================================================================
 // Main component
@@ -397,7 +735,7 @@ export default function ClientDetailPage() {
   // =========================================================================
   const openProjectAdd = () => { setProjectForm(defaultProjectForm()); setEditingProjectId(null); setShowProjectForm(true); };
   const openProjectEdit = (p: Project) => {
-    setProjectForm({ name: p.name||"", website_url: p.website_url||"", tech_stack: p.tech_stack||"", admin_url: p.admin_url||"", admin_id: p.admin_id||"", admin_pw: p.admin_pw||"", status: p.status||"상담중", description: p.description||"", started_at: p.started_at??"", completed_at: p.completed_at??"" });
+    setProjectForm({ name: p.name||"", website_url: p.website_url||"", tech_stack: p.tech_stack||"", admin_url: p.admin_url||"", admin_id: p.admin_id||"", admin_pw: p.admin_pw||"", status: p.status||"상담중", description: p.description||"", started_at: p.started_at??"", completed_at: p.completed_at??"", unit_price: p.unit_price||0, platform: p.platform||"" });
     setEditingProjectId(p.id); setShowProjectForm(true);
   };
   const saveProject = async () => {
@@ -462,14 +800,16 @@ export default function ClientDetailPage() {
         <FormCard title={editingProjectId ? "프로젝트 수정" : "새 프로젝트"} onSave={saveProject} onCancel={() => { setShowProjectForm(false); setEditingProjectId(null); }} saving={projectSaving}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div><label className={labelClass}>프로젝트명 *</label><input className={inputClass} placeholder="프로젝트명" value={projectForm.name} onChange={(e) => setProjectForm((p) => ({ ...p, name: e.target.value }))} /></div>
-            <div><label className={labelClass}>상태</label><select className={inputClass} value={projectForm.status} onChange={(e) => setProjectForm((p) => ({ ...p, status: e.target.value }))}><option value="상담중">상담중</option><option value="진행중">진행중</option><option value="완료">완료</option><option value="유지보수">유지보수</option></select></div>
+            <div><label className={labelClass}>상태</label><CustomSelect options={projectStatusOptions} value={projectForm.status} onChange={(v) => setProjectForm((p) => ({ ...p, status: v }))} /></div>
             <div><label className={labelClass}>웹사이트 URL</label><input className={inputClass} placeholder="https://example.com" value={projectForm.website_url} onChange={(e) => setProjectForm((p) => ({ ...p, website_url: e.target.value }))} /></div>
             <div><label className={labelClass}>기술 스택</label><input className={inputClass} placeholder="Next.js, React, ..." value={projectForm.tech_stack} onChange={(e) => setProjectForm((p) => ({ ...p, tech_stack: e.target.value }))} /></div>
             <div><label className={labelClass}>관리자 URL</label><input className={inputClass} placeholder="https://example.com/admin" value={projectForm.admin_url} onChange={(e) => setProjectForm((p) => ({ ...p, admin_url: e.target.value }))} /></div>
             <div><label className={labelClass}>관리자 ID</label><input className={inputClass} placeholder="admin ID" value={projectForm.admin_id} onChange={(e) => setProjectForm((p) => ({ ...p, admin_id: e.target.value }))} /></div>
             <div><label className={labelClass}>관리자 PW</label><input className={inputClass} placeholder="admin PW" value={projectForm.admin_pw} onChange={(e) => setProjectForm((p) => ({ ...p, admin_pw: e.target.value }))} /></div>
-            <div><label className={labelClass}>시작일</label><input type="date" className={inputClass} value={projectForm.started_at} onChange={(e) => setProjectForm((p) => ({ ...p, started_at: e.target.value }))} /></div>
-            <div><label className={labelClass}>완료일</label><input type="date" className={inputClass} value={projectForm.completed_at} onChange={(e) => setProjectForm((p) => ({ ...p, completed_at: e.target.value }))} /></div>
+            <div><label className={labelClass}>작업 단가 (원)</label><input type="number" className={inputClass} placeholder="0" value={projectForm.unit_price || ""} onChange={(e) => setProjectForm((p) => ({ ...p, unit_price: Number(e.target.value) }))} /></div>
+            <div><label className={labelClass}>수주 플랫폼</label><CustomSelect options={platformOptions} value={projectForm.platform} onChange={(v) => setProjectForm((p) => ({ ...p, platform: v }))} placeholder="플랫폼 선택" /></div>
+            <div><label className={labelClass}>시작일</label><DatePicker value={projectForm.started_at} onChange={(v) => setProjectForm((p) => ({ ...p, started_at: v }))} placeholder="시작일 선택" /></div>
+            <div><label className={labelClass}>완료일</label><DatePicker value={projectForm.completed_at} onChange={(v) => setProjectForm((p) => ({ ...p, completed_at: v }))} placeholder="완료일 선택" /></div>
           </div>
           <div><label className={labelClass}>설명</label><textarea className={`${inputClass} resize-y`} rows={3} placeholder="프로젝트에 대한 설명" value={projectForm.description} onChange={(e) => setProjectForm((p) => ({ ...p, description: e.target.value }))} /></div>
         </FormCard>
@@ -480,9 +820,10 @@ export default function ClientDetailPage() {
             <div key={p.id} className={cardClass}>
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{p.name}</h4>
                     <span className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
+                    {p.platform && <span className="px-2 py-0.5 text-[0.7rem] font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
                   </div>
                   {p.website_url && <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all">{p.website_url}</a>}
                 </div>
@@ -493,6 +834,7 @@ export default function ClientDetailPage() {
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                 {p.tech_stack && <div><span className="text-[var(--color-gray)] text-xs block">기술 스택</span><span className="text-[var(--color-dark-2)]">{p.tech_stack}</span></div>}
+                {p.unit_price > 0 && <div><span className="text-[var(--color-gray)] text-xs block">작업 단가</span><span className="text-[var(--color-dark)] font-semibold">{formatAmount(p.unit_price)}</span></div>}
                 {p.admin_url && <div><span className="text-[var(--color-gray)] text-xs block">관리자 URL</span><a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block">{p.admin_url}</a></div>}
                 {p.admin_id && <div><span className="text-[var(--color-gray)] text-xs block">관리자 ID</span><span className="text-[var(--color-dark-2)]">{p.admin_id}</span></div>}
                 {p.admin_pw && <div><span className="text-[var(--color-gray)] text-xs block">관리자 PW</span><span className="text-[var(--color-dark-2)]">{p.admin_pw}</span></div>}
@@ -514,9 +856,9 @@ export default function ClientDetailPage() {
             <div><label className={labelClass}>호스팅 업체 *</label><input className={inputClass} placeholder="카페24, AWS, ..." value={hostingForm.provider} onChange={(e) => setHostingForm((p) => ({ ...p, provider: e.target.value }))} /></div>
             <div><label className={labelClass}>플랜</label><input className={inputClass} placeholder="Basic, Pro, ..." value={hostingForm.plan} onChange={(e) => setHostingForm((p) => ({ ...p, plan: e.target.value }))} /></div>
             <div><label className={labelClass}>금액 (원)</label><input type="number" className={inputClass} placeholder="0" value={hostingForm.amount || ""} onChange={(e) => setHostingForm((p) => ({ ...p, amount: Number(e.target.value) }))} /></div>
-            <div><label className={labelClass}>결제 주기</label><select className={inputClass} value={hostingForm.billing_cycle} onChange={(e) => setHostingForm((p) => ({ ...p, billing_cycle: e.target.value }))}><option value="monthly">월간</option><option value="yearly">연간</option></select></div>
-            <div><label className={labelClass}>시작일</label><input type="date" className={inputClass} value={hostingForm.start_date} onChange={(e) => setHostingForm((p) => ({ ...p, start_date: e.target.value }))} /></div>
-            <div><label className={labelClass}>만료일</label><input type="date" className={inputClass} value={hostingForm.end_date} onChange={(e) => setHostingForm((p) => ({ ...p, end_date: e.target.value }))} /></div>
+            <div><label className={labelClass}>결제 주기</label><CustomSelect options={billingCycleOptions} value={hostingForm.billing_cycle} onChange={(v) => setHostingForm((p) => ({ ...p, billing_cycle: v }))} /></div>
+            <div><label className={labelClass}>시작일</label><DatePicker value={hostingForm.start_date} onChange={(v) => setHostingForm((p) => ({ ...p, start_date: v }))} placeholder="시작일 선택" /></div>
+            <div><label className={labelClass}>만료일</label><DatePicker value={hostingForm.end_date} onChange={(v) => setHostingForm((p) => ({ ...p, end_date: v }))} placeholder="만료일 선택" /></div>
           </div>
           <div className="mb-4"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="호스팅 관련 메모" value={hostingForm.memo} onChange={(e) => setHostingForm((p) => ({ ...p, memo: e.target.value }))} /></div>
           <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={hostingForm.auto_renew} onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
@@ -547,8 +889,8 @@ export default function ClientDetailPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div><label className={labelClass}>도메인명 *</label><input className={inputClass} placeholder="example.com" value={domainForm.domain_name} onChange={(e) => setDomainForm((p) => ({ ...p, domain_name: e.target.value }))} /></div>
             <div><label className={labelClass}>등록기관</label><input className={inputClass} placeholder="가비아, 후이즈, ..." value={domainForm.registrar} onChange={(e) => setDomainForm((p) => ({ ...p, registrar: e.target.value }))} /></div>
-            <div><label className={labelClass}>등록일</label><input type="date" className={inputClass} value={domainForm.registered_date} onChange={(e) => setDomainForm((p) => ({ ...p, registered_date: e.target.value }))} /></div>
-            <div><label className={labelClass}>만료일</label><input type="date" className={inputClass} value={domainForm.expires_date} onChange={(e) => setDomainForm((p) => ({ ...p, expires_date: e.target.value }))} /></div>
+            <div><label className={labelClass}>등록일</label><DatePicker value={domainForm.registered_date} onChange={(v) => setDomainForm((p) => ({ ...p, registered_date: v }))} placeholder="등록일 선택" /></div>
+            <div><label className={labelClass}>만료일</label><DatePicker value={domainForm.expires_date} onChange={(v) => setDomainForm((p) => ({ ...p, expires_date: v }))} placeholder="만료일 선택" /></div>
             <div className="sm:col-span-2"><label className={labelClass}>네임서버</label><input className={inputClass} placeholder="ns1.example.com, ns2.example.com" value={domainForm.nameservers} onChange={(e) => setDomainForm((p) => ({ ...p, nameservers: e.target.value }))} /></div>
           </div>
           <div className="mb-4"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="도메인 관련 메모" value={domainForm.memo} onChange={(e) => setDomainForm((p) => ({ ...p, memo: e.target.value }))} /></div>
@@ -590,9 +932,9 @@ export default function ClientDetailPage() {
           <FormCard title={editingPaymentId ? "결제 수정" : "새 결제"} onSave={savePayment} onCancel={() => { setShowPaymentForm(false); setEditingPaymentId(null); }} saving={paymentSaving}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div><label className={labelClass}>금액 (원) *</label><input type="number" className={inputClass} placeholder="0" value={paymentForm.amount || ""} onChange={(e) => setPaymentForm((p) => ({ ...p, amount: Number(e.target.value) }))} /></div>
-              <div><label className={labelClass}>유형</label><select className={inputClass} value={paymentForm.type} onChange={(e) => setPaymentForm((p) => ({ ...p, type: e.target.value }))}><option value="제작비">제작비</option><option value="호스팅">호스팅</option><option value="도메인">도메인</option><option value="유지보수">유지보수</option><option value="기타">기타</option></select></div>
-              <div><label className={labelClass}>결제일</label><input type="date" className={inputClass} value={paymentForm.payment_date} onChange={(e) => setPaymentForm((p) => ({ ...p, payment_date: e.target.value }))} /></div>
-              <div><label className={labelClass}>상태</label><select className={inputClass} value={paymentForm.status} onChange={(e) => setPaymentForm((p) => ({ ...p, status: e.target.value }))}><option value="paid">완료</option><option value="pending">대기</option><option value="overdue">미납</option></select></div>
+              <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={(v) => setPaymentForm((p) => ({ ...p, type: v }))} /></div>
+              <div><label className={labelClass}>결제일</label><DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" /></div>
+              <div><label className={labelClass}>상태</label><CustomSelect options={paymentStatusOptions} value={paymentForm.status} onChange={(v) => setPaymentForm((p) => ({ ...p, status: v }))} /></div>
               <div className="sm:col-span-2"><label className={labelClass}>설명</label><input className={inputClass} placeholder="결제 설명" value={paymentForm.description} onChange={(e) => setPaymentForm((p) => ({ ...p, description: e.target.value }))} /></div>
             </div>
             <div><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="결제 관련 메모" value={paymentForm.memo} onChange={(e) => setPaymentForm((p) => ({ ...p, memo: e.target.value }))} /></div>
@@ -700,7 +1042,10 @@ export default function ClientDetailPage() {
 
         {renderActiveTab()}
       </div>
-      <style>{`@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`}</style>
+      <style>{`
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </div>
   );
 }

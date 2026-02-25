@@ -20,6 +20,8 @@ interface Project {
   description: string | null;
   started_at: string | null;
   completed_at: string | null;
+  unit_price: number | null;
+  platform: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -180,6 +182,11 @@ export default function ClientProjectDetailPage() {
                 <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
                   {project.status}
                 </span>
+                {project.platform && (
+                  <span className="px-3 py-1 text-[0.75rem] font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
+                    {project.platform}
+                  </span>
+                )}
               </div>
               {project.website_url && (
                 <a
@@ -216,6 +223,13 @@ export default function ClientProjectDetailPage() {
                   </span>
                 ))}
               </div>
+            </div>
+          )}
+
+          {project.unit_price != null && project.unit_price > 0 && (
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+              <h3 className="text-[var(--color-gray)] text-xs font-medium mb-2">작업 단가</h3>
+              <p className="text-[var(--color-dark)] font-semibold">{Number(project.unit_price).toLocaleString()}원</p>
             </div>
           )}
 
