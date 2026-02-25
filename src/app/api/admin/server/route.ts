@@ -174,7 +174,10 @@ function getUptime(): MetricResult<UptimeData> {
 }
 
 function getNetworkTraffic(): MetricResult<NetworkInterface[]> {
-  const content = readProcFile(`${HOST_PROC}/net/dev`);
+  // Try host PID 1's network namespace first (more accurate than /host/proc/net/dev
+  // which shows container's network namespace)
+  const hostNetDev = readProcFile(`${HOST_PROC}/1/net/dev`);
+  const content = hostNetDev || readProcFile(`${HOST_PROC}/net/dev`);
   if (!content) return { available: false, error: "net/dev를 읽을 수 없습니다" };
 
   try {
@@ -199,6 +202,16 @@ function getNetworkTraffic(): MetricResult<NetworkInterface[]> {
         txHuman: formatBytes(txBytes),
       });
     }
+
+    // Sort: physical interfaces first (eth/ens), then bridges, then virtual
+    interfaces.sort((a, b) => {
+      const order = (n: string) => {
+        if (n.startsWith("eth") || n.startsWith("ens") || n.startsWith("enp")) return 0;
+        if (n.startsWith("br-") || n.startsWith("docker") || n.startsWith("veth")) return 2;
+        return 1;
+      };
+      return order(a.name) - order(b.name) || a.name.localeCompare(b.name);
+    });
 
     return { available: true, data: interfaces };
   } catch {
@@ -254,7 +267,10 @@ function getDiskUsage(): MetricResult<DiskData> {
 function getListeningPorts(): MetricResult<PortData[]> {
   const ports = new Set<string>();
 
+  // Try host PID 1's network namespace for accurate host ports
   for (const [file, protocol] of [
+    [`${HOST_PROC}/1/net/tcp`, "tcp"],
+    [`${HOST_PROC}/1/net/tcp6`, "tcp6"],
     [`${HOST_PROC}/net/tcp`, "tcp"],
     [`${HOST_PROC}/net/tcp6`, "tcp6"],
   ] as const) {
