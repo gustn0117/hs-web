@@ -38,6 +38,7 @@ interface Project {
 
 interface Hosting {
   id: string;
+  project_id: string | null;
   provider: string;
   plan: string;
   amount: number;
@@ -50,6 +51,7 @@ interface Hosting {
 
 interface Domain {
   id: string;
+  project_id: string | null;
   domain_name: string;
   registrar: string;
   registered_date: string;
@@ -69,7 +71,7 @@ interface Payment {
   memo: string;
 }
 
-type TabKey = "projects" | "hosting" | "domains" | "payments";
+type TabKey = "projects" | "payments";
 
 // ---------------------------------------------------------------------------
 // Shared style constants
@@ -89,6 +91,8 @@ const btnDanger =
   "px-3 py-1.5 bg-red-50 border border-red-200 text-red-500 text-[0.8rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all";
 const btnSmall =
   "px-3 py-1.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-[0.8rem] rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all";
+const btnMini =
+  "px-2 py-1 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-[0.7rem] rounded-lg cursor-pointer hover:bg-gray-100 transition-all";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -151,12 +155,12 @@ const defaultProjectForm = (): Omit<Project, "id"> => ({
 });
 
 const defaultHostingForm = (): Omit<Hosting, "id"> => ({
-  provider: "", plan: "", amount: 0, billing_cycle: "monthly",
+  project_id: null, provider: "", plan: "", amount: 0, billing_cycle: "monthly",
   start_date: "", end_date: "", auto_renew: false, memo: "",
 });
 
 const defaultDomainForm = (): Omit<Domain, "id"> => ({
-  domain_name: "", registrar: "", registered_date: "", expires_date: "",
+  project_id: null, domain_name: "", registrar: "", registered_date: "", expires_date: "",
   auto_renew: false, nameservers: "", memo: "",
 });
 
@@ -289,55 +293,30 @@ function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
 }
 
-function DatePicker({
-  value,
-  onChange,
-  placeholder = "날짜 선택",
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}) {
+function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
   const today = new Date();
   const parsed = value ? new Date(value + "T00:00:00") : null;
-
   const [viewYear, setViewYear] = useState(parsed?.getFullYear() ?? today.getFullYear());
   const [viewMonth, setViewMonth] = useState(parsed?.getMonth() ?? today.getMonth());
   const [showYearPicker, setShowYearPicker] = useState(false);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setShowYearPicker(false);
-      }
-    };
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) { setOpen(false); setShowYearPicker(false); } };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   useEffect(() => {
-    if (open && parsed) {
-      setViewYear(parsed.getFullYear());
-      setViewMonth(parsed.getMonth());
-    }
+    if (open && parsed) { setViewYear(parsed.getFullYear()); setViewMonth(parsed.getMonth()); }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDow = new Date(viewYear, viewMonth, 1).getDay();
-
-  const prevMonth = () => {
-    if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); }
-    else setViewMonth((m) => m - 1);
-  };
-  const nextMonth = () => {
-    if (viewMonth === 11) { setViewYear((y) => y + 1); setViewMonth(0); }
-    else setViewMonth((m) => m + 1);
-  };
+  const prevMonth = () => { if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); } else setViewMonth((m) => m - 1); };
+  const nextMonth = () => { if (viewMonth === 11) { setViewYear((y) => y + 1); setViewMonth(0); } else setViewMonth((m) => m + 1); };
 
   const selectDate = (day: number) => {
     const mm = String(viewMonth + 1).padStart(2, "0");
@@ -347,141 +326,53 @@ function DatePicker({
     setShowYearPicker(false);
   };
 
-  const clearDate = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onChange("");
-    setOpen(false);
-  };
-
-  const isToday = (day: number) =>
-    viewYear === today.getFullYear() && viewMonth === today.getMonth() && day === today.getDate();
-  const isSelected = (day: number) =>
-    parsed && viewYear === parsed.getFullYear() && viewMonth === parsed.getMonth() && day === parsed.getDate();
-
+  const clearDate = (e: React.MouseEvent) => { e.stopPropagation(); onChange(""); setOpen(false); };
+  const isToday = (day: number) => viewYear === today.getFullYear() && viewMonth === today.getMonth() && day === today.getDate();
+  const isSelected = (day: number) => parsed && viewYear === parsed.getFullYear() && viewMonth === parsed.getMonth() && day === parsed.getDate();
   const years = Array.from({ length: 21 }, (_, i) => today.getFullYear() - 10 + i);
 
   return (
     <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => { setOpen(!open); setShowYearPicker(false); }}
-        className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}
-      >
+      <button type="button" onClick={() => { setOpen(!open); setShowYearPicker(false); }} className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}>
         <span className={`flex items-center gap-2 ${!value ? "text-gray-400" : ""}`}>
-          <svg className="w-4 h-4 text-[var(--color-gray)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-          </svg>
+          <svg className="w-4 h-4 text-[var(--color-gray)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
           {parsed ? formatDate(value) : placeholder}
         </span>
-        <div className="flex items-center gap-1">
-          {value && (
-            <span onClick={clearDate} className="p-0.5 hover:bg-gray-200 rounded-full transition-colors">
-              <svg className="w-3.5 h-3.5 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </span>
-          )}
-        </div>
+        {value && <span onClick={clearDate} className="p-0.5 hover:bg-gray-200 rounded-full transition-colors"><svg className="w-3.5 h-3.5 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>}
       </button>
       {open && (
         <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
           {showYearPicker ? (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <button type="button" onClick={() => setShowYearPicker(false)} className="text-[var(--color-gray)] hover:text-[var(--color-dark)] bg-transparent border-none cursor-pointer p-1">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-                </button>
+                <button type="button" onClick={() => setShowYearPicker(false)} className="text-[var(--color-gray)] hover:text-[var(--color-dark)] bg-transparent border-none cursor-pointer p-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
                 <span className="text-sm font-semibold text-[var(--color-dark)]">연도 선택</span>
                 <div className="w-6" />
               </div>
               <div className="grid grid-cols-3 gap-1.5 max-h-[220px] overflow-y-auto">
                 {years.map((y) => (
-                  <button
-                    key={y}
-                    type="button"
-                    onClick={() => { setViewYear(y); setShowYearPicker(false); }}
-                    className={`py-2 rounded-lg text-sm cursor-pointer border-none transition-colors ${
-                      y === viewYear
-                        ? "bg-[var(--color-primary)] text-white font-semibold"
-                        : y === today.getFullYear()
-                        ? "bg-blue-50 text-blue-600 font-medium hover:bg-blue-100"
-                        : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"
-                    }`}
-                  >
-                    {y}
-                  </button>
+                  <button key={y} type="button" onClick={() => { setViewYear(y); setShowYearPicker(false); }} className={`py-2 rounded-lg text-sm cursor-pointer border-none transition-colors ${y === viewYear ? "bg-[var(--color-primary)] text-white font-semibold" : y === today.getFullYear() ? "bg-blue-50 text-blue-600 font-medium hover:bg-blue-100" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{y}</button>
                 ))}
               </div>
             </div>
           ) : (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <button type="button" onClick={prevMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowYearPicker(true)}
-                  className="text-sm font-bold text-[var(--color-dark)] bg-transparent border-none cursor-pointer hover:text-[var(--color-accent)] transition-colors px-2 py-1 rounded-lg hover:bg-gray-50"
-                >
-                  {viewYear}년 {MONTHS_KR[viewMonth]}
-                </button>
-                <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-                </button>
+                <button type="button" onClick={prevMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                <button type="button" onClick={() => setShowYearPicker(true)} className="text-sm font-bold text-[var(--color-dark)] bg-transparent border-none cursor-pointer hover:text-[var(--color-accent)] transition-colors px-2 py-1 rounded-lg hover:bg-gray-50">{viewYear}년 {MONTHS_KR[viewMonth]}</button>
+                <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
               </div>
-              <div className="grid grid-cols-7 mb-1">
-                {WEEKDAYS.map((d, i) => (
-                  <div key={d} className={`text-center text-[0.7rem] font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>
-                ))}
-              </div>
+              <div className="grid grid-cols-7 mb-1">{WEEKDAYS.map((d, i) => (<div key={d} className={`text-center text-[0.7rem] font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>))}</div>
               <div className="grid grid-cols-7">
                 {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                   const dow = (firstDow + day - 1) % 7;
-                  return (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => selectDate(day)}
-                      className={`py-1.5 text-[0.85rem] rounded-lg cursor-pointer border-none transition-all ${
-                        isSelected(day)
-                          ? "bg-[var(--color-primary)] text-white font-bold"
-                          : isToday(day)
-                          ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100"
-                          : dow === 0
-                          ? "bg-transparent text-red-400 hover:bg-red-50"
-                          : dow === 6
-                          ? "bg-transparent text-blue-400 hover:bg-blue-50"
-                          : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  );
+                  return (<button key={day} type="button" onClick={() => selectDate(day)} className={`py-1.5 text-[0.85rem] rounded-lg cursor-pointer border-none transition-all ${isSelected(day) ? "bg-[var(--color-primary)] text-white font-bold" : isToday(day) ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100" : dow === 0 ? "bg-transparent text-red-400 hover:bg-red-50" : dow === 6 ? "bg-transparent text-blue-400 hover:bg-blue-50" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{day}</button>);
                 })}
               </div>
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setViewYear(today.getFullYear());
-                    setViewMonth(today.getMonth());
-                    selectDate(today.getDate());
-                  }}
-                  className="text-[0.8rem] text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium"
-                >
-                  오늘
-                </button>
-                {value && (
-                  <button
-                    type="button"
-                    onClick={clearDate}
-                    className="text-[0.8rem] text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline"
-                  >
-                    초기화
-                  </button>
-                )}
+                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-[0.8rem] text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
+                {value && <button type="button" onClick={clearDate} className="text-[0.8rem] text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
               </div>
             </div>
           )}
@@ -492,7 +383,27 @@ function DatePicker({
 }
 
 // ===========================================================================
-// FormCard (module-level to prevent remount on state changes)
+// AmountInput - comma-formatted number input
+// ===========================================================================
+
+function AmountInput({ value, onChange, placeholder }: { value: number; onChange: (v: number) => void; placeholder?: string }) {
+  const displayValue = value ? Number(value).toLocaleString() : "";
+  return (
+    <input
+      className={inputClass}
+      inputMode="numeric"
+      placeholder={placeholder || "0"}
+      value={displayValue}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, "");
+        onChange(raw ? parseInt(raw, 10) : 0);
+      }}
+    />
+  );
+}
+
+// ===========================================================================
+// FormCard
 // ===========================================================================
 
 function FormCard({ title, onSave, onCancel, saving, children }: { title: string; onSave: () => void; onCancel: () => void; saving?: boolean; children: React.ReactNode }) {
@@ -576,15 +487,13 @@ export default function ClientDetailPage() {
   const [projectSaving, setProjectSaving] = useState(false);
 
   const [hostings, setHostings] = useState<Hosting[]>([]);
-  const [hostingLoading, setHostingLoading] = useState(false);
-  const [showHostingForm, setShowHostingForm] = useState(false);
+  const [hostingFormProjectId, setHostingFormProjectId] = useState<string | null>(null);
   const [editingHostingId, setEditingHostingId] = useState<string | null>(null);
   const [hostingForm, setHostingForm] = useState(defaultHostingForm());
   const [hostingSaving, setHostingSaving] = useState(false);
 
   const [domains, setDomains] = useState<Domain[]>([]);
-  const [domainsLoading, setDomainsLoading] = useState(false);
-  const [showDomainForm, setShowDomainForm] = useState(false);
+  const [domainFormProjectId, setDomainFormProjectId] = useState<string | null>(null);
   const [editingDomainId, setEditingDomainId] = useState<string | null>(null);
   const [domainForm, setDomainForm] = useState(defaultDomainForm());
   const [domainSaving, setDomainSaving] = useState(false);
@@ -635,15 +544,13 @@ export default function ClientDetailPage() {
   }, [clientId]);
 
   const fetchHostings = useCallback(async () => {
-    setHostingLoading(true);
     try { const r = await fetch(`/api/clients/${clientId}/hosting`); const d = await r.json(); setHostings(d.hosting ?? []); }
-    catch { /* ignore */ } finally { setHostingLoading(false); }
+    catch { /* ignore */ }
   }, [clientId]);
 
   const fetchDomains = useCallback(async () => {
-    setDomainsLoading(true);
     try { const r = await fetch(`/api/clients/${clientId}/domains`); const d = await r.json(); setDomains(d.domains ?? []); }
-    catch { /* ignore */ } finally { setDomainsLoading(false); }
+    catch { /* ignore */ }
   }, [clientId]);
 
   const fetchPayments = useCallback(async () => {
@@ -654,10 +561,8 @@ export default function ClientDetailPage() {
 
   useEffect(() => { fetchClient(); }, [fetchClient]);
   useEffect(() => {
-    if (activeTab === "projects") fetchProjects();
-    else if (activeTab === "hosting") fetchHostings();
-    else if (activeTab === "domains") fetchDomains();
-    else if (activeTab === "payments") fetchPayments();
+    if (activeTab === "projects") { fetchProjects(); fetchHostings(); fetchDomains(); }
+    else if (activeTab === "payments") { fetchPayments(); }
   }, [activeTab, fetchProjects, fetchHostings, fetchDomains, fetchPayments]);
 
   // =========================================================================
@@ -686,15 +591,9 @@ export default function ClientDetailPage() {
   // =========================================================================
 
   const saveEntity = async <T,>(
-    entityName: string,
-    urlBase: string,
-    editingId: string | null,
-    formData: Record<string, unknown>,
-    setList: React.Dispatch<React.SetStateAction<T[]>>,
-    responseKey: string,
-    setSaving: (b: boolean) => void,
-    setShow: (b: boolean) => void,
-    setEditId: (id: string | null) => void,
+    entityName: string, urlBase: string, editingId: string | null, formData: Record<string, unknown>,
+    setList: React.Dispatch<React.SetStateAction<T[]>>, responseKey: string,
+    setSaving: (b: boolean) => void, onDone: () => void, setEditId: (id: string | null) => void,
   ) => {
     setSaving(true);
     const cleaned = clean(formData);
@@ -714,16 +613,11 @@ export default function ClientDetailPage() {
         showToast(`${entityName}이(가) 추가되었습니다.`);
       } else { showToast(r.error!, "error"); return; }
     }
-    setShow(false);
+    onDone();
     setEditId(null);
   };
 
-  const deleteEntity = async <T,>(
-    entityName: string,
-    url: string,
-    id: string,
-    setList: React.Dispatch<React.SetStateAction<T[]>>,
-  ) => {
+  const deleteEntity = async <T,>(entityName: string, url: string, id: string, setList: React.Dispatch<React.SetStateAction<T[]>>) => {
     if (!confirm(`이 ${entityName}을(를) 삭제하시겠습니까?`)) return;
     const r = await api(url, "DELETE");
     if (r.ok) { setList((prev) => prev.filter((item) => (item as { id: string }).id !== id)); showToast(`${entityName}이(가) 삭제되었습니다.`); }
@@ -731,7 +625,7 @@ export default function ClientDetailPage() {
   };
 
   // =========================================================================
-  // Projects
+  // Projects CRUD
   // =========================================================================
   const openProjectAdd = () => { setProjectForm(defaultProjectForm()); setEditingProjectId(null); setShowProjectForm(true); };
   const openProjectEdit = (p: Project) => {
@@ -740,40 +634,50 @@ export default function ClientDetailPage() {
   };
   const saveProject = async () => {
     if (!projectForm.name.trim()) { showToast("프로젝트명은 필수입니다.", "error"); return; }
-    await saveEntity<Project>("프로젝트", `/api/clients/${clientId}/projects`, editingProjectId, projectForm as unknown as Record<string, unknown>, setProjects, "project", setProjectSaving, setShowProjectForm, setEditingProjectId);
+    await saveEntity<Project>("프로젝트", `/api/clients/${clientId}/projects`, editingProjectId, projectForm as unknown as Record<string, unknown>, setProjects, "project", setProjectSaving, () => setShowProjectForm(false), setEditingProjectId);
   };
   const deleteProject = (id: string) => deleteEntity<Project>("프로젝트", `/api/clients/${clientId}/projects/${id}`, id, setProjects);
 
   // =========================================================================
-  // Hosting
+  // Hosting CRUD (per-project)
   // =========================================================================
-  const openHostingAdd = () => { setHostingForm(defaultHostingForm()); setEditingHostingId(null); setShowHostingForm(true); };
-  const openHostingEdit = (h: Hosting) => {
-    setHostingForm({ provider: h.provider||"", plan: h.plan||"", amount: h.amount, billing_cycle: h.billing_cycle||"monthly", start_date: h.start_date??"", end_date: h.end_date??"", auto_renew: h.auto_renew, memo: h.memo||"" });
-    setEditingHostingId(h.id); setShowHostingForm(true);
+  const openHostingAdd = (projectId: string) => {
+    setHostingForm({ ...defaultHostingForm(), project_id: projectId });
+    setEditingHostingId(null);
+    setHostingFormProjectId(projectId);
+  };
+  const openHostingEdit = (projectId: string, h: Hosting) => {
+    setHostingForm({ project_id: projectId, provider: h.provider||"", plan: h.plan||"", amount: h.amount, billing_cycle: h.billing_cycle||"monthly", start_date: h.start_date??"", end_date: h.end_date??"", auto_renew: h.auto_renew, memo: h.memo||"" });
+    setEditingHostingId(h.id);
+    setHostingFormProjectId(projectId);
   };
   const saveHosting = async () => {
     if (!hostingForm.provider.trim()) { showToast("호스팅 업체명은 필수입니다.", "error"); return; }
-    await saveEntity<Hosting>("호스팅", `/api/clients/${clientId}/hosting`, editingHostingId, hostingForm as unknown as Record<string, unknown>, setHostings, "hosting", setHostingSaving, setShowHostingForm, setEditingHostingId);
+    await saveEntity<Hosting>("호스팅", `/api/clients/${clientId}/hosting`, editingHostingId, hostingForm as unknown as Record<string, unknown>, setHostings, "hosting", setHostingSaving, () => setHostingFormProjectId(null), setEditingHostingId);
   };
   const deleteHosting = (id: string) => deleteEntity<Hosting>("호스팅", `/api/clients/${clientId}/hosting/${id}`, id, setHostings);
 
   // =========================================================================
-  // Domains
+  // Domains CRUD (per-project)
   // =========================================================================
-  const openDomainAdd = () => { setDomainForm(defaultDomainForm()); setEditingDomainId(null); setShowDomainForm(true); };
-  const openDomainEdit = (d: Domain) => {
-    setDomainForm({ domain_name: d.domain_name||"", registrar: d.registrar||"", registered_date: d.registered_date??"", expires_date: d.expires_date??"", auto_renew: d.auto_renew, nameservers: d.nameservers||"", memo: d.memo||"" });
-    setEditingDomainId(d.id); setShowDomainForm(true);
+  const openDomainAdd = (projectId: string) => {
+    setDomainForm({ ...defaultDomainForm(), project_id: projectId });
+    setEditingDomainId(null);
+    setDomainFormProjectId(projectId);
+  };
+  const openDomainEdit = (projectId: string, d: Domain) => {
+    setDomainForm({ project_id: projectId, domain_name: d.domain_name||"", registrar: d.registrar||"", registered_date: d.registered_date??"", expires_date: d.expires_date??"", auto_renew: d.auto_renew, nameservers: d.nameservers||"", memo: d.memo||"" });
+    setEditingDomainId(d.id);
+    setDomainFormProjectId(projectId);
   };
   const saveDomain = async () => {
     if (!domainForm.domain_name.trim()) { showToast("도메인명은 필수입니다.", "error"); return; }
-    await saveEntity<Domain>("도메인", `/api/clients/${clientId}/domains`, editingDomainId, domainForm as unknown as Record<string, unknown>, setDomains, "domain", setDomainSaving, setShowDomainForm, setEditingDomainId);
+    await saveEntity<Domain>("도메인", `/api/clients/${clientId}/domains`, editingDomainId, domainForm as unknown as Record<string, unknown>, setDomains, "domain", setDomainSaving, () => setDomainFormProjectId(null), setEditingDomainId);
   };
   const deleteDomain = (id: string) => deleteEntity<Domain>("도메인", `/api/clients/${clientId}/domains/${id}`, id, setDomains);
 
   // =========================================================================
-  // Payments
+  // Payments CRUD
   // =========================================================================
   const openPaymentAdd = () => { setPaymentForm(defaultPaymentForm()); setEditingPaymentId(null); setShowPaymentForm(true); };
   const openPaymentEdit = (p: Payment) => {
@@ -782,9 +686,182 @@ export default function ClientDetailPage() {
   };
   const savePayment = async () => {
     if (!paymentForm.amount || paymentForm.amount <= 0) { showToast("금액을 입력하세요.", "error"); return; }
-    await saveEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments`, editingPaymentId, paymentForm as unknown as Record<string, unknown>, setPayments, "payment", setPaymentSaving, setShowPaymentForm, setEditingPaymentId);
+    await saveEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments`, editingPaymentId, paymentForm as unknown as Record<string, unknown>, setPayments, "payment", setPaymentSaving, () => setShowPaymentForm(false), setEditingPaymentId);
   };
   const deletePayment = (id: string) => deleteEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments/${id}`, id, setPayments);
+
+  // =========================================================================
+  // Inline hosting form
+  // =========================================================================
+  const renderHostingForm = () => (
+    <div className="bg-blue-50/50 rounded-xl p-4 mb-3 border border-blue-100">
+      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingHostingId ? "호스팅 수정" : "호스팅 추가"}</h5>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div><label className={labelClass}>호스팅 업체 *</label><input className={inputClass} placeholder="카페24, AWS, ..." value={hostingForm.provider} onChange={(e) => setHostingForm((p) => ({ ...p, provider: e.target.value }))} /></div>
+        <div><label className={labelClass}>플랜</label><input className={inputClass} placeholder="Basic, Pro, ..." value={hostingForm.plan} onChange={(e) => setHostingForm((p) => ({ ...p, plan: e.target.value }))} /></div>
+        <div><label className={labelClass}>금액 (원)</label><AmountInput value={hostingForm.amount} onChange={(v) => setHostingForm((p) => ({ ...p, amount: v }))} /></div>
+        <div><label className={labelClass}>결제 주기</label><CustomSelect options={billingCycleOptions} value={hostingForm.billing_cycle} onChange={(v) => setHostingForm((p) => ({ ...p, billing_cycle: v }))} /></div>
+        <div><label className={labelClass}>시작일</label><DatePicker value={hostingForm.start_date} onChange={(v) => setHostingForm((p) => ({ ...p, start_date: v }))} placeholder="시작일 선택" /></div>
+        <div><label className={labelClass}>만료일</label><DatePicker value={hostingForm.end_date} onChange={(v) => setHostingForm((p) => ({ ...p, end_date: v }))} placeholder="만료일 선택" /></div>
+      </div>
+      <div className="mt-3"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="호스팅 관련 메모" value={hostingForm.memo} onChange={(e) => setHostingForm((p) => ({ ...p, memo: e.target.value }))} /></div>
+      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={hostingForm.auto_renew} onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
+      <div className="flex gap-2 mt-4">
+        <button onClick={saveHosting} disabled={hostingSaving} className={btnPrimary}>{hostingSaving ? "저장 중..." : "저장"}</button>
+        <button onClick={() => setHostingFormProjectId(null)} className={btnSecondary}>취소</button>
+      </div>
+    </div>
+  );
+
+  // =========================================================================
+  // Inline domain form
+  // =========================================================================
+  const renderDomainForm = () => (
+    <div className="bg-emerald-50/50 rounded-xl p-4 mb-3 border border-emerald-100">
+      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingDomainId ? "도메인 수정" : "도메인 추가"}</h5>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div><label className={labelClass}>도메인명 *</label><input className={inputClass} placeholder="example.com" value={domainForm.domain_name} onChange={(e) => setDomainForm((p) => ({ ...p, domain_name: e.target.value }))} /></div>
+        <div><label className={labelClass}>등록기관</label><input className={inputClass} placeholder="가비아, 후이즈, ..." value={domainForm.registrar} onChange={(e) => setDomainForm((p) => ({ ...p, registrar: e.target.value }))} /></div>
+        <div><label className={labelClass}>등록일</label><DatePicker value={domainForm.registered_date} onChange={(v) => setDomainForm((p) => ({ ...p, registered_date: v }))} placeholder="등록일 선택" /></div>
+        <div><label className={labelClass}>만료일</label><DatePicker value={domainForm.expires_date} onChange={(v) => setDomainForm((p) => ({ ...p, expires_date: v }))} placeholder="만료일 선택" /></div>
+        <div className="sm:col-span-2"><label className={labelClass}>네임서버</label><input className={inputClass} placeholder="ns1.example.com, ns2.example.com" value={domainForm.nameservers} onChange={(e) => setDomainForm((p) => ({ ...p, nameservers: e.target.value }))} /></div>
+      </div>
+      <div className="mt-3"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="도메인 관련 메모" value={domainForm.memo} onChange={(e) => setDomainForm((p) => ({ ...p, memo: e.target.value }))} /></div>
+      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={domainForm.auto_renew} onChange={(e) => setDomainForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
+      <div className="flex gap-2 mt-4">
+        <button onClick={saveDomain} disabled={domainSaving} className={btnPrimary}>{domainSaving ? "저장 중..." : "저장"}</button>
+        <button onClick={() => setDomainFormProjectId(null)} className={btnSecondary}>취소</button>
+      </div>
+    </div>
+  );
+
+  // =========================================================================
+  // Project card with inline hosting/domains
+  // =========================================================================
+  const renderProjectCard = (p: Project) => {
+    const pHostings = hostings.filter((h) => h.project_id === p.id);
+    const pDomains = domains.filter((d) => d.project_id === p.id);
+
+    return (
+      <div key={p.id} className={cardClass}>
+        {/* Project header */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{p.name}</h4>
+              <span className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
+              {p.platform && <span className="px-2 py-0.5 text-[0.7rem] font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
+            </div>
+            {p.website_url && <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all">{p.website_url}</a>}
+          </div>
+          <div className="flex gap-1.5 ml-3 shrink-0">
+            <button onClick={() => openProjectEdit(p)} className={btnSmall}>수정</button>
+            <button onClick={() => deleteProject(p.id)} className={btnDanger}>삭제</button>
+          </div>
+        </div>
+
+        {/* Project info */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          {p.tech_stack && <div><span className="text-[var(--color-gray)] text-xs block">기술 스택</span><span className="text-[var(--color-dark-2)]">{p.tech_stack}</span></div>}
+          {p.unit_price > 0 && <div><span className="text-[var(--color-gray)] text-xs block">작업 단가</span><span className="text-[var(--color-dark)] font-semibold">{formatAmount(p.unit_price)}</span></div>}
+          {p.admin_url && <div><span className="text-[var(--color-gray)] text-xs block">관리자 URL</span><a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block">{p.admin_url}</a></div>}
+          {p.admin_id && <div><span className="text-[var(--color-gray)] text-xs block">관리자 ID</span><span className="text-[var(--color-dark-2)]">{p.admin_id}</span></div>}
+          {p.admin_pw && <div><span className="text-[var(--color-gray)] text-xs block">관리자 PW</span><span className="text-[var(--color-dark-2)]">{p.admin_pw}</span></div>}
+          {p.started_at && <div><span className="text-[var(--color-gray)] text-xs block">시작일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.started_at)}</span></div>}
+          {p.completed_at && <div><span className="text-[var(--color-gray)] text-xs block">완료일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.completed_at)}</span></div>}
+        </div>
+        {p.description && <p className="mt-3 pt-3 border-t border-gray-100 text-[var(--color-gray)] text-sm">{p.description}</p>}
+
+        {/* ── Hosting section ── */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <h5 className="text-[var(--color-dark-2)] text-sm font-semibold flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" /></svg>
+              호스팅 <span className="text-[var(--color-gray)] font-normal">{pHostings.length}건</span>
+            </h5>
+            <button onClick={() => openHostingAdd(p.id)} className={btnMini}>+ 추가</button>
+          </div>
+          {hostingFormProjectId === p.id && renderHostingForm()}
+          {pHostings.length === 0 && hostingFormProjectId !== p.id && (
+            <p className="text-[var(--color-gray)] text-xs py-2">등록된 호스팅이 없습니다.</p>
+          )}
+          {pHostings.map((h) => (
+            <div key={h.id} className="bg-gray-50 rounded-xl px-4 py-3 mb-2">
+              <div className="flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-medium text-sm text-[var(--color-dark)]">{h.provider}</span>
+                    {h.plan && <span className="text-[var(--color-gray)] text-sm">· {h.plan}</span>}
+                    {h.auto_renew && <span className="px-1.5 py-0.5 text-[0.6rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-[var(--color-gray)]">
+                    <span>{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span>
+                    {h.start_date && <span>시작: {formatDate(h.start_date)}</span>}
+                    {h.end_date && (
+                      <span className={isExpired(h.end_date) ? "text-red-500 font-medium" : isWithin30Days(h.end_date) ? "text-orange-500 font-medium" : ""}>
+                        만료: {formatDate(h.end_date)}
+                        {isExpired(h.end_date) && " (만료됨)"}
+                        {!isExpired(h.end_date) && isWithin30Days(h.end_date) && " (임박)"}
+                      </span>
+                    )}
+                  </div>
+                  {h.memo && <p className="text-xs text-[var(--color-gray)] mt-1">{h.memo}</p>}
+                </div>
+                <div className="flex gap-1 ml-2 shrink-0">
+                  <button onClick={() => openHostingEdit(p.id, h)} className={btnMini}>수정</button>
+                  <button onClick={() => deleteHosting(h.id)} className="px-2 py-1 bg-red-50 border border-red-200 text-red-400 text-[0.7rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Domain section ── */}
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <h5 className="text-[var(--color-dark-2)] text-sm font-semibold flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253" /></svg>
+              도메인 <span className="text-[var(--color-gray)] font-normal">{pDomains.length}건</span>
+            </h5>
+            <button onClick={() => openDomainAdd(p.id)} className={btnMini}>+ 추가</button>
+          </div>
+          {domainFormProjectId === p.id && renderDomainForm()}
+          {pDomains.length === 0 && domainFormProjectId !== p.id && (
+            <p className="text-[var(--color-gray)] text-xs py-2">등록된 도메인이 없습니다.</p>
+          )}
+          {pDomains.map((d) => (
+            <div key={d.id} className="bg-gray-50 rounded-xl px-4 py-3 mb-2">
+              <div className="flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-medium text-sm text-[var(--color-dark)]">{d.domain_name}</span>
+                    {d.registrar && <span className="text-[var(--color-gray)] text-sm">· {d.registrar}</span>}
+                    {d.auto_renew && <span className="px-1.5 py-0.5 text-[0.6rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-[var(--color-gray)]">
+                    {d.registered_date && <span>등록: {formatDate(d.registered_date)}</span>}
+                    {d.expires_date && (
+                      <span className={isExpired(d.expires_date) ? "text-red-500 font-medium" : isWithin30Days(d.expires_date) ? "text-orange-500 font-medium" : ""}>
+                        만료: {formatDate(d.expires_date)}
+                        {isExpired(d.expires_date) && " (만료됨)"}
+                        {!isExpired(d.expires_date) && isWithin30Days(d.expires_date) && " (임박)"}
+                      </span>
+                    )}
+                    {d.nameservers && <span>NS: {d.nameservers}</span>}
+                  </div>
+                  {d.memo && <p className="text-xs text-[var(--color-gray)] mt-1">{d.memo}</p>}
+                </div>
+                <div className="flex gap-1 ml-2 shrink-0">
+                  <button onClick={() => openDomainEdit(p.id, d)} className={btnMini}>수정</button>
+                  <button onClick={() => deleteDomain(d.id)} className="px-2 py-1 bg-red-50 border border-red-200 text-red-400 text-[0.7rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   // =========================================================================
   // Tab renderers
@@ -806,7 +883,7 @@ export default function ClientDetailPage() {
             <div><label className={labelClass}>관리자 URL</label><input className={inputClass} placeholder="https://example.com/admin" value={projectForm.admin_url} onChange={(e) => setProjectForm((p) => ({ ...p, admin_url: e.target.value }))} /></div>
             <div><label className={labelClass}>관리자 ID</label><input className={inputClass} placeholder="admin ID" value={projectForm.admin_id} onChange={(e) => setProjectForm((p) => ({ ...p, admin_id: e.target.value }))} /></div>
             <div><label className={labelClass}>관리자 PW</label><input className={inputClass} placeholder="admin PW" value={projectForm.admin_pw} onChange={(e) => setProjectForm((p) => ({ ...p, admin_pw: e.target.value }))} /></div>
-            <div><label className={labelClass}>작업 단가 (원)</label><input type="number" className={inputClass} placeholder="0" value={projectForm.unit_price || ""} onChange={(e) => setProjectForm((p) => ({ ...p, unit_price: Number(e.target.value) }))} /></div>
+            <div><label className={labelClass}>작업 단가 (원)</label><AmountInput value={projectForm.unit_price} onChange={(v) => setProjectForm((p) => ({ ...p, unit_price: v }))} /></div>
             <div><label className={labelClass}>수주 플랫폼</label><CustomSelect options={platformOptions} value={projectForm.platform} onChange={(v) => setProjectForm((p) => ({ ...p, platform: v }))} placeholder="플랫폼 선택" /></div>
             <div><label className={labelClass}>시작일</label><DatePicker value={projectForm.started_at} onChange={(v) => setProjectForm((p) => ({ ...p, started_at: v }))} placeholder="시작일 선택" /></div>
             <div><label className={labelClass}>완료일</label><DatePicker value={projectForm.completed_at} onChange={(v) => setProjectForm((p) => ({ ...p, completed_at: v }))} placeholder="완료일 선택" /></div>
@@ -816,101 +893,7 @@ export default function ClientDetailPage() {
       )}
       {projectsLoading ? <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
         : projects.length === 0 ? <div className="text-center py-12 text-[var(--color-gray)]"><svg className="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>등록된 프로젝트가 없습니다.</div>
-        : <div className="space-y-4">{projects.map((p) => (
-            <div key={p.id} className={cardClass}>
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{p.name}</h4>
-                    <span className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
-                    {p.platform && <span className="px-2 py-0.5 text-[0.7rem] font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
-                  </div>
-                  {p.website_url && <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all">{p.website_url}</a>}
-                </div>
-                <div className="flex gap-1.5 ml-3 shrink-0">
-                  <button onClick={() => openProjectEdit(p)} className={btnSmall}>수정</button>
-                  <button onClick={() => deleteProject(p.id)} className={btnDanger}>삭제</button>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                {p.tech_stack && <div><span className="text-[var(--color-gray)] text-xs block">기술 스택</span><span className="text-[var(--color-dark-2)]">{p.tech_stack}</span></div>}
-                {p.unit_price > 0 && <div><span className="text-[var(--color-gray)] text-xs block">작업 단가</span><span className="text-[var(--color-dark)] font-semibold">{formatAmount(p.unit_price)}</span></div>}
-                {p.admin_url && <div><span className="text-[var(--color-gray)] text-xs block">관리자 URL</span><a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block">{p.admin_url}</a></div>}
-                {p.admin_id && <div><span className="text-[var(--color-gray)] text-xs block">관리자 ID</span><span className="text-[var(--color-dark-2)]">{p.admin_id}</span></div>}
-                {p.admin_pw && <div><span className="text-[var(--color-gray)] text-xs block">관리자 PW</span><span className="text-[var(--color-dark-2)]">{p.admin_pw}</span></div>}
-                {p.started_at && <div><span className="text-[var(--color-gray)] text-xs block">시작일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.started_at)}</span></div>}
-                {p.completed_at && <div><span className="text-[var(--color-gray)] text-xs block">완료일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.completed_at)}</span></div>}
-              </div>
-              {p.description && <p className="mt-3 pt-3 border-t border-gray-100 text-[var(--color-gray)] text-sm">{p.description}</p>}
-            </div>
-          ))}</div>}
-    </div>
-  );
-
-  const renderHostingTab = () => (
-    <div>
-      <div className="flex items-center justify-between mb-5"><h3 className="text-[var(--color-dark)] font-semibold">호스팅 <span className="text-[var(--color-gray)] font-normal text-sm ml-2">{hostings.length}건</span></h3><button onClick={openHostingAdd} className={btnPrimary}>+ 추가</button></div>
-      {showHostingForm && (
-        <FormCard title={editingHostingId ? "호스팅 수정" : "새 호스팅"} onSave={saveHosting} onCancel={() => { setShowHostingForm(false); setEditingHostingId(null); }} saving={hostingSaving}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div><label className={labelClass}>호스팅 업체 *</label><input className={inputClass} placeholder="카페24, AWS, ..." value={hostingForm.provider} onChange={(e) => setHostingForm((p) => ({ ...p, provider: e.target.value }))} /></div>
-            <div><label className={labelClass}>플랜</label><input className={inputClass} placeholder="Basic, Pro, ..." value={hostingForm.plan} onChange={(e) => setHostingForm((p) => ({ ...p, plan: e.target.value }))} /></div>
-            <div><label className={labelClass}>금액 (원)</label><input type="number" className={inputClass} placeholder="0" value={hostingForm.amount || ""} onChange={(e) => setHostingForm((p) => ({ ...p, amount: Number(e.target.value) }))} /></div>
-            <div><label className={labelClass}>결제 주기</label><CustomSelect options={billingCycleOptions} value={hostingForm.billing_cycle} onChange={(v) => setHostingForm((p) => ({ ...p, billing_cycle: v }))} /></div>
-            <div><label className={labelClass}>시작일</label><DatePicker value={hostingForm.start_date} onChange={(v) => setHostingForm((p) => ({ ...p, start_date: v }))} placeholder="시작일 선택" /></div>
-            <div><label className={labelClass}>만료일</label><DatePicker value={hostingForm.end_date} onChange={(v) => setHostingForm((p) => ({ ...p, end_date: v }))} placeholder="만료일 선택" /></div>
-          </div>
-          <div className="mb-4"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="호스팅 관련 메모" value={hostingForm.memo} onChange={(e) => setHostingForm((p) => ({ ...p, memo: e.target.value }))} /></div>
-          <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={hostingForm.auto_renew} onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
-        </FormCard>
-      )}
-      {hostingLoading ? <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
-        : hostings.length === 0 ? <div className="text-center py-12 text-[var(--color-gray)]"><svg className="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" /></svg>등록된 호스팅 정보가 없습니다.</div>
-        : <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{hostings.map((h) => (
-            <div key={h.id} className={cardClass}>
-              <div className="flex items-start justify-between mb-3"><div><h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{h.provider}</h4>{h.plan && <p className="text-[var(--color-gray)] text-sm">{h.plan}</p>}</div>{h.auto_renew && <span className="px-2 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}</div>
-              <div className="space-y-2 text-sm mb-3">
-                <div className="flex justify-between"><span className="text-[var(--color-gray)]">금액</span><span className="text-[var(--color-dark)] font-semibold">{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span></div>
-                {h.start_date && <div className="flex justify-between"><span className="text-[var(--color-gray)]">시작일</span><span className="text-[var(--color-dark-2)]">{formatDate(h.start_date)}</span></div>}
-                {h.end_date && <div className="flex justify-between"><span className="text-[var(--color-gray)]">만료일</span><span className={`font-medium ${isExpired(h.end_date) ? "text-red-600" : isWithin30Days(h.end_date) ? "text-orange-500" : "text-[var(--color-dark-2)]"}`}>{formatDate(h.end_date)}{isExpired(h.end_date) && <span className="ml-1 text-[0.7rem]">(만료됨)</span>}{!isExpired(h.end_date) && isWithin30Days(h.end_date) && <span className="ml-1 text-[0.7rem]">(만료 임박)</span>}</span></div>}
-              </div>
-              {h.memo && <p className="text-[var(--color-gray)] text-sm mb-3 bg-gray-50 rounded-lg px-3 py-2">{h.memo}</p>}
-              <div className="flex gap-1.5 pt-3 border-t border-gray-100"><button onClick={() => openHostingEdit(h)} className={btnSmall}>수정</button><button onClick={() => deleteHosting(h.id)} className={btnDanger}>삭제</button></div>
-            </div>
-          ))}</div>}
-    </div>
-  );
-
-  const renderDomainsTab = () => (
-    <div>
-      <div className="flex items-center justify-between mb-5"><h3 className="text-[var(--color-dark)] font-semibold">도메인 <span className="text-[var(--color-gray)] font-normal text-sm ml-2">{domains.length}건</span></h3><button onClick={openDomainAdd} className={btnPrimary}>+ 추가</button></div>
-      {showDomainForm && (
-        <FormCard title={editingDomainId ? "도메인 수정" : "새 도메인"} onSave={saveDomain} onCancel={() => { setShowDomainForm(false); setEditingDomainId(null); }} saving={domainSaving}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div><label className={labelClass}>도메인명 *</label><input className={inputClass} placeholder="example.com" value={domainForm.domain_name} onChange={(e) => setDomainForm((p) => ({ ...p, domain_name: e.target.value }))} /></div>
-            <div><label className={labelClass}>등록기관</label><input className={inputClass} placeholder="가비아, 후이즈, ..." value={domainForm.registrar} onChange={(e) => setDomainForm((p) => ({ ...p, registrar: e.target.value }))} /></div>
-            <div><label className={labelClass}>등록일</label><DatePicker value={domainForm.registered_date} onChange={(v) => setDomainForm((p) => ({ ...p, registered_date: v }))} placeholder="등록일 선택" /></div>
-            <div><label className={labelClass}>만료일</label><DatePicker value={domainForm.expires_date} onChange={(v) => setDomainForm((p) => ({ ...p, expires_date: v }))} placeholder="만료일 선택" /></div>
-            <div className="sm:col-span-2"><label className={labelClass}>네임서버</label><input className={inputClass} placeholder="ns1.example.com, ns2.example.com" value={domainForm.nameservers} onChange={(e) => setDomainForm((p) => ({ ...p, nameservers: e.target.value }))} /></div>
-          </div>
-          <div className="mb-4"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="도메인 관련 메모" value={domainForm.memo} onChange={(e) => setDomainForm((p) => ({ ...p, memo: e.target.value }))} /></div>
-          <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={domainForm.auto_renew} onChange={(e) => setDomainForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
-        </FormCard>
-      )}
-      {domainsLoading ? <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
-        : domains.length === 0 ? <div className="text-center py-12 text-[var(--color-gray)]"><svg className="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253" /></svg>등록된 도메인이 없습니다.</div>
-        : <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">{domains.map((d) => (
-            <div key={d.id} className={cardClass}>
-              <div className="flex items-start justify-between mb-3"><div><h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{d.domain_name}</h4>{d.registrar && <p className="text-[var(--color-gray)] text-sm">{d.registrar}</p>}</div>{d.auto_renew && <span className="px-2 py-0.5 text-[0.7rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}</div>
-              <div className="space-y-2 text-sm mb-3">
-                {d.registered_date && <div className="flex justify-between"><span className="text-[var(--color-gray)]">등록일</span><span className="text-[var(--color-dark-2)]">{formatDate(d.registered_date)}</span></div>}
-                {d.expires_date && <div className="flex justify-between"><span className="text-[var(--color-gray)]">만료일</span><span className={`font-medium ${isExpired(d.expires_date) ? "text-red-600" : isWithin30Days(d.expires_date) ? "text-orange-500" : "text-[var(--color-dark-2)]"}`}>{formatDate(d.expires_date)}{isExpired(d.expires_date) && <span className="ml-1 text-[0.7rem]">(만료됨)</span>}{!isExpired(d.expires_date) && isWithin30Days(d.expires_date) && <span className="ml-1 text-[0.7rem]">(만료 임박)</span>}</span></div>}
-                {d.nameservers && <div className="flex justify-between"><span className="text-[var(--color-gray)]">네임서버</span><span className="text-[var(--color-dark-2)] text-right max-w-[60%]">{d.nameservers}</span></div>}
-              </div>
-              {d.memo && <p className="text-[var(--color-gray)] text-sm mb-3 bg-gray-50 rounded-lg px-3 py-2">{d.memo}</p>}
-              <div className="flex gap-1.5 pt-3 border-t border-gray-100"><button onClick={() => openDomainEdit(d)} className={btnSmall}>수정</button><button onClick={() => deleteDomain(d.id)} className={btnDanger}>삭제</button></div>
-            </div>
-          ))}</div>}
+        : <div className="space-y-4">{projects.map(renderProjectCard)}</div>}
     </div>
   );
 
@@ -931,7 +914,7 @@ export default function ClientDetailPage() {
         {showPaymentForm && (
           <FormCard title={editingPaymentId ? "결제 수정" : "새 결제"} onSave={savePayment} onCancel={() => { setShowPaymentForm(false); setEditingPaymentId(null); }} saving={paymentSaving}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div><label className={labelClass}>금액 (원) *</label><input type="number" className={inputClass} placeholder="0" value={paymentForm.amount || ""} onChange={(e) => setPaymentForm((p) => ({ ...p, amount: Number(e.target.value) }))} /></div>
+              <div><label className={labelClass}>금액 (원) *</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
               <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={(v) => setPaymentForm((p) => ({ ...p, type: v }))} /></div>
               <div><label className={labelClass}>결제일</label><DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" /></div>
               <div><label className={labelClass}>상태</label><CustomSelect options={paymentStatusOptions} value={paymentForm.status} onChange={(v) => setPaymentForm((p) => ({ ...p, status: v }))} /></div>
@@ -955,16 +938,12 @@ export default function ClientDetailPage() {
   // =========================================================================
   const tabConfig: { key: TabKey; label: string; count: number; icon: string }[] = [
     { key: "projects", label: "프로젝트", count: projects.length, icon: "M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" },
-    { key: "hosting", label: "호스팅", count: hostings.length, icon: "M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" },
-    { key: "domains", label: "도메인", count: domains.length, icon: "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253" },
     { key: "payments", label: "결제", count: payments.length, icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" },
   ];
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case "projects": return renderProjectsTab();
-      case "hosting": return renderHostingTab();
-      case "domains": return renderDomainsTab();
       case "payments": return renderPaymentsTab();
     }
   };

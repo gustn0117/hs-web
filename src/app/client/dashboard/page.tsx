@@ -26,6 +26,7 @@ interface Project {
 
 interface Hosting {
   id: string;
+  project_id: string | null;
   provider: string;
   plan: string | null;
   amount: number;
@@ -38,6 +39,7 @@ interface Hosting {
 
 interface Domain {
   id: string;
+  project_id: string | null;
   domain_name: string;
   registrar: string | null;
   registered_date: string | null;
@@ -73,7 +75,7 @@ interface DashboardData {
   payments: Payment[];
 }
 
-type TabKey = "overview" | "projects" | "hosting" | "domains" | "payments";
+type TabKey = "overview" | "projects" | "payments";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -240,8 +242,6 @@ export default function ClientDashboardPage() {
   const tabConfig: { key: TabKey; label: string; icon: string }[] = [
     { key: "overview", label: "개요", icon: "M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" },
     { key: "projects", label: "프로젝트", icon: "M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" },
-    { key: "hosting", label: "호스팅", icon: "M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" },
-    { key: "domains", label: "도메인", icon: "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3" },
     { key: "payments", label: "결제 내역", icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" },
   ];
 
@@ -469,227 +469,191 @@ export default function ClientDashboardPage() {
     </div>
   );
 
-  const renderProjects = () => (
-    <div className="space-y-4">
-      {data.projects.length === 0 ? (
-        <EmptyState icon="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" message="등록된 프로젝트가 없습니다." />
-      ) : (
-        data.projects.map((p) => {
-          const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
-          return (
-            <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
-              <Link href={`/client/dashboard/projects/${p.id}`} className="no-underline block mb-4">
-                <div className="flex items-start justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                      <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
-                      <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
-                        {p.status}
-                      </span>
-                      {p.platform && (
-                        <span className="px-2.5 py-1 text-[0.7rem] font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
-                          {p.platform}
+  const renderProjects = () => {
+    const getProjectHostings = (projectId: string) => data.hosting.filter((h) => h.project_id === projectId);
+    const getProjectDomains = (projectId: string) => data.domains.filter((d) => d.project_id === projectId);
+
+    return (
+      <div className="space-y-4">
+        {data.projects.length === 0 ? (
+          <EmptyState icon="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" message="등록된 프로젝트가 없습니다." />
+        ) : (
+          data.projects.map((p) => {
+            const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
+            const projectHostings = getProjectHostings(p.id);
+            const projectDomains = getProjectDomains(p.id);
+
+            return (
+              <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
+                <Link href={`/client/dashboard/projects/${p.id}`} className="no-underline block mb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                        <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
+                        <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
+                          {p.status}
                         </span>
+                        {p.platform && (
+                          <span className="px-2.5 py-1 text-[0.7rem] font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
+                            {p.platform}
+                          </span>
+                        )}
+                      </div>
+                      {p.website_url && (
+                        <p className="text-[var(--color-accent)] text-sm break-all inline-flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                          </svg>
+                          {p.website_url}
+                        </p>
                       )}
                     </div>
-                    {p.website_url && (
-                      <p className="text-[var(--color-accent)] text-sm break-all inline-flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        {p.website_url}
-                      </p>
-                    )}
+                    <svg className="w-5 h-5 text-gray-300 shrink-0 ml-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
                   </div>
-                  <svg className="w-5 h-5 text-gray-300 shrink-0 ml-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </div>
-              </Link>
+                </Link>
 
-              {p.tech_stack && (
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {p.tech_stack.split(",").map((t, i) => (
-                    <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg text-[0.75rem] text-blue-700 font-medium">
-                      {t.trim()}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                {p.admin_url && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 페이지</span>
-                    <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block text-[0.85rem]">
-                      {p.admin_url}
-                    </a>
+                {p.tech_stack && (
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {p.tech_stack.split(",").map((t, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg text-[0.75rem] text-blue-700 font-medium">
+                        {t.trim()}
+                      </span>
+                    ))}
                   </div>
                 )}
-                {p.admin_id && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 아이디</span>
-                    <div className="flex items-center">
-                      <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_id}</span>
-                      <CopyButton text={p.admin_id} />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                  {p.admin_url && (
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 페이지</span>
+                      <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block text-[0.85rem]">
+                        {p.admin_url}
+                      </a>
                     </div>
-                  </div>
-                )}
-                {p.admin_pw && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 비밀번호</span>
-                    <div className="flex items-center">
-                      <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_pw}</span>
-                      <CopyButton text={p.admin_pw} />
-                    </div>
-                  </div>
-                )}
-                {p.started_at && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">시작일</span>
-                    <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.started_at)}</span>
-                  </div>
-                )}
-                {p.completed_at && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">완료일</span>
-                    <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.completed_at)}</span>
-                  </div>
-                )}
-              </div>
-
-              {p.description && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-sm text-[var(--color-gray)] leading-relaxed">{p.description}</p>
-                </div>
-              )}
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
-
-  const renderHosting = () => (
-    <div className="space-y-4">
-      {data.hosting.length === 0 ? (
-        <EmptyState icon="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" message="등록된 호스팅 정보가 없습니다." />
-      ) : (
-        data.hosting.map((h) => {
-          const days = daysUntil(h.end_date);
-          const expired = isExpired(h.end_date);
-          const soon = isExpiringSoon(h.end_date);
-          return (
-            <div key={h.id} className={`bg-white border rounded-2xl p-6 shadow-sm ${expired ? "border-red-200" : soon ? "border-orange-200" : "border-gray-100"}`}>
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="font-bold text-lg text-[var(--color-dark)]">{h.provider}</h3>
-                  {h.plan && <p className="text-[var(--color-gray)] text-sm mt-0.5">{h.plan}</p>}
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {h.auto_renew && (
-                    <span className="px-2.5 py-1 text-[0.7rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-semibold">자동갱신</span>
                   )}
-                  {expired && <span className="px-2.5 py-1 text-[0.7rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-semibold">만료됨</span>}
-                  {!expired && soon && <span className="px-2.5 py-1 text-[0.7rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-semibold">만료 임박</span>}
+                  {p.admin_id && (
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 아이디</span>
+                      <div className="flex items-center">
+                        <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_id}</span>
+                        <CopyButton text={p.admin_id} />
+                      </div>
+                    </div>
+                  )}
+                  {p.admin_pw && (
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 비밀번호</span>
+                      <div className="flex items-center">
+                        <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_pw}</span>
+                        <CopyButton text={p.admin_pw} />
+                      </div>
+                    </div>
+                  )}
+                  {p.started_at && (
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="text-[var(--color-gray)] text-xs block mb-1">시작일</span>
+                      <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.started_at)}</span>
+                    </div>
+                  )}
+                  {p.completed_at && (
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="text-[var(--color-gray)] text-xs block mb-1">완료일</span>
+                      <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.completed_at)}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="bg-gray-50 rounded-xl px-4 py-3">
-                  <span className="text-[var(--color-gray)] text-xs block mb-1">금액</span>
-                  <span className="text-[var(--color-dark)] font-bold text-sm">{formatAmount(h.amount)}</span>
-                  <span className="text-[var(--color-gray)] text-xs ml-1">/ {h.billing_cycle === "monthly" ? "월" : "연"}</span>
-                </div>
-                <div className="bg-gray-50 rounded-xl px-4 py-3">
-                  <span className="text-[var(--color-gray)] text-xs block mb-1">시작일</span>
-                  <span className="text-[var(--color-dark)] text-sm">{formatDate(h.start_date)}</span>
-                </div>
-                {h.end_date && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">만료일</span>
-                    <span className={`text-sm font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>
-                      {formatDate(h.end_date)}
-                    </span>
+                {p.description && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <p className="text-sm text-[var(--color-gray)] leading-relaxed">{p.description}</p>
                   </div>
                 )}
-                {days !== null && !expired && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">남은 기간</span>
-                    <span className={`text-sm font-bold ${soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>{days}일</span>
+
+                {/* Hosting inline */}
+                {projectHostings.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-1.5 mb-3">
+                      <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
+                      </svg>
+                      호스팅
+                    </h4>
+                    <div className="space-y-2">
+                      {projectHostings.map((h) => {
+                        const days = daysUntil(h.end_date);
+                        const expired = isExpired(h.end_date);
+                        const soon = isExpiringSoon(h.end_date);
+                        return (
+                          <div key={h.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-[var(--color-dark)] text-sm">{h.provider}</span>
+                                {h.plan && <span className="text-[var(--color-gray)] text-xs">· {h.plan}</span>}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                {h.auto_renew && <span className="px-2 py-0.5 text-[0.6rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                                {expired && <span className="px-2 py-0.5 text-[0.6rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-medium">만료됨</span>}
+                                {!expired && soon && <span className="px-2 py-0.5 text-[0.6rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-medium">만료 임박</span>}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
+                              <span className="font-medium text-[var(--color-dark)]">{formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
+                              <span>시작: {formatShortDate(h.start_date)}</span>
+                              {h.end_date && <span className={expired ? "text-red-600 font-medium" : soon ? "text-orange-500 font-medium" : ""}>만료: {formatShortDate(h.end_date)}{days !== null && !expired ? ` (${days}일)` : ""}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Domains inline */}
+                {projectDomains.length > 0 && (
+                  <div className={`mt-4 ${projectHostings.length === 0 ? "pt-4 border-t border-gray-100" : "pt-3"}`}>
+                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-1.5 mb-3">
+                      <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
+                      </svg>
+                      도메인
+                    </h4>
+                    <div className="space-y-2">
+                      {projectDomains.map((d) => {
+                        const days = daysUntil(d.expires_date);
+                        const expired = isExpired(d.expires_date);
+                        const soon = isExpiringSoon(d.expires_date);
+                        return (
+                          <div key={d.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-[var(--color-dark)] text-sm">{d.domain_name}</span>
+                                {d.registrar && <span className="text-[var(--color-gray)] text-xs">· {d.registrar}</span>}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                {d.auto_renew && <span className="px-2 py-0.5 text-[0.6rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                                {expired && <span className="px-2 py-0.5 text-[0.6rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-medium">만료됨</span>}
+                                {!expired && soon && <span className="px-2 py-0.5 text-[0.6rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-medium">만료 임박</span>}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
+                              {d.registered_date && <span>등록: {formatShortDate(d.registered_date)}</span>}
+                              {d.expires_date && <span className={expired ? "text-red-600 font-medium" : soon ? "text-orange-500 font-medium" : ""}>만료: {formatShortDate(d.expires_date)}{days !== null && !expired ? ` (${days}일)` : ""}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
-
-              {h.memo && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-sm text-[var(--color-gray)]">{h.memo}</p>
-                </div>
-              )}
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
-
-  const renderDomains = () => (
-    <div className="space-y-4">
-      {data.domains.length === 0 ? (
-        <EmptyState icon="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" message="등록된 도메인 정보가 없습니다." />
-      ) : (
-        data.domains.map((d) => {
-          const days = daysUntil(d.expires_date);
-          const expired = isExpired(d.expires_date);
-          const soon = isExpiringSoon(d.expires_date);
-          return (
-            <div key={d.id} className={`bg-white border rounded-2xl p-6 shadow-sm ${expired ? "border-red-200" : soon ? "border-orange-200" : "border-gray-100"}`}>
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="font-bold text-lg text-[var(--color-dark)]">{d.domain_name}</h3>
-                  {d.registrar && <p className="text-[var(--color-gray)] text-sm mt-0.5">{d.registrar}</p>}
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {d.auto_renew && <span className="px-2.5 py-1 text-[0.7rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-semibold">자동갱신</span>}
-                  {expired && <span className="px-2.5 py-1 text-[0.7rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-semibold">만료됨</span>}
-                  {!expired && soon && <span className="px-2.5 py-1 text-[0.7rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-semibold">만료 임박</span>}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {d.registered_date && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">등록일</span>
-                    <span className="text-[var(--color-dark)] text-sm">{formatDate(d.registered_date)}</span>
-                  </div>
-                )}
-                {d.expires_date && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">만료일</span>
-                    <span className={`text-sm font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>
-                      {formatDate(d.expires_date)}
-                    </span>
-                  </div>
-                )}
-                {days !== null && !expired && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">남은 기간</span>
-                    <span className={`text-sm font-bold ${soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>{days}일</span>
-                  </div>
-                )}
-                {d.nameservers && (
-                  <div className="bg-gray-50 rounded-xl px-4 py-3 sm:col-span-2 lg:col-span-1">
-                    <span className="text-[var(--color-gray)] text-xs block mb-1">네임서버</span>
-                    <span className="text-[var(--color-dark)] text-sm break-all">{d.nameservers}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
+            );
+          })
+        )}
+      </div>
+    );
+  };
 
   const renderPayments = () => {
     const paid = data.payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
@@ -762,8 +726,6 @@ export default function ClientDashboardPage() {
     switch (activeTab) {
       case "overview": return renderOverview();
       case "projects": return renderProjects();
-      case "hosting": return renderHosting();
-      case "domains": return renderDomains();
       case "payments": return renderPayments();
     }
   };

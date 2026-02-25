@@ -24,6 +24,30 @@ interface Project {
   platform: string | null;
 }
 
+interface Hosting {
+  id: string;
+  project_id: string | null;
+  provider: string;
+  plan: string | null;
+  amount: number;
+  billing_cycle: string;
+  start_date: string;
+  end_date: string | null;
+  auto_renew: boolean;
+  memo: string | null;
+}
+
+interface Domain {
+  id: string;
+  project_id: string | null;
+  domain_name: string;
+  registrar: string | null;
+  registered_date: string | null;
+  expires_date: string | null;
+  auto_renew: boolean;
+  nameservers: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Constants & Helpers
 // ---------------------------------------------------------------------------
@@ -38,6 +62,31 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }
 function formatDate(dateStr: string | null): string {
   if (!dateStr) return "-";
   return new Date(dateStr).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
+}
+
+function formatShortDate(dateStr: string | null): string {
+  if (!dateStr) return "-";
+  return new Date(dateStr).toLocaleDateString("ko-KR", { year: "2-digit", month: "numeric", day: "numeric" });
+}
+
+function formatAmount(amount: number): string {
+  return Number(amount).toLocaleString() + "원";
+}
+
+function isExpiringSoon(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  const diff = new Date(dateStr).getTime() - Date.now();
+  return diff > 0 && diff < 30 * 24 * 60 * 60 * 1000;
+}
+
+function isExpired(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  return new Date(dateStr).getTime() < Date.now();
+}
+
+function daysUntil(dateStr: string | null): number | null {
+  if (!dateStr) return null;
+  return Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -67,6 +116,8 @@ export default function ClientProjectDetailPage() {
   const router = useRouter();
 
   const [project, setProject] = useState<Project | null>(null);
+  const [hostings, setHostings] = useState<Hosting[]>([]);
+  const [domains, setDomains] = useState<Domain[]>([]);
   const [clientName, setClientName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -80,8 +131,13 @@ export default function ClientProjectDetailPage() {
       .then((data) => {
         setClientName(data.client.name);
         const found = data.projects.find((p: Project) => p.id === pid);
-        if (found) setProject(found);
-        else setError("프로젝트를 찾을 수 없습니다.");
+        if (found) {
+          setProject(found);
+          setHostings((data.hosting || []).filter((h: Hosting) => h.project_id === pid));
+          setDomains((data.domains || []).filter((d: Domain) => d.project_id === pid));
+        } else {
+          setError("프로젝트를 찾을 수 없습니다.");
+        }
       })
       .catch(() => setError("데이터를 불러올 수 없습니다."))
       .finally(() => setLoading(false));
@@ -301,6 +357,130 @@ export default function ClientProjectDetailPage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Hosting */}
+        {hostings.length > 0 && (
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-6">
+            <h3 className="text-[var(--color-dark)] font-bold mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
+              </svg>
+              호스팅
+            </h3>
+            <div className="space-y-3">
+              {hostings.map((h) => {
+                const days = daysUntil(h.end_date);
+                const expired = isExpired(h.end_date);
+                const soon = isExpiringSoon(h.end_date);
+                return (
+                  <div key={h.id} className={`border rounded-xl p-4 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <span className="font-bold text-[var(--color-dark)]">{h.provider}</span>
+                        {h.plan && <span className="text-[var(--color-gray)] text-sm ml-2">· {h.plan}</span>}
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {h.auto_renew && <span className="px-2.5 py-1 text-[0.7rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-semibold">자동갱신</span>}
+                        {expired && <span className="px-2.5 py-1 text-[0.7rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-semibold">만료됨</span>}
+                        {!expired && soon && <span className="px-2.5 py-1 text-[0.7rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-semibold">만료 임박</span>}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                        <span className="text-[var(--color-gray)] text-xs block mb-0.5">금액</span>
+                        <span className="text-[var(--color-dark)] font-bold text-sm">{formatAmount(h.amount)}</span>
+                        <span className="text-[var(--color-gray)] text-xs ml-0.5">/ {h.billing_cycle === "monthly" ? "월" : "연"}</span>
+                      </div>
+                      <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                        <span className="text-[var(--color-gray)] text-xs block mb-0.5">시작일</span>
+                        <span className="text-[var(--color-dark)] text-sm">{formatShortDate(h.start_date)}</span>
+                      </div>
+                      {h.end_date && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">만료일</span>
+                          <span className={`text-sm font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>
+                            {formatShortDate(h.end_date)}
+                          </span>
+                        </div>
+                      )}
+                      {days !== null && !expired && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">남은 기간</span>
+                          <span className={`text-sm font-bold ${soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>{days}일</span>
+                        </div>
+                      )}
+                    </div>
+                    {h.memo && (
+                      <p className="mt-3 text-sm text-[var(--color-gray)] pt-3 border-t border-gray-100">{h.memo}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Domains */}
+        {domains.length > 0 && (
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-6">
+            <h3 className="text-[var(--color-dark)] font-bold mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
+              </svg>
+              도메인
+            </h3>
+            <div className="space-y-3">
+              {domains.map((d) => {
+                const days = daysUntil(d.expires_date);
+                const expired = isExpired(d.expires_date);
+                const soon = isExpiringSoon(d.expires_date);
+                return (
+                  <div key={d.id} className={`border rounded-xl p-4 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <span className="font-bold text-[var(--color-dark)]">{d.domain_name}</span>
+                        {d.registrar && <span className="text-[var(--color-gray)] text-sm ml-2">· {d.registrar}</span>}
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {d.auto_renew && <span className="px-2.5 py-1 text-[0.7rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-semibold">자동갱신</span>}
+                        {expired && <span className="px-2.5 py-1 text-[0.7rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-semibold">만료됨</span>}
+                        {!expired && soon && <span className="px-2.5 py-1 text-[0.7rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-semibold">만료 임박</span>}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {d.registered_date && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span>
+                          <span className="text-[var(--color-dark)] text-sm">{formatShortDate(d.registered_date)}</span>
+                        </div>
+                      )}
+                      {d.expires_date && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">만료일</span>
+                          <span className={`text-sm font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>
+                            {formatShortDate(d.expires_date)}
+                          </span>
+                        </div>
+                      )}
+                      {days !== null && !expired && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">남은 기간</span>
+                          <span className={`text-sm font-bold ${soon ? "text-orange-500" : "text-[var(--color-dark)]"}`}>{days}일</span>
+                        </div>
+                      )}
+                      {d.nameservers && (
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-100 sm:col-span-2 lg:col-span-1">
+                          <span className="text-[var(--color-gray)] text-xs block mb-0.5">네임서버</span>
+                          <span className="text-[var(--color-dark)] text-sm break-all">{d.nameservers}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
