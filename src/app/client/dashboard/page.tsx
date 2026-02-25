@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -323,14 +324,12 @@ export default function ClientDashboardPage() {
             {data.projects.slice(0, 2).map((p) => {
               const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
               return (
-                <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="no-underline block bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
                   <div className="flex items-start justify-between mb-3">
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-[var(--color-dark)] truncate">{p.name}</h4>
                       {p.website_url && (
-                        <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm hover:underline truncate block mt-0.5">
-                          {p.website_url}
-                        </a>
+                        <p className="text-[var(--color-accent)] text-sm truncate mt-0.5">{p.website_url}</p>
                       )}
                     </div>
                     <span className={`px-2.5 py-1 text-[0.7rem] font-semibold rounded-full border shrink-0 ml-3 ${sc.bg} ${sc.text} ${sc.border}`}>
@@ -346,7 +345,7 @@ export default function ClientDashboardPage() {
                       ))}
                     </div>
                   )}
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -476,25 +475,30 @@ export default function ClientDashboardPage() {
         data.projects.map((p) => {
           const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
           return (
-            <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-              <div className="flex items-start justify-between mb-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                    <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
-                    <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
-                      {p.status}
-                    </span>
+            <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
+              <Link href={`/client/dashboard/projects/${p.id}`} className="no-underline block mb-4">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                      <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
+                      <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
+                        {p.status}
+                      </span>
+                    </div>
+                    {p.website_url && (
+                      <p className="text-[var(--color-accent)] text-sm break-all inline-flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        {p.website_url}
+                      </p>
+                    )}
                   </div>
-                  {p.website_url && (
-                    <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm hover:underline break-all inline-flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                      </svg>
-                      {p.website_url}
-                    </a>
-                  )}
+                  <svg className="w-5 h-5 text-gray-300 shrink-0 ml-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
                 </div>
-              </div>
+              </Link>
 
               {p.tech_stack && (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -763,9 +767,11 @@ export default function ClientDashboardPage() {
       <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 sticky top-0 z-20 shadow-sm shadow-gray-100/50">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-extrabold text-[var(--color-dark)]">
-              HS <span className="gradient-text">WEB</span>
-            </h1>
+            <Link href="/client/dashboard" className="no-underline">
+              <h1 className="text-lg font-extrabold text-[var(--color-dark)]">
+                HS <span className="gradient-text">WEB</span>
+              </h1>
+            </Link>
             <div className="hidden sm:block w-px h-5 bg-gray-200" />
             <span className="hidden sm:block text-[var(--color-gray)] text-sm">고객 포털</span>
           </div>

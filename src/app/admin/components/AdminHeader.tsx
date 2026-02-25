@@ -21,12 +21,14 @@ export default function AdminHeader() {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-6">
-        <h1 className="text-lg font-bold text-[var(--color-dark)]">
-          HS <span className="gradient-text">WEB</span>
-          <span className="text-[var(--color-gray)] font-normal text-sm ml-2">
-            Admin
-          </span>
-        </h1>
+        <Link href="/admin/dashboard" className="no-underline">
+          <h1 className="text-lg font-bold text-[var(--color-dark)]">
+            HS <span className="gradient-text">WEB</span>
+            <span className="text-[var(--color-gray)] font-normal text-sm ml-2">
+              Admin
+            </span>
+          </h1>
+        </Link>
         <nav className="flex items-center gap-4">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
