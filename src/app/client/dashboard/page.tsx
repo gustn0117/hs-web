@@ -88,10 +88,10 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }
   "유지보수": { bg: "bg-violet-50", text: "text-violet-700", border: "border-violet-200" },
 };
 
-const PAYMENT_STATUS: Record<string, { label: string; bg: string; text: string }> = {
-  paid: { label: "완료", bg: "bg-emerald-50", text: "text-emerald-700" },
-  pending: { label: "대기", bg: "bg-amber-50", text: "text-amber-700" },
-  overdue: { label: "미납", bg: "bg-red-50", text: "text-red-700" },
+const PAYMENT_STATUS: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  paid: { label: "완료", bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  pending: { label: "대기", bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  overdue: { label: "미납", bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
 };
 
 // ---------------------------------------------------------------------------
@@ -128,6 +128,26 @@ function daysUntil(dateStr: string | null): number | null {
   return Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 }
 
+function getNextRenewalDate(endDate: string | null, billingCycle: string): string | null {
+  if (!endDate) return null;
+  const end = new Date(endDate);
+  const now = new Date();
+  if (end > now) return endDate;
+  const next = new Date(end);
+  while (next <= now) {
+    if (billingCycle === "yearly") next.setFullYear(next.getFullYear() + 1);
+    else next.setMonth(next.getMonth() + 1);
+  }
+  return next.toISOString().split("T")[0];
+}
+
+function getRenewalBadge(d: number): { text: string; cls: string } {
+  if (d < 0) return { text: `${Math.abs(d)}일 지남`, cls: "bg-red-100 text-red-700 border-red-200" };
+  if (d <= 7) return { text: `D-${d}`, cls: "bg-red-100 text-red-700 border-red-200" };
+  if (d <= 30) return { text: `D-${d}`, cls: "bg-amber-100 text-amber-700 border-amber-200" };
+  return { text: `D-${d}`, cls: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+}
+
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
@@ -142,7 +162,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-1.5 px-1.5 py-0.5 text-[0.65rem] bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded text-[var(--color-gray)] cursor-pointer transition-all"
+      className="ml-1.5 px-1.5 py-0.5 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded text-[var(--color-gray)] cursor-pointer transition-all"
       title="복사"
     >
       {copied ? "복사됨" : "복사"}
@@ -218,10 +238,11 @@ export default function ClientDashboardPage() {
   // Compute alerts
   const alerts: { type: "warning" | "danger"; message: string }[] = [];
   data.hosting.forEach((h) => {
-    if (isExpired(h.end_date)) alerts.push({ type: "danger", message: `호스팅 "${h.provider}" 만료됨` });
-    else if (isExpiringSoon(h.end_date)) {
-      const d = daysUntil(h.end_date);
-      alerts.push({ type: "warning", message: `호스팅 "${h.provider}" ${d}일 후 만료` });
+    const renewal = getNextRenewalDate(h.end_date, h.billing_cycle);
+    const d = renewal ? daysUntil(renewal) : null;
+    if (isExpired(h.end_date) && !h.auto_renew) alerts.push({ type: "danger", message: `호스팅 "${h.provider}" 만료됨` });
+    else if (d !== null && d >= 0 && d <= 30) {
+      alerts.push({ type: "warning", message: `호스팅 "${h.provider}" ${d}일 후 갱신 예정` });
     }
   });
   data.domains.forEach((d) => {
@@ -238,6 +259,7 @@ export default function ClientDashboardPage() {
   const totalPaid = data.payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
   const totalPending = data.payments.filter((p) => p.status === "pending" || p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
   const activeProjects = data.projects.filter((p) => p.status === "진행중" || p.status === "상담중").length;
+  const hostingPayments = data.payments.filter((p) => p.type === "호스팅");
 
   const tabConfig: { key: TabKey; label: string; icon: string }[] = [
     { key: "overview", label: "개요", icon: "M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" },
@@ -251,12 +273,12 @@ export default function ClientDashboardPage() {
   // =========================================================================
 
   const renderOverview = () => (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
               </svg>
@@ -264,12 +286,12 @@ export default function ClientDashboardPage() {
             <span className="text-[var(--color-gray)] text-xs font-medium">프로젝트</span>
           </div>
           <p className="text-2xl font-bold text-[var(--color-dark)]">{data.projects.length}</p>
-          {activeProjects > 0 && <p className="text-[0.75rem] text-blue-600 mt-1">{activeProjects}건 진행중</p>}
+          {activeProjects > 0 && <p className="text-xs text-blue-600 mt-1 font-medium">{activeProjects}건 진행중</p>}
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
               </svg>
@@ -277,12 +299,14 @@ export default function ClientDashboardPage() {
             <span className="text-[var(--color-gray)] text-xs font-medium">호스팅</span>
           </div>
           <p className="text-2xl font-bold text-[var(--color-dark)]">{data.hosting.length}</p>
-          {data.hosting.some((h) => isExpiringSoon(h.end_date)) && <p className="text-[0.75rem] text-orange-500 mt-1">만료 임박 있음</p>}
+          {data.hosting.some((h) => { const r = getNextRenewalDate(h.end_date, h.billing_cycle); return r && daysUntil(r)! <= 30; }) && (
+            <p className="text-xs text-amber-600 mt-1 font-medium">갱신 임박</p>
+          )}
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
               </svg>
@@ -290,12 +314,12 @@ export default function ClientDashboardPage() {
             <span className="text-[var(--color-gray)] text-xs font-medium">도메인</span>
           </div>
           <p className="text-2xl font-bold text-[var(--color-dark)]">{data.domains.length}</p>
-          {data.domains.some((d) => isExpiringSoon(d.expires_date)) && <p className="text-[0.75rem] text-orange-500 mt-1">만료 임박 있음</p>}
+          {data.domains.some((d) => isExpiringSoon(d.expires_date)) && <p className="text-xs text-amber-600 mt-1 font-medium">만료 임박</p>}
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -303,7 +327,7 @@ export default function ClientDashboardPage() {
             <span className="text-[var(--color-gray)] text-xs font-medium">총 결제액</span>
           </div>
           <p className="text-2xl font-bold text-[var(--color-dark)]">{formatAmount(totalPaid)}</p>
-          {totalPending > 0 && <p className="text-[0.75rem] text-amber-600 mt-1">{formatAmount(totalPending)} 미결제</p>}
+          {totalPending > 0 && <p className="text-xs text-amber-600 mt-1 font-medium">{formatAmount(totalPending)} 미결제</p>}
         </div>
       </div>
 
@@ -312,7 +336,7 @@ export default function ClientDashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2">
-              <svg className="w-4.5 h-4.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
               </svg>
               프로젝트
@@ -327,22 +351,20 @@ export default function ClientDashboardPage() {
             {data.projects.slice(0, 2).map((p) => {
               const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
               return (
-                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="no-underline block bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
+                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="no-underline block bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
                   <div className="flex items-start justify-between mb-3">
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-[var(--color-dark)] truncate">{p.name}</h4>
-                      {p.website_url && (
-                        <p className="text-[var(--color-accent)] text-sm truncate mt-0.5">{p.website_url}</p>
-                      )}
+                      {p.website_url && <p className="text-[var(--color-accent)] text-sm truncate mt-0.5">{p.website_url}</p>}
                     </div>
-                    <span className={`px-2.5 py-1 text-[0.7rem] font-semibold rounded-full border shrink-0 ml-3 ${sc.bg} ${sc.text} ${sc.border}`}>
+                    <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border shrink-0 ml-3 ${sc.bg} ${sc.text} ${sc.border}`}>
                       {p.status}
                     </span>
                   </div>
                   {p.tech_stack && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {p.tech_stack.split(",").map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-gray-50 border border-gray-100 rounded-md text-[0.7rem] text-[var(--color-gray)]">
+                        <span key={i} className="px-2 py-0.5 bg-gray-50 border border-gray-200 rounded-md text-xs text-[var(--color-gray)]">
                           {t.trim()}
                         </span>
                       ))}
@@ -360,7 +382,7 @@ export default function ClientDashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2">
-              <svg className="w-4.5 h-4.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               최근 결제
@@ -371,18 +393,18 @@ export default function ClientDashboardPage() {
               </button>
             )}
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
             {data.payments.slice(0, 3).map((p, i) => {
-              const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600" };
+              const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600", border: "" };
               return (
-                <div key={p.id} className={`flex items-center justify-between px-5 py-4 ${i > 0 ? "border-t border-gray-50" : ""}`}>
+                <div key={p.id} className={`flex items-center justify-between px-5 py-4 ${i > 0 ? "border-t border-gray-100" : ""}`}>
                   <div className="flex items-center gap-4 min-w-0 flex-1">
                     <div className={`w-9 h-9 rounded-lg ${st.bg} flex items-center justify-center shrink-0`}>
-                      <span className={`text-[0.7rem] font-bold ${st.text}`}>{st.label}</span>
+                      <span className={`text-xs font-bold ${st.text}`}>{st.label}</span>
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-[var(--color-dark)] truncate">{p.description || p.type}</p>
-                      <p className="text-[0.75rem] text-[var(--color-gray)]">{formatShortDate(p.payment_date)}</p>
+                      <p className="text-xs text-[var(--color-gray)]">{formatShortDate(p.payment_date)}</p>
                     </div>
                   </div>
                   <span className="text-sm font-bold text-[var(--color-dark)] shrink-0 ml-3">{formatAmount(p.amount)}</span>
@@ -393,36 +415,40 @@ export default function ClientDashboardPage() {
         </div>
       )}
 
-      {/* Hosting & Domain expiry overview */}
+      {/* Hosting & Domain with renewal dates */}
       {(data.hosting.length > 0 || data.domains.length > 0) && (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {data.hosting.length > 0 && (
             <div>
               <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2 mb-4">
-                <svg className="w-4.5 h-4.5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
                 </svg>
                 호스팅
               </h3>
               <div className="space-y-3">
                 {data.hosting.map((h) => {
-                  const days = daysUntil(h.end_date);
-                  const expired = isExpired(h.end_date);
-                  const soon = isExpiringSoon(h.end_date);
+                  const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
+                  const renewalDays = renewalDate ? daysUntil(renewalDate) : null;
+                  const badge = renewalDays !== null ? getRenewalBadge(renewalDays) : null;
                   return (
-                    <div key={h.id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                    <div key={h.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-[var(--color-dark)] text-sm">{h.provider}</span>
-                        <div className="flex items-center gap-2">
-                          {h.auto_renew && <span className="px-2 py-0.5 text-[0.65rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                        <div className="flex items-center gap-1.5">
+                          {h.auto_renew && <span className="px-2 py-0.5 text-xs bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                          {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
                         </div>
                       </div>
-                      <div className="flex items-center justify-between text-[0.8rem]">
-                        <span className="text-[var(--color-gray)]">{h.plan || "-"} · {formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
-                        {h.end_date && (
-                          <span className={`font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-gray)]"}`}>
-                            {expired ? "만료됨" : days !== null ? `${days}일 남음` : ""}
-                          </span>
+                      <div className="text-xs text-[var(--color-gray)] space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span>{h.plan || "-"} · {formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
+                        </div>
+                        {renewalDate && (
+                          <div className="flex items-center gap-1.5">
+                            <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
+                            <span className="font-medium text-[var(--color-dark-2)]">다음 갱신: {formatDate(renewalDate)}</span>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -435,7 +461,7 @@ export default function ClientDashboardPage() {
           {data.domains.length > 0 && (
             <div>
               <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2 mb-4">
-                <svg className="w-4.5 h-4.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
                 </svg>
                 도메인
@@ -444,18 +470,21 @@ export default function ClientDashboardPage() {
                 {data.domains.map((d) => {
                   const days = daysUntil(d.expires_date);
                   const expired = isExpired(d.expires_date);
-                  const soon = isExpiringSoon(d.expires_date);
+                  const badge = days !== null ? getRenewalBadge(days) : null;
                   return (
-                    <div key={d.id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                    <div key={d.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-[var(--color-dark)] text-sm">{d.domain_name}</span>
-                        {d.auto_renew && <span className="px-2 py-0.5 text-[0.65rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                        <div className="flex items-center gap-1.5">
+                          {d.auto_renew && <span className="px-2 py-0.5 text-xs bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                          {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-[0.8rem]">
-                        <span className="text-[var(--color-gray)]">{d.registrar || "-"}</span>
+                      <div className="flex items-center justify-between text-xs text-[var(--color-gray)]">
+                        <span>{d.registrar || "-"}</span>
                         {d.expires_date && (
-                          <span className={`font-medium ${expired ? "text-red-600" : soon ? "text-orange-500" : "text-[var(--color-gray)]"}`}>
-                            {expired ? "만료됨" : days !== null ? `${days}일 남음` : ""}
+                          <span className={expired ? "text-red-600 font-medium" : ""}>
+                            만료: {formatShortDate(d.expires_date)}
                           </span>
                         )}
                       </div>
@@ -475,7 +504,7 @@ export default function ClientDashboardPage() {
     const getProjectDomains = (projectId: string) => data.domains.filter((d) => d.project_id === projectId);
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-5">
         {data.projects.length === 0 ? (
           <EmptyState icon="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" message="등록된 프로젝트가 없습니다." />
         ) : (
@@ -485,17 +514,17 @@ export default function ClientDashboardPage() {
             const projectDomains = getProjectDomains(p.id);
 
             return (
-              <div key={p.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-gray-200 transition-all">
+              <div key={p.id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                 <Link href={`/client/dashboard/projects/${p.id}`} className="no-underline block mb-4">
                   <div className="flex items-start justify-between">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
                         <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
-                        <span className={`px-3 py-1 text-[0.75rem] font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${sc.bg} ${sc.text} ${sc.border}`}>
                           {p.status}
                         </span>
                         {p.platform && (
-                          <span className="px-2.5 py-1 text-[0.7rem] font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
+                          <span className="px-2.5 py-1 text-xs font-medium rounded-full border bg-indigo-50 text-indigo-600 border-indigo-200">
                             {p.platform}
                           </span>
                         )}
@@ -518,7 +547,7 @@ export default function ClientDashboardPage() {
                 {p.tech_stack && (
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {p.tech_stack.split(",").map((t, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg text-[0.75rem] text-blue-700 font-medium">
+                      <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700 font-medium">
                         {t.trim()}
                       </span>
                     ))}
@@ -529,7 +558,7 @@ export default function ClientDashboardPage() {
                   {p.admin_url && (
                     <div className="bg-gray-50 rounded-xl px-4 py-3">
                       <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 페이지</span>
-                      <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block text-[0.85rem]">
+                      <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block text-sm">
                         {p.admin_url}
                       </a>
                     </div>
@@ -538,7 +567,7 @@ export default function ClientDashboardPage() {
                     <div className="bg-gray-50 rounded-xl px-4 py-3">
                       <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 아이디</span>
                       <div className="flex items-center">
-                        <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_id}</span>
+                        <span className="text-[var(--color-dark)] text-sm font-medium">{p.admin_id}</span>
                         <CopyButton text={p.admin_id} />
                       </div>
                     </div>
@@ -547,7 +576,7 @@ export default function ClientDashboardPage() {
                     <div className="bg-gray-50 rounded-xl px-4 py-3">
                       <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 비밀번호</span>
                       <div className="flex items-center">
-                        <span className="text-[var(--color-dark)] text-[0.85rem] font-medium">{p.admin_pw}</span>
+                        <span className="text-[var(--color-dark)] text-sm font-medium">{p.admin_pw}</span>
                         <CopyButton text={p.admin_pw} />
                       </div>
                     </div>
@@ -555,13 +584,13 @@ export default function ClientDashboardPage() {
                   {p.started_at && (
                     <div className="bg-gray-50 rounded-xl px-4 py-3">
                       <span className="text-[var(--color-gray)] text-xs block mb-1">시작일</span>
-                      <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.started_at)}</span>
+                      <span className="text-[var(--color-dark)] text-sm">{formatDate(p.started_at)}</span>
                     </div>
                   )}
                   {p.completed_at && (
                     <div className="bg-gray-50 rounded-xl px-4 py-3">
                       <span className="text-[var(--color-gray)] text-xs block mb-1">완료일</span>
-                      <span className="text-[var(--color-dark)] text-[0.85rem]">{formatDate(p.completed_at)}</span>
+                      <span className="text-[var(--color-dark)] text-sm">{formatDate(p.completed_at)}</span>
                     </div>
                   )}
                 </div>
@@ -572,10 +601,10 @@ export default function ClientDashboardPage() {
                   </div>
                 )}
 
-                {/* Hosting inline */}
+                {/* Hosting inline with renewal dates */}
                 {projectHostings.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-1.5 mb-3">
+                  <div className="mt-5 pt-5 border-t border-gray-100">
+                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
                       <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
                       </svg>
@@ -583,27 +612,33 @@ export default function ClientDashboardPage() {
                     </h4>
                     <div className="space-y-2">
                       {projectHostings.map((h) => {
-                        const days = daysUntil(h.end_date);
-                        const expired = isExpired(h.end_date);
-                        const soon = isExpiringSoon(h.end_date);
+                        const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
+                        const renewalDays = renewalDate ? daysUntil(renewalDate) : null;
+                        const badge = renewalDays !== null ? getRenewalBadge(renewalDays) : null;
+                        const expired = isExpired(h.end_date) && !h.auto_renew;
                         return (
-                          <div key={h.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                          <div key={h.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : badge && renewalDays! <= 30 ? "border-amber-200 bg-amber-50/30" : "border-gray-200 bg-gray-50/50"}`}>
                             <div className="flex items-center justify-between mb-1.5">
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-[var(--color-dark)] text-sm">{h.provider}</span>
                                 {h.plan && <span className="text-[var(--color-gray)] text-xs">· {h.plan}</span>}
                               </div>
                               <div className="flex items-center gap-1.5">
-                                {h.auto_renew && <span className="px-2 py-0.5 text-[0.6rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
-                                {expired && <span className="px-2 py-0.5 text-[0.6rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-medium">만료됨</span>}
-                                {!expired && soon && <span className="px-2 py-0.5 text-[0.6rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-medium">만료 임박</span>}
+                                {h.auto_renew && <span className="px-2 py-0.5 text-xs bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                                {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
                               </div>
                             </div>
-                            <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
                               <span className="font-medium text-[var(--color-dark)]">{formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
                               <span>시작: {formatShortDate(h.start_date)}</span>
-                              {h.end_date && <span className={expired ? "text-red-600 font-medium" : soon ? "text-orange-500 font-medium" : ""}>만료: {formatShortDate(h.end_date)}{days !== null && !expired ? ` (${days}일)` : ""}</span>}
+                              {h.end_date && <span>만료: {formatShortDate(h.end_date)}</span>}
                             </div>
+                            {renewalDate && (
+                              <div className="flex items-center gap-1.5 mt-1.5">
+                                <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
+                                <span className="text-xs font-medium text-[var(--color-dark-2)]">다음 갱신: {formatDate(renewalDate)}</span>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -614,7 +649,7 @@ export default function ClientDashboardPage() {
                 {/* Domains inline */}
                 {projectDomains.length > 0 && (
                   <div className={`mt-4 ${projectHostings.length === 0 ? "pt-4 border-t border-gray-100" : "pt-3"}`}>
-                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-1.5 mb-3">
+                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
                       <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
                       </svg>
@@ -624,23 +659,22 @@ export default function ClientDashboardPage() {
                       {projectDomains.map((d) => {
                         const days = daysUntil(d.expires_date);
                         const expired = isExpired(d.expires_date);
-                        const soon = isExpiringSoon(d.expires_date);
+                        const badge = days !== null ? getRenewalBadge(days) : null;
                         return (
-                          <div key={d.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : soon ? "border-orange-200 bg-orange-50/30" : "border-gray-100 bg-gray-50/50"}`}>
+                          <div key={d.id} className={`border rounded-xl p-3.5 ${expired ? "border-red-200 bg-red-50/30" : days !== null && days <= 30 ? "border-amber-200 bg-amber-50/30" : "border-gray-200 bg-gray-50/50"}`}>
                             <div className="flex items-center justify-between mb-1.5">
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-[var(--color-dark)] text-sm">{d.domain_name}</span>
                                 {d.registrar && <span className="text-[var(--color-gray)] text-xs">· {d.registrar}</span>}
                               </div>
                               <div className="flex items-center gap-1.5">
-                                {d.auto_renew && <span className="px-2 py-0.5 text-[0.6rem] bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
-                                {expired && <span className="px-2 py-0.5 text-[0.6rem] bg-red-50 text-red-600 rounded-full border border-red-200 font-medium">만료됨</span>}
-                                {!expired && soon && <span className="px-2 py-0.5 text-[0.6rem] bg-orange-50 text-orange-600 rounded-full border border-orange-200 font-medium">만료 임박</span>}
+                                {d.auto_renew && <span className="px-2 py-0.5 text-xs bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 font-medium">자동갱신</span>}
+                                {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
                               </div>
                             </div>
                             <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
                               {d.registered_date && <span>등록: {formatShortDate(d.registered_date)}</span>}
-                              {d.expires_date && <span className={expired ? "text-red-600 font-medium" : soon ? "text-orange-500 font-medium" : ""}>만료: {formatShortDate(d.expires_date)}{days !== null && !expired ? ` (${days}일)` : ""}</span>}
+                              {d.expires_date && <span className={expired ? "text-red-600 font-medium" : ""}>만료: {formatShortDate(d.expires_date)}</span>}
                             </div>
                           </div>
                         );
@@ -662,51 +696,55 @@ export default function ClientDashboardPage() {
     const overdue = data.payments.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
 
     return (
-      <div className="space-y-5">
+      <div className="space-y-6">
         {data.payments.length === 0 ? (
           <EmptyState icon="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75" message="등록된 결제 내역이 없습니다." />
         ) : (
           <>
             {/* Summary */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4">
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
-                <p className="text-emerald-600 text-[0.7rem] font-semibold mb-1">결제 완료</p>
+                <p className="text-emerald-600 text-xs font-semibold mb-1">결제 완료</p>
                 <p className="text-emerald-700 font-bold text-lg">{formatAmount(paid)}</p>
               </div>
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
-                <p className="text-amber-600 text-[0.7rem] font-semibold mb-1">대기</p>
+                <p className="text-amber-600 text-xs font-semibold mb-1">대기</p>
                 <p className="text-amber-700 font-bold text-lg">{formatAmount(pending)}</p>
               </div>
               <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
-                <p className="text-red-500 text-[0.7rem] font-semibold mb-1">미납</p>
+                <p className="text-red-500 text-xs font-semibold mb-1">미납</p>
                 <p className="text-red-700 font-bold text-lg">{formatAmount(overdue)}</p>
               </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50/80 border-b border-gray-100">
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-[0.8rem]">날짜</th>
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-[0.8rem]">구분</th>
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-[0.8rem]">내용</th>
-                      <th className="text-right px-5 py-3.5 text-[var(--color-gray)] font-medium text-[0.8rem]">금액</th>
-                      <th className="text-center px-5 py-3.5 text-[var(--color-gray)] font-medium text-[0.8rem]">상태</th>
+                    <tr className="bg-gray-50 border-b border-gray-200">
+                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">날짜</th>
+                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">구분</th>
+                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">내용</th>
+                      <th className="text-right px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">금액</th>
+                      <th className="text-center px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">상태</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.payments.map((p) => {
-                      const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600" };
+                      const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600", border: "" };
+                      const relatedHosting = p.type === "호스팅" && data.hosting.length > 0 ? data.hosting[0] : null;
                       return (
-                        <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-4 text-[var(--color-dark-2)] whitespace-nowrap">{formatDate(p.payment_date)}</td>
-                          <td className="px-5 py-4 text-[var(--color-dark-2)]">{p.type}</td>
+                          <td className="px-5 py-4">
+                            <span className="text-[var(--color-dark-2)]">{p.type}</span>
+                            {relatedHosting && <span className="text-xs text-[var(--color-gray)] ml-1">({relatedHosting.provider})</span>}
+                          </td>
                           <td className="px-5 py-4 text-[var(--color-gray)]">{p.description || "-"}</td>
                           <td className="px-5 py-4 text-right font-bold text-[var(--color-dark)]">{formatAmount(p.amount)}</td>
                           <td className="px-5 py-4 text-center">
-                            <span className={`inline-block px-3 py-1 text-[0.7rem] font-semibold rounded-full ${st.bg} ${st.text}`}>
+                            <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border ${st.bg} ${st.text} ${st.border}`}>
                               {st.label}
                             </span>
                           </td>
@@ -737,7 +775,7 @@ export default function ClientDashboardPage() {
   return (
     <div className="min-h-screen bg-[var(--color-light)]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 sticky top-0 z-20 shadow-sm shadow-gray-100/50">
+      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3.5 sticky top-0 z-20 shadow-sm">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/client/dashboard" className="no-underline">
@@ -766,7 +804,7 @@ export default function ClientDashboardPage() {
       </header>
 
       <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Welcome & Alerts */}
+        {/* Welcome */}
         <div className="mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-dark)] mb-1">
             안녕하세요, {data.client.name}님
@@ -788,7 +826,7 @@ export default function ClientDashboardPage() {
                     : "bg-amber-50 border-amber-200 text-amber-700"
                 }`}
               >
-                <svg className="w-4.5 h-4.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                 </svg>
                 <span className="font-medium">{alert.message}</span>
@@ -798,12 +836,12 @@ export default function ClientDashboardPage() {
         )}
 
         {/* Tab bar */}
-        <div className="flex gap-1 border-b border-gray-200 mb-6 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+        <div className="flex gap-1 border-b border-gray-200 mb-8 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           {tabConfig.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 px-3.5 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${
                 activeTab === tab.key
                   ? "border-[var(--color-accent)] text-[var(--color-dark)]"
                   : "border-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)] hover:border-gray-300"
@@ -899,13 +937,12 @@ function SettingsTab({ username }: { username: string }) {
   };
 
   return (
-    <div className="max-w-lg">
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+    <div className="max-w-md">
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
         <h3 className="text-[var(--color-dark)] font-bold text-lg mb-1">계정 설정</h3>
         <p className="text-[var(--color-gray)] text-sm mb-6">아이디와 비밀번호를 변경할 수 있습니다.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Current password */}
           <div>
             <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
               현재 비밀번호 <span className="text-red-500">*</span>
@@ -922,11 +959,8 @@ function SettingsTab({ username }: { username: string }) {
           <div className="border-t border-gray-100 pt-5">
             <p className="text-[var(--color-gray)] text-xs mb-4">변경하고 싶은 항목만 입력하세요.</p>
 
-            {/* New username */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
-                아이디
-              </label>
+              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">아이디</label>
               <input
                 type="text"
                 value={newUsername}
@@ -937,11 +971,8 @@ function SettingsTab({ username }: { username: string }) {
               <p className="text-[var(--color-gray)] text-xs mt-1">3자 이상</p>
             </div>
 
-            {/* New password */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
-                새 비밀번호
-              </label>
+              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">새 비밀번호</label>
               <input
                 type="password"
                 value={newPassword}
@@ -952,12 +983,9 @@ function SettingsTab({ username }: { username: string }) {
               <p className="text-[var(--color-gray)] text-xs mt-1">4자 이상</p>
             </div>
 
-            {/* Confirm password */}
             {newPassword && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
-                  새 비밀번호 확인
-                </label>
+                <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">새 비밀번호 확인</label>
                 <input
                   type="password"
                   value={confirmPassword}
@@ -976,7 +1004,6 @@ function SettingsTab({ username }: { username: string }) {
             )}
           </div>
 
-          {/* Message */}
           {message && (
             <div
               className={`px-4 py-3 rounded-xl text-sm font-medium ${
@@ -989,7 +1016,6 @@ function SettingsTab({ username }: { username: string }) {
             </div>
           )}
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={saving}

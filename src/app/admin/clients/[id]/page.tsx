@@ -78,21 +78,21 @@ type TabKey = "projects" | "payments";
 // ---------------------------------------------------------------------------
 
 const inputClass =
-  "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
+  "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
 const labelClass =
-  "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
+  "block text-[var(--color-dark-2)] text-xs font-medium mb-1.5";
 const cardClass =
-  "bg-white border border-gray-200 rounded-xl p-5 shadow-sm";
+  "bg-white border border-gray-200 rounded-2xl p-6 shadow-sm";
 const btnPrimary =
   "px-5 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed";
 const btnSecondary =
   "px-5 py-2.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl text-sm font-semibold cursor-pointer transition-all hover:bg-gray-200";
 const btnDanger =
-  "px-3 py-1.5 bg-red-50 border border-red-200 text-red-500 text-[0.8rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all";
+  "px-3 py-1.5 bg-red-50 border border-red-200 text-red-500 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all";
 const btnSmall =
-  "px-3 py-1.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-[0.8rem] rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all";
+  "px-3 py-1.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-xs rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all";
 const btnMini =
-  "px-2 py-1 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-[0.7rem] rounded-lg cursor-pointer hover:bg-gray-100 transition-all";
+  "px-2.5 py-1 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-xs rounded-lg cursor-pointer hover:bg-gray-100 transition-all";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -106,12 +106,24 @@ function clean(data: Record<string, unknown>): Record<string, unknown> {
   return result;
 }
 
-function isWithin30Days(dateStr: string): boolean {
-  if (!dateStr) return false;
+function getDaysUntil(dateStr: string): number {
+  if (!dateStr) return Infinity;
   const target = new Date(dateStr);
   const now = new Date();
-  const diff = target.getTime() - now.getTime();
-  return diff >= 0 && diff <= 30 * 24 * 60 * 60 * 1000;
+  return Math.ceil((target.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+}
+
+function getNextRenewalDate(endDate: string, billingCycle: string): string | null {
+  if (!endDate) return null;
+  const end = new Date(endDate);
+  const now = new Date();
+  if (end > now) return endDate;
+  const next = new Date(end);
+  while (next <= now) {
+    if (billingCycle === "yearly") next.setFullYear(next.getFullYear() + 1);
+    else next.setMonth(next.getMonth() + 1);
+  }
+  return next.toISOString().split("T")[0];
 }
 
 function isExpired(dateStr: string): boolean {
@@ -128,12 +140,28 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function formatDateShort(dateStr: string): string {
+  if (!dateStr) return "-";
+  return new Date(dateStr).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
 function formatAmount(amount: number): string {
   return Number(amount).toLocaleString() + "원";
 }
 
+function getRenewalBadge(daysUntil: number): { text: string; cls: string } {
+  if (daysUntil < 0) return { text: `${Math.abs(daysUntil)}일 지남`, cls: "bg-red-100 text-red-700 border-red-200" };
+  if (daysUntil <= 7) return { text: `D-${daysUntil}`, cls: "bg-red-100 text-red-700 border-red-200" };
+  if (daysUntil <= 30) return { text: `D-${daysUntil}`, cls: "bg-amber-100 text-amber-700 border-amber-200" };
+  return { text: `D-${daysUntil}`, cls: "bg-emerald-50 text-emerald-700 border-emerald-200" };
+}
+
 const PROJECT_STATUS_COLORS: Record<string, string> = {
-  "상담중": "bg-yellow-50 text-yellow-700 border border-yellow-200",
+  "상담중": "bg-amber-50 text-amber-700 border border-amber-200",
   "진행중": "bg-blue-50 text-blue-700 border border-blue-200",
   "완료": "bg-emerald-50 text-emerald-700 border border-emerald-200",
   "유지보수": "bg-purple-50 text-purple-700 border border-purple-200",
@@ -141,7 +169,7 @@ const PROJECT_STATUS_COLORS: Record<string, string> = {
 
 const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
   paid: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
-  pending: { label: "대기", cls: "bg-yellow-50 text-yellow-700 border border-yellow-200" },
+  pending: { label: "대기", cls: "bg-amber-50 text-amber-700 border border-amber-200" },
   overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-200" },
 };
 
@@ -261,7 +289,7 @@ function CustomSelect({
               key={opt.value}
               type="button"
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-4 py-2.5 text-[0.95rem] flex items-center gap-2.5 cursor-pointer transition-colors border-none ${
+              className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 cursor-pointer transition-colors border-none ${
                 opt.value === value
                   ? "bg-[var(--color-primary)]/5 text-[var(--color-primary)] font-medium"
                   : "bg-white text-[var(--color-dark)] hover:bg-gray-50"
@@ -362,17 +390,17 @@ function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value:
                 <button type="button" onClick={() => setShowYearPicker(true)} className="text-sm font-bold text-[var(--color-dark)] bg-transparent border-none cursor-pointer hover:text-[var(--color-accent)] transition-colors px-2 py-1 rounded-lg hover:bg-gray-50">{viewYear}년 {MONTHS_KR[viewMonth]}</button>
                 <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
               </div>
-              <div className="grid grid-cols-7 mb-1">{WEEKDAYS.map((d, i) => (<div key={d} className={`text-center text-[0.7rem] font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>))}</div>
+              <div className="grid grid-cols-7 mb-1">{WEEKDAYS.map((d, i) => (<div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>))}</div>
               <div className="grid grid-cols-7">
                 {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                   const dow = (firstDow + day - 1) % 7;
-                  return (<button key={day} type="button" onClick={() => selectDate(day)} className={`py-1.5 text-[0.85rem] rounded-lg cursor-pointer border-none transition-all ${isSelected(day) ? "bg-[var(--color-primary)] text-white font-bold" : isToday(day) ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100" : dow === 0 ? "bg-transparent text-red-400 hover:bg-red-50" : dow === 6 ? "bg-transparent text-blue-400 hover:bg-blue-50" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{day}</button>);
+                  return (<button key={day} type="button" onClick={() => selectDate(day)} className={`py-1.5 text-sm rounded-lg cursor-pointer border-none transition-all ${isSelected(day) ? "bg-[var(--color-primary)] text-white font-bold" : isToday(day) ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100" : dow === 0 ? "bg-transparent text-red-400 hover:bg-red-50" : dow === 6 ? "bg-transparent text-blue-400 hover:bg-blue-50" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{day}</button>);
                 })}
               </div>
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-[0.8rem] text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
-                {value && <button type="button" onClick={clearDate} className="text-[0.8rem] text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
+                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-xs text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
+                {value && <button type="button" onClick={clearDate} className="text-xs text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
               </div>
             </div>
           )}
@@ -408,7 +436,7 @@ function AmountInput({ value, onChange, placeholder }: { value: number; onChange
 
 function FormCard({ title, onSave, onCancel, saving, children }: { title: string; onSave: () => void; onCancel: () => void; saving?: boolean; children: React.ReactNode }) {
   return (
-    <div className={`${cardClass} mb-5 border-[var(--color-primary)]/20`}>
+    <div className={`${cardClass} mb-6 border-[var(--color-primary)]/20`}>
       <h4 className="text-[var(--color-dark)] font-semibold mb-4">{title}</h4>
       {children}
       <div className="flex gap-3 mt-5">
@@ -424,7 +452,7 @@ function FormCard({ title, onSave, onCancel, saving, children }: { title: string
 // ===========================================================================
 
 const projectStatusOptions: SelectOption[] = [
-  { value: "상담중", label: "상담중", color: "bg-yellow-400" },
+  { value: "상담중", label: "상담중", color: "bg-amber-400" },
   { value: "진행중", label: "진행중", color: "bg-blue-400" },
   { value: "완료", label: "완료", color: "bg-emerald-400" },
   { value: "유지보수", label: "유지보수", color: "bg-purple-400" },
@@ -445,7 +473,7 @@ const paymentTypeOptions: SelectOption[] = [
 
 const paymentStatusOptions: SelectOption[] = [
   { value: "paid", label: "완료", color: "bg-emerald-400" },
-  { value: "pending", label: "대기", color: "bg-yellow-400" },
+  { value: "pending", label: "대기", color: "bg-amber-400" },
   { value: "overdue", label: "미납", color: "bg-red-400" },
 ];
 
@@ -561,8 +589,9 @@ export default function ClientDetailPage() {
 
   useEffect(() => { fetchClient(); }, [fetchClient]);
   useEffect(() => {
+    // Always fetch payments for hosting-payment linkage
+    fetchPayments();
     if (activeTab === "projects") { fetchProjects(); fetchHostings(); fetchDomains(); }
-    else if (activeTab === "payments") { fetchPayments(); }
   }, [activeTab, fetchProjects, fetchHostings, fetchDomains, fetchPayments]);
 
   // =========================================================================
@@ -691,6 +720,11 @@ export default function ClientDetailPage() {
   const deletePayment = (id: string) => deleteEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments/${id}`, id, setPayments);
 
   // =========================================================================
+  // Hosting-payment linkage helper
+  // =========================================================================
+  const hostingPayments = payments.filter((p) => p.type === "호스팅");
+
+  // =========================================================================
   // Inline hosting form
   // =========================================================================
   const renderHostingForm = () => (
@@ -745,14 +779,19 @@ export default function ClientDetailPage() {
     return (
       <div key={p.id} className={cardClass}>
         {/* Project header */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h4 className="text-[var(--color-dark)] font-semibold text-[0.95rem]">{p.name}</h4>
-              <span className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
-              {p.platform && <span className="px-2 py-0.5 text-[0.7rem] font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
+            <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+              <h4 className="text-[var(--color-dark)] font-bold text-base">{p.name}</h4>
+              <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
+              {p.platform && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
             </div>
-            {p.website_url && <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all">{p.website_url}</a>}
+            {p.website_url && (
+              <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all inline-flex items-center gap-1">
+                {p.website_url}
+                <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+              </a>
+            )}
           </div>
           <div className="flex gap-1.5 ml-3 shrink-0">
             <button onClick={() => openProjectEdit(p)} className={btnSmall}>수정</button>
@@ -760,24 +799,54 @@ export default function ClientDetailPage() {
           </div>
         </div>
 
-        {/* Project info */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-          {p.tech_stack && <div><span className="text-[var(--color-gray)] text-xs block">기술 스택</span><span className="text-[var(--color-dark-2)]">{p.tech_stack}</span></div>}
-          {p.unit_price > 0 && <div><span className="text-[var(--color-gray)] text-xs block">작업 단가</span><span className="text-[var(--color-dark)] font-semibold">{formatAmount(p.unit_price)}</span></div>}
-          {p.admin_url && <div><span className="text-[var(--color-gray)] text-xs block">관리자 URL</span><a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block">{p.admin_url}</a></div>}
-          {p.admin_id && <div><span className="text-[var(--color-gray)] text-xs block">관리자 ID</span><span className="text-[var(--color-dark-2)]">{p.admin_id}</span></div>}
-          {p.admin_pw && <div><span className="text-[var(--color-gray)] text-xs block">관리자 PW</span><span className="text-[var(--color-dark-2)]">{p.admin_pw}</span></div>}
-          {p.started_at && <div><span className="text-[var(--color-gray)] text-xs block">시작일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.started_at)}</span></div>}
-          {p.completed_at && <div><span className="text-[var(--color-gray)] text-xs block">완료일</span><span className="text-[var(--color-dark-2)]">{formatDate(p.completed_at)}</span></div>}
+        {/* Project info grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {p.tech_stack && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">기술 스택</span>
+              <span className="text-[var(--color-dark-2)] text-sm">{p.tech_stack}</span>
+            </div>
+          )}
+          {p.unit_price > 0 && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">작업 단가</span>
+              <span className="text-[var(--color-dark)] text-sm font-semibold">{formatAmount(p.unit_price)}</span>
+            </div>
+          )}
+          {p.admin_url && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">관리자 URL</span>
+              <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline text-sm truncate block">{p.admin_url}</a>
+            </div>
+          )}
+          {p.admin_id && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">관리자 ID / PW</span>
+              <span className="text-[var(--color-dark-2)] text-sm">{p.admin_id}{p.admin_pw ? ` / ${p.admin_pw}` : ""}</span>
+            </div>
+          )}
+          {p.started_at && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">시작일</span>
+              <span className="text-[var(--color-dark-2)] text-sm">{formatDate(p.started_at)}</span>
+            </div>
+          )}
+          {p.completed_at && (
+            <div className="bg-gray-50 rounded-lg px-3 py-2">
+              <span className="text-[var(--color-gray)] text-xs block mb-0.5">완료일</span>
+              <span className="text-[var(--color-dark-2)] text-sm">{formatDate(p.completed_at)}</span>
+            </div>
+          )}
         </div>
-        {p.description && <p className="mt-3 pt-3 border-t border-gray-100 text-[var(--color-gray)] text-sm">{p.description}</p>}
+        {p.description && <p className="mt-4 pt-4 border-t border-gray-100 text-[var(--color-gray)] text-sm leading-relaxed">{p.description}</p>}
 
         {/* ── Hosting section ── */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-2">
-            <h5 className="text-[var(--color-dark-2)] text-sm font-semibold flex items-center gap-1.5">
+        <div className="mt-5 pt-5 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
               <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" /></svg>
-              호스팅 <span className="text-[var(--color-gray)] font-normal">{pHostings.length}건</span>
+              호스팅
+              <span className="text-[var(--color-gray)] font-normal text-xs">{pHostings.length}건</span>
             </h5>
             <button onClick={() => openHostingAdd(p.id)} className={btnMini}>+ 추가</button>
           </div>
@@ -785,43 +854,79 @@ export default function ClientDetailPage() {
           {pHostings.length === 0 && hostingFormProjectId !== p.id && (
             <p className="text-[var(--color-gray)] text-xs py-2">등록된 호스팅이 없습니다.</p>
           )}
-          {pHostings.map((h) => (
-            <div key={h.id} className="bg-gray-50 rounded-xl px-4 py-3 mb-2">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-medium text-sm text-[var(--color-dark)]">{h.provider}</span>
-                    {h.plan && <span className="text-[var(--color-gray)] text-sm">· {h.plan}</span>}
-                    {h.auto_renew && <span className="px-1.5 py-0.5 text-[0.6rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
-                  </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-[var(--color-gray)]">
-                    <span>{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span>
-                    {h.start_date && <span>시작: {formatDate(h.start_date)}</span>}
-                    {h.end_date && (
-                      <span className={isExpired(h.end_date) ? "text-red-500 font-medium" : isWithin30Days(h.end_date) ? "text-orange-500 font-medium" : ""}>
-                        만료: {formatDate(h.end_date)}
-                        {isExpired(h.end_date) && " (만료됨)"}
-                        {!isExpired(h.end_date) && isWithin30Days(h.end_date) && " (임박)"}
-                      </span>
+          {pHostings.map((h) => {
+            const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
+            const daysUntil = renewalDate ? getDaysUntil(renewalDate) : null;
+            const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
+
+            return (
+              <div key={h.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    {/* Provider + Plan + Badges */}
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="font-semibold text-sm text-[var(--color-dark)]">{h.provider}</span>
+                      {h.plan && <span className="text-[var(--color-gray)] text-sm">· {h.plan}</span>}
+                      {h.auto_renew && <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
+                    </div>
+                    {/* Amount + Dates */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)] mb-1.5">
+                      <span className="font-medium text-[var(--color-dark-2)]">{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span>
+                      {h.start_date && <span>시작: {formatDateShort(h.start_date)}</span>}
+                      {h.end_date && <span>만료: {formatDateShort(h.end_date)}</span>}
+                    </div>
+                    {/* Renewal date with badge */}
+                    {renewalDate && badge && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
+                        <span className="text-xs font-medium text-[var(--color-dark-2)]">
+                          다음 갱신: {formatDate(renewalDate)}
+                        </span>
+                        <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>
+                          {badge.text}
+                        </span>
+                      </div>
                     )}
+                    {/* Related hosting payments */}
+                    {hostingPayments.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-gray-200/60">
+                        <span className="text-xs text-[var(--color-gray)] font-medium">최근 결제:</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {hostingPayments.slice(0, 3).map((hp) => {
+                            const si = PAYMENT_STATUS_MAP[hp.status];
+                            return (
+                              <span key={hp.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-lg text-xs">
+                                <span className="text-[var(--color-dark-2)]">{hp.payment_date ? formatDateShort(hp.payment_date) : "-"}</span>
+                                <span className="text-[var(--color-dark)] font-medium">{formatAmount(hp.amount)}</span>
+                                {si && <span className={`px-1 py-0 text-xs rounded ${si.cls}`}>{si.label}</span>}
+                              </span>
+                            );
+                          })}
+                          {hostingPayments.length > 3 && (
+                            <span className="text-xs text-[var(--color-gray)]">+{hostingPayments.length - 3}건</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {h.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{h.memo}</p>}
                   </div>
-                  {h.memo && <p className="text-xs text-[var(--color-gray)] mt-1">{h.memo}</p>}
-                </div>
-                <div className="flex gap-1 ml-2 shrink-0">
-                  <button onClick={() => openHostingEdit(p.id, h)} className={btnMini}>수정</button>
-                  <button onClick={() => deleteHosting(h.id)} className="px-2 py-1 bg-red-50 border border-red-200 text-red-400 text-[0.7rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => openHostingEdit(p.id, h)} className={btnMini}>수정</button>
+                    <button onClick={() => deleteHosting(h.id)} className="px-2.5 py-1 bg-red-50 border border-red-200 text-red-400 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* ── Domain section ── */}
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-2">
-            <h5 className="text-[var(--color-dark-2)] text-sm font-semibold flex items-center gap-1.5">
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
               <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253" /></svg>
-              도메인 <span className="text-[var(--color-gray)] font-normal">{pDomains.length}건</span>
+              도메인
+              <span className="text-[var(--color-gray)] font-normal text-xs">{pDomains.length}건</span>
             </h5>
             <button onClick={() => openDomainAdd(p.id)} className={btnMini}>+ 추가</button>
           </div>
@@ -829,35 +934,44 @@ export default function ClientDetailPage() {
           {pDomains.length === 0 && domainFormProjectId !== p.id && (
             <p className="text-[var(--color-gray)] text-xs py-2">등록된 도메인이 없습니다.</p>
           )}
-          {pDomains.map((d) => (
-            <div key={d.id} className="bg-gray-50 rounded-xl px-4 py-3 mb-2">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-medium text-sm text-[var(--color-dark)]">{d.domain_name}</span>
-                    {d.registrar && <span className="text-[var(--color-gray)] text-sm">· {d.registrar}</span>}
-                    {d.auto_renew && <span className="px-1.5 py-0.5 text-[0.6rem] font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
+          {pDomains.map((d) => {
+            const daysUntil = d.expires_date ? getDaysUntil(d.expires_date) : null;
+            const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
+
+            return (
+              <div key={d.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="font-semibold text-sm text-[var(--color-dark)]">{d.domain_name}</span>
+                      {d.registrar && <span className="text-[var(--color-gray)] text-sm">· {d.registrar}</span>}
+                      {d.auto_renew && <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
+                      {badge && (
+                        <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>
+                          {badge.text}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                      {d.registered_date && <span>등록: {formatDateShort(d.registered_date)}</span>}
+                      {d.expires_date && (
+                        <span className={isExpired(d.expires_date) ? "text-red-500 font-medium" : ""}>
+                          만료: {formatDateShort(d.expires_date)}
+                          {isExpired(d.expires_date) && " (만료됨)"}
+                        </span>
+                      )}
+                      {d.nameservers && <span>NS: {d.nameservers}</span>}
+                    </div>
+                    {d.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{d.memo}</p>}
                   </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-[var(--color-gray)]">
-                    {d.registered_date && <span>등록: {formatDate(d.registered_date)}</span>}
-                    {d.expires_date && (
-                      <span className={isExpired(d.expires_date) ? "text-red-500 font-medium" : isWithin30Days(d.expires_date) ? "text-orange-500 font-medium" : ""}>
-                        만료: {formatDate(d.expires_date)}
-                        {isExpired(d.expires_date) && " (만료됨)"}
-                        {!isExpired(d.expires_date) && isWithin30Days(d.expires_date) && " (임박)"}
-                      </span>
-                    )}
-                    {d.nameservers && <span>NS: {d.nameservers}</span>}
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => openDomainEdit(p.id, d)} className={btnMini}>수정</button>
+                    <button onClick={() => deleteDomain(d.id)} className="px-2.5 py-1 bg-red-50 border border-red-200 text-red-400 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
                   </div>
-                  {d.memo && <p className="text-xs text-[var(--color-gray)] mt-1">{d.memo}</p>}
-                </div>
-                <div className="flex gap-1 ml-2 shrink-0">
-                  <button onClick={() => openDomainEdit(p.id, d)} className={btnMini}>수정</button>
-                  <button onClick={() => deleteDomain(d.id)} className="px-2 py-1 bg-red-50 border border-red-200 text-red-400 text-[0.7rem] rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
@@ -869,8 +983,8 @@ export default function ClientDetailPage() {
 
   const renderProjectsTab = () => (
     <div>
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="text-[var(--color-dark)] font-semibold">프로젝트 <span className="text-[var(--color-gray)] font-normal text-sm ml-2">{projects.length}건</span></h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-[var(--color-dark)] font-bold text-lg">프로젝트 <span className="text-[var(--color-gray)] font-normal text-sm ml-1">{projects.length}건</span></h3>
         <button onClick={openProjectAdd} className={btnPrimary}>+ 추가</button>
       </div>
       {showProjectForm && (
@@ -891,9 +1005,23 @@ export default function ClientDetailPage() {
           <div><label className={labelClass}>설명</label><textarea className={`${inputClass} resize-y`} rows={3} placeholder="프로젝트에 대한 설명" value={projectForm.description} onChange={(e) => setProjectForm((p) => ({ ...p, description: e.target.value }))} /></div>
         </FormCard>
       )}
-      {projectsLoading ? <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
-        : projects.length === 0 ? <div className="text-center py-12 text-[var(--color-gray)]"><svg className="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>등록된 프로젝트가 없습니다.</div>
-        : <div className="space-y-4">{projects.map(renderProjectCard)}</div>}
+      {projectsLoading ? (
+        <div className="space-y-4">
+          {[1, 2].map((i) => (
+            <div key={i} className={`${cardClass} animate-pulse`}>
+              <div className="flex items-center gap-3 mb-4"><div className="h-5 bg-gray-200 rounded w-40" /><div className="h-5 bg-gray-100 rounded-full w-16" /></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4"><div className="h-12 bg-gray-50 rounded-lg" /><div className="h-12 bg-gray-50 rounded-lg" /><div className="h-12 bg-gray-50 rounded-lg" /></div>
+            </div>
+          ))}
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="text-center py-16">
+          <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>
+          <p className="text-[var(--color-gray)] text-sm">등록된 프로젝트가 없습니다.</p>
+        </div>
+      ) : (
+        <div className="space-y-5">{projects.map(renderProjectCard)}</div>
+      )}
     </div>
   );
 
@@ -901,16 +1029,32 @@ export default function ClientDetailPage() {
     const totalPaid = payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
     const totalPending = payments.filter((p) => p.status === "pending").reduce((s, p) => s + Number(p.amount), 0);
     const totalOverdue = payments.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
+
     return (
       <div>
-        <div className="flex items-center justify-between mb-5"><h3 className="text-[var(--color-dark)] font-semibold">결제 내역 <span className="text-[var(--color-gray)] font-normal text-sm ml-2">{payments.length}건</span></h3><button onClick={openPaymentAdd} className={btnPrimary}>+ 추가</button></div>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-[var(--color-dark)] font-bold text-lg">결제 내역 <span className="text-[var(--color-gray)] font-normal text-sm ml-1">{payments.length}건</span></h3>
+          <button onClick={openPaymentAdd} className={btnPrimary}>+ 추가</button>
+        </div>
+
+        {/* Summary cards */}
         {payments.length > 0 && (
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-center"><p className="text-emerald-600 text-[0.7rem] font-medium mb-0.5">완료</p><p className="text-emerald-700 font-bold text-sm">{formatAmount(totalPaid)}</p></div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-center"><p className="text-yellow-600 text-[0.7rem] font-medium mb-0.5">대기</p><p className="text-yellow-700 font-bold text-sm">{formatAmount(totalPending)}</p></div>
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center"><p className="text-red-500 text-[0.7rem] font-medium mb-0.5">미납</p><p className="text-red-700 font-bold text-sm">{formatAmount(totalOverdue)}</p></div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-4 text-center">
+              <p className="text-emerald-600 text-xs font-medium mb-1">완료</p>
+              <p className="text-emerald-700 font-bold">{formatAmount(totalPaid)}</p>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-4 text-center">
+              <p className="text-amber-600 text-xs font-medium mb-1">대기</p>
+              <p className="text-amber-700 font-bold">{formatAmount(totalPending)}</p>
+            </div>
+            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-4 text-center">
+              <p className="text-red-500 text-xs font-medium mb-1">미납</p>
+              <p className="text-red-700 font-bold">{formatAmount(totalOverdue)}</p>
+            </div>
           </div>
         )}
+
         {showPaymentForm && (
           <FormCard title={editingPaymentId ? "결제 수정" : "새 결제"} onSave={savePayment} onCancel={() => { setShowPaymentForm(false); setEditingPaymentId(null); }} saving={paymentSaving}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -923,12 +1067,54 @@ export default function ClientDetailPage() {
             <div><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="결제 관련 메모" value={paymentForm.memo} onChange={(e) => setPaymentForm((p) => ({ ...p, memo: e.target.value }))} /></div>
           </FormCard>
         )}
-        {paymentsLoading ? <div className="text-center py-10 text-[var(--color-gray)]">로딩 중...</div>
-          : payments.length === 0 ? <div className="text-center py-12 text-[var(--color-gray)]"><svg className="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>등록된 결제 내역이 없습니다.</div>
-          : <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="bg-gray-50 border-b border-gray-200"><th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">결제일</th><th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">유형</th><th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium">설명</th><th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium">금액</th><th className="text-center py-3 px-4 text-[var(--color-gray)] font-medium">상태</th><th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium">작업</th></tr></thead><tbody>{payments.map((p) => {
-            const si = PAYMENT_STATUS_MAP[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
-            return (<tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors"><td className="py-3 px-4 text-[var(--color-dark-2)]">{p.payment_date ? formatDate(p.payment_date) : "-"}</td><td className="py-3 px-4 text-[var(--color-dark-2)]">{p.type}</td><td className="py-3 px-4 text-[var(--color-gray)]">{p.description || "-"}</td><td className="py-3 px-4 text-[var(--color-dark)] font-semibold text-right">{formatAmount(p.amount)}</td><td className="py-3 px-4 text-center"><span className={`inline-block px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full ${si.cls}`}>{si.label}</span></td><td className="py-3 px-4 text-right"><div className="flex gap-1.5 justify-end"><button onClick={() => openPaymentEdit(p)} className={btnSmall}>수정</button><button onClick={() => deletePayment(p.id)} className={btnDanger}>삭제</button></div></td></tr>);
-          })}</tbody></table></div></div>}
+
+        {paymentsLoading ? (
+          <div className={`${cardClass} animate-pulse`}>
+            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-10 bg-gray-100 rounded-lg" />)}</div>
+          </div>
+        ) : payments.length === 0 ? (
+          <div className="text-center py-16">
+            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
+            <p className="text-[var(--color-gray)] text-sm">등록된 결제 내역이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">결제일</th>
+                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">유형</th>
+                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">설명</th>
+                    <th className="text-right py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">금액</th>
+                    <th className="text-center py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">상태</th>
+                    <th className="text-right py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">작업</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.map((p) => {
+                    const si = PAYMENT_STATUS_MAP[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
+                    // Show related hosting provider for hosting-type payments
+                    const relatedHosting = p.type === "호스팅" && hostings.length > 0 ? hostings[0] : null;
+                    return (
+                      <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                        <td className="py-3.5 px-4 text-[var(--color-dark-2)]">{p.payment_date ? formatDateShort(p.payment_date) : "-"}</td>
+                        <td className="py-3.5 px-4">
+                          <span className="text-[var(--color-dark-2)]">{p.type}</span>
+                          {relatedHosting && <span className="text-xs text-[var(--color-gray)] ml-1">({relatedHosting.provider})</span>}
+                        </td>
+                        <td className="py-3.5 px-4 text-[var(--color-gray)]">{p.description || "-"}</td>
+                        <td className="py-3.5 px-4 text-[var(--color-dark)] font-semibold text-right">{formatAmount(p.amount)}</td>
+                        <td className="py-3.5 px-4 text-center"><span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${si.cls}`}>{si.label}</span></td>
+                        <td className="py-3.5 px-4 text-right"><div className="flex gap-1.5 justify-end"><button onClick={() => openPaymentEdit(p)} className={btnSmall}>수정</button><button onClick={() => deletePayment(p.id)} className={btnDanger}>삭제</button></div></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -953,28 +1139,51 @@ export default function ClientDetailPage() {
   // =========================================================================
 
   if (clientLoading) return (
-    <div className="min-h-screen bg-[var(--color-light)]"><AdminHeader /><div className="max-w-[1200px] mx-auto px-6 py-8"><div className="animate-pulse"><div className="h-4 bg-gray-200 rounded w-32 mb-6" /><div className="bg-white border border-gray-200 rounded-xl p-6"><div className="flex items-center gap-4 mb-4"><div className="w-14 h-14 bg-gray-200 rounded-full" /><div><div className="h-5 bg-gray-200 rounded w-40 mb-2" /><div className="h-3 bg-gray-100 rounded w-24" /></div></div><div className="grid grid-cols-3 gap-4"><div className="h-12 bg-gray-100 rounded-lg" /><div className="h-12 bg-gray-100 rounded-lg" /><div className="h-12 bg-gray-100 rounded-lg" /></div></div></div></div></div>
+    <div className="min-h-screen bg-[var(--color-light)]">
+      <AdminHeader />
+      <div className="max-w-[1100px] mx-auto px-6 py-8">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-32 mb-6" />
+          <div className={cardClass}>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-14 h-14 bg-gray-200 rounded-full" />
+              <div><div className="h-5 bg-gray-200 rounded w-40 mb-2" /><div className="h-3 bg-gray-100 rounded w-24" /></div>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5 pt-5 border-t border-gray-100">
+              {[1, 2, 3, 4].map((i) => <div key={i} className="h-14 bg-gray-50 rounded-lg" />)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
   if (!client) return (
-    <div className="min-h-screen bg-[var(--color-light)]"><AdminHeader /><div className="text-center py-20"><p className="text-[var(--color-gray)] mb-4">클라이언트를 찾을 수 없습니다.</p><Link href="/admin/clients" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">목록으로 돌아가기</Link></div></div>
+    <div className="min-h-screen bg-[var(--color-light)]">
+      <AdminHeader />
+      <div className="text-center py-20">
+        <p className="text-[var(--color-gray)] mb-4">클라이언트를 찾을 수 없습니다.</p>
+        <Link href="/admin/clients" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">목록으로 돌아가기</Link>
+      </div>
+    </div>
   );
 
   return (
     <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
-        <Link href="/admin/clients" className="text-[var(--color-gray)] no-underline hover:text-[var(--color-dark)] transition-colors flex items-center gap-1 text-sm mb-6">
+      <div className="max-w-[1100px] mx-auto px-6 py-8">
+        {/* Back link */}
+        <Link href="/admin/clients" className="text-[var(--color-gray)] no-underline hover:text-[var(--color-dark)] transition-colors flex items-center gap-1.5 text-sm mb-6 w-fit">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
           클라이언트 목록
         </Link>
 
         {/* Client info card */}
-        <div className={`${cardClass} mb-6`}>
+        <div className={`${cardClass} mb-8`}>
           {editingClient ? (
             <div>
-              <h3 className="text-[var(--color-dark)] font-semibold mb-5">클라이언트 정보 수정</h3>
+              <h3 className="text-[var(--color-dark)] font-bold text-lg mb-5">클라이언트 정보 수정</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div><label className={labelClass}>이름 *</label><input className={inputClass} value={clientForm.name} onChange={(e) => setClientForm((p) => ({ ...p, name: e.target.value }))} /></div>
                 <div><label className={labelClass}>이메일</label><input type="text" className={inputClass} value={clientForm.email} onChange={(e) => setClientForm((p) => ({ ...p, email: e.target.value }))} /></div>
@@ -989,32 +1198,72 @@ export default function ClientDetailPage() {
             <div>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0 ${client.is_active ? "bg-gradient-to-br from-[var(--color-primary)] to-blue-600" : "bg-gray-400"}`}>{client.name.charAt(0)}</div>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shrink-0 ${client.is_active ? "bg-gradient-to-br from-[var(--color-primary)] to-blue-600" : "bg-gray-400"}`}>
+                    {client.name.charAt(0)}
+                  </div>
                   <div>
-                    <div className="flex items-center gap-2.5 mb-1"><h2 className="text-xl font-bold text-[var(--color-dark)]">{client.name}</h2><span className={`px-2.5 py-0.5 text-[0.7rem] font-semibold rounded-full ${client.is_active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"}`}>{client.is_active ? "활성" : "비활성"}</span></div>
+                    <div className="flex items-center gap-2.5 mb-1">
+                      <h2 className="text-xl font-bold text-[var(--color-dark)]">{client.name}</h2>
+                      <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${client.is_active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"}`}>
+                        {client.is_active ? "활성" : "비활성"}
+                      </span>
+                    </div>
                     <p className="text-[var(--color-gray)] text-sm">@{client.username}</p>
                   </div>
                 </div>
                 <button onClick={startEditClient} className={btnSmall}>수정</button>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 pt-5 border-t border-gray-100">
-                {client.email && <div><span className="text-[var(--color-gray)] text-xs block mb-0.5">이메일</span><span className="text-[var(--color-dark)] text-sm">{client.email}</span></div>}
-                {client.phone && <div><span className="text-[var(--color-gray)] text-xs block mb-0.5">전화번호</span><span className="text-[var(--color-dark)] text-sm">{client.phone}</span></div>}
-                <div><span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span><span className="text-[var(--color-dark)] text-sm">{formatDate(client.created_at)}</span></div>
-                <div><span className="text-[var(--color-gray)] text-xs block mb-0.5">아이디</span><span className="text-[var(--color-dark)] text-sm">{client.username}</span></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-100">
+                {client.email && (
+                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">이메일</span>
+                    <span className="text-[var(--color-dark)] text-sm">{client.email}</span>
+                  </div>
+                )}
+                {client.phone && (
+                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">전화번호</span>
+                    <span className="text-[var(--color-dark)] text-sm">{client.phone}</span>
+                  </div>
+                )}
+                <div className="bg-gray-50 rounded-lg px-3 py-2.5">
+                  <span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span>
+                  <span className="text-[var(--color-dark)] text-sm">{formatDate(client.created_at)}</span>
+                </div>
+                <div className="bg-gray-50 rounded-lg px-3 py-2.5">
+                  <span className="text-[var(--color-gray)] text-xs block mb-0.5">아이디</span>
+                  <span className="text-[var(--color-dark)] text-sm">{client.username}</span>
+                </div>
               </div>
-              {client.memo && <div className="mt-4 pt-4 border-t border-gray-100"><span className="text-[var(--color-gray)] text-xs block mb-1">메모</span><p className="text-[var(--color-dark-2)] text-sm whitespace-pre-wrap bg-gray-50 rounded-lg px-3 py-2">{client.memo}</p></div>}
+              {client.memo && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-[var(--color-gray)] text-xs block mb-1.5">메모</span>
+                  <p className="text-[var(--color-dark-2)] text-sm whitespace-pre-wrap bg-gray-50 rounded-lg px-4 py-3 leading-relaxed">{client.memo}</p>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         {/* Tab bar */}
-        <div className="flex gap-1 border-b border-gray-200 mb-6 overflow-x-auto">
+        <div className="flex gap-1 border-b border-gray-200 mb-8 overflow-x-auto">
           {tabConfig.map((tab) => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${activeTab === tab.key ? "border-[var(--color-primary)] text-[var(--color-dark)]" : "border-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)] hover:border-gray-300"}`}>
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${
+                activeTab === tab.key
+                  ? "border-[var(--color-primary)] text-[var(--color-dark)]"
+                  : "border-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)] hover:border-gray-300"
+              }`}
+            >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} /></svg>
               {tab.label}
-              {tab.count > 0 && <span className={`px-1.5 py-0.5 text-[0.65rem] font-semibold rounded-full ${activeTab === tab.key ? "bg-[var(--color-primary)] text-white" : "bg-gray-200 text-[var(--color-gray)]"}`}>{tab.count}</span>}
+              {tab.count > 0 && (
+                <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
+                  activeTab === tab.key ? "bg-[var(--color-primary)] text-white" : "bg-gray-200 text-[var(--color-gray)]"
+                }`}>{tab.count}</span>
+              )}
             </button>
           ))}
         </div>
