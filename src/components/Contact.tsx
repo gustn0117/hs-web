@@ -44,9 +44,9 @@ const contactItems = [
 ];
 
 const quickFaqs = [
-  { q: "제작 비용은?", a: "80만원부터 시작" },
-  { q: "제작 기간은?", a: "기본 2~3주" },
-  { q: "유지보수는?", a: "1~6개월 무상 포함" },
+  { q: "제작 비용은?", a: "상담 시 안내" },
+  { q: "제작 기간은?", a: "빠르게 진행" },
+  { q: "유지보수는?", a: "무상 포함" },
 ];
 
 function FloatingInput({ label, type = "text", placeholder, required = false }: { label: string; type?: string; placeholder: string; required?: boolean }) {
