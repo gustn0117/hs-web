@@ -122,7 +122,7 @@ export default function Portfolio({ items }: { items?: PortfolioItem[] }) {
                     <div className={`absolute top-0 left-0 right-0 h-[3px] ${style.badge} opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10`} />
 
                     {/* Thumbnail */}
-                    <div className={`h-[220px] relative overflow-hidden ${p.thumbnail ? '' : `bg-gradient-to-br ${style.bg} ${style.iconColor}`}`}>
+                    <div className={`aspect-square relative overflow-hidden ${p.thumbnail ? '' : `bg-gradient-to-br ${style.bg} ${style.iconColor}`}`}>
                       {p.thumbnail ? (
                         <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       ) : (
