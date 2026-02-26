@@ -65,6 +65,9 @@ interface DockerContainer {
   cpuPercent?: number;
   memoryUsageMB?: number;
   memoryLimitMB?: number;
+  sizeRw?: number;
+  sizeRootFs?: number;
+  sizeHuman?: string;
 }
 
 // ─── Helpers ───
@@ -361,6 +364,8 @@ interface DockerContainerRaw {
   Status: string;
   Ports: { IP?: string; PrivatePort: number; PublicPort?: number; Type: string }[];
   Created: number;
+  SizeRw?: number;
+  SizeRootFs?: number;
 }
 
 interface DockerStatsRaw {
@@ -385,7 +390,7 @@ async function getDockerContainers(): Promise<{
   error?: string;
 }> {
   const raw = await dockerRequest<DockerContainerRaw[]>(
-    "/containers/json?all=true"
+    "/containers/json?all=true&size=true"
   );
 
   if (!raw || !Array.isArray(raw)) {
@@ -405,6 +410,9 @@ async function getDockerContainers(): Promise<{
         private: p.PrivatePort,
         type: p.Type,
       })),
+    sizeRw: c.SizeRw ?? undefined,
+    sizeRootFs: c.SizeRootFs ?? undefined,
+    sizeHuman: c.SizeRw != null ? formatBytes(c.SizeRw) : undefined,
   }));
 
   // Fetch stats for running containers (max 10, with timeout)
