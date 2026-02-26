@@ -13,14 +13,14 @@ interface PortfolioItem {
 }
 
 const CATEGORY_STYLES: Record<string, { bg: string; iconColor: string; badge: string }> = {
-  "브랜드 홈페이지": { bg: "from-amber-100 to-amber-50", iconColor: "text-amber-600", badge: "bg-amber-500" },
-  "쇼핑몰": { bg: "from-pink-100 to-pink-50", iconColor: "text-pink-600", badge: "bg-pink-500" },
-  "기업 홈페이지": { bg: "from-sky-100 to-sky-50", iconColor: "text-sky-600", badge: "bg-sky-500" },
-  "랜딩페이지": { bg: "from-violet-100 to-violet-50", iconColor: "text-violet-600", badge: "bg-violet-500" },
-  "웹 애플리케이션": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-500" },
-  "CMS": { bg: "from-orange-100 to-orange-50", iconColor: "text-orange-600", badge: "bg-orange-500" },
-  "기업 관리 시스템": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-500" },
-  "기타": { bg: "from-gray-100 to-gray-50", iconColor: "text-gray-600", badge: "bg-gray-500" },
+  "브랜드 홈페이지": { bg: "from-slate-100 to-slate-50", iconColor: "text-slate-600", badge: "bg-[var(--color-primary)]" },
+  "쇼핑몰": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-600" },
+  "기업 홈페이지": { bg: "from-sky-100 to-sky-50", iconColor: "text-sky-600", badge: "bg-sky-600" },
+  "랜딩페이지": { bg: "from-indigo-100 to-indigo-50", iconColor: "text-indigo-600", badge: "bg-indigo-600" },
+  "웹 애플리케이션": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-blue-600" },
+  "CMS": { bg: "from-slate-100 to-slate-50", iconColor: "text-slate-600", badge: "bg-slate-600" },
+  "기업 관리 시스템": { bg: "from-blue-100 to-blue-50", iconColor: "text-blue-600", badge: "bg-[var(--color-primary)]" },
+  "기타": { bg: "from-gray-100 to-gray-50", iconColor: "text-gray-600", badge: "bg-gray-600" },
 };
 
 function FallbackIcon() {
@@ -82,10 +82,10 @@ export default function Portfolio({ items }: { items?: PortfolioItem[] }) {
               <div className="absolute bottom-4 left-4 right-4 flex gap-1.5">
                 <div className="w-6 h-6 bg-blue-100 rounded" />
                 <div className="w-6 h-6 bg-blue-100 rounded" />
-                <div className="w-6 h-6 bg-amber-100 rounded" />
+                <div className="w-6 h-6 bg-blue-100 rounded" />
               </div>
               {/* Decorative sparkles */}
-              <div className="absolute -top-2 -right-2 w-4 h-4 text-amber-400 animate-float">
+              <div className="absolute -top-2 -right-2 w-4 h-4 text-blue-400 animate-float">
                 <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
               </div>
             </div>

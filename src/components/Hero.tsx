@@ -159,7 +159,7 @@ export default function Hero() {
                     <span className="text-blue-400">useState</span>
                     <span className="text-gray-300">{" } "}</span>
                     <span className="text-violet-400">from</span>
-                    <span className="text-amber-400">{" 'react'"}</span>
+                    <span className="text-sky-400">{" 'react'"}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-gray-600 w-4 text-right">2</span>
@@ -179,7 +179,7 @@ export default function Hero() {
                   {[
                     { color: "bg-blue-100", border: "border-blue-50" },
                     { color: "bg-blue-100", border: "border-blue-50" },
-                    { color: "bg-amber-100", border: "border-amber-50" },
+                    { color: "bg-slate-100", border: "border-slate-50" },
                   ].map((c, n) => (
                     <div key={n} className={`bg-gray-50 rounded-lg p-2.5 border ${c.border}`}>
                       <div className={`w-5 h-5 ${c.color} rounded mb-1.5`} />

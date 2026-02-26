@@ -16,6 +16,13 @@ export const metadata: Metadata = {
   keywords:
     "홈페이지 제작, 웹사이트 제작, 반응형 웹디자인, 쇼핑몰 제작, 랜딩페이지, 웹에이전시, HS WEB",
   authors: [{ name: "HS WEB" }],
+  manifest: "/manifest.json",
+  other: {
+    "theme-color": "#0f1a2d",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-title": "HS WEB",
+  },
   openGraph: {
     type: "website",
     title: "HS WEB | 웹사이트 제작 전문",

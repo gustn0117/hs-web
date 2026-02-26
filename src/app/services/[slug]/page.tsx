@@ -52,15 +52,15 @@ export default function ServiceDetailPage() {
 
   return (
     <div ref={ref}>
-      {/* Hero */}
-      <section className="pt-32 pb-20 bg-[var(--color-light)] relative overflow-hidden">
-        <div className="absolute inset-0 dot-pattern pointer-events-none opacity-40" />
+      {/* Hero — dark background */}
+      <section className="relative pt-32 pb-20 bg-gradient-to-br from-[var(--color-dark)] to-[var(--color-dark-2)] overflow-hidden">
+        <div className="absolute inset-0 dot-pattern pointer-events-none opacity-[0.04]" />
 
         <div className="max-w-[900px] mx-auto px-6 relative z-10">
           <div className="fade-up">
             <Link
               href="/services"
-              className="inline-flex items-center gap-1.5 text-[var(--color-gray)] text-sm no-underline hover:text-[var(--color-dark)] transition-colors mb-6"
+              className="inline-flex items-center gap-1.5 text-gray-400 text-sm no-underline hover:text-white transition-colors mb-8"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -69,49 +69,51 @@ export default function ServiceDetailPage() {
             </Link>
 
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/15">
+              <div className="w-14 h-14 bg-white/10 backdrop-blur-sm text-white rounded-2xl flex items-center justify-center border border-white/10">
                 <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={service.iconPath} />
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--color-dark)] tracking-tight">
+                <h1 className="text-3xl md:text-[2.5rem] font-extrabold text-white tracking-tight leading-tight">
                   {service.title}
                 </h1>
-                <p className="text-[var(--color-gray)] text-lg mt-1">
+                <p className="text-gray-400 text-lg mt-1">
                   {service.subtitle}
                 </p>
               </div>
             </div>
 
-            <p className="text-[var(--color-gray)] text-lg leading-relaxed max-w-[700px] mb-8">
+            <p className="text-gray-400 text-lg leading-relaxed max-w-[650px] mb-8">
               {service.description}
             </p>
 
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap gap-2 mb-10">
               {service.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-sm font-medium text-[var(--color-dark-2)]"
+                  className="px-3 py-1.5 bg-white/[0.06] border border-white/10 rounded-full text-sm font-medium text-gray-300"
                 >
                   {tag}
                 </span>
               ))}
             </div>
 
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:shadow-xl hover:shadow-blue-900/15 transition-all duration-300 no-underline hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-[var(--color-dark)] bg-white hover:bg-gray-100 transition-all duration-300 no-underline hover:shadow-xl"
               >
                 무료 상담 받기
-                <span>→</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
               </Link>
               <Link
                 href="/portfolio"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-[var(--color-dark)] border border-gray-200 hover:border-gray-300 transition-all duration-300 no-underline bg-white/80 backdrop-blur-sm"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-gray-300 border border-white/15 hover:border-white/30 hover:text-white transition-all duration-300 no-underline"
               >
-                관련 포트폴리오 보기
+                포트폴리오 보기
               </Link>
             </div>
           </div>
@@ -120,7 +122,7 @@ export default function ServiceDetailPage() {
 
       {/* Features */}
       <section className="py-24 bg-white">
-        <div className="max-w-[900px] mx-auto px-6">
+        <div className="max-w-[1000px] mx-auto px-6">
           <div className="text-center mb-14 fade-up">
             <p className="text-[var(--color-accent)] text-sm font-semibold uppercase tracking-[2px] mb-3">
               FEATURES
@@ -135,18 +137,18 @@ export default function ServiceDetailPage() {
             {service.features.map((f, i) => (
               <div
                 key={i}
-                className="fade-up bg-[var(--color-light)] rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 hover:-translate-y-1 group"
+                className="fade-up bg-[var(--color-light)] rounded-2xl p-7 border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300 hover:-translate-y-1 group"
                 style={{ transitionDelay: `${i * 60}ms` }}
               >
-                <div className="w-10 h-10 bg-[var(--color-dark)] text-white rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-[var(--color-dark)] text-white rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={f.iconPath} />
                   </svg>
                 </div>
-                <h3 className="font-bold text-[0.95rem] text-[var(--color-dark)] mb-2">
+                <h3 className="font-bold text-[1rem] text-[var(--color-dark)] mb-2">
                   {f.title}
                 </h3>
-                <p className="text-[var(--color-gray)] text-[0.82rem] leading-relaxed">
+                <p className="text-[var(--color-gray)] text-[0.85rem] leading-relaxed">
                   {f.desc}
                 </p>
               </div>
@@ -156,11 +158,12 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* Free maintenance highlight */}
-      <section className="py-16 bg-[var(--color-light)] border-y border-gray-100">
-        <div className="max-w-[900px] mx-auto px-6">
-          <div className="fade-up flex flex-col md:flex-row items-center gap-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/15 shrink-0">
-              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <section className="py-16 bg-[var(--color-dark)] relative overflow-hidden">
+        <div className="absolute inset-0 dot-pattern pointer-events-none opacity-[0.04]" />
+        <div className="max-w-[800px] mx-auto px-6 relative z-10">
+          <div className="fade-up flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+            <div className="w-14 h-14 bg-white/10 text-white rounded-2xl flex items-center justify-center border border-white/10 shrink-0">
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -168,17 +171,17 @@ export default function ServiceDetailPage() {
                 />
               </svg>
             </div>
-            <div className="text-center md:text-left">
-              <h3 className="text-xl font-bold text-[var(--color-dark)] mb-2">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-2">
                 유지보수 무료
               </h3>
-              <p className="text-[var(--color-gray)] leading-relaxed">
+              <p className="text-gray-400 leading-relaxed text-[0.95rem]">
                 HS WEB에서 제작한 모든 프로젝트는{" "}
-                <span className="text-[var(--color-dark)] font-semibold">
+                <span className="text-white font-semibold">
                   도메인과 호스팅 비용을 제외한 모든 수정 작업이 무료
                 </span>
                 입니다. 큰 규모의 리뉴얼이 아닌 이상, 텍스트 변경부터 레이아웃
-                수정까지 추가 비용 없이 지속적으로 지원해드립니다.
+                수정까지 추가 비용 없이 지원합니다.
               </p>
             </div>
           </div>
@@ -186,7 +189,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* Technologies */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[var(--color-light)]">
         <div className="max-w-[900px] mx-auto px-6">
           <div className="text-center mb-10 fade-up">
             <p className="text-[var(--color-accent)] text-sm font-semibold uppercase tracking-[2px] mb-3">
@@ -202,7 +205,7 @@ export default function ServiceDetailPage() {
             {service.technologies.map((tech) => (
               <span
                 key={tech}
-                className="px-5 py-2.5 bg-[var(--color-light)] border border-gray-200 rounded-xl text-[var(--color-dark)] text-sm font-medium hover:border-[var(--color-accent)] hover:shadow-sm transition-all"
+                className="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-[var(--color-dark)] text-sm font-medium hover:border-[var(--color-accent)] hover:shadow-sm transition-all"
               >
                 {tech}
               </span>
@@ -212,7 +215,7 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-[var(--color-light)]">
+      <section className="py-20 bg-white">
         <div className="max-w-[700px] mx-auto px-6">
           <div className="text-center mb-10 fade-up">
             <p className="text-[var(--color-accent)] text-sm font-semibold uppercase tracking-[2px] mb-3">
@@ -228,7 +231,7 @@ export default function ServiceDetailPage() {
             {service.faqs.map((faq, i) => (
               <div
                 key={i}
-                className="fade-up bg-white rounded-2xl border border-gray-100 overflow-hidden transition-all"
+                className="fade-up bg-[var(--color-light)] rounded-2xl border border-gray-100 overflow-hidden transition-all"
                 style={{ transitionDelay: `${i * 60}ms` }}
               >
                 <button
@@ -262,19 +265,19 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* Navigation between services */}
-      <section className="py-12 bg-white border-t border-gray-100">
+      <section className="py-0 bg-[var(--color-light)] border-t border-gray-100">
         <div className="max-w-[900px] mx-auto px-6">
-          <div className="flex justify-between items-center">
+          <div className="grid grid-cols-2 divide-x divide-gray-100">
             {prevService ? (
               <Link
                 href={`/services/${prevService.slug}`}
-                className="flex items-center gap-3 text-[var(--color-gray)] hover:text-[var(--color-dark)] transition-colors no-underline group"
+                className="flex items-center gap-3 py-8 pr-6 text-[var(--color-gray)] hover:text-[var(--color-dark)] transition-colors no-underline group"
               >
-                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>
                 <div>
-                  <p className="text-xs text-[var(--color-gray)]">이전</p>
+                  <p className="text-xs text-[var(--color-gray)] mb-0.5">이전 서비스</p>
                   <p className="font-semibold text-sm">{prevService.title}</p>
                 </div>
               </Link>
@@ -284,13 +287,13 @@ export default function ServiceDetailPage() {
             {nextService ? (
               <Link
                 href={`/services/${nextService.slug}`}
-                className="flex items-center gap-3 text-[var(--color-gray)] hover:text-[var(--color-dark)] transition-colors no-underline group text-right"
+                className="flex items-center justify-end gap-3 py-8 pl-6 text-[var(--color-gray)] hover:text-[var(--color-dark)] transition-colors no-underline group text-right"
               >
                 <div>
-                  <p className="text-xs text-[var(--color-gray)]">다음</p>
+                  <p className="text-xs text-[var(--color-gray)] mb-0.5">다음 서비스</p>
                   <p className="font-semibold text-sm">{nextService.title}</p>
                 </div>
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
               </Link>
@@ -302,13 +305,13 @@ export default function ServiceDetailPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-[var(--color-dark)] to-[var(--color-dark-2)] relative overflow-hidden">
+      <section className="py-20 bg-[var(--color-dark)] relative overflow-hidden">
         <div className="absolute inset-0 dot-pattern pointer-events-none opacity-[0.04]" />
         <div className="max-w-[600px] mx-auto px-6 text-center relative z-10">
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4 tracking-tight">
             {service.title}가 필요하신가요?
           </h2>
-          <p className="text-white/60 text-lg mb-8 leading-relaxed">
+          <p className="text-gray-400 text-lg mb-8 leading-relaxed">
             무료 상담을 통해 프로젝트에 맞는 최적의 솔루션을 제안해드립니다.
           </p>
           <Link
@@ -316,7 +319,9 @@ export default function ServiceDetailPage() {
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[var(--color-dark)] rounded-xl font-bold text-lg no-underline hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
           >
             무료 상담 신청하기
-            <span>→</span>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
           </Link>
         </div>
       </section>
