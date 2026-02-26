@@ -58,19 +58,9 @@ export default function Hero() {
     <section ref={sectionRef} className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-blue-50/20 flex items-center pt-[72px] relative overflow-hidden">
       <div className="absolute inset-0 dot-pattern pointer-events-none" />
 
-      {/* Floating decorations with parallax */}
-      <div className="parallax-slow absolute top-32 right-[15%] w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-float" />
-      <div className="parallax-slow absolute bottom-20 left-[10%] w-56 h-56 bg-blue-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
-      <div className="absolute top-1/2 right-[5%] w-4 h-4 bg-[var(--color-primary)] rounded-full opacity-20 animate-float" style={{ animationDelay: "0.8s" }} />
-      <div className="absolute top-[20%] left-[20%] w-3 h-3 bg-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2s" }} />
-      <div className="absolute top-[40%] right-[30%] w-2 h-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-full opacity-15 animate-float" style={{ animationDelay: "2.5s", animationDuration: "4s" }} />
-      <div className="absolute bottom-[30%] right-[8%] w-6 h-6 border border-blue-300/20 rounded-full animate-float" style={{ animationDelay: "1.2s", animationDuration: "5s" }} />
-      <div className="absolute top-[60%] left-[5%] w-3 h-3 border border-blue-300/15 rounded-full animate-float" style={{ animationDelay: "3s", animationDuration: "4.5s" }} />
-
-      {/* Geometric decorations */}
-      <div className="absolute top-[25%] right-[6%] w-14 h-14 border border-blue-400/10 rounded-lg animate-rotate-slow pointer-events-none" />
-      <div className="absolute bottom-[18%] left-[3%] w-20 h-[2px] bg-gradient-to-r from-transparent via-blue-300/20 to-transparent pointer-events-none" />
-      <div className="absolute top-[70%] right-[18%] w-16 h-[2px] bg-gradient-to-r from-transparent via-blue-300/20 to-transparent pointer-events-none" />
+      {/* Subtle background blobs */}
+      <div className="parallax-slow absolute top-32 right-[15%] w-72 h-72 bg-blue-400/10 rounded-full blur-3xl" />
+      <div className="parallax-slow absolute bottom-20 left-[10%] w-56 h-56 bg-blue-400/10 rounded-full blur-3xl" />
 
       <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -113,29 +103,13 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex items-center gap-3 mt-6 justify-center lg:justify-start text-[0.8rem] text-[var(--color-gray-light)]">
-              <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                무료 상담
-              </div>
-              <span className="w-1 h-1 bg-gray-300 rounded-full" />
-              <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                빠른 제작
-              </div>
-              <span className="w-1 h-1 bg-gray-300 rounded-full" />
-              <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                <span className="text-emerald-600 font-semibold">유지보수 무료</span>
-              </div>
-            </div>
-
             {/* Key points */}
-            <div className="flex flex-wrap gap-3 mt-10">
-              {["맞춤형 디자인", "반응형 웹", "SEO / 마케팅", "유지보수 무료"].map((tag) => (
-                <span key={tag} className="px-4 py-2 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/15 rounded-full text-[var(--color-gray)] text-[0.85rem] font-medium">
-                  {tag}
+            <div className="flex items-center gap-4 mt-8 justify-center lg:justify-start text-[0.82rem] text-[var(--color-gray)]">
+              {["무료 상담", "빠른 제작", "유지보수 무료"].map((text, i) => (
+                <span key={text} className="flex items-center gap-1.5">
+                  {i > 0 && <span className="w-1 h-1 bg-gray-300 rounded-full mr-2" />}
+                  <svg className="w-3.5 h-3.5 text-[var(--color-accent)]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {text}
                 </span>
               ))}
             </div>

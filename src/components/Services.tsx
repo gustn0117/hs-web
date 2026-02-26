@@ -6,12 +6,6 @@ import { services } from "@/lib/services";
 
 const ICON_COLOR = "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] shadow-md shadow-blue-900/15";
 
-const highlights = [
-  { icon: "M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z", text: "다양한 프로젝트 경험" },
-  { icon: "M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5", text: "풀스택 개발 역량" },
-  { icon: "M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5", text: "업종별 맞춤 솔루션" },
-  { icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", text: "유지보수 무료 지원" },
-];
 
 export default function Services() {
   const ref = useRef<HTMLDivElement>(null);
@@ -48,21 +42,6 @@ export default function Services() {
             웹사이트 제작부터 기술 마케팅까지,
             비즈니스 성장에 필요한 모든 웹 솔루션을 제공합니다.
           </p>
-        </div>
-
-        {/* Highlights box */}
-        <div className="fade-up mb-10 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 className="text-[0.85rem] font-bold text-[var(--color-primary)] uppercase tracking-[1.5px] mb-4">핵심 역량</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {highlights.map((h) => (
-              <div key={h.text} className="flex items-center gap-2.5">
-                <svg className="w-5 h-5 text-[var(--color-primary)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d={h.icon} />
-                </svg>
-                <span className="text-[var(--color-dark)] text-[0.88rem] font-medium">{h.text}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="flex flex-col">
