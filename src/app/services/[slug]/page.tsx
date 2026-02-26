@@ -97,9 +97,6 @@ export default function ServiceDetailPage() {
                   {tag}
                 </span>
               ))}
-              <span className="px-3 py-1.5 bg-[var(--color-dark)] text-white rounded-full text-sm font-semibold">
-                {service.metric}
-              </span>
             </div>
 
             <div className="flex gap-4 flex-wrap">

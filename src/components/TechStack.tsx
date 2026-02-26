@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const categories = [
   {
     title: "프론트엔드",
     desc: "빠르고 인터랙티브한 사용자 경험을 구현합니다.",
     color: "from-blue-400 to-blue-600",
-    barColor: "from-blue-400 to-blue-500",
     badgeBg: "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100",
-    level: 95,
     techs: [
       { name: "React", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="2.5" /><ellipse cx="12" cy="12" rx="10" ry="4" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" /></svg> },
       { name: "Next.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1.5 14.5V7.5l8 9h-2.5L10.5 10v6.5h-1z" opacity="0.6" /></svg> },
@@ -22,9 +20,7 @@ const categories = [
     title: "백엔드",
     desc: "안정적이고 확장 가능한 서버 아키텍처를 설계합니다.",
     color: "from-blue-400 to-blue-600",
-    barColor: "from-blue-400 to-violet-500",
     badgeBg: "bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100",
-    level: 90,
     techs: [
       { name: "Node.js", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.85l9 5.2v10.4l-9 5.2-9-5.2V7.05l9-5.2z" opacity="0.3" /></svg> },
       { name: "Express", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="6" width="20" height="12" rx="2" opacity="0.15" /><text x="12" y="15" textAnchor="middle" fontSize="8" fontWeight="bold">Ex</text></svg> },
@@ -37,9 +33,7 @@ const categories = [
     title: "도구 & 플랫폼",
     desc: "효율적인 개발 환경과 안정적인 배포를 지원합니다.",
     color: "from-amber-400 to-amber-600",
-    barColor: "from-amber-400 to-orange-500",
     badgeBg: "bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100",
-    level: 88,
     techs: [
       { name: "Figma", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2.5" opacity="0.4" /><rect x="6.5" y="3" width="5" height="8" rx="2.5" opacity="0.25" /><rect x="12.5" y="3" width="5" height="5" rx="2.5" opacity="0.3" /></svg> },
       { name: "AWS", icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="4" width="20" height="16" rx="3" opacity="0.15" /><text x="12" y="15" textAnchor="middle" fontSize="7" fontWeight="bold">AWS</text></svg> },
@@ -50,17 +44,8 @@ const categories = [
   },
 ];
 
-const trendingTechs = [
-  { name: "AI 챗봇", color: "bg-violet-50 text-violet-600 border-violet-200" },
-  { name: "서버리스", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  { name: "PWA", color: "bg-blue-50 text-blue-600 border-blue-200" },
-  { name: "마이크로프론트엔드", color: "bg-amber-50 text-amber-600 border-amber-200" },
-  { name: "Edge Computing", color: "bg-rose-50 text-rose-600 border-rose-200" },
-];
-
 export default function TechStack() {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -68,17 +53,13 @@ export default function TechStack() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
-            if (entry.target === ref.current) setVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.1 }
     );
-    if (ref.current) {
-      observer.observe(ref.current);
-      ref.current.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
-    }
+    ref.current?.querySelectorAll(".fade-up").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -121,10 +102,7 @@ export default function TechStack() {
                     {cat.title === "프론트엔드" ? "FE" : cat.title === "백엔드" ? "BE" : "DV"}
                   </span>
                 </div>
-                <div>
-                  <h3 className="font-bold text-[var(--color-dark)] text-[1rem]">{cat.title}</h3>
-                  <span className="text-[var(--color-gray-light)] text-[0.75rem]">숙련도 {cat.level}%</span>
-                </div>
+                <h3 className="font-bold text-[var(--color-dark)] text-[1rem]">{cat.title}</h3>
               </div>
 
               {/* Category description */}
@@ -133,7 +111,7 @@ export default function TechStack() {
               </p>
 
               {/* Tech badges */}
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2">
                 {cat.techs.map((tech) => (
                   <div
                     key={tech.name}
@@ -145,35 +123,11 @@ export default function TechStack() {
                 ))}
               </div>
 
-              {/* Skill bar */}
-              <div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${cat.barColor} rounded-full transition-transform duration-1000 ease-out origin-left`}
-                    style={{ transform: visible ? `scaleX(${cat.level / 100})` : 'scaleX(0)' }}
-                  />
-                </div>
-              </div>
+
             </div>
           ))}
         </div>
 
-        {/* Trending techs */}
-        <div className="mt-12 fade-up text-center">
-          <h4 className="text-[var(--color-dark)] font-bold text-[0.95rem] mb-4">
-            최근 관심 기술
-          </h4>
-          <div className="flex flex-wrap justify-center gap-3">
-            {trendingTechs.map((t) => (
-              <span
-                key={t.name}
-                className={`px-4 py-2 border rounded-full text-[0.82rem] font-medium ${t.color} transition-all duration-300 hover:scale-105`}
-              >
-                {t.name}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

@@ -89,18 +89,10 @@ export default function Services() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-[0.95rem] font-bold text-[var(--color-dark)]">{s.title}</h3>
-                    <span className="text-[0.68rem] px-2 py-0.5 bg-blue-50 text-[var(--color-primary)] rounded-full font-semibold hidden sm:inline-block">
-                      {s.metric}
-                    </span>
-                  </div>
+                  <h3 className="text-[0.95rem] font-bold text-[var(--color-dark)]">{s.title}</h3>
                   <p className="text-[var(--color-gray)] text-[0.82rem] leading-snug mt-0.5">{s.description.slice(0, 60)}...</p>
-                  {/* Tags + metric - mobile */}
+                  {/* Tags - mobile */}
                   <div className="flex flex-wrap gap-1.5 mt-2 md:hidden">
-                    <span className="text-[0.68rem] px-2 py-0.5 bg-blue-50 text-[var(--color-primary)] rounded-full font-semibold">
-                      {s.metric}
-                    </span>
                     {s.tags.map((tag) => (
                       <span key={tag} className="text-[0.68rem] px-2 py-0.5 bg-gray-50 text-[var(--color-gray)] rounded-full">
                         {tag}
