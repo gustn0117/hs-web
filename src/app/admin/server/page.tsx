@@ -106,6 +106,19 @@ const WELL_KNOWN_PORTS: Record<number, string> = {
 
 const REFRESH_INTERVAL = 30000;
 
+// Infrastructure container group definitions
+const INFRA_GROUPS: { key: string; label: string; icon: string; match: (name: string) => boolean }[] = [
+  { key: "supabase", label: "Supabase", icon: "db", match: (n) => n.startsWith("supabase") },
+  { key: "system", label: "시스템 서비스", icon: "sys", match: (n) => ["auto-deployer", "webhook-server", "cloudflared", "watchtower", "nginx", "caddy", "traefik"].some((s) => n.startsWith(s)) },
+];
+
+function getContainerGroup(name: string): string | null {
+  for (const g of INFRA_GROUPS) {
+    if (g.match(name)) return g.key;
+  }
+  return null;
+}
+
 // ─── Helpers ───
 
 function progressColor(percent: number): string {
@@ -154,7 +167,17 @@ export default function ServerMonitoring() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [showVirtualInterfaces, setShowVirtualInterfaces] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const toggleGroup = (key: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
 
   const fetchData = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -237,6 +260,20 @@ export default function ServerMonitoring() {
   // Network interfaces split
   const physicalInterfaces = system.network.data?.filter((i) => isPhysicalInterface(i.name)) ?? [];
   const virtualInterfaces = system.network.data?.filter((i) => !isPhysicalInterface(i.name)) ?? [];
+
+  // Group containers: projects vs infrastructure
+  const projectContainers: DockerContainer[] = [];
+  const infraGroups: Map<string, DockerContainer[]> = new Map();
+
+  docker.containers?.forEach((c) => {
+    const groupKey = getContainerGroup(c.name);
+    if (groupKey) {
+      if (!infraGroups.has(groupKey)) infraGroups.set(groupKey, []);
+      infraGroups.get(groupKey)!.push(c);
+    } else {
+      projectContainers.push(c);
+    }
+  });
 
   return (
     <div className="min-h-screen bg-[var(--color-light)]">
@@ -402,7 +439,7 @@ export default function ServerMonitoring() {
           </div>
         </div>
 
-        {/* ===== Services (Docker Containers as Cards) ===== */}
+        {/* ===== Services (Docker Containers) ===== */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2">
@@ -424,119 +461,215 @@ export default function ServerMonitoring() {
               <p className="text-[var(--color-gray)] text-xs mt-1">docker-compose.yml에 볼륨 마운트를 확인하세요.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {docker.containers?.map((c) => {
-                const badge = containerStateBadge(c.state);
-                const isRunning = c.state === "running";
-                const memPercent = c.memoryUsageMB && c.memoryLimitMB
-                  ? Math.min((c.memoryUsageMB / c.memoryLimitMB) * 100, 100)
-                  : 0;
+            <div className="space-y-6">
+              {/* ── Project Containers (individual cards) ── */}
+              {projectContainers.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {projectContainers.map((c) => {
+                    const badge = containerStateBadge(c.state);
+                    const isRunning = c.state === "running";
+                    const memPercent = c.memoryUsageMB && c.memoryLimitMB
+                      ? Math.min((c.memoryUsageMB / c.memoryLimitMB) * 100, 100)
+                      : 0;
 
-                return (
-                  <div
-                    key={c.id}
-                    className={`bg-white border-2 rounded-2xl p-5 shadow-sm transition-all ${
-                      isRunning ? badge.border : "border-gray-200 opacity-60"
-                    }`}
-                  >
-                    {/* Header: Name + Status */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${badge.dot}`} />
-                        <h4 className="text-[var(--color-dark)] font-semibold text-sm truncate">
-                          {c.name}
-                        </h4>
-                      </div>
-                      <span className="text-xs text-[var(--color-gray)] shrink-0 ml-2">
-                        {badge.label}
-                      </span>
-                    </div>
+                    return (
+                      <div
+                        key={c.id}
+                        className={`bg-white border-2 rounded-2xl p-5 shadow-sm transition-all ${
+                          isRunning ? badge.border : "border-gray-200 opacity-60"
+                        }`}
+                      >
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${badge.dot}`} />
+                            <h4 className="text-[var(--color-dark)] font-semibold text-sm truncate">{c.name}</h4>
+                          </div>
+                          <span className="text-xs text-[var(--color-gray)] shrink-0 ml-2">{badge.label}</span>
+                        </div>
 
-                    {/* Image */}
-                    <p className="text-xs text-[var(--color-gray)] truncate mb-3 font-mono">
-                      {c.image.split("@")[0].split("/").pop()}
-                    </p>
+                        {/* Image */}
+                        <p className="text-xs text-[var(--color-gray)] truncate mb-3 font-mono">
+                          {c.image.split("@")[0].split("/").pop()}
+                        </p>
 
-                    {/* Ports */}
-                    {c.ports.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {c.ports.map((p) => {
-                          const serviceName = getPortServiceName(p.public) || getPortServiceName(p.private);
-                          return (
-                            <span
-                              key={`${p.public}:${p.private}`}
-                              className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs"
-                            >
-                              <span className="text-blue-700 font-mono font-medium">{p.public}</span>
-                              <span className="text-blue-400">→</span>
-                              <span className="text-blue-600 font-mono">{p.private}</span>
-                              {serviceName && (
-                                <span className="text-blue-500 font-sans ml-0.5">{serviceName}</span>
-                              )}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Resource Bars (only for running containers with stats) */}
-                    {isRunning && (c.cpuPercent !== undefined || c.memoryUsageMB !== undefined) && (
-                      <div className="space-y-3 mb-3">
-                        {/* CPU */}
-                        {c.cpuPercent !== undefined && (
-                          <div>
-                            <div className="flex items-center justify-between text-xs mb-1">
-                              <span className="text-[var(--color-gray)]">CPU</span>
-                              <span className={`font-semibold ${progressTextColor(c.cpuPercent)}`}>
-                                {c.cpuPercent}%
-                              </span>
-                            </div>
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full transition-all ${progressColor(c.cpuPercent)}`}
-                                style={{ width: `${Math.min(c.cpuPercent, 100)}%` }}
-                              />
-                            </div>
+                        {/* Ports */}
+                        {c.ports.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-4">
+                            {c.ports.map((p) => {
+                              const serviceName = getPortServiceName(p.public) || getPortServiceName(p.private);
+                              return (
+                                <span key={`${p.public}:${p.private}`} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
+                                  <span className="text-blue-700 font-mono font-medium">{p.public}</span>
+                                  <span className="text-blue-400">→</span>
+                                  <span className="text-blue-600 font-mono">{p.private}</span>
+                                  {serviceName && <span className="text-blue-500 font-sans ml-0.5">{serviceName}</span>}
+                                </span>
+                              );
+                            })}
                           </div>
                         )}
 
-                        {/* Memory */}
-                        {c.memoryUsageMB !== undefined && (
-                          <div>
-                            <div className="flex items-center justify-between text-xs mb-1">
-                              <span className="text-[var(--color-gray)]">메모리</span>
-                              <span className={`font-semibold ${progressTextColor(memPercent)}`}>
-                                {formatMemoryMB(c.memoryUsageMB)}
-                                {c.memoryLimitMB ? ` / ${formatMemoryMB(c.memoryLimitMB)}` : ""}
-                              </span>
-                            </div>
-                            {c.memoryLimitMB && memPercent > 0 && (
-                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full transition-all ${progressColor(memPercent)}`}
-                                  style={{ width: `${memPercent}%` }}
-                                />
+                        {/* Resource Bars */}
+                        {isRunning && (c.cpuPercent !== undefined || c.memoryUsageMB !== undefined) && (
+                          <div className="space-y-3 mb-3">
+                            {c.cpuPercent !== undefined && (
+                              <div>
+                                <div className="flex items-center justify-between text-xs mb-1">
+                                  <span className="text-[var(--color-gray)]">CPU</span>
+                                  <span className={`font-semibold ${progressTextColor(c.cpuPercent)}`}>{c.cpuPercent}%</span>
+                                </div>
+                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                  <div className={`h-full rounded-full transition-all ${progressColor(c.cpuPercent)}`} style={{ width: `${Math.min(c.cpuPercent, 100)}%` }} />
+                                </div>
+                              </div>
+                            )}
+                            {c.memoryUsageMB !== undefined && (
+                              <div>
+                                <div className="flex items-center justify-between text-xs mb-1">
+                                  <span className="text-[var(--color-gray)]">메모리</span>
+                                  <span className={`font-semibold ${progressTextColor(memPercent)}`}>
+                                    {formatMemoryMB(c.memoryUsageMB)}{c.memoryLimitMB ? ` / ${formatMemoryMB(c.memoryLimitMB)}` : ""}
+                                  </span>
+                                </div>
+                                {c.memoryLimitMB && memPercent > 0 && (
+                                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div className={`h-full rounded-full transition-all ${progressColor(memPercent)}`} style={{ width: `${memPercent}%` }} />
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
                         )}
+
+                        {/* Footer */}
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                          {c.sizeHuman ? (
+                            <span className="text-xs text-[var(--color-gray)] flex items-center gap-1">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
+                              </svg>
+                              {c.sizeHuman}
+                            </span>
+                          ) : <span />}
+                          <span className="text-xs text-[var(--color-gray)]">{c.status}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* ── Infrastructure Groups (collapsible summaries) ── */}
+              {INFRA_GROUPS.map((group) => {
+                const containers = infraGroups.get(group.key);
+                if (!containers || containers.length === 0) return null;
+
+                const groupRunning = containers.filter((c) => c.state === "running").length;
+                const totalCpu = containers.reduce((sum, c) => sum + (c.cpuPercent ?? 0), 0);
+                const totalMem = containers.reduce((sum, c) => sum + (c.memoryUsageMB ?? 0), 0);
+                const isExpanded = expandedGroups.has(group.key);
+
+                return (
+                  <div key={group.key} className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    {/* Group Header (clickable) */}
+                    <button
+                      onClick={() => toggleGroup(group.key)}
+                      className="w-full flex items-center justify-between px-5 py-4 bg-transparent border-none cursor-pointer hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${group.key === "supabase" ? "bg-emerald-50" : "bg-gray-100"}`}>
+                          {group.key === "supabase" ? (
+                            <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.657-5.657A8.014 8.014 0 015 6.5a8 8 0 1116 0c0 1.12-.23 2.186-.643 3.157M11.42 15.17l2.496 4.715c.179.338.588.5.95.378l3.347-1.116a.75.75 0 00.462-.937l-1.525-4.065M11.42 15.17L15.15 11.4" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="text-left">
+                          <h4 className="text-[var(--color-dark)] font-semibold text-sm">{group.label}</h4>
+                          <p className="text-xs text-[var(--color-gray)] mt-0.5">
+                            <span className="text-emerald-600 font-medium">{groupRunning}</span>/{containers.length} 실행 중
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        {/* Summary stats */}
+                        <div className="hidden sm:flex items-center gap-3 text-xs text-[var(--color-gray)]">
+                          {totalCpu > 0 && (
+                            <span>CPU <span className="font-semibold text-[var(--color-dark)]">{Math.round(totalCpu * 10) / 10}%</span></span>
+                          )}
+                          {totalMem > 0 && (
+                            <span>메모리 <span className="font-semibold text-[var(--color-dark)]">{formatMemoryMB(totalMem)}</span></span>
+                          )}
+                        </div>
+                        <svg
+                          className={`w-4 h-4 text-[var(--color-gray)] transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </div>
+                    </button>
+
+                    {/* Expanded container list */}
+                    {isExpanded && (
+                      <div className="border-t border-gray-200">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="text-left py-2.5 px-4 text-[var(--color-gray)] font-medium">이름</th>
+                                <th className="text-center py-2.5 px-3 text-[var(--color-gray)] font-medium">상태</th>
+                                <th className="text-left py-2.5 px-3 text-[var(--color-gray)] font-medium">포트</th>
+                                <th className="text-right py-2.5 px-3 text-[var(--color-gray)] font-medium">CPU</th>
+                                <th className="text-right py-2.5 px-3 text-[var(--color-gray)] font-medium">메모리</th>
+                                <th className="text-right py-2.5 px-4 text-[var(--color-gray)] font-medium">디스크</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {containers.map((c) => {
+                                const badge = containerStateBadge(c.state);
+                                return (
+                                  <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                                    <td className="py-2.5 px-4">
+                                      <div className="flex items-center gap-2">
+                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dot}`} />
+                                        <span className="text-[var(--color-dark)] font-medium truncate max-w-[180px]">{c.name}</span>
+                                      </div>
+                                    </td>
+                                    <td className="py-2.5 px-3 text-center">
+                                      <span className="text-[var(--color-gray)]">{badge.label}</span>
+                                    </td>
+                                    <td className="py-2.5 px-3 text-[var(--color-dark-2)]">
+                                      {c.ports.length > 0
+                                        ? c.ports.map((p) => `${p.public}:${p.private}`).join(", ")
+                                        : "-"}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-right text-[var(--color-dark)] tabular-nums">
+                                      {c.cpuPercent !== undefined ? `${c.cpuPercent}%` : "-"}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-right text-[var(--color-dark)] tabular-nums">
+                                      {c.memoryUsageMB !== undefined ? formatMemoryMB(c.memoryUsageMB) : "-"}
+                                    </td>
+                                    <td className="py-2.5 px-4 text-right text-[var(--color-gray)] tabular-nums">
+                                      {c.sizeHuman ?? "-"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     )}
-
-                    {/* Disk + Status footer */}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      {c.sizeHuman ? (
-                        <span className="text-xs text-[var(--color-gray)] flex items-center gap-1">
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
-                          </svg>
-                          {c.sizeHuman}
-                        </span>
-                      ) : (
-                        <span />
-                      )}
-                      <span className="text-xs text-[var(--color-gray)]">{c.status}</span>
-                    </div>
                   </div>
                 );
               })}
