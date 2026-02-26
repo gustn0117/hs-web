@@ -75,7 +75,7 @@ interface DashboardData {
   payments: Payment[];
 }
 
-type TabKey = "overview" | "projects" | "payments";
+type TabKey = "overview" | "projects" | "payments" | "settings";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -243,6 +243,7 @@ export default function ClientDashboardPage() {
     { key: "overview", label: "개요", icon: "M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" },
     { key: "projects", label: "프로젝트", icon: "M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" },
     { key: "payments", label: "결제 내역", icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" },
+    { key: "settings", label: "설정", icon: "M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
   ];
 
   // =========================================================================
@@ -722,11 +723,14 @@ export default function ClientDashboardPage() {
     );
   };
 
+  const renderSettings = () => <SettingsTab username={data.client.username} />;
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case "overview": return renderOverview();
       case "projects": return renderProjects();
       case "payments": return renderPayments();
+      case "settings": return renderSettings();
     }
   };
 
@@ -822,6 +826,178 @@ export default function ClientDashboardPage() {
             문의사항이 있으시면 관리자에게 연락해 주세요.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Settings tab
+// ---------------------------------------------------------------------------
+
+function SettingsTab({ username }: { username: string }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newUsername, setNewUsername] = useState(username);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+
+    if (!currentPassword) {
+      setMessage({ type: "error", text: "현재 비밀번호를 입력해주세요." });
+      return;
+    }
+
+    const usernameChanged = newUsername.trim() !== username;
+    const passwordChanged = newPassword.length > 0;
+
+    if (!usernameChanged && !passwordChanged) {
+      setMessage({ type: "error", text: "변경할 항목이 없습니다." });
+      return;
+    }
+
+    if (passwordChanged && newPassword !== confirmPassword) {
+      setMessage({ type: "error", text: "새 비밀번호가 일치하지 않습니다." });
+      return;
+    }
+
+    if (passwordChanged && newPassword.length < 4) {
+      setMessage({ type: "error", text: "비밀번호는 4자 이상이어야 합니다." });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/client-auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword,
+          ...(usernameChanged && { newUsername: newUsername.trim() }),
+          ...(passwordChanged && { newPassword }),
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) {
+        setMessage({ type: "error", text: result.error || "수정에 실패했습니다." });
+      } else {
+        setMessage({ type: "success", text: result.message || "정보가 수정되었습니다." });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      }
+    } catch {
+      setMessage({ type: "error", text: "네트워크 오류가 발생했습니다." });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="max-w-lg">
+      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <h3 className="text-[var(--color-dark)] font-bold text-lg mb-1">계정 설정</h3>
+        <p className="text-[var(--color-gray)] text-sm mb-6">아이디와 비밀번호를 변경할 수 있습니다.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Current password */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
+              현재 비밀번호 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="현재 비밀번호 입력"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] bg-white focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+            />
+          </div>
+
+          <div className="border-t border-gray-100 pt-5">
+            <p className="text-[var(--color-gray)] text-xs mb-4">변경하고 싶은 항목만 입력하세요.</p>
+
+            {/* New username */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
+                아이디
+              </label>
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                placeholder="새 아이디"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] bg-white focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+              />
+              <p className="text-[var(--color-gray)] text-xs mt-1">3자 이상</p>
+            </div>
+
+            {/* New password */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
+                새 비밀번호
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="변경하지 않으려면 비워두세요"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] bg-white focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/10 transition-all"
+              />
+              <p className="text-[var(--color-gray)] text-xs mt-1">4자 이상</p>
+            </div>
+
+            {/* Confirm password */}
+            {newPassword && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[var(--color-dark)] mb-1.5">
+                  새 비밀번호 확인
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="새 비밀번호 다시 입력"
+                  className={`w-full px-4 py-2.5 border rounded-xl text-sm text-[var(--color-dark)] bg-white focus:outline-none focus:ring-2 transition-all ${
+                    confirmPassword && confirmPassword !== newPassword
+                      ? "border-red-300 focus:border-red-400 focus:ring-red-100"
+                      : "border-gray-200 focus:border-[var(--color-accent)] focus:ring-[var(--color-accent)]/10"
+                  }`}
+                />
+                {confirmPassword && confirmPassword !== newPassword && (
+                  <p className="text-red-500 text-xs mt-1">비밀번호가 일치하지 않습니다.</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Message */}
+          {message && (
+            <div
+              className={`px-4 py-3 rounded-xl text-sm font-medium ${
+                message.type === "success"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-3 bg-[var(--color-dark)] text-white rounded-xl text-sm font-semibold cursor-pointer border-none hover:bg-[var(--color-dark-2)] transition-colors disabled:opacity-50"
+          >
+            {saving ? "저장 중..." : "변경사항 저장"}
+          </button>
+        </form>
       </div>
     </div>
   );
