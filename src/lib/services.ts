@@ -4,7 +4,6 @@ export interface ServiceItem {
   subtitle: string;
   description: string;
   iconPath: string;
-  color: { from: string; to: string; shadow: string; bg: string };
   tags: string[];
   metric: string;
   features: { title: string; desc: string; iconPath: string }[];
@@ -21,12 +20,6 @@ export const services: ServiceItem[] = [
       "PC, 태블릿, 모바일 모든 디바이스에서 완벽하게 보이는 반응형 홈페이지를 제작합니다. SEO 최적화와 빠른 로딩 속도로 비즈니스 효과를 극대화합니다.",
     iconPath:
       "M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0121 5.25z",
-    color: {
-      from: "from-blue-500",
-      to: "to-blue-400",
-      shadow: "shadow-blue-500/20",
-      bg: "bg-blue-50",
-    },
     tags: ["PC / 모바일 최적화", "SEO 적용", "빠른 로딩"],
     metric: "평균 제작 기간 2주",
     features: [
@@ -90,12 +83,6 @@ export const services: ServiceItem[] = [
       "결제 시스템 연동부터 상품 관리까지, 매출을 극대화하는 온라인 쇼핑몰을 구축합니다. PG 결제, 재고 관리, 회원 시스템 등 필수 기능을 포함합니다.",
     iconPath:
       "M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z",
-    color: {
-      from: "from-pink-500",
-      to: "to-rose-400",
-      shadow: "shadow-pink-500/20",
-      bg: "bg-pink-50",
-    },
     tags: ["PG 결제 연동", "재고 관리", "회원 시스템"],
     metric: "매출 평균 35% 증가",
     features: [
@@ -166,12 +153,6 @@ export const services: ServiceItem[] = [
       "광고 유입 고객을 확실하게 전환시키는 고성능 랜딩페이지를 제작합니다. A/B 테스트, 애니메이션 효과, 전환율 최적화 전략을 적용합니다.",
     iconPath:
       "M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z",
-    color: {
-      from: "from-violet-500",
-      to: "to-purple-400",
-      shadow: "shadow-violet-500/20",
-      bg: "bg-violet-50",
-    },
     tags: ["전환율 최적화", "A/B 테스트", "애니메이션"],
     metric: "전환율 평균 40% 향상",
     features: [
@@ -241,12 +222,6 @@ export const services: ServiceItem[] = [
       "React, Next.js 등 최신 프레임워크를 활용한 고성능 웹 애플리케이션을 개발합니다. 복잡한 비즈니스 로직도 안정적으로 구현합니다.",
     iconPath:
       "M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5",
-    color: {
-      from: "from-sky-500",
-      to: "to-cyan-400",
-      shadow: "shadow-sky-500/20",
-      bg: "bg-sky-50",
-    },
     tags: ["React / Vue", "Node.js", "API 개발"],
     metric: "일 평균 1만+ 사용자 지원",
     features: [
@@ -317,12 +292,6 @@ export const services: ServiceItem[] = [
       "콘텐츠를 직접 관리할 수 있는 맞춤형 CMS를 구축합니다. 직관적인 관리자 페이지로 개발 지식 없이도 콘텐츠를 자유롭게 편집할 수 있습니다.",
     iconPath:
       "M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z",
-    color: {
-      from: "from-orange-500",
-      to: "to-amber-400",
-      shadow: "shadow-orange-500/20",
-      bg: "bg-orange-50",
-    },
     tags: ["콘텐츠 관리", "관리자 페이지", "권한 설정"],
     metric: "관리 시간 70% 절감",
     features: [
@@ -393,12 +362,6 @@ export const services: ServiceItem[] = [
       "ERP, CRM, 인사관리 등 기업 맞춤형 관리 시스템을 개발합니다. 업무 자동화와 데이터 분석으로 기업 생산성을 높여드립니다.",
     iconPath:
       "M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21",
-    color: {
-      from: "from-blue-500",
-      to: "to-blue-400",
-      shadow: "shadow-blue-500/20",
-      bg: "bg-blue-50",
-    },
     tags: ["ERP / CRM", "업무 자동화", "데이터 분석"],
     metric: "업무 효율 평균 50% 개선",
     features: [
@@ -470,12 +433,6 @@ export const services: ServiceItem[] = [
       "검색엔진 최적화(SEO), 백링크 구축, 기술적 마케팅으로 사이트의 검색 노출과 트래픽을 높여드립니다. 데이터 기반의 체계적인 마케팅 전략을 제공합니다.",
     iconPath:
       "M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941",
-    color: {
-      from: "from-emerald-500",
-      to: "to-teal-400",
-      shadow: "shadow-emerald-500/20",
-      bg: "bg-emerald-50",
-    },
     tags: ["SEO 최적화", "백링크 구축", "데이터 분석"],
     metric: "검색 트래픽 평균 3배 증가",
     features: [

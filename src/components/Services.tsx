@@ -4,15 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { services } from "@/lib/services";
 
-const ICON_COLORS = [
-  { from: "from-blue-500", to: "to-blue-400", shadow: "shadow-blue-500/20" },
-  { from: "from-pink-500", to: "to-rose-400", shadow: "shadow-pink-500/20" },
-  { from: "from-violet-500", to: "to-purple-400", shadow: "shadow-violet-500/20" },
-  { from: "from-sky-500", to: "to-cyan-400", shadow: "shadow-sky-500/20" },
-  { from: "from-orange-500", to: "to-amber-400", shadow: "shadow-orange-500/20" },
-  { from: "from-blue-500", to: "to-blue-400", shadow: "shadow-blue-500/20" },
-  { from: "from-emerald-500", to: "to-teal-400", shadow: "shadow-emerald-500/20" },
-];
+const ICON_COLOR = "bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] shadow-md shadow-blue-900/15";
 
 const highlights = [
   { icon: "M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.745 3.745 0 011.043 3.296A3.745 3.745 0 0121 12z", text: "다양한 프로젝트 경험" },
@@ -75,7 +67,6 @@ export default function Services() {
 
         <div className="flex flex-col">
           {services.map((s, i) => {
-            const color = ICON_COLORS[i] || ICON_COLORS[0];
             const num = String(i + 1).padStart(2, "0");
             return (
               <Link
@@ -90,7 +81,7 @@ export default function Services() {
                 </span>
 
                 {/* Icon */}
-                <div className={`w-9 h-9 shrink-0 bg-gradient-to-br ${color.from} ${color.to} text-white rounded-lg flex items-center justify-center shadow-md ${color.shadow} group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-9 h-9 shrink-0 ${ICON_COLOR} text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={s.iconPath} />
                   </svg>
