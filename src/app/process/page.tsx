@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 
 export default function ProcessPage() {
   return (
-    <>
+    <div className="pt-[72px]">
       <Process />
       <FAQ />
       <CTA />
-    </>
+    </div>
   );
 }
