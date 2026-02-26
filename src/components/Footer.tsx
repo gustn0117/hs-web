@@ -7,10 +7,10 @@ const footerSections = [
   {
     title: "서비스",
     links: [
-      { label: "반응형 홈페이지", href: "/services" },
-      { label: "쇼핑몰 구축", href: "/services" },
-      { label: "랜딩페이지", href: "/services" },
-      { label: "웹 애플리케이션", href: "/services" },
+      { label: "반응형 홈페이지", href: "/services/responsive-web" },
+      { label: "쇼핑몰 구축", href: "/services/ecommerce" },
+      { label: "랜딩페이지", href: "/services/landing-page" },
+      { label: "기술 마케팅", href: "/services/marketing" },
     ],
   },
   {
@@ -25,8 +25,8 @@ const footerSections = [
   {
     title: "고객지원",
     links: [
-      { label: "개인정보처리방침", href: "#" },
-      { label: "이용약관", href: "#" },
+      { label: "사이트 관리", href: "/client" },
+      { label: "고객 후기", href: "/testimonials" },
       { label: "FAQ", href: "#" },
       { label: "블로그", href: "#" },
     ],

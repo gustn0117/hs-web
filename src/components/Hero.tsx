@@ -77,11 +77,7 @@ export default function Hero() {
           <div className="text-center lg:text-left">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-blue-200/60 px-4 py-2 rounded-full text-[var(--color-primary)] text-[0.85rem] font-semibold mb-6 shadow-sm shadow-blue-100/50">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-primary)]" />
-              </span>
-              웹 제작 전문 에이전시
+              웹 제작 &middot; 마케팅 전문 에이전시
             </div>
 
             <h1 className="text-4xl md:text-[3.2rem] font-black text-[var(--color-dark)] leading-[1.2] mb-4 tracking-tight">
@@ -96,9 +92,9 @@ export default function Hero() {
             </p>
 
             <p className="text-lg text-[var(--color-gray)] mb-9 max-w-[480px] leading-relaxed mx-auto lg:mx-0">
-              HS WEB은 감각적인 디자인과 최신 기술력으로 홈페이지부터 쇼핑몰,
-              CMS, 기업 관리 시스템까지 비즈니스에 필요한 모든 웹 솔루션을
-              제공합니다.
+              HS WEB은 감각적인 디자인과 최신 기술력으로 웹사이트 제작부터
+              SEO, 백링크 등 기술 마케팅까지 비즈니스 성장에 필요한 모든 웹
+              솔루션을 제공합니다.
             </p>
 
             <div className="flex gap-4 flex-wrap justify-center lg:justify-start">
@@ -130,14 +126,14 @@ export default function Hero() {
               </div>
               <span className="w-1 h-1 bg-gray-300 rounded-full" />
               <div className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
-                유지보수 포함
+                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                <span className="text-emerald-600 font-semibold">유지보수 무료</span>
               </div>
             </div>
 
             {/* Key points */}
             <div className="flex flex-wrap gap-3 mt-10">
-              {["맞춤형 디자인", "반응형 웹", "SEO 최적화", "유지보수 지원"].map((tag) => (
+              {["맞춤형 디자인", "반응형 웹", "SEO / 마케팅", "유지보수 무료"].map((tag) => (
                 <span key={tag} className="px-4 py-2 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/15 rounded-full text-[var(--color-gray)] text-[0.85rem] font-medium">
                   {tag}
                 </span>
