@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminHeader from "../components/AdminHeader";
 
+interface ClientProject {
+  id: string;
+  name: string;
+  status: string;
+}
+
 interface Client {
   id: string;
   username: string;
@@ -14,6 +20,7 @@ interface Client {
   memo: string;
   is_active: boolean;
   created_at: string;
+  projects?: ClientProject[];
 }
 
 export default function AdminClientsPage() {
@@ -54,11 +61,13 @@ export default function AdminClientsPage() {
     if (filter === "inactive" && c.is_active) return false;
     if (search) {
       const q = search.toLowerCase();
+      const projectMatch = c.projects?.some((p) => p.name.toLowerCase().includes(q));
       return (
         c.name.toLowerCase().includes(q) ||
         c.username.toLowerCase().includes(q) ||
         (c.email && c.email.toLowerCase().includes(q)) ||
-        (c.phone && c.phone.includes(q))
+        (c.phone && c.phone.includes(q)) ||
+        projectMatch
       );
     }
     return true;
@@ -114,7 +123,7 @@ export default function AdminClientsPage() {
                 </svg>
                 <input
                   type="text"
-                  placeholder="이름, 아이디, 이메일, 전화번호로 검색..."
+                  placeholder="이름, 아이디, 이메일, 전화번호, 프로젝트명으로 검색..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 focus:bg-white transition-all placeholder:text-gray-400"
@@ -239,6 +248,26 @@ export default function AdminClientsPage() {
                       </div>
                     )}
                   </div>
+
+                  {client.projects && client.projects.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="flex flex-wrap gap-1.5">
+                        {client.projects.map((p) => (
+                          <span
+                            key={p.id}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-md font-medium ${
+                              p.status === "진행중" ? "bg-blue-50 text-blue-600 border border-blue-100" :
+                              p.status === "완료" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                              p.status === "유지보수" ? "bg-purple-50 text-purple-600 border border-purple-100" :
+                              "bg-amber-50 text-amber-600 border border-amber-100"
+                            }`}
+                          >
+                            {p.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {client.memo && (
                     <p className="mt-3 pt-3 border-t border-gray-100 text-[var(--color-gray)] text-xs line-clamp-2 leading-relaxed">

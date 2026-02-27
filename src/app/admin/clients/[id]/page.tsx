@@ -726,25 +726,61 @@ export default function ClientDetailPage() {
   // =========================================================================
   const hostingPayments = payments.filter((p) => p.type === "호스팅");
 
-  // Helper: suggest next hosting payment date (1 month after last hosting payment, or today)
-  const suggestHostingDate = (): string => {
-    const sorted = [...hostingPayments].sort((a, b) => (b.payment_date || "").localeCompare(a.payment_date || ""));
-    if (sorted.length > 0 && sorted[0].payment_date) {
-      const last = new Date(sorted[0].payment_date + "T00:00:00");
+  // Helper: suggest next hosting payment date for a specific project
+  // Uses same day-of-month from last hosting payment (e.g. 2/25 → 3/25)
+  const suggestHostingDate = (projectId: string | null): string => {
+    // Find last hosting payment for this project
+    const projectHostingPayments = hostingPayments
+      .filter((p) => projectId ? p.project_id === projectId : true)
+      .sort((a, b) => (b.payment_date || "").localeCompare(a.payment_date || ""));
+
+    if (projectHostingPayments.length > 0 && projectHostingPayments[0].payment_date) {
+      const last = new Date(projectHostingPayments[0].payment_date + "T00:00:00");
       last.setMonth(last.getMonth() + 1);
-      return last.toISOString().split("T")[0];
+      const mm = String(last.getMonth() + 1).padStart(2, "0");
+      const dd = String(last.getDate()).padStart(2, "0");
+      return `${last.getFullYear()}-${mm}-${dd}`;
     }
-    // Fallback: today
+
+    // Fallback: check hosting start_date for this project
+    const projectHostings = hostings.filter((h) => projectId ? h.project_id === projectId : true);
+    if (projectHostings.length > 0 && projectHostings[0].start_date) {
+      const start = new Date(projectHostings[0].start_date + "T00:00:00");
+      // Suggest next month from start date with same day
+      const now = new Date();
+      const next = new Date(start);
+      while (next <= now) {
+        next.setMonth(next.getMonth() + 1);
+      }
+      const mm = String(next.getMonth() + 1).padStart(2, "0");
+      const dd = String(next.getDate()).padStart(2, "0");
+      return `${next.getFullYear()}-${mm}-${dd}`;
+    }
+
+    // Final fallback: today
     const today = new Date();
-    return today.toISOString().split("T")[0];
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${today.getFullYear()}-${mm}-${dd}`;
   };
 
   // When payment type changes, auto-suggest date for hosting
   const handlePaymentTypeChange = (type: string) => {
     setPaymentForm((prev) => {
       const updates: Partial<Omit<Payment, "id">> = { type };
-      if (type === "호스팅" && !prev.payment_date) {
-        updates.payment_date = suggestHostingDate();
+      if (type === "호스팅") {
+        updates.payment_date = suggestHostingDate(prev.project_id);
+      }
+      return { ...prev, ...updates };
+    });
+  };
+
+  // When project changes, re-suggest date if type is already hosting
+  const handlePaymentProjectChange = (projectId: string | null) => {
+    setPaymentForm((prev) => {
+      const updates: Partial<Omit<Payment, "id">> = { project_id: projectId };
+      if (prev.type === "호스팅") {
+        updates.payment_date = suggestHostingDate(projectId);
       }
       return { ...prev, ...updates };
     });
@@ -1089,7 +1125,7 @@ export default function ClientDetailPage() {
                 <CustomSelect
                   options={[{ value: "", label: "프로젝트 미지정" }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
                   value={paymentForm.project_id || ""}
-                  onChange={(v) => setPaymentForm((p) => ({ ...p, project_id: v || null }))}
+                  onChange={(v) => handlePaymentProjectChange(v || null)}
                   placeholder="프로젝트 선택"
                 />
               </div>
