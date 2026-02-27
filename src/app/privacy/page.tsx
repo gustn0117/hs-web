@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 | HS WEB",
+  title: "개인정보처리방침",
   description: "HS WEB의 개인정보 수집, 이용, 보호에 관한 방침입니다.",
+  alternates: { canonical: "https://hsweb.pics/privacy" },
 };
 
 const sections = [

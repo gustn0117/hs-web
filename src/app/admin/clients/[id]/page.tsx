@@ -837,6 +837,7 @@ export default function ClientDetailPage() {
   const renderProjectCard = (p: Project) => {
     const pHostings = hostings.filter((h) => h.project_id === p.id);
     const pDomains = domains.filter((d) => d.project_id === p.id);
+    const pHostingPayments = payments.filter((pay) => pay.type === "호스팅" && pay.project_id === p.id);
 
     return (
       <div key={p.id} className={cardClass}>
@@ -950,11 +951,11 @@ export default function ClientDetailPage() {
                       </div>
                     )}
                     {/* Related hosting payments */}
-                    {hostingPayments.length > 0 && (
+                    {pHostingPayments.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-gray-200/60">
                         <span className="text-xs text-[var(--color-gray)] font-medium">최근 결제:</span>
                         <div className="flex flex-wrap gap-1.5 mt-1">
-                          {hostingPayments.slice(0, 3).map((hp) => {
+                          {pHostingPayments.slice(0, 3).map((hp) => {
                             const si = PAYMENT_STATUS_MAP[hp.status];
                             return (
                               <span key={hp.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-lg text-xs">
@@ -964,8 +965,8 @@ export default function ClientDetailPage() {
                               </span>
                             );
                           })}
-                          {hostingPayments.length > 3 && (
-                            <span className="text-xs text-[var(--color-gray)]">+{hostingPayments.length - 3}건</span>
+                          {pHostingPayments.length > 3 && (
+                            <span className="text-xs text-[var(--color-gray)]">+{pHostingPayments.length - 3}건</span>
                           )}
                         </div>
                       </div>
