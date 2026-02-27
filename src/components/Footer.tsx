@@ -88,6 +88,15 @@ export default function Footer() {
             <p className="text-[var(--color-gray-light)] text-[0.85rem]">
               &copy; 2026 HS WEB. All rights reserved.
             </p>
+            <div className="flex items-center gap-4">
+              <Link href="/terms" className="text-[var(--color-gray-light)] text-[0.8rem] no-underline hover:text-white transition-colors">
+                이용약관
+              </Link>
+              <span className="text-white/20 text-xs">|</span>
+              <Link href="/privacy" className="text-[var(--color-gray-light)] text-[0.8rem] no-underline hover:text-white transition-colors">
+                개인정보처리방침
+              </Link>
+            </div>
           </div>
 
           <div className="mt-6 text-center">
