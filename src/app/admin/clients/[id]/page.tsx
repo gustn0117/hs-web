@@ -63,6 +63,7 @@ interface Domain {
 
 interface Payment {
   id: string;
+  project_id: string | null;
   payment_date: string;
   type: string;
   description: string;
@@ -193,7 +194,7 @@ const defaultDomainForm = (): Omit<Domain, "id"> => ({
 });
 
 const defaultPaymentForm = (): Omit<Payment, "id"> => ({
-  payment_date: "", type: "제작비", description: "", amount: 0, status: "pending", memo: "",
+  project_id: null, payment_date: "", type: "제작비", description: "", amount: 0, status: "pending", memo: "",
 });
 
 // ===========================================================================
@@ -589,9 +590,10 @@ export default function ClientDetailPage() {
 
   useEffect(() => { fetchClient(); }, [fetchClient]);
   useEffect(() => {
-    // Always fetch payments for hosting-payment linkage
+    // Always fetch payments & projects (payments need project names for display)
     fetchPayments();
-    if (activeTab === "projects") { fetchProjects(); fetchHostings(); fetchDomains(); }
+    fetchProjects();
+    if (activeTab === "projects") { fetchHostings(); fetchDomains(); }
   }, [activeTab, fetchProjects, fetchHostings, fetchDomains, fetchPayments]);
 
   // =========================================================================
@@ -710,7 +712,7 @@ export default function ClientDetailPage() {
   // =========================================================================
   const openPaymentAdd = () => { setPaymentForm(defaultPaymentForm()); setEditingPaymentId(null); setShowPaymentForm(true); };
   const openPaymentEdit = (p: Payment) => {
-    setPaymentForm({ payment_date: p.payment_date??"", type: p.type||"제작비", description: p.description||"", amount: p.amount, status: p.status||"pending", memo: p.memo||"" });
+    setPaymentForm({ project_id: p.project_id ?? null, payment_date: p.payment_date??"", type: p.type||"제작비", description: p.description||"", amount: p.amount, status: p.status||"pending", memo: p.memo||"" });
     setEditingPaymentId(p.id); setShowPaymentForm(true);
   };
   const savePayment = async () => {
@@ -723,6 +725,30 @@ export default function ClientDetailPage() {
   // Hosting-payment linkage helper
   // =========================================================================
   const hostingPayments = payments.filter((p) => p.type === "호스팅");
+
+  // Helper: suggest next hosting payment date (1 month after last hosting payment, or today)
+  const suggestHostingDate = (): string => {
+    const sorted = [...hostingPayments].sort((a, b) => (b.payment_date || "").localeCompare(a.payment_date || ""));
+    if (sorted.length > 0 && sorted[0].payment_date) {
+      const last = new Date(sorted[0].payment_date + "T00:00:00");
+      last.setMonth(last.getMonth() + 1);
+      return last.toISOString().split("T")[0];
+    }
+    // Fallback: today
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
+  // When payment type changes, auto-suggest date for hosting
+  const handlePaymentTypeChange = (type: string) => {
+    setPaymentForm((prev) => {
+      const updates: Partial<Omit<Payment, "id">> = { type };
+      if (type === "호스팅" && !prev.payment_date) {
+        updates.payment_date = suggestHostingDate();
+      }
+      return { ...prev, ...updates };
+    });
+  };
 
   // =========================================================================
   // Inline hosting form
@@ -1058,11 +1084,23 @@ export default function ClientDetailPage() {
         {showPaymentForm && (
           <FormCard title={editingPaymentId ? "결제 수정" : "새 결제"} onSave={savePayment} onCancel={() => { setShowPaymentForm(false); setEditingPaymentId(null); }} saving={paymentSaving}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className={labelClass}>프로젝트</label>
+                <CustomSelect
+                  options={[{ value: "", label: "프로젝트 미지정" }, ...projects.map((p) => ({ value: p.id, label: p.name }))]}
+                  value={paymentForm.project_id || ""}
+                  onChange={(v) => setPaymentForm((p) => ({ ...p, project_id: v || null }))}
+                  placeholder="프로젝트 선택"
+                />
+              </div>
+              <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={handlePaymentTypeChange} /></div>
               <div><label className={labelClass}>금액 (원) *</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
-              <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={(v) => setPaymentForm((p) => ({ ...p, type: v }))} /></div>
-              <div><label className={labelClass}>결제일</label><DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" /></div>
+              <div>
+                <label className={labelClass}>결제일{paymentForm.type === "호스팅" && paymentForm.payment_date && <span className="text-[var(--color-accent)] ml-1">(자동추천)</span>}</label>
+                <DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" />
+              </div>
               <div><label className={labelClass}>상태</label><CustomSelect options={paymentStatusOptions} value={paymentForm.status} onChange={(v) => setPaymentForm((p) => ({ ...p, status: v }))} /></div>
-              <div className="sm:col-span-2"><label className={labelClass}>설명</label><input className={inputClass} placeholder="결제 설명" value={paymentForm.description} onChange={(e) => setPaymentForm((p) => ({ ...p, description: e.target.value }))} /></div>
+              <div><label className={labelClass}>설명</label><input className={inputClass} placeholder="결제 설명" value={paymentForm.description} onChange={(e) => setPaymentForm((p) => ({ ...p, description: e.target.value }))} /></div>
             </div>
             <div><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="결제 관련 메모" value={paymentForm.memo} onChange={(e) => setPaymentForm((p) => ({ ...p, memo: e.target.value }))} /></div>
           </FormCard>
@@ -1084,6 +1122,7 @@ export default function ClientDetailPage() {
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
                     <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">결제일</th>
+                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">프로젝트</th>
                     <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">유형</th>
                     <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">설명</th>
                     <th className="text-right py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">금액</th>
@@ -1094,14 +1133,19 @@ export default function ClientDetailPage() {
                 <tbody>
                   {payments.map((p) => {
                     const si = PAYMENT_STATUS_MAP[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
-                    // Show related hosting provider for hosting-type payments
-                    const relatedHosting = p.type === "호스팅" && hostings.length > 0 ? hostings[0] : null;
+                    const linkedProject = p.project_id ? projects.find((pr) => pr.id === p.project_id) : null;
                     return (
                       <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
                         <td className="py-3.5 px-4 text-[var(--color-dark-2)]">{p.payment_date ? formatDateShort(p.payment_date) : "-"}</td>
                         <td className="py-3.5 px-4">
+                          {linkedProject ? (
+                            <span className="text-[var(--color-dark-2)] text-sm">{linkedProject.name}</span>
+                          ) : (
+                            <span className="text-[var(--color-gray)] text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4">
                           <span className="text-[var(--color-dark-2)]">{p.type}</span>
-                          {relatedHosting && <span className="text-xs text-[var(--color-gray)] ml-1">({relatedHosting.provider})</span>}
                         </td>
                         <td className="py-3.5 px-4 text-[var(--color-gray)]">{p.description || "-"}</td>
                         <td className="py-3.5 px-4 text-[var(--color-dark)] font-semibold text-right">{formatAmount(p.amount)}</td>
