@@ -45,6 +45,9 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   alternates: {
     canonical: SITE_URL,
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
   },
   other: {
     "theme-color": "#0f1a2d",
