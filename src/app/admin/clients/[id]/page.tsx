@@ -1367,38 +1367,24 @@ export default function ClientDetailPage() {
               {!client.username && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   {inviteUrl ? (
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-blue-700 text-sm font-semibold">초대 링크</span>
-                        {inviteExpires && (
-                          <span className="text-blue-400 text-xs">만료: {formatDate(inviteExpires)}</span>
-                        )}
+                    <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                      <div className="min-w-0">
+                        <span className="text-[var(--color-dark)] text-sm font-medium block truncate">{inviteUrl.replace("https://", "")}</span>
+                        {inviteExpires && <span className="text-[var(--color-gray)] text-xs">만료: {formatDate(inviteExpires)}</span>}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          readOnly
-                          value={inviteUrl}
-                          className="flex-1 px-3 py-2 bg-white border border-blue-200 rounded-lg text-sm text-[var(--color-dark)] select-all focus:outline-none"
-                          onClick={(e) => (e.target as HTMLInputElement).select()}
-                        />
-                        <button
-                          onClick={copyInviteUrl}
-                          className={`px-4 py-2 rounded-lg text-sm font-semibold border-none cursor-pointer transition-all shrink-0 ${
-                            inviteCopied
-                              ? "bg-emerald-500 text-white"
-                              : "bg-blue-600 text-white hover:bg-blue-700"
-                          }`}
-                        >
-                          {inviteCopied ? "복사됨" : "복사"}
-                        </button>
-                      </div>
+                      <button
+                        onClick={copyInviteUrl}
+                        className={`ml-3 px-3.5 py-1.5 rounded-lg text-xs font-semibold border-none cursor-pointer transition-all shrink-0 ${
+                          inviteCopied
+                            ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                            : "bg-gray-200 text-[var(--color-dark-2)] hover:bg-gray-300"
+                        }`}
+                      >
+                        {inviteCopied ? "복사됨" : "복사"}
+                      </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={generateInvite}
-                      disabled={inviteLoading}
-                      className={`w-full px-5 py-2.5 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed ${btnPrimary}`}
-                    >
+                    <button onClick={generateInvite} disabled={inviteLoading} className={btnSmall}>
                       {inviteLoading ? "생성 중..." : "초대 링크 생성"}
                     </button>
                   )}
