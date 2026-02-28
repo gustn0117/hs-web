@@ -1365,70 +1365,103 @@ export default function ClientDetailPage() {
               )}
               {/* Invitation link section - only for unregistered clients */}
               {!client.username && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-5 pt-5 border-t border-gray-100">
                   {inviteUrl ? (
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200/60 rounded-2xl p-5 relative overflow-hidden">
+                      {/* Decorative pattern */}
+                      <div className="absolute top-0 right-0 w-32 h-32 opacity-[0.04]">
+                        <svg viewBox="0 0 100 100" fill="currentColor" className="text-blue-900 w-full h-full">
+                          <circle cx="50" cy="50" r="40" /><circle cx="20" cy="20" r="15" /><circle cx="80" cy="80" r="10" />
                         </svg>
-                        <span className="text-blue-700 text-sm font-semibold">초대 링크</span>
-                        {inviteExpires && (
-                          <span className="text-blue-500 text-xs ml-auto">만료: {formatDate(inviteExpires)}</span>
-                        )}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          readOnly
-                          value={inviteUrl}
-                          className="flex-1 px-3 py-2 bg-white border border-blue-200 rounded-lg text-sm text-[var(--color-dark)] select-all focus:outline-none"
-                          onClick={(e) => (e.target as HTMLInputElement).select()}
-                        />
-                        <button
-                          onClick={copyInviteUrl}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold border-none cursor-pointer hover:bg-blue-700 transition-colors flex items-center gap-1.5 shrink-0"
-                        >
-                          {inviteCopied ? (
-                            <>
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                              </svg>
-                              복사됨
-                            </>
-                          ) : (
-                            <>
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                              </svg>
-                              복사
-                            </>
-                          )}
-                        </button>
+                      <div className="relative">
+                        <div className="flex items-center gap-2.5 mb-3">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+                            </svg>
+                          </div>
+                          <div>
+                            <span className="text-blue-800 text-sm font-bold block">초대 링크 생성됨</span>
+                            {inviteExpires && (
+                              <span className="text-blue-500/70 text-[11px]">만료: {formatDate(inviteExpires)}</span>
+                            )}
+                          </div>
+                          <span className="ml-auto px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">활성</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white rounded-xl p-1.5 border border-blue-100 shadow-sm">
+                          <input
+                            readOnly
+                            value={inviteUrl}
+                            className="flex-1 px-3 py-2.5 bg-transparent border-none text-sm text-[var(--color-dark)] select-all focus:outline-none font-mono text-[13px]"
+                            onClick={(e) => (e.target as HTMLInputElement).select()}
+                          />
+                          <button
+                            onClick={copyInviteUrl}
+                            className={`px-5 py-2.5 rounded-lg text-sm font-semibold border-none cursor-pointer transition-all flex items-center gap-1.5 shrink-0 ${
+                              inviteCopied
+                                ? "bg-emerald-500 text-white"
+                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:shadow-blue-500/25"
+                            }`}
+                          >
+                            {inviteCopied ? (
+                              <>
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                복사됨
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                                </svg>
+                                링크 복사
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <p className="text-blue-500/50 text-[11px] mt-3 text-center">이 링크를 클라이언트에게 전달하면 직접 계정을 등록할 수 있습니다</p>
                       </div>
                     </div>
                   ) : (
-                    <button
-                      onClick={generateInvite}
-                      disabled={inviteLoading}
-                      className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {inviteLoading ? (
-                        <>
-                          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
-                            <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    <div className="bg-amber-50/50 border border-amber-200/50 rounded-2xl p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                          <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                           </svg>
-                          생성 중...
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
-                          </svg>
-                          초대 링크 생성
-                        </>
-                      )}
-                    </button>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-amber-800 text-sm font-semibold mb-1">계정 미등록</p>
+                          <p className="text-amber-700/60 text-xs leading-relaxed mb-3">
+                            초대 링크를 생성해 클라이언트에게 보내면 직접 아이디와 비밀번호를 설정할 수 있습니다.
+                          </p>
+                          <button
+                            onClick={generateInvite}
+                            disabled={inviteLoading}
+                            className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2"
+                          >
+                            {inviteLoading ? (
+                              <>
+                                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                                  <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                                </svg>
+                                생성 중...
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+                                </svg>
+                                초대 링크 생성
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
