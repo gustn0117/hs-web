@@ -5,25 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminHeader from "../../components/AdminHeader";
 
-interface ClientFormData {
-  username: string;
-  password: string;
-  name: string;
-  email: string;
-  phone: string;
-  memo: string;
-}
-
 export default function NewClientPage() {
   const router = useRouter();
-  const [form, setForm] = useState<ClientFormData>({
-    username: "",
-    password: "",
-    name: "",
-    email: "",
-    phone: "",
-    memo: "",
-  });
+  const [form, setForm] = useState({ name: "", memo: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -31,8 +15,8 @@ export default function NewClientPage() {
     e.preventDefault();
     setError("");
 
-    if (!form.username.trim() || !form.password.trim() || !form.name.trim()) {
-      setError("아이디, 비밀번호, 이름은 필수 항목입니다.");
+    if (!form.name.trim()) {
+      setError("이름은 필수 항목입니다.");
       return;
     }
 
@@ -50,7 +34,8 @@ export default function NewClientPage() {
         throw new Error(data.error || "클라이언트 생성에 실패했습니다.");
       }
 
-      router.push("/admin/clients");
+      const data = await res.json();
+      router.push(`/admin/clients/${data.client.id}`);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "클라이언트 생성에 실패했습니다."
@@ -81,7 +66,7 @@ export default function NewClientPage() {
             클라이언트 목록으로
           </Link>
           <h2 className="text-xl font-bold text-[var(--color-dark)]">새 클라이언트 추가</h2>
-          <p className="text-[var(--color-gray)] text-sm mt-1">고객 포털 로그인에 사용할 계정을 생성합니다.</p>
+          <p className="text-[var(--color-gray)] text-sm mt-1">클라이언트를 생성한 뒤 초대 링크를 보내 계정 등록을 안내하세요.</p>
         </div>
 
         <form onSubmit={handleSubmit} noValidate className="max-w-[800px]">
@@ -94,43 +79,6 @@ export default function NewClientPage() {
             </div>
           )}
 
-          {/* 계정 정보 */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-5">
-            <h3 className="text-[var(--color-dark)] font-semibold mb-4 flex items-center gap-2">
-              <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-              </svg>
-              계정 정보
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className={labelClass}>아이디 *</label>
-                <input
-                  type="text"
-                  value={form.username}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, username: e.target.value }))
-                  }
-                  placeholder="로그인에 사용할 아이디"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>비밀번호 *</label>
-                <input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, password: e.target.value }))
-                  }
-                  placeholder="비밀번호를 입력하세요"
-                  className={inputClass}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 기본 정보 */}
           <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-5">
             <h3 className="text-[var(--color-dark)] font-semibold mb-4 flex items-center gap-2">
               <svg className="w-4 h-4 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -144,46 +92,16 @@ export default function NewClientPage() {
                 <input
                   type="text"
                   value={form.name}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, name: e.target.value }))
-                  }
+                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   placeholder="클라이언트 이름"
                   className={inputClass}
                 />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label className={labelClass}>이메일</label>
-                  <input
-                    type="text"
-                    value={form.email}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, email: e.target.value }))
-                    }
-                    placeholder="email@example.com"
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>전화번호</label>
-                  <input
-                    type="text"
-                    value={form.phone}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, phone: e.target.value }))
-                    }
-                    placeholder="010-0000-0000"
-                    className={inputClass}
-                  />
-                </div>
               </div>
               <div>
                 <label className={labelClass}>메모</label>
                 <textarea
                   value={form.memo}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, memo: e.target.value }))
-                  }
+                  onChange={(e) => setForm((p) => ({ ...p, memo: e.target.value }))}
                   placeholder="클라이언트에 대한 메모를 남겨주세요"
                   rows={3}
                   className={`${inputClass} resize-y`}

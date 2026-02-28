@@ -506,6 +506,11 @@ export default function ClientDetailPage() {
   const [clientSaving, setClientSaving] = useState(false);
   const [clientForm, setClientForm] = useState({ name: "", email: "", phone: "", memo: "", is_active: true, password: "" });
 
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [inviteExpires, setInviteExpires] = useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
+
   const [activeTab, setActiveTab] = useState<TabKey>("projects");
 
   const [projects, setProjects] = useState<Project[]>([]);
@@ -599,6 +604,31 @@ export default function ClientDetailPage() {
   // =========================================================================
   // Client CRUD
   // =========================================================================
+
+  const generateInvite = async () => {
+    setInviteLoading(true);
+    const r = await api("/api/invitations", "POST", { client_id: clientId });
+    setInviteLoading(false);
+    if (r.ok) {
+      setInviteUrl(r.data!.url as string);
+      setInviteExpires(r.data!.expires_at as string);
+      showToast("초대 링크가 생성되었습니다.");
+    } else {
+      showToast(r.error!, "error");
+    }
+  };
+
+  const copyInviteUrl = async () => {
+    if (!inviteUrl) return;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setInviteCopied(true);
+      setTimeout(() => setInviteCopied(false), 2000);
+      showToast("링크가 복사되었습니다.");
+    } catch {
+      showToast("복사에 실패했습니다.", "error");
+    }
+  };
 
   const startEditClient = () => {
     if (!client) return;
@@ -1288,8 +1318,17 @@ export default function ClientDetailPage() {
                       <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${client.is_active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"}`}>
                         {client.is_active ? "활성" : "비활성"}
                       </span>
+                      {client.username ? (
+                        <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-200">등록 완료</span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-200">미등록</span>
+                      )}
                     </div>
-                    <p className="text-[var(--color-gray)] text-sm">@{client.username}</p>
+                    {client.username ? (
+                      <p className="text-[var(--color-gray)] text-sm">@{client.username}</p>
+                    ) : (
+                      <p className="text-[var(--color-gray)] text-sm">초대 링크를 보내 계정 등록을 안내하세요</p>
+                    )}
                   </div>
                 </div>
                 <button onClick={startEditClient} className={btnSmall}>수정</button>
@@ -1311,15 +1350,86 @@ export default function ClientDetailPage() {
                   <span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span>
                   <span className="text-[var(--color-dark)] text-sm">{formatDate(client.created_at)}</span>
                 </div>
-                <div className="bg-gray-50 rounded-lg px-3 py-2.5">
-                  <span className="text-[var(--color-gray)] text-xs block mb-0.5">아이디</span>
-                  <span className="text-[var(--color-dark)] text-sm">{client.username}</span>
-                </div>
+                {client.username && (
+                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">아이디</span>
+                    <span className="text-[var(--color-dark)] text-sm">{client.username}</span>
+                  </div>
+                )}
               </div>
               {client.memo && (
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <span className="text-[var(--color-gray)] text-xs block mb-1.5">메모</span>
                   <p className="text-[var(--color-dark-2)] text-sm whitespace-pre-wrap bg-gray-50 rounded-lg px-4 py-3 leading-relaxed">{client.memo}</p>
+                </div>
+              )}
+              {/* Invitation link section - only for unregistered clients */}
+              {!client.username && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  {inviteUrl ? (
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+                        </svg>
+                        <span className="text-blue-700 text-sm font-semibold">초대 링크</span>
+                        {inviteExpires && (
+                          <span className="text-blue-500 text-xs ml-auto">만료: {formatDate(inviteExpires)}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          readOnly
+                          value={inviteUrl}
+                          className="flex-1 px-3 py-2 bg-white border border-blue-200 rounded-lg text-sm text-[var(--color-dark)] select-all focus:outline-none"
+                          onClick={(e) => (e.target as HTMLInputElement).select()}
+                        />
+                        <button
+                          onClick={copyInviteUrl}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold border-none cursor-pointer hover:bg-blue-700 transition-colors flex items-center gap-1.5 shrink-0"
+                        >
+                          {inviteCopied ? (
+                            <>
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                              복사됨
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                              </svg>
+                              복사
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={generateInvite}
+                      disabled={inviteLoading}
+                      className="w-full px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {inviteLoading ? (
+                        <>
+                          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                            <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                          </svg>
+                          생성 중...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-1.135a4.5 4.5 0 00-1.242-7.244l4.5-4.5a4.5 4.5 0 016.364 6.364l-1.757 1.757" />
+                          </svg>
+                          초대 링크 생성
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
