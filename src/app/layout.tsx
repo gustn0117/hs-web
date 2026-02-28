@@ -88,7 +88,7 @@ export const metadata: Metadata = {
   verification: {
     google: "YOUR_GOOGLE_VERIFICATION_CODE",
     other: {
-      "naver-site-verification": ["YOUR_NAVER_VERIFICATION_CODE"],
+      "naver-site-verification": ["9e9ba54205fecadd9d81829473d63ad96fbf0fef"],
     },
   },
 };
