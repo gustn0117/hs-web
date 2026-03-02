@@ -48,6 +48,18 @@ interface Domain {
   nameservers: string | null;
 }
 
+interface Marketing {
+  id: string;
+  project_id: string | null;
+  type: string;
+  title: string;
+  description: string | null;
+  status: string;
+  started_at: string | null;
+  completed_at: string | null;
+  memo: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Constants & Helpers
 // ---------------------------------------------------------------------------
@@ -118,6 +130,7 @@ export default function ClientProjectDetailPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [hostings, setHostings] = useState<Hosting[]>([]);
   const [domains, setDomains] = useState<Domain[]>([]);
+  const [marketings, setMarketings] = useState<Marketing[]>([]);
   const [clientName, setClientName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -135,6 +148,7 @@ export default function ClientProjectDetailPage() {
           setProject(found);
           setHostings((data.hosting || []).filter((h: Hosting) => h.project_id === pid));
           setDomains((data.domains || []).filter((d: Domain) => d.project_id === pid));
+          setMarketings((data.marketing || []).filter((m: Marketing) => m.project_id === pid));
         } else {
           setError("프로젝트를 찾을 수 없습니다.");
         }
@@ -484,6 +498,52 @@ export default function ClientProjectDetailPage() {
             </div>
           </div>
         )}
+
+        {/* Marketing - 항상 표시 */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm mt-6">
+          <h3 className="text-[var(--color-dark)] font-bold mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+            마케팅
+          </h3>
+          {marketings.length === 0 ? (
+            <div className="border border-gray-100 bg-gray-50/50 rounded-xl p-4 text-center">
+              <p className="text-[var(--color-gray)] text-sm">신청하지 않음</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {marketings.map((m) => {
+                const mTypeCls: Record<string, string> = {
+                  "SEO": "bg-purple-50 text-purple-700 border-purple-200",
+                  "트래픽": "bg-blue-50 text-blue-700 border-blue-200",
+                  "백링크": "bg-emerald-50 text-emerald-700 border-emerald-200",
+                  "기타": "bg-gray-100 text-gray-600 border-gray-200",
+                };
+                const mStatusCls: Record<string, { label: string; cls: string }> = {
+                  planned: { label: "예정", cls: "bg-gray-100 text-gray-600 border-gray-200" },
+                  in_progress: { label: "진행중", cls: "bg-blue-50 text-blue-700 border-blue-200" },
+                  completed: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+                };
+                const si = mStatusCls[m.status] ?? { label: m.status, cls: "bg-gray-100 text-gray-600 border-gray-200" };
+                return (
+                  <div key={m.id} className="border border-gray-100 bg-gray-50/50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${mTypeCls[m.type] ?? mTypeCls["기타"]}`}>{m.type}</span>
+                      <span className="font-semibold text-sm text-[var(--color-dark)]">{m.title}</span>
+                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${si.cls}`}>{si.label}</span>
+                    </div>
+                    {m.description && <p className="text-sm text-[var(--color-gray)] mb-2">{m.description}</p>}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                      {m.started_at && <span>시작: {formatShortDate(m.started_at)}</span>}
+                      {m.completed_at && <span>완료: {formatShortDate(m.completed_at)}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* Footer */}
         <div className="mt-12 pb-8 text-center">
