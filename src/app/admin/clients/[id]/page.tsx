@@ -39,8 +39,6 @@ interface Project {
 interface Hosting {
   id: string;
   project_id: string | null;
-  provider: string;
-  plan: string;
   amount: number;
   billing_cycle: string;
   start_date: string;
@@ -184,7 +182,7 @@ const defaultProjectForm = (): Omit<Project, "id"> => ({
 });
 
 const defaultHostingForm = (): Omit<Hosting, "id"> => ({
-  project_id: null, provider: "", plan: "", amount: 0, billing_cycle: "monthly",
+  project_id: null, amount: 0, billing_cycle: "monthly",
   start_date: "", end_date: "", auto_renew: false, memo: "",
 });
 
@@ -708,12 +706,12 @@ export default function ClientDetailPage() {
     setHostingFormProjectId(projectId);
   };
   const openHostingEdit = (projectId: string, h: Hosting) => {
-    setHostingForm({ project_id: projectId, provider: h.provider||"", plan: h.plan||"", amount: h.amount, billing_cycle: h.billing_cycle||"monthly", start_date: h.start_date??"", end_date: h.end_date??"", auto_renew: h.auto_renew, memo: h.memo||"" });
+    setHostingForm({ project_id: projectId, amount: h.amount, billing_cycle: h.billing_cycle||"monthly", start_date: h.start_date??"", end_date: h.end_date??"", auto_renew: h.auto_renew, memo: h.memo||"" });
     setEditingHostingId(h.id);
     setHostingFormProjectId(projectId);
   };
   const saveHosting = async () => {
-    if (!hostingForm.provider.trim()) { showToast("호스팅 업체명은 필수입니다.", "error"); return; }
+    if (!hostingForm.amount) { showToast("금액을 입력해주세요.", "error"); return; }
     await saveEntity<Hosting>("호스팅", `/api/clients/${clientId}/hosting`, editingHostingId, hostingForm as unknown as Record<string, unknown>, setHostings, "hosting", setHostingSaving, () => setHostingFormProjectId(null), setEditingHostingId);
   };
   const deleteHosting = (id: string) => deleteEntity<Hosting>("호스팅", `/api/clients/${clientId}/hosting/${id}`, id, setHostings);
@@ -823,9 +821,7 @@ export default function ClientDetailPage() {
     <div className="bg-blue-50/50 rounded-xl p-4 mb-3 border border-blue-100">
       <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingHostingId ? "호스팅 수정" : "호스팅 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div><label className={labelClass}>호스팅 업체 *</label><input className={inputClass} placeholder="카페24, AWS, ..." value={hostingForm.provider} onChange={(e) => setHostingForm((p) => ({ ...p, provider: e.target.value }))} /></div>
-        <div><label className={labelClass}>플랜</label><input className={inputClass} placeholder="Basic, Pro, ..." value={hostingForm.plan} onChange={(e) => setHostingForm((p) => ({ ...p, plan: e.target.value }))} /></div>
-        <div><label className={labelClass}>금액 (원)</label><AmountInput value={hostingForm.amount} onChange={(v) => setHostingForm((p) => ({ ...p, amount: v }))} /></div>
+        <div><label className={labelClass}>금액 (원) *</label><AmountInput value={hostingForm.amount} onChange={(v) => setHostingForm((p) => ({ ...p, amount: v }))} /></div>
         <div><label className={labelClass}>결제 주기</label><CustomSelect options={billingCycleOptions} value={hostingForm.billing_cycle} onChange={(v) => setHostingForm((p) => ({ ...p, billing_cycle: v }))} /></div>
         <div><label className={labelClass}>시작일</label><DatePicker value={hostingForm.start_date} onChange={(v) => setHostingForm((p) => ({ ...p, start_date: v }))} placeholder="시작일 선택" /></div>
         <div><label className={labelClass}>만료일</label><DatePicker value={hostingForm.end_date} onChange={(v) => setHostingForm((p) => ({ ...p, end_date: v }))} placeholder="만료일 선택" /></div>
@@ -956,10 +952,8 @@ export default function ClientDetailPage() {
               <div key={h.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    {/* Provider + Plan + Badges */}
+                    {/* Amount + Badges */}
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className="font-semibold text-sm text-[var(--color-dark)]">{h.provider}</span>
-                      {h.plan && <span className="text-[var(--color-gray)] text-sm">· {h.plan}</span>}
                       {h.auto_renew && <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
                     </div>
                     {/* Amount + Dates */}
