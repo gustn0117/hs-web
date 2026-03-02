@@ -653,6 +653,11 @@ export default function ClientDetailPage() {
 
   useEffect(() => { fetchClient(); }, [fetchClient]);
   useEffect(() => {
+    const onFocus = () => fetchClient();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchClient]);
+  useEffect(() => {
     // Always fetch payments & projects (payments need project names for display)
     fetchPayments();
     fetchProjects();
