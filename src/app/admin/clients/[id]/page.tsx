@@ -792,23 +792,36 @@ export default function ClientDetailPage() {
     return `${today.getFullYear()}-${mm}-${dd}`;
   };
 
-  // When payment type changes, auto-suggest date for hosting
+  // Helper: suggest hosting amount for a specific project
+  const suggestHostingAmount = (projectId: string | null): number => {
+    const projectHostings = hostings.filter((h) => projectId ? h.project_id === projectId : true);
+    if (projectHostings.length > 0 && projectHostings[0].amount) {
+      return projectHostings[0].amount;
+    }
+    return 0;
+  };
+
+  // When payment type changes, auto-suggest date & amount for hosting
   const handlePaymentTypeChange = (type: string) => {
     setPaymentForm((prev) => {
       const updates: Partial<Omit<Payment, "id">> = { type };
       if (type === "호스팅") {
         updates.payment_date = suggestHostingDate(prev.project_id);
+        const amt = suggestHostingAmount(prev.project_id);
+        if (amt) updates.amount = amt;
       }
       return { ...prev, ...updates };
     });
   };
 
-  // When project changes, re-suggest date if type is already hosting
+  // When project changes, re-suggest date & amount if type is already hosting
   const handlePaymentProjectChange = (projectId: string | null) => {
     setPaymentForm((prev) => {
       const updates: Partial<Omit<Payment, "id">> = { project_id: projectId };
       if (prev.type === "호스팅") {
         updates.payment_date = suggestHostingDate(projectId);
+        const amt = suggestHostingAmount(projectId);
+        if (amt) updates.amount = amt;
       }
       return { ...prev, ...updates };
     });
@@ -1155,7 +1168,7 @@ export default function ClientDetailPage() {
                 />
               </div>
               <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={handlePaymentTypeChange} /></div>
-              <div><label className={labelClass}>금액 (원) *</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
+              <div><label className={labelClass}>금액 (원) *{paymentForm.type === "호스팅" && paymentForm.amount > 0 && <span className="text-[var(--color-accent)] ml-1">(자동추천)</span>}</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
               <div>
                 <label className={labelClass}>결제일{paymentForm.type === "호스팅" && paymentForm.payment_date && <span className="text-[var(--color-accent)] ml-1">(자동추천)</span>}</label>
                 <DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" />
