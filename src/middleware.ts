@@ -51,9 +51,32 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Page view tracking (public pages only, fire-and-forget)
+  const shouldTrack =
+    !pathname.startsWith("/admin") &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/client") &&
+    !pathname.startsWith("/_next") &&
+    !pathname.includes(".");
+
+  if (shouldTrack) {
+    const trackUrl = new URL("/api/track", request.url);
+    fetch(trackUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-forwarded-for": request.headers.get("x-forwarded-for") || "",
+        "cf-connecting-ip": request.headers.get("cf-connecting-ip") || "",
+        "x-real-ip": request.headers.get("x-real-ip") || "",
+        "user-agent": request.headers.get("user-agent") || "",
+      },
+      body: JSON.stringify({ site: "hs-web", path: pathname }),
+    }).catch(() => {});
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path+", "/client/dashboard/:path*"],
+  matcher: ["/admin/:path+", "/client/dashboard/:path*", "/((?!_next|api|favicon).*)"],
 };

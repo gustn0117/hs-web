@@ -87,6 +87,24 @@ interface ServerMetrics {
   };
 }
 
+interface MonthlyAnalytics {
+  month: string;
+  site: string;
+  uniqueVisitors: number;
+  totalViews: number;
+}
+
+interface TodayStat {
+  site: string;
+  uniqueVisitors: number;
+  totalViews: number;
+}
+
+interface AnalyticsData {
+  monthly: MonthlyAnalytics[];
+  today: TodayStat[];
+}
+
 // ─── Constants ───
 
 const WELL_KNOWN_PORTS: Record<number, string> = {
@@ -167,6 +185,7 @@ function isPhysicalInterface(name: string): boolean {
 
 export default function ServerMonitoring() {
   const [data, setData] = useState<ServerMetrics | null>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -186,11 +205,16 @@ export default function ServerMonitoring() {
   const fetchData = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     try {
-      const res = await fetch("/api/admin/server");
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
+      const [serverRes, analyticsRes] = await Promise.all([
+        fetch("/api/admin/server"),
+        fetch("/api/admin/analytics"),
+      ]);
+      if (serverRes.ok) {
+        setData(await serverRes.json());
         setLastUpdated(new Date());
+      }
+      if (analyticsRes.ok) {
+        setAnalytics(await analyticsRes.json());
       }
     } catch {
       // keep previous data
@@ -442,6 +466,81 @@ export default function ServerMonitoring() {
             )}
           </div>
         </div>
+
+        {/* ===== Visitor Analytics ===== */}
+        {analytics && (
+          <div className="mb-8">
+            <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128H5.228A2.25 2.25 0 013 16.878V3.75A2.25 2.25 0 015.25 1.5h13.5A2.25 2.25 0 0121 3.75v13.128M15 19.128l3.374-3.374M12 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              방문자 현황
+            </h3>
+
+            {/* Today stats */}
+            {analytics.today.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
+                {analytics.today.map((s) => (
+                  <div key={s.site} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                    <p className="text-xs text-[var(--color-gray)] mb-1 truncate">{s.site}</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-[var(--color-dark)]">{s.uniqueVisitors}</span>
+                      <span className="text-xs text-[var(--color-gray)]">명 오늘</span>
+                    </div>
+                    <p className="text-xs text-[var(--color-gray)] mt-1">{s.totalViews} 페이지뷰</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Monthly table */}
+            {analytics.monthly.length > 0 ? (
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium text-xs">월</th>
+                        <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium text-xs">사이트</th>
+                        <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium text-xs">고유 방문자</th>
+                        <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium text-xs">페이지뷰</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        // 월별로 그룹핑하여 월 구분선 표시
+                        let lastMonth = "";
+                        return analytics.monthly.map((row, i) => {
+                          const isNewMonth = row.month !== lastMonth;
+                          lastMonth = row.month;
+                          const monthLabel = row.month.replace(/-/, "년 ") + "월";
+                          return (
+                            <tr key={i} className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 ${isNewMonth && i > 0 ? "border-t-2 border-t-gray-200" : ""}`}>
+                              <td className="py-2.5 px-4 text-[var(--color-dark)] font-medium tabular-nums text-xs">
+                                {isNewMonth ? monthLabel : ""}
+                              </td>
+                              <td className="py-2.5 px-4 text-[var(--color-dark-2)] text-xs">{row.site}</td>
+                              <td className="py-2.5 px-4 text-right text-[var(--color-dark)] font-semibold tabular-nums text-xs">
+                                {row.uniqueVisitors.toLocaleString()}명
+                              </td>
+                              <td className="py-2.5 px-4 text-right text-[var(--color-gray)] tabular-nums text-xs">
+                                {row.totalViews.toLocaleString()}
+                              </td>
+                            </tr>
+                          );
+                        });
+                      })()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center">
+                <p className="text-[var(--color-gray)] text-sm">아직 방문자 데이터가 없습니다.</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ===== Services (Docker Containers) ===== */}
         <div className="mb-8">
