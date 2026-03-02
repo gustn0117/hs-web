@@ -118,9 +118,9 @@ function getNextRenewalDate(endDate: string, billingCycle: string): string | nul
   const now = new Date();
   if (end > now) return endDate;
   const next = new Date(end);
+  const increment = billingCycle === "yearly" ? 365 : 30;
   while (next <= now) {
-    if (billingCycle === "yearly") next.setFullYear(next.getFullYear() + 1);
-    else next.setMonth(next.getMonth() + 1);
+    next.setDate(next.getDate() + increment);
   }
   return next.toISOString().split("T")[0];
 }
@@ -764,7 +764,7 @@ export default function ClientDetailPage() {
 
     if (projectHostingPayments.length > 0 && projectHostingPayments[0].payment_date) {
       const last = new Date(projectHostingPayments[0].payment_date + "T00:00:00");
-      last.setMonth(last.getMonth() + 1);
+      last.setDate(last.getDate() + 30);
       const mm = String(last.getMonth() + 1).padStart(2, "0");
       const dd = String(last.getDate()).padStart(2, "0");
       return `${last.getFullYear()}-${mm}-${dd}`;
@@ -778,7 +778,7 @@ export default function ClientDetailPage() {
       const now = new Date();
       const next = new Date(start);
       while (next <= now) {
-        next.setMonth(next.getMonth() + 1);
+        next.setDate(next.getDate() + 30);
       }
       const mm = String(next.getMonth() + 1).padStart(2, "0");
       const dd = String(next.getDate()).padStart(2, "0");
