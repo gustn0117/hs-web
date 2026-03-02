@@ -57,6 +57,18 @@ interface Payment {
   status: string;
 }
 
+interface Marketing {
+  id: string;
+  project_id: string | null;
+  type: string;
+  title: string;
+  description: string | null;
+  status: string;
+  started_at: string | null;
+  completed_at: string | null;
+  memo: string | null;
+}
+
 interface ClientInfo {
   id: string;
   name: string;
@@ -73,6 +85,7 @@ interface DashboardData {
   hosting: Hosting[];
   domains: Domain[];
   payments: Payment[];
+  marketing: Marketing[];
 }
 
 type TabKey = "overview" | "projects" | "payments" | "settings";
@@ -525,6 +538,7 @@ export default function ClientDashboardPage() {
   const renderProjects = () => {
     const getProjectHostings = (projectId: string) => data.hosting.filter((h) => h.project_id === projectId);
     const getProjectDomains = (projectId: string) => data.domains.filter((d) => d.project_id === projectId);
+    const getProjectMarketings = (projectId: string) => (data.marketing ?? []).filter((m) => m.project_id === projectId);
 
     return (
       <div className="space-y-5">
@@ -535,6 +549,7 @@ export default function ClientDashboardPage() {
             const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
             const projectHostings = getProjectHostings(p.id);
             const projectDomains = getProjectDomains(p.id);
+            const projectMarketings = getProjectMarketings(p.id);
 
             return (
               <div key={p.id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -698,6 +713,48 @@ export default function ClientDashboardPage() {
                             <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
                               {d.registered_date && <span>등록: {formatShortDate(d.registered_date)}</span>}
                               {d.expires_date && <span className={expired ? "text-red-600 font-medium" : ""}>만료: {formatShortDate(d.expires_date)}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Marketing inline */}
+                {projectMarketings.length > 0 && (
+                  <div className={`mt-4 ${projectHostings.length === 0 && projectDomains.length === 0 ? "pt-4 border-t border-gray-100" : "pt-3"}`}>
+                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
+                      <svg className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                      </svg>
+                      마케팅
+                    </h4>
+                    <div className="space-y-2">
+                      {projectMarketings.map((m) => {
+                        const mTypeCls: Record<string, string> = {
+                          "SEO": "bg-purple-50 text-purple-700 border-purple-200",
+                          "트래픽": "bg-blue-50 text-blue-700 border-blue-200",
+                          "백링크": "bg-emerald-50 text-emerald-700 border-emerald-200",
+                          "기타": "bg-gray-100 text-gray-600 border-gray-200",
+                        };
+                        const mStatusCls: Record<string, { label: string; cls: string }> = {
+                          planned: { label: "예정", cls: "bg-gray-100 text-gray-600 border-gray-200" },
+                          in_progress: { label: "진행중", cls: "bg-blue-50 text-blue-700 border-blue-200" },
+                          completed: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+                        };
+                        const si = mStatusCls[m.status] ?? { label: m.status, cls: "bg-gray-100 text-gray-600 border-gray-200" };
+                        return (
+                          <div key={m.id} className="border border-gray-200 bg-gray-50/50 rounded-xl p-3.5">
+                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                              <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${mTypeCls[m.type] ?? mTypeCls["기타"]}`}>{m.type}</span>
+                              <span className="font-semibold text-sm text-[var(--color-dark)]">{m.title}</span>
+                              <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${si.cls}`}>{si.label}</span>
+                            </div>
+                            {m.description && <p className="text-xs text-[var(--color-dark-2)] mb-1.5 line-clamp-2">{m.description}</p>}
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                              {m.started_at && <span>시작: {formatShortDate(m.started_at)}</span>}
+                              {m.completed_at && <span>완료: {formatShortDate(m.completed_at)}</span>}
                             </div>
                           </div>
                         );

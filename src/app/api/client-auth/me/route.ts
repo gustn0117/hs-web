@@ -14,7 +14,7 @@ export async function GET() {
     );
   }
 
-  const [clientResult, projectsResult, hostingResult, domainsResult, paymentsResult] =
+  const [clientResult, projectsResult, hostingResult, domainsResult, paymentsResult, marketingResult] =
     await Promise.all([
       supabase
         .from("clients")
@@ -41,6 +41,11 @@ export async function GET() {
         .select("*")
         .eq("client_id", clientId)
         .order("payment_date", { ascending: false }),
+      supabase
+        .from("marketing")
+        .select("*")
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: false }),
     ]);
 
   if (clientResult.error || !clientResult.data) {
@@ -56,5 +61,6 @@ export async function GET() {
     hosting: hostingResult.data ?? [],
     domains: domainsResult.data ?? [],
     payments: paymentsResult.data ?? [],
+    marketing: marketingResult.data ?? [],
   });
 }

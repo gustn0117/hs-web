@@ -70,6 +70,18 @@ interface Payment {
   memo: string;
 }
 
+interface Marketing {
+  id: string;
+  project_id: string | null;
+  type: string;
+  title: string;
+  description: string;
+  status: string;
+  started_at: string;
+  completed_at: string;
+  memo: string;
+}
+
 type TabKey = "projects" | "payments";
 
 // ---------------------------------------------------------------------------
@@ -173,6 +185,12 @@ const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
   overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-200" },
 };
 
+const MARKETING_STATUS_MAP: Record<string, { label: string; cls: string }> = {
+  planned: { label: "예정", cls: "bg-gray-100 text-gray-600 border border-gray-200" },
+  in_progress: { label: "진행중", cls: "bg-blue-50 text-blue-700 border border-blue-200" },
+  completed: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+};
+
 // ---------------------------------------------------------------------------
 // Default form data factories
 // ---------------------------------------------------------------------------
@@ -194,6 +212,10 @@ const defaultDomainForm = (): Omit<Domain, "id"> => ({
 
 const defaultPaymentForm = (): Omit<Payment, "id"> => ({
   project_id: null, payment_date: "", type: "제작비", description: "", amount: 0, status: "pending", memo: "",
+});
+
+const defaultMarketingForm = (): Omit<Marketing, "id"> => ({
+  project_id: null, type: "SEO", title: "", description: "", status: "in_progress", started_at: "", completed_at: "", memo: "",
 });
 
 // ===========================================================================
@@ -478,6 +500,19 @@ const paymentStatusOptions: SelectOption[] = [
   { value: "overdue", label: "미납", color: "bg-red-400" },
 ];
 
+const marketingTypeOptions: SelectOption[] = [
+  { value: "SEO", label: "SEO" },
+  { value: "트래픽", label: "트래픽" },
+  { value: "백링크", label: "백링크" },
+  { value: "기타", label: "기타" },
+];
+
+const marketingStatusOptions: SelectOption[] = [
+  { value: "planned", label: "예정", color: "bg-gray-400" },
+  { value: "in_progress", label: "진행중", color: "bg-blue-400" },
+  { value: "completed", label: "완료", color: "bg-emerald-400" },
+];
+
 const platformOptions: SelectOption[] = [
   { value: "", label: "선택 안함" },
   { value: "크몽", label: "크몽" },
@@ -539,6 +574,12 @@ export default function ClientDetailPage() {
   const [paymentForm, setPaymentForm] = useState(defaultPaymentForm());
   const [paymentSaving, setPaymentSaving] = useState(false);
 
+  const [marketings, setMarketings] = useState<Marketing[]>([]);
+  const [marketingFormProjectId, setMarketingFormProjectId] = useState<string | null>(null);
+  const [editingMarketingId, setEditingMarketingId] = useState<string | null>(null);
+  const [marketingForm, setMarketingForm] = useState(defaultMarketingForm());
+  const [marketingSaving, setMarketingSaving] = useState(false);
+
   // =========================================================================
   // API helper
   // =========================================================================
@@ -593,13 +634,18 @@ export default function ClientDetailPage() {
     catch { /* ignore */ } finally { setPaymentsLoading(false); }
   }, [clientId]);
 
+  const fetchMarketings = useCallback(async () => {
+    try { const r = await fetch(`/api/clients/${clientId}/marketing`); const d = await r.json(); setMarketings(d.marketing ?? []); }
+    catch { /* ignore */ }
+  }, [clientId]);
+
   useEffect(() => { fetchClient(); }, [fetchClient]);
   useEffect(() => {
     // Always fetch payments & projects (payments need project names for display)
     fetchPayments();
     fetchProjects();
-    if (activeTab === "projects") { fetchHostings(); fetchDomains(); }
-  }, [activeTab, fetchProjects, fetchHostings, fetchDomains, fetchPayments]);
+    if (activeTab === "projects") { fetchHostings(); fetchDomains(); fetchMarketings(); }
+  }, [activeTab, fetchProjects, fetchHostings, fetchDomains, fetchPayments, fetchMarketings]);
 
   // =========================================================================
   // Client CRUD
@@ -736,6 +782,25 @@ export default function ClientDetailPage() {
     await saveEntity<Domain>("도메인", `/api/clients/${clientId}/domains`, editingDomainId, domainForm as unknown as Record<string, unknown>, setDomains, "domain", setDomainSaving, () => setDomainFormProjectId(null), setEditingDomainId);
   };
   const deleteDomain = (id: string) => deleteEntity<Domain>("도메인", `/api/clients/${clientId}/domains/${id}`, id, setDomains);
+
+  // =========================================================================
+  // Marketing CRUD (per-project)
+  // =========================================================================
+  const openMarketingAdd = (projectId: string) => {
+    setMarketingForm({ ...defaultMarketingForm(), project_id: projectId });
+    setEditingMarketingId(null);
+    setMarketingFormProjectId(projectId);
+  };
+  const openMarketingEdit = (projectId: string, m: Marketing) => {
+    setMarketingForm({ project_id: projectId, type: m.type||"SEO", title: m.title||"", description: m.description||"", status: m.status||"in_progress", started_at: m.started_at??"", completed_at: m.completed_at??"", memo: m.memo||"" });
+    setEditingMarketingId(m.id);
+    setMarketingFormProjectId(projectId);
+  };
+  const saveMarketing = async () => {
+    if (!marketingForm.title.trim()) { showToast("마케팅 제목은 필수입니다.", "error"); return; }
+    await saveEntity<Marketing>("마케팅", `/api/clients/${clientId}/marketing`, editingMarketingId, marketingForm as unknown as Record<string, unknown>, setMarketings, "marketing", setMarketingSaving, () => setMarketingFormProjectId(null), setEditingMarketingId);
+  };
+  const deleteMarketing = (id: string) => deleteEntity<Marketing>("마케팅", `/api/clients/${clientId}/marketing/${id}`, id, setMarketings);
 
   // =========================================================================
   // Payments CRUD
@@ -889,11 +954,34 @@ export default function ClientDetailPage() {
   );
 
   // =========================================================================
-  // Project card with inline hosting/domains
+  // Inline marketing form
+  // =========================================================================
+  const renderMarketingForm = () => (
+    <div className="bg-purple-50/50 rounded-xl p-4 mb-3 border border-purple-100">
+      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingMarketingId ? "마케팅 수정" : "마케팅 추가"}</h5>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div><label className={labelClass}>유형 *</label><CustomSelect options={marketingTypeOptions} value={marketingForm.type} onChange={(v) => setMarketingForm((p) => ({ ...p, type: v }))} /></div>
+        <div><label className={labelClass}>상태</label><CustomSelect options={marketingStatusOptions} value={marketingForm.status} onChange={(v) => setMarketingForm((p) => ({ ...p, status: v }))} /></div>
+        <div className="sm:col-span-2"><label className={labelClass}>제목 *</label><input className={inputClass} placeholder="마케팅 작업 제목" value={marketingForm.title} onChange={(e) => setMarketingForm((p) => ({ ...p, title: e.target.value }))} /></div>
+        <div><label className={labelClass}>시작일</label><DatePicker value={marketingForm.started_at} onChange={(v) => setMarketingForm((p) => ({ ...p, started_at: v }))} placeholder="시작일 선택" /></div>
+        <div><label className={labelClass}>완료일</label><DatePicker value={marketingForm.completed_at} onChange={(v) => setMarketingForm((p) => ({ ...p, completed_at: v }))} placeholder="완료일 선택" /></div>
+      </div>
+      <div className="mt-3"><label className={labelClass}>설명</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="마케팅 작업 상세 설명" value={marketingForm.description} onChange={(e) => setMarketingForm((p) => ({ ...p, description: e.target.value }))} /></div>
+      <div className="mt-3"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="내부 메모" value={marketingForm.memo} onChange={(e) => setMarketingForm((p) => ({ ...p, memo: e.target.value }))} /></div>
+      <div className="flex gap-2 mt-4">
+        <button onClick={saveMarketing} disabled={marketingSaving} className={btnPrimary}>{marketingSaving ? "저장 중..." : "저장"}</button>
+        <button onClick={() => setMarketingFormProjectId(null)} className={btnSecondary}>취소</button>
+      </div>
+    </div>
+  );
+
+  // =========================================================================
+  // Project card with inline hosting/domains/marketing
   // =========================================================================
   const renderProjectCard = (p: Project) => {
     const pHostings = hostings.filter((h) => h.project_id === p.id);
     const pDomains = domains.filter((d) => d.project_id === p.id);
+    const pMarketings = marketings.filter((m) => m.project_id === p.id);
     const pHostingPayments = payments.filter((pay) => pay.type === "호스팅" && pay.project_id === p.id);
 
     return (
@@ -1085,6 +1173,54 @@ export default function ClientDetailPage() {
                   <div className="flex gap-1 shrink-0">
                     <button onClick={() => openDomainEdit(p.id, d)} className={btnMini}>수정</button>
                     <button onClick={() => deleteDomain(d.id)} className="px-2.5 py-1 bg-red-50 border border-red-200 text-red-400 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── Marketing section ── */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
+              <svg className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+              마케팅
+              <span className="text-[var(--color-gray)] font-normal text-xs">{pMarketings.length}건</span>
+            </h5>
+            <button onClick={() => openMarketingAdd(p.id)} className={btnMini}>+ 추가</button>
+          </div>
+          {marketingFormProjectId === p.id && renderMarketingForm()}
+          {pMarketings.length === 0 && marketingFormProjectId !== p.id && (
+            <p className="text-[var(--color-gray)] text-xs py-2">등록된 마케팅이 없습니다.</p>
+          )}
+          {pMarketings.map((m) => {
+            const si = MARKETING_STATUS_MAP[m.status] ?? { label: m.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
+            const typeCls: Record<string, string> = {
+              "SEO": "bg-purple-50 text-purple-700 border-purple-200",
+              "트래픽": "bg-blue-50 text-blue-700 border-blue-200",
+              "백링크": "bg-emerald-50 text-emerald-700 border-emerald-200",
+              "기타": "bg-gray-100 text-gray-600 border-gray-200",
+            };
+            return (
+              <div key={m.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full border ${typeCls[m.type] ?? typeCls["기타"]}`}>{m.type}</span>
+                      <span className="font-semibold text-sm text-[var(--color-dark)]">{m.title}</span>
+                      <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${si.cls}`}>{si.label}</span>
+                    </div>
+                    {m.description && <p className="text-xs text-[var(--color-dark-2)] mb-1.5 line-clamp-2">{m.description}</p>}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                      {m.started_at && <span>시작: {formatDateShort(m.started_at)}</span>}
+                      {m.completed_at && <span>완료: {formatDateShort(m.completed_at)}</span>}
+                    </div>
+                    {m.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{m.memo}</p>}
+                  </div>
+                  <div className="flex gap-1 shrink-0">
+                    <button onClick={() => openMarketingEdit(p.id, m)} className={btnMini}>수정</button>
+                    <button onClick={() => deleteMarketing(m.id)} className="px-2.5 py-1 bg-red-50 border border-red-200 text-red-400 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all">삭제</button>
                   </div>
                 </div>
               </div>
