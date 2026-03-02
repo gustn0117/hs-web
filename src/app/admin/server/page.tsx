@@ -62,6 +62,10 @@ interface DockerContainer {
   cpuPercent?: number;
   memoryUsageMB?: number;
   memoryLimitMB?: number;
+  networkRxBytes?: number;
+  networkTxBytes?: number;
+  networkRxHuman?: string;
+  networkTxHuman?: string;
   sizeRw?: number;
   sizeRootFs?: number;
   sizeHuman?: string;
@@ -539,6 +543,27 @@ export default function ServerMonitoring() {
                                 )}
                               </div>
                             )}
+                          </div>
+                        )}
+
+                        {/* Network Traffic */}
+                        {isRunning && c.networkRxHuman && c.networkTxHuman && (
+                          <div className="flex items-center justify-between py-2 mb-1">
+                            <span className="text-xs text-[var(--color-gray)]">트래픽</span>
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1 text-xs">
+                                <svg className="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                                <span className="text-[var(--color-dark-2)] font-mono text-xs">{c.networkRxHuman}</span>
+                              </span>
+                              <span className="flex items-center gap-1 text-xs">
+                                <svg className="w-3 h-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                                </svg>
+                                <span className="text-[var(--color-dark-2)] font-mono text-xs">{c.networkTxHuman}</span>
+                              </span>
+                            </div>
                           </div>
                         )}
 

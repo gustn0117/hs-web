@@ -65,6 +65,10 @@ interface DockerContainer {
   cpuPercent?: number;
   memoryUsageMB?: number;
   memoryLimitMB?: number;
+  networkRxBytes?: number;
+  networkTxBytes?: number;
+  networkRxHuman?: string;
+  networkTxHuman?: string;
   sizeRw?: number;
   sizeRootFs?: number;
   sizeHuman?: string;
@@ -382,6 +386,7 @@ interface DockerStatsRaw {
     usage: number;
     limit: number;
   };
+  networks?: Record<string, { rx_bytes: number; tx_bytes: number }>;
 }
 
 async function getDockerContainers(): Promise<{
@@ -440,6 +445,20 @@ async function getDockerContainers(): Promise<{
       Math.round((stats.memory_stats.usage / 1048576) * 10) / 10;
     container.memoryLimitMB =
       Math.round((stats.memory_stats.limit / 1048576) * 10) / 10;
+
+    // Network traffic (sum all interfaces)
+    if (stats.networks) {
+      let rxTotal = 0;
+      let txTotal = 0;
+      for (const iface of Object.values(stats.networks)) {
+        rxTotal += iface.rx_bytes || 0;
+        txTotal += iface.tx_bytes || 0;
+      }
+      container.networkRxBytes = rxTotal;
+      container.networkTxBytes = txTotal;
+      container.networkRxHuman = formatBytes(rxTotal);
+      container.networkTxHuman = formatBytes(txTotal);
+    }
   });
 
   // Wait max 8 seconds for all stats
