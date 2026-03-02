@@ -90,6 +90,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }
 
 const PAYMENT_STATUS: Record<string, { label: string; bg: string; text: string; border: string }> = {
   paid: { label: "완료", bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  confirming: { label: "확인 중", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
   pending: { label: "대기", bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
   overdue: { label: "미납", bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
 };
@@ -180,6 +181,7 @@ export default function ClientDashboardPage() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [accountCopied, setAccountCopied] = useState(false);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -717,130 +719,133 @@ export default function ClientDashboardPage() {
     setTimeout(() => setAccountCopied(false), 2000);
   };
 
+  const handleConfirmPayment = async (paymentId: string) => {
+    setConfirmingId(paymentId);
+    try {
+      const res = await fetch("/api/client-auth/confirm-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId }),
+      });
+      if (res.ok) {
+        setData((prev) => prev ? {
+          ...prev,
+          payments: prev.payments.map((p) => p.id === paymentId ? { ...p, status: "confirming" } : p),
+        } : prev);
+      }
+    } catch { /* ignore */ }
+    finally { setConfirmingId(null); }
+  };
+
   const renderPayments = () => {
     const paid = data.payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
     const pending = data.payments.filter((p) => p.status === "pending").reduce((s, p) => s + Number(p.amount), 0);
     const overdue = data.payments.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
+    const confirming = data.payments.filter((p) => p.status === "confirming").reduce((s, p) => s + Number(p.amount), 0);
     const unpaid = pending + overdue;
 
     const sorted = [...data.payments].sort((a, b) => {
-      const order: Record<string, number> = { overdue: 0, pending: 1, paid: 2 };
+      const order: Record<string, number> = { overdue: 0, pending: 1, confirming: 2, paid: 3 };
       const diff = (order[a.status] ?? 9) - (order[b.status] ?? 9);
       if (diff !== 0) return diff;
       return (b.payment_date || "").localeCompare(a.payment_date || "");
     });
 
     return (
-      <div className="space-y-6">
-        {/* Bank account info card */}
-        {unpaid > 0 ? (
-          <div className="bg-gradient-to-r from-blue-600 to-[var(--color-primary)] rounded-2xl p-5 sm:p-6 text-white">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <p className="text-blue-100 text-xs font-medium mb-1">미결제 금액</p>
-                <p className="text-2xl sm:text-3xl font-extrabold">{formatAmount(unpaid)}</p>
-              </div>
-              <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m1.5 0h16.5m0 0h-.75a.75.75 0 01-.75-.75V4.5m0 0L18 1.5M3.75 4.5L6 1.5" />
-                </svg>
-              </div>
+      <div className="space-y-5">
+        {/* Bank account card */}
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="px-5 py-4 flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs text-[var(--color-gray)] mb-1">입금 계좌</p>
+              <p className="text-sm font-bold text-[var(--color-dark)]">우리은행 1002-163-026503</p>
+              <p className="text-xs text-[var(--color-gray)] mt-0.5">예금주: 심현수</p>
             </div>
-            <div className="bg-white/10 rounded-xl p-4">
-              <p className="text-blue-100 text-xs mb-2">입금 계좌</p>
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-bold text-sm sm:text-base">우리은행 1002-163-026503</p>
-                  <p className="text-blue-200 text-xs mt-0.5">예금주: 심현수</p>
-                </div>
-                <button
-                  onClick={copyAccount}
-                  className={`px-3.5 py-2 rounded-lg text-xs font-semibold border-none cursor-pointer transition-all shrink-0 ${
-                    accountCopied
-                      ? "bg-emerald-400 text-white"
-                      : "bg-white/20 text-white hover:bg-white/30"
-                  }`}
-                >
-                  {accountCopied ? "복사됨" : "계좌 복사"}
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={copyAccount}
+              className={`px-4 py-2 rounded-lg text-xs font-semibold border cursor-pointer transition-all shrink-0 ${
+                accountCopied
+                  ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                  : "bg-[var(--color-primary)] text-white border-transparent hover:opacity-90"
+              }`}
+            >
+              {accountCopied ? "복사 완료" : "계좌 복사"}
+            </button>
           </div>
-        ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[var(--color-dark)] font-bold text-sm">모든 결제가 완료되었습니다</p>
-                <p className="text-[var(--color-gray)] text-xs mt-0.5">미납 내역이 없습니다.</p>
-              </div>
+          {unpaid > 0 && (
+            <div className="px-5 py-3 bg-red-50 border-t border-red-100 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-red-400 rounded-full shrink-0" />
+              <p className="text-xs font-medium text-red-700">미결제 금액 {formatAmount(unpaid)}</p>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-[var(--color-gray)] text-xs mb-1">입금 계좌 안내</p>
-              <div className="flex items-center justify-between">
-                <p className="text-[var(--color-dark)] text-sm font-medium">우리은행 1002-163-026503 (심현수)</p>
-                <button
-                  onClick={copyAccount}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-all shrink-0 ${
-                    accountCopied
-                      ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-                      : "bg-gray-50 text-[var(--color-gray)] border-gray-200 hover:bg-gray-100"
-                  }`}
-                >
-                  {accountCopied ? "복사됨" : "복사"}
-                </button>
-              </div>
+          )}
+          {unpaid === 0 && confirming === 0 && data.payments.length > 0 && (
+            <div className="px-5 py-3 bg-emerald-50 border-t border-emerald-100 flex items-center gap-2">
+              <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+              <p className="text-xs font-medium text-emerald-700">모든 결제가 완료되었습니다</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {data.payments.length === 0 ? (
           <EmptyState icon="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75" message="등록된 결제 내역이 없습니다." />
         ) : (
           <>
-            {/* Summary */}
+            {/* Summary row */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-center">
-                <p className="text-emerald-600 text-xs font-semibold mb-1">완료</p>
-                <p className="text-emerald-700 font-bold text-base sm:text-lg">{formatAmount(paid)}</p>
-              </div>
-              <div className={`border rounded-xl p-3.5 text-center ${pending > 0 ? "bg-amber-50 border-amber-200" : "bg-gray-50 border-gray-200"}`}>
-                <p className={`text-xs font-semibold mb-1 ${pending > 0 ? "text-amber-600" : "text-[var(--color-gray)]"}`}>대기</p>
-                <p className={`font-bold text-base sm:text-lg ${pending > 0 ? "text-amber-700" : "text-[var(--color-gray)]"}`}>{formatAmount(pending)}</p>
-              </div>
-              <div className={`border rounded-xl p-3.5 text-center ${overdue > 0 ? "bg-red-50 border-red-200" : "bg-gray-50 border-gray-200"}`}>
-                <p className={`text-xs font-semibold mb-1 ${overdue > 0 ? "text-red-500" : "text-[var(--color-gray)]"}`}>미납</p>
-                <p className={`font-bold text-base sm:text-lg ${overdue > 0 ? "text-red-700" : "text-[var(--color-gray)]"}`}>{formatAmount(overdue)}</p>
-              </div>
+              {[
+                { label: "완료", amount: paid, color: "emerald", active: paid > 0 },
+                { label: "확인 중", amount: confirming, color: "blue", active: confirming > 0 },
+                { label: "미결제", amount: unpaid, color: "red", active: unpaid > 0 },
+              ].map(({ label, amount, color, active }) => (
+                <div key={label} className={`rounded-xl p-3 text-center border ${active ? `bg-${color}-50 border-${color}-200` : "bg-gray-50 border-gray-200"}`}>
+                  <p className={`text-xs font-medium mb-0.5 ${active ? `text-${color}-600` : "text-[var(--color-gray)]"}`}>{label}</p>
+                  <p className={`font-bold text-sm sm:text-base ${active ? `text-${color}-700` : "text-[var(--color-gray)]"}`}>{formatAmount(amount)}</p>
+                </div>
+              ))}
             </div>
 
             {/* Payment list */}
-            <div className="space-y-2.5">
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden divide-y divide-gray-100">
               {sorted.map((p) => {
                 const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600", border: "" };
-                const borderColor = p.status === "overdue" ? "border-l-red-400" : p.status === "pending" ? "border-l-amber-400" : "border-l-emerald-400";
+                const isUnpaid = p.status === "pending" || p.status === "overdue";
+                const isConfirming = p.status === "confirming";
                 return (
-                  <div key={p.id} className={`bg-white border border-gray-200 rounded-xl px-4 sm:px-5 py-4 shadow-sm border-l-[3px] ${borderColor} hover:shadow-md transition-shadow`}>
+                  <div key={p.id} className="px-5 py-4 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-sm font-semibold text-[var(--color-dark)]">{p.type}</span>
-                          <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-full border ${st.bg} ${st.text} ${st.border}`}>
+                          <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full border ${st.bg} ${st.text} ${st.border}`}>
                             {st.label}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-[var(--color-gray)]">
-                          <span>{formatDate(p.payment_date)}</span>
+                        <div className="flex items-center gap-1.5 text-xs text-[var(--color-gray)]">
+                          <span>{formatShortDate(p.payment_date)}</span>
                           {p.description && <><span className="text-gray-300">|</span><span className="truncate">{p.description}</span></>}
                         </div>
                       </div>
-                      <span className={`text-base sm:text-lg font-bold shrink-0 ${p.status === "overdue" ? "text-red-600" : p.status === "pending" ? "text-amber-600" : "text-[var(--color-dark)]"}`}>
-                        {formatAmount(p.amount)}
-                      </span>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className={`text-sm font-bold ${p.status === "overdue" ? "text-red-600" : p.status === "pending" ? "text-amber-600" : p.status === "confirming" ? "text-blue-600" : "text-[var(--color-dark)]"}`}>
+                          {formatAmount(p.amount)}
+                        </span>
+                        {isUnpaid && (
+                          <button
+                            onClick={() => handleConfirmPayment(p.id)}
+                            disabled={confirmingId === p.id}
+                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white text-xs font-semibold rounded-lg border-none cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+                          >
+                            {confirmingId === p.id ? "처리 중" : "입금 완료"}
+                          </button>
+                        )}
+                        {isConfirming && (
+                          <span className="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg border border-blue-200">
+                            확인 중
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

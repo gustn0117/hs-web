@@ -168,6 +168,7 @@ const PROJECT_STATUS_COLORS: Record<string, string> = {
 
 const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
   paid: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  confirming: { label: "입금확인중", cls: "bg-blue-50 text-blue-700 border border-blue-200" },
   pending: { label: "대기", cls: "bg-amber-50 text-amber-700 border border-amber-200" },
   overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-200" },
 };
@@ -472,6 +473,7 @@ const paymentTypeOptions: SelectOption[] = [
 
 const paymentStatusOptions: SelectOption[] = [
   { value: "paid", label: "완료", color: "bg-emerald-400" },
+  { value: "confirming", label: "입금확인중", color: "bg-blue-400" },
   { value: "pending", label: "대기", color: "bg-amber-400" },
   { value: "overdue", label: "미납", color: "bg-red-400" },
 ];
@@ -748,6 +750,22 @@ export default function ClientDetailPage() {
     await saveEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments`, editingPaymentId, paymentForm as unknown as Record<string, unknown>, setPayments, "payment", setPaymentSaving, () => setShowPaymentForm(false), setEditingPaymentId);
   };
   const deletePayment = (id: string) => deleteEntity<Payment>("결제 내역", `/api/clients/${clientId}/payments/${id}`, id, setPayments);
+
+  const quickUpdatePaymentStatus = async (paymentId: string, status: string) => {
+    try {
+      const res = await fetch(`/api/clients/${clientId}/payments/${paymentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        setPayments((prev) => prev.map((p) => p.id === paymentId ? { ...p, status } : p));
+        showToast(status === "paid" ? "결제 승인 완료" : "결제 반려 완료", "success");
+      }
+    } catch {
+      showToast("처리 중 오류 발생", "error");
+    }
+  };
 
   // =========================================================================
   // Hosting-payment linkage helper
@@ -1224,7 +1242,15 @@ export default function ClientDetailPage() {
                         <td className="py-3.5 px-4 text-[var(--color-gray)]">{p.description || "-"}</td>
                         <td className="py-3.5 px-4 text-[var(--color-dark)] font-semibold text-right">{formatAmount(p.amount)}</td>
                         <td className="py-3.5 px-4 text-center"><span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${si.cls}`}>{si.label}</span></td>
-                        <td className="py-3.5 px-4 text-right"><div className="flex gap-1.5 justify-end"><button onClick={() => openPaymentEdit(p)} className={btnSmall}>수정</button><button onClick={() => deletePayment(p.id)} className={btnDanger}>삭제</button></div></td>
+                        <td className="py-3.5 px-4 text-right"><div className="flex gap-1.5 justify-end">
+                          {p.status === "confirming" && (
+                            <>
+                              <button onClick={() => quickUpdatePaymentStatus(p.id, "paid")} className="px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs rounded-lg cursor-pointer hover:bg-emerald-100 transition-all font-semibold">승인</button>
+                              <button onClick={() => quickUpdatePaymentStatus(p.id, "pending")} className="px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-600 text-xs rounded-lg cursor-pointer hover:bg-amber-100 transition-all">반려</button>
+                            </>
+                          )}
+                          <button onClick={() => openPaymentEdit(p)} className={btnSmall}>수정</button><button onClick={() => deletePayment(p.id)} className={btnDanger}>삭제</button>
+                        </div></td>
                       </tr>
                     );
                   })}
