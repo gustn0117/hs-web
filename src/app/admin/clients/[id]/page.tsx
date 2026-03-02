@@ -608,7 +608,19 @@ export default function ClientDetailPage() {
       const res = await fetch(`/api/clients/${clientId}`);
       if (!res.ok) return;
       const data = await res.json();
-      setClient(data.client ?? data);
+      const c = data.client ?? data;
+      setClient(c);
+      // Load existing invitation for unregistered clients
+      if (!c.username) {
+        try {
+          const invRes = await fetch(`/api/invitations?client_id=${clientId}`);
+          const invData = await invRes.json();
+          if (invData.url) {
+            setInviteUrl(invData.url);
+            setInviteExpires(invData.expires_at);
+          }
+        } catch { /* ignore */ }
+      }
     } catch { /* ignore */ } finally { setClientLoading(false); }
   }, [clientId]);
 
