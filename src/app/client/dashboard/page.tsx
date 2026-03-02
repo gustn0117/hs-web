@@ -377,6 +377,26 @@ export default function ClientDashboardPage() {
         </div>
       )}
 
+      {/* Unpaid payment banner */}
+      {totalPending > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-blue-900">미결제 {formatAmount(totalPending)}</p>
+              <p className="text-xs text-blue-600">우리은행 1002-163-026503 (심현수)</p>
+            </div>
+          </div>
+          <button onClick={() => setActiveTab("payments")} className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg border-none cursor-pointer hover:bg-blue-700 transition-colors shrink-0">
+            상세 보기
+          </button>
+        </div>
+      )}
+
       {/* Recent payments */}
       {data.payments.length > 0 && (
         <div>
@@ -690,70 +710,141 @@ export default function ClientDashboardPage() {
     );
   };
 
+  const [accountCopied, setAccountCopied] = useState(false);
+  const copyAccount = () => {
+    navigator.clipboard.writeText("1002163026503");
+    setAccountCopied(true);
+    setTimeout(() => setAccountCopied(false), 2000);
+  };
+
   const renderPayments = () => {
     const paid = data.payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
     const pending = data.payments.filter((p) => p.status === "pending").reduce((s, p) => s + Number(p.amount), 0);
     const overdue = data.payments.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
+    const unpaid = pending + overdue;
+
+    const sorted = [...data.payments].sort((a, b) => {
+      const order: Record<string, number> = { overdue: 0, pending: 1, paid: 2 };
+      const diff = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+      if (diff !== 0) return diff;
+      return (b.payment_date || "").localeCompare(a.payment_date || "");
+    });
 
     return (
       <div className="space-y-6">
+        {/* Bank account info card */}
+        {unpaid > 0 ? (
+          <div className="bg-gradient-to-r from-blue-600 to-[var(--color-primary)] rounded-2xl p-5 sm:p-6 text-white">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <p className="text-blue-100 text-xs font-medium mb-1">미결제 금액</p>
+                <p className="text-2xl sm:text-3xl font-extrabold">{formatAmount(unpaid)}</p>
+              </div>
+              <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m1.5 0h16.5m0 0h-.75a.75.75 0 01-.75-.75V4.5m0 0L18 1.5M3.75 4.5L6 1.5" />
+                </svg>
+              </div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-blue-100 text-xs mb-2">입금 계좌</p>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-bold text-sm sm:text-base">우리은행 1002-163-026503</p>
+                  <p className="text-blue-200 text-xs mt-0.5">예금주: 심현수</p>
+                </div>
+                <button
+                  onClick={copyAccount}
+                  className={`px-3.5 py-2 rounded-lg text-xs font-semibold border-none cursor-pointer transition-all shrink-0 ${
+                    accountCopied
+                      ? "bg-emerald-400 text-white"
+                      : "bg-white/20 text-white hover:bg-white/30"
+                  }`}
+                >
+                  {accountCopied ? "복사됨" : "계좌 복사"}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-[var(--color-dark)] font-bold text-sm">모든 결제가 완료되었습니다</p>
+                <p className="text-[var(--color-gray)] text-xs mt-0.5">미납 내역이 없습니다.</p>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-[var(--color-gray)] text-xs mb-1">입금 계좌 안내</p>
+              <div className="flex items-center justify-between">
+                <p className="text-[var(--color-dark)] text-sm font-medium">우리은행 1002-163-026503 (심현수)</p>
+                <button
+                  onClick={copyAccount}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-all shrink-0 ${
+                    accountCopied
+                      ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                      : "bg-gray-50 text-[var(--color-gray)] border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  {accountCopied ? "복사됨" : "복사"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {data.payments.length === 0 ? (
           <EmptyState icon="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75" message="등록된 결제 내역이 없습니다." />
         ) : (
           <>
             {/* Summary */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
-                <p className="text-emerald-600 text-xs font-semibold mb-1">결제 완료</p>
-                <p className="text-emerald-700 font-bold text-lg">{formatAmount(paid)}</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-center">
+                <p className="text-emerald-600 text-xs font-semibold mb-1">완료</p>
+                <p className="text-emerald-700 font-bold text-base sm:text-lg">{formatAmount(paid)}</p>
               </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
-                <p className="text-amber-600 text-xs font-semibold mb-1">대기</p>
-                <p className="text-amber-700 font-bold text-lg">{formatAmount(pending)}</p>
+              <div className={`border rounded-xl p-3.5 text-center ${pending > 0 ? "bg-amber-50 border-amber-200" : "bg-gray-50 border-gray-200"}`}>
+                <p className={`text-xs font-semibold mb-1 ${pending > 0 ? "text-amber-600" : "text-[var(--color-gray)]"}`}>대기</p>
+                <p className={`font-bold text-base sm:text-lg ${pending > 0 ? "text-amber-700" : "text-[var(--color-gray)]"}`}>{formatAmount(pending)}</p>
               </div>
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
-                <p className="text-red-500 text-xs font-semibold mb-1">미납</p>
-                <p className="text-red-700 font-bold text-lg">{formatAmount(overdue)}</p>
+              <div className={`border rounded-xl p-3.5 text-center ${overdue > 0 ? "bg-red-50 border-red-200" : "bg-gray-50 border-gray-200"}`}>
+                <p className={`text-xs font-semibold mb-1 ${overdue > 0 ? "text-red-500" : "text-[var(--color-gray)]"}`}>미납</p>
+                <p className={`font-bold text-base sm:text-lg ${overdue > 0 ? "text-red-700" : "text-[var(--color-gray)]"}`}>{formatAmount(overdue)}</p>
               </div>
             </div>
 
-            {/* Table */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">날짜</th>
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">구분</th>
-                      <th className="text-left px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">내용</th>
-                      <th className="text-right px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">금액</th>
-                      <th className="text-center px-5 py-3.5 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">상태</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.payments.map((p) => {
-                      const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600", border: "" };
-                      const relatedHosting = p.type === "호스팅" && data.hosting.length > 0 ? data.hosting[0] : null;
-                      return (
-                        <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                          <td className="px-5 py-4 text-[var(--color-dark-2)] whitespace-nowrap">{formatDate(p.payment_date)}</td>
-                          <td className="px-5 py-4">
-                            <span className="text-[var(--color-dark-2)]">{p.type}</span>
-                            {relatedHosting && <span className="text-xs text-[var(--color-gray)] ml-1">({relatedHosting.provider})</span>}
-                          </td>
-                          <td className="px-5 py-4 text-[var(--color-gray)]">{p.description || "-"}</td>
-                          <td className="px-5 py-4 text-right font-bold text-[var(--color-dark)]">{formatAmount(p.amount)}</td>
-                          <td className="px-5 py-4 text-center">
-                            <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border ${st.bg} ${st.text} ${st.border}`}>
-                              {st.label}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+            {/* Payment list */}
+            <div className="space-y-2.5">
+              {sorted.map((p) => {
+                const st = PAYMENT_STATUS[p.status] || { label: p.status, bg: "bg-gray-50", text: "text-gray-600", border: "" };
+                const borderColor = p.status === "overdue" ? "border-l-red-400" : p.status === "pending" ? "border-l-amber-400" : "border-l-emerald-400";
+                return (
+                  <div key={p.id} className={`bg-white border border-gray-200 rounded-xl px-4 sm:px-5 py-4 shadow-sm border-l-[3px] ${borderColor} hover:shadow-md transition-shadow`}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-semibold text-[var(--color-dark)]">{p.type}</span>
+                          <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-full border ${st.bg} ${st.text} ${st.border}`}>
+                            {st.label}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-[var(--color-gray)]">
+                          <span>{formatDate(p.payment_date)}</span>
+                          {p.description && <><span className="text-gray-300">|</span><span className="truncate">{p.description}</span></>}
+                        </div>
+                      </div>
+                      <span className={`text-base sm:text-lg font-bold shrink-0 ${p.status === "overdue" ? "text-red-600" : p.status === "pending" ? "text-amber-600" : "text-[var(--color-dark)]"}`}>
+                        {formatAmount(p.amount)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
