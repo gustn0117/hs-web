@@ -179,6 +179,7 @@ export default function ClientDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [accountCopied, setAccountCopied] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -710,7 +711,6 @@ export default function ClientDashboardPage() {
     );
   };
 
-  const [accountCopied, setAccountCopied] = useState(false);
   const copyAccount = () => {
     navigator.clipboard.writeText("1002163026503");
     setAccountCopied(true);
