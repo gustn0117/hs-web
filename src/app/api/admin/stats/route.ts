@@ -82,6 +82,21 @@ export async function GET() {
     (d) => d.expires_date && new Date(d.expires_date) < now
   );
 
+  // Overdue/unpaid payments (pending/overdue/confirming with past payment_date)
+  const overduePayments = payments
+    .filter((p) => {
+      if (p.status === "paid") return false;
+      if (p.status === "overdue" || p.status === "confirming") return true;
+      // pending with past payment_date
+      if (p.status === "pending" && p.payment_date && new Date(p.payment_date) < now) return true;
+      return false;
+    })
+    .sort((a, b) => (a.payment_date ?? "").localeCompare(b.payment_date ?? ""))
+    .map((p) => {
+      const client = clients.find((c) => c.id === p.client_id);
+      return { ...p, client_name: client?.name ?? "알 수 없음" };
+    });
+
   // Recent payments (last 10)
   const recentPayments = [...payments]
     .sort((a, b) => (b.payment_date ?? "").localeCompare(a.payment_date ?? ""))
@@ -111,6 +126,7 @@ export async function GET() {
     monthlyRevenue,
     revenueByType,
     recentPayments,
+    overduePayments,
     projectStatusCounts,
     hostingRenewals,
     domainRenewals,

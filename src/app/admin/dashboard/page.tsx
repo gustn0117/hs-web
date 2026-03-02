@@ -26,6 +26,16 @@ interface Stats {
     payment_date: string;
     status: string;
   }[];
+  overduePayments: {
+    id: string;
+    client_id: string;
+    client_name: string;
+    amount: number;
+    type: string;
+    description: string;
+    payment_date: string;
+    status: string;
+  }[];
   projectStatusCounts: Record<string, number>;
   hostingRenewals: { id: string; provider: string; plan: string; end_date: string; client_id: string }[];
   domainRenewals: { id: string; domain_name: string; expires_date: string; client_id: string }[];
@@ -35,6 +45,7 @@ interface Stats {
 
 const PAYMENT_STATUS: Record<string, { label: string; cls: string }> = {
   paid: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
+  confirming: { label: "입금확인중", cls: "bg-blue-50 text-blue-700 border border-blue-200" },
   pending: { label: "대기", cls: "bg-amber-50 text-amber-700 border border-amber-200" },
   overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-200" },
 };
@@ -96,7 +107,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const { overview, monthlyRevenue, revenueByType, recentPayments, projectStatusCounts, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
+  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const maxMonthly = Math.max(...monthlyRevenue.map((m) => m.amount), 1);
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
@@ -195,6 +206,42 @@ export default function AdminDashboard() {
             <p className="text-red-500 text-xs font-medium">즉시 처리 필요</p>
           </div>
         </div>
+
+        {/* ===== Overdue Payments ===== */}
+        {overduePayments.length > 0 && (
+          <div className="bg-white border border-red-200 rounded-2xl p-6 shadow-sm mb-8">
+            <h3 className="text-[var(--color-dark)] font-semibold mb-4 flex items-center gap-2">
+              <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+              미처리 결제
+              <span className="text-xs font-normal text-[var(--color-gray)] ml-1">({overduePayments.length}건)</span>
+            </h3>
+            <div className="space-y-2">
+              {overduePayments.map((p) => {
+                const si = PAYMENT_STATUS[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
+                const daysLate = p.payment_date ? Math.floor((Date.now() - new Date(p.payment_date).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/admin/clients/${p.client_id}`}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-50/50 hover:bg-red-50 border border-red-100 transition-colors no-underline"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className={`px-2 py-0.5 text-xs font-semibold rounded-full shrink-0 ${si.cls}`}>{si.label}</span>
+                      <span className="text-sm font-medium text-[var(--color-dark)] truncate">{p.client_name}</span>
+                      <span className="text-xs text-[var(--color-gray)] shrink-0">{p.type}{p.description ? ` · ${p.description}` : ""}</span>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0 ml-3">
+                      {daysLate > 0 && <span className="text-xs text-red-500 font-medium">{daysLate}일 경과</span>}
+                      <span className="text-sm font-bold text-[var(--color-dark)]">{fmt(p.amount)}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ===== Monthly Revenue Chart ===== */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-8">
