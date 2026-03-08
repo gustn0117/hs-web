@@ -61,10 +61,10 @@ export default function AdminClientsPage() {
     if (filter === "inactive" && c.is_active) return false;
     if (search) {
       const q = search.toLowerCase();
-      const projectMatch = c.projects?.some((p) => p.name.toLowerCase().includes(q));
+      const projectMatch = c.projects?.some((p) => p.name?.toLowerCase().includes(q));
       return (
-        c.name.toLowerCase().includes(q) ||
-        c.username.toLowerCase().includes(q) ||
+        (c.name && c.name.toLowerCase().includes(q)) ||
+        (c.username && c.username.toLowerCase().includes(q)) ||
         (c.email && c.email.toLowerCase().includes(q)) ||
         (c.phone && c.phone.includes(q)) ||
         projectMatch
