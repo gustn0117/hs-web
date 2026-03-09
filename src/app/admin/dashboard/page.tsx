@@ -388,7 +388,7 @@ export default function AdminDashboard() {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[var(--color-dark)] font-semibold">최근 결제 내역</h3>
-            <Link href="/admin/clients" className="text-[var(--color-accent)] text-sm no-underline hover:underline font-medium">
+            <Link href="/admin/payments" className="text-[var(--color-accent)] text-sm no-underline hover:underline font-medium">
               전체 보기
             </Link>
           </div>

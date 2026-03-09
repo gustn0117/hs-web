@@ -97,9 +97,19 @@ export async function GET() {
       return { ...p, client_name: client?.name ?? "알 수 없음" };
     });
 
-  // Recent payments (last 10)
+  // Recent payments (upcoming first - ascending by payment_date)
+  const today = now.toISOString().slice(0, 10);
   const recentPayments = [...payments]
-    .sort((a, b) => (b.payment_date ?? "").localeCompare(a.payment_date ?? ""))
+    .sort((a, b) => {
+      const da = a.payment_date ?? "";
+      const db = b.payment_date ?? "";
+      // Future/today first (ascending), then past (descending)
+      const aFuture = da >= today ? 0 : 1;
+      const bFuture = db >= today ? 0 : 1;
+      if (aFuture !== bFuture) return aFuture - bFuture;
+      if (aFuture === 0) return da.localeCompare(db); // upcoming: closest first
+      return db.localeCompare(da); // past: most recent first
+    })
     .slice(0, 10)
     .map((p) => {
       const client = clients.find((c) => c.id === p.client_id);
