@@ -7,30 +7,11 @@ const contactItems = [
   {
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-      </svg>
-    ),
-    label: "이메일",
-    value: "contact@hsweb.co.kr",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
       </svg>
     ),
     label: "전화",
-    value: "010-0000-0000",
-  },
-  {
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-      </svg>
-    ),
-    label: "주소",
-    value: "서울특별시 강남구",
+    value: "010-3319-2509",
   },
   {
     icon: (
@@ -49,7 +30,7 @@ const quickFaqs = [
   { q: "유지보수는?", a: "무상 포함" },
 ];
 
-function FloatingInput({ label, type = "text", placeholder, required = false }: { label: string; type?: string; placeholder: string; required?: boolean }) {
+function FloatingInput({ label, name, type = "text", placeholder, required = false }: { label: string; name: string; type?: string; placeholder: string; required?: boolean }) {
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const isActive = focused || hasValue;
@@ -66,6 +47,7 @@ function FloatingInput({ label, type = "text", placeholder, required = false }: 
         {label}
       </label>
       <input
+        name={name}
         type={type}
         placeholder={isActive ? placeholder : ""}
         required={required}
@@ -78,7 +60,7 @@ function FloatingInput({ label, type = "text", placeholder, required = false }: 
   );
 }
 
-function FloatingSelect({ label, options }: { label: string; options: string[] }) {
+function FloatingSelect({ label, name, options }: { label: string; name: string; options: string[] }) {
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const isActive = focused || hasValue;
@@ -95,6 +77,7 @@ function FloatingSelect({ label, options }: { label: string; options: string[] }
         {label}
       </label>
       <select
+        name={name}
         onFocus={() => setFocused(true)}
         onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
         onChange={(e) => setHasValue(e.target.value.length > 0)}
@@ -107,7 +90,7 @@ function FloatingSelect({ label, options }: { label: string; options: string[] }
   );
 }
 
-function FloatingTextarea({ label, placeholder }: { label: string; placeholder: string }) {
+function FloatingTextarea({ label, name, placeholder }: { label: string; name: string; placeholder: string }) {
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
   const isActive = focused || hasValue;
@@ -124,6 +107,7 @@ function FloatingTextarea({ label, placeholder }: { label: string; placeholder: 
         {label}
       </label>
       <textarea
+        name={name}
         placeholder={isActive ? placeholder : ""}
         onFocus={() => setFocused(true)}
         onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
@@ -154,14 +138,25 @@ export default function Contact() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    try {
+      const form = e.target as HTMLFormElement;
+      const data = Object.fromEntries(new FormData(form));
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error();
       alert("상담 신청이 완료되었습니다!\n빠른 시일 내에 연락드리겠습니다.");
-      (e.target as HTMLFormElement).reset();
-    }, 1500);
+      form.reset();
+    } catch {
+      alert("전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -218,23 +213,6 @@ export default function Contact() {
               ))}
             </div>
 
-            {/* Map placeholder */}
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6 mb-6 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, #000 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
-              <div className="flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                  <svg className="w-5 h-5 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="font-semibold text-[0.9rem] text-[var(--color-dark)]">서울특별시 강남구</div>
-                  <div className="text-[var(--color-gray)] text-[0.78rem]">오프라인 미팅 가능 (사전 예약)</div>
-                </div>
-              </div>
-            </div>
-
             {/* Quick FAQ */}
             <div>
               <h4 className="font-bold text-[0.9rem] text-[var(--color-dark)] mb-3">빠른 FAQ</h4>
@@ -258,17 +236,17 @@ export default function Contact() {
             onSubmit={handleSubmit}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <FloatingInput label="이름" placeholder="홍길동" required />
-              <FloatingInput label="연락처" type="tel" placeholder="010-0000-0000" required />
+              <FloatingInput name="name" label="이름" placeholder="홍길동" required />
+              <FloatingInput name="phone" label="연락처" type="tel" placeholder="010-0000-0000" required />
             </div>
             <div className="mb-4">
-              <FloatingInput label="이메일" type="email" placeholder="example@email.com" />
+              <FloatingInput name="email" label="이메일" type="email" placeholder="example@email.com" />
             </div>
             <div className="mb-4">
-              <FloatingSelect label="문의 유형" options={["홈페이지 제작", "쇼핑몰 구축", "랜딩페이지", "웹 애플리케이션", "유지보수", "기타"]} />
+              <FloatingSelect name="type" label="문의 유형" options={["홈페이지 제작", "쇼핑몰 구축", "랜딩페이지", "웹 애플리케이션", "유지보수", "기타"]} />
             </div>
             <div className="mb-5">
-              <FloatingTextarea label="문의 내용" placeholder="프로젝트에 대해 자유롭게 설명해주세요." />
+              <FloatingTextarea name="message" label="문의 내용" placeholder="프로젝트에 대해 자유롭게 설명해주세요." />
             </div>
             <button
               type="submit"
