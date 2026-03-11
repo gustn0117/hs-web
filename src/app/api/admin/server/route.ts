@@ -226,46 +226,59 @@ function getNetworkTraffic(): MetricResult<NetworkInterface[]> {
   }
 }
 
+function parseDfOutput(output: string): DiskData | null {
+  const lines = output.trim().split("\n");
+  if (lines.length < 2) return null;
+
+  const dataLine = lines.slice(1).join(" ");
+  const fields = dataLine.trim().split(/\s+/);
+
+  const totalGB = parseInt(fields[1], 10);
+  const usedGB = parseInt(fields[2], 10);
+  const availableGB = parseInt(fields[3], 10);
+  if (isNaN(totalGB) || totalGB === 0) return null;
+
+  const usagePercent = (usedGB / totalGB) * 100;
+  return {
+    totalGB,
+    usedGB,
+    availableGB,
+    usagePercent: Math.round(usagePercent * 10) / 10,
+  };
+}
+
 function getDiskUsage(): MetricResult<DiskData> {
   try {
-    let output: string;
-    try {
-      output = execSync(`df -BG ${HOST_ROOTFS} 2>/dev/null`, {
-        timeout: 5000,
-        encoding: "utf-8",
-      });
-    } catch {
+    // WSL2 환경: /mnt/c 가 실제 물리 SSD이므로 우선 확인
+    const targets = [
+      `${HOST_ROOTFS}/mnt/c`,  // WSL2 physical SSD via host rootfs
+      "/mnt/c",                 // WSL2 physical SSD direct
+      HOST_ROOTFS,              // host rootfs
+      "/",                      // fallback
+    ];
+
+    for (const target of targets) {
       try {
-        output = execSync("df -BG / 2>/dev/null", {
+        const output = execSync(`df -BG ${target} 2>/dev/null`, {
           timeout: 5000,
           encoding: "utf-8",
         });
+        const data = parseDfOutput(output);
+        // WSL2 가상 디스크(/dev/sdd)는 1TB로 잡히므로 건너뛰기
+        if (data && data.totalGB < 900) {
+          return { available: true, data };
+        }
+        // 1TB 이상이면 WSL2 가상 디스크일 가능성 → 다음 타겟 시도
+        if (data && target === targets[targets.length - 1]) {
+          // 마지막 fallback이면 그냥 반환
+          return { available: true, data };
+        }
       } catch {
-        return { available: false, error: "df 명령어 실행 실패" };
+        continue;
       }
     }
 
-    const lines = output.trim().split("\n");
-    if (lines.length < 2) return { available: false, error: "df 출력 파싱 실패" };
-
-    // Handle case where df output wraps to two lines
-    const dataLine = lines.slice(1).join(" ");
-    const fields = dataLine.trim().split(/\s+/);
-
-    const totalGB = parseInt(fields[1], 10);
-    const usedGB = parseInt(fields[2], 10);
-    const availableGB = parseInt(fields[3], 10);
-    const usagePercent = totalGB > 0 ? (usedGB / totalGB) * 100 : 0;
-
-    return {
-      available: true,
-      data: {
-        totalGB,
-        usedGB,
-        availableGB,
-        usagePercent: Math.round(usagePercent * 10) / 10,
-      },
-    };
+    return { available: false, error: "df 명령어 실행 실패" };
   } catch {
     return { available: false, error: "디스크 정보 수집 실패" };
   }
