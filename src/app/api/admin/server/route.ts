@@ -569,20 +569,16 @@ function getProjectDirectorySizes(): MetricResult<DiskBreakdownItem[]> {
 
 async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
   try {
-    const pgMetaUrl = process.env.PG_META_URL || "https://api.hsweb.pics/pg";
+    const pgMetaUrl = process.env.PG_META_URL || "http://supabase-meta:8080";
     const query = `
-      SELECT schema_name AS name,
-             pg_total_relation_size_sum AS size_bytes
-      FROM (
-        SELECT n.nspname AS schema_name,
-               COALESCE(SUM(pg_total_relation_size(c.oid)), 0) AS pg_total_relation_size_sum
-        FROM pg_catalog.pg_namespace n
-        LEFT JOIN pg_catalog.pg_class c ON c.relnamespace = n.oid
-        WHERE n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast', '_analytics', '_realtime', 'pgsodium', 'pgsodium_masks', 'vault', 'net', 'supabase_functions', 'supabase_migrations', 'graphql', 'graphql_public')
-          AND n.nspname NOT LIKE 'pg_%'
-        GROUP BY n.nspname
-        HAVING COALESCE(SUM(pg_total_relation_size(c.oid)), 0) > 0
-      ) sub
+      SELECT n.nspname AS name,
+             COALESCE(SUM(pg_total_relation_size(c.oid)), 0)::bigint AS size_bytes
+      FROM pg_catalog.pg_namespace n
+      LEFT JOIN pg_catalog.pg_class c ON c.relnamespace = n.oid AND c.relkind IN ('r','m','i','t')
+      WHERE n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast', '_analytics', '_realtime', 'pgsodium', 'pgsodium_masks', 'vault', 'net', 'supabase_functions', 'supabase_migrations', 'graphql', 'graphql_public', 'extensions', 'storage', 'auth', 'cron', 'realtime', '_supabase_internal')
+        AND n.nspname NOT LIKE 'pg_%'
+      GROUP BY n.nspname
+      HAVING COALESCE(SUM(pg_total_relation_size(c.oid)), 0) > 0
       ORDER BY size_bytes DESC;
     `;
 
@@ -592,7 +588,7 @@ async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
       body: JSON.stringify({ query }),
     });
 
-    if (!res.ok) return { available: false, error: "DB 크기 조회 실패" };
+    if (!res.ok) return { available: false, error: `DB 크기 조회 실패 (${res.status})` };
 
     const rows: { name: string; size_bytes: number }[] = await res.json();
     const items: DiskBreakdownItem[] = rows.map((r) => ({
@@ -603,8 +599,8 @@ async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
     }));
 
     return { available: true, data: items };
-  } catch {
-    return { available: false, error: "DB 크기 조회 실패" };
+  } catch (e) {
+    return { available: false, error: `DB 크기 조회 실패: ${e instanceof Error ? e.message : String(e)}` };
   }
 }
 
