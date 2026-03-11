@@ -71,6 +71,22 @@ interface DockerContainer {
   sizeHuman?: string;
 }
 
+interface DiskBreakdownItem {
+  name: string;
+  type: "project" | "database" | "docker" | "other";
+  sizeBytes: number;
+  sizeHuman: string;
+}
+
+interface DockerDiskData {
+  available: boolean;
+  data?: {
+    images: { sizeBytes: number; sizeHuman: string; count: number };
+    volumes: { sizeBytes: number; sizeHuman: string; count: number };
+    buildCache: { sizeBytes: number; sizeHuman: string };
+  };
+}
+
 interface ServerMetrics {
   system: {
     memory: MetricResult<MemoryData>;
@@ -84,6 +100,11 @@ interface ServerMetrics {
     available: boolean;
     containers?: DockerContainer[];
     error?: string;
+  };
+  diskBreakdown?: {
+    projects: MetricResult<DiskBreakdownItem[]>;
+    databases: MetricResult<DiskBreakdownItem[]>;
+    dockerDisk: DockerDiskData;
   };
 }
 
@@ -179,6 +200,13 @@ function getPortServiceName(port: number): string | undefined {
 
 function isPhysicalInterface(name: string): boolean {
   return name.startsWith("eth") || name.startsWith("ens") || name.startsWith("enp") || name.startsWith("wlan");
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(1) + " " + units[i];
 }
 
 // ─── Component ───
@@ -466,6 +494,116 @@ export default function ServerMonitoring() {
             )}
           </div>
         </div>
+
+        {/* ===== Disk Breakdown ===== */}
+        {data.diskBreakdown && (
+          <div className="mb-8">
+            <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
+              </svg>
+              디스크 사용량 상세
+            </h3>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Project Directories */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <h4 className="text-[var(--color-dark)] font-semibold text-sm mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  프로젝트별 디스크 사용량
+                </h4>
+                {data.diskBreakdown.projects.available && data.diskBreakdown.projects.data ? (() => {
+                  const items = data.diskBreakdown.projects.data!;
+                  const maxSize = items.length > 0 ? items[0].sizeBytes : 1;
+                  const totalSize = items.reduce((sum, i) => sum + i.sizeBytes, 0);
+                  return (
+                    <>
+                      <p className="text-xs text-[var(--color-gray)] mb-3">총 {formatBytes(totalSize)} · {items.length}개 프로젝트</p>
+                      <div className="space-y-2 max-h-[320px] overflow-y-auto">
+                        {items.map((item) => {
+                          const percent = maxSize > 0 ? (item.sizeBytes / maxSize) * 100 : 0;
+                          return (
+                            <div key={item.name}>
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-[var(--color-dark)] font-medium truncate mr-2">{item.name}</span>
+                                <span className="text-[var(--color-gray)] shrink-0 tabular-nums">{item.sizeHuman}</span>
+                              </div>
+                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-blue-400 transition-all" style={{ width: `${percent}%` }} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  );
+                })() : (
+                  <p className="text-[var(--color-gray)] text-sm py-4 text-center">
+                    {data.diskBreakdown.projects.error || "프로젝트 디렉토리를 읽을 수 없습니다"}
+                  </p>
+                )}
+              </div>
+
+              {/* Database Sizes */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <h4 className="text-[var(--color-dark)] font-semibold text-sm mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  데이터베이스 스키마별 사용량
+                </h4>
+                {data.diskBreakdown.databases.available && data.diskBreakdown.databases.data ? (() => {
+                  const items = data.diskBreakdown.databases.data!;
+                  const maxSize = items.length > 0 ? items[0].sizeBytes : 1;
+                  const totalSize = items.reduce((sum, i) => sum + i.sizeBytes, 0);
+                  return (
+                    <>
+                      <p className="text-xs text-[var(--color-gray)] mb-3">총 {formatBytes(totalSize)} · {items.length}개 스키마</p>
+                      <div className="space-y-2 max-h-[320px] overflow-y-auto">
+                        {items.map((item) => {
+                          const percent = maxSize > 0 ? (item.sizeBytes / maxSize) * 100 : 0;
+                          return (
+                            <div key={item.name}>
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-[var(--color-dark)] font-medium font-mono truncate mr-2">{item.name}</span>
+                                <span className="text-[var(--color-gray)] shrink-0 tabular-nums">{item.sizeHuman}</span>
+                              </div>
+                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${percent}%` }} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  );
+                })() : (
+                  <p className="text-[var(--color-gray)] text-sm py-4 text-center">
+                    {data.diskBreakdown.databases.error || "DB 크기를 조회할 수 없습니다"}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Docker Storage Summary */}
+            {data.diskBreakdown.dockerDisk.available && data.diskBreakdown.dockerDisk.data && (
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                  <p className="text-xs text-[var(--color-gray)] mb-1">Docker 이미지</p>
+                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.images.sizeHuman}</p>
+                  <p className="text-xs text-[var(--color-gray)]">{data.diskBreakdown.dockerDisk.data.images.count}개</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                  <p className="text-xs text-[var(--color-gray)] mb-1">Docker 볼륨</p>
+                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.volumes.sizeHuman}</p>
+                  <p className="text-xs text-[var(--color-gray)]">{data.diskBreakdown.dockerDisk.data.volumes.count}개</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+                  <p className="text-xs text-[var(--color-gray)] mb-1">빌드 캐시</p>
+                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.buildCache.sizeHuman}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ===== Visitor Analytics ===== */}
         {analytics && (

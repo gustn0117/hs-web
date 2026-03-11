@@ -477,6 +477,137 @@ async function getDockerContainers(): Promise<{
   return { available: true, containers };
 }
 
+// ─── Disk Breakdown ───
+
+interface DiskBreakdownItem {
+  name: string;
+  type: "project" | "database" | "docker" | "other";
+  sizeBytes: number;
+  sizeHuman: string;
+}
+
+interface DiskBreakdownData {
+  items: DiskBreakdownItem[];
+  dockerImages: { sizeBytes: number; sizeHuman: string; count: number };
+  dockerVolumes: { sizeBytes: number; sizeHuman: string; count: number };
+  dockerBuildCache: { sizeBytes: number; sizeHuman: string };
+}
+
+async function getDockerDiskBreakdown(): Promise<MetricResult<{ images: DiskBreakdownData["dockerImages"]; volumes: DiskBreakdownData["dockerVolumes"]; buildCache: DiskBreakdownData["dockerBuildCache"]; containerSizes: Map<string, number> }>> {
+  const df = await dockerRequest<{
+    Images?: { Size: number; SharedSize: number; Containers: number; Repository?: string; Tag?: string }[];
+    Containers?: { SizeRw: number; SizeRootFs: number; Names: string[]; Id: string }[];
+    Volumes?: { UsageData?: { Size: number }; Name: string }[];
+    BuildCache?: { Size: number }[];
+  }>("/system/df");
+
+  if (!df) return { available: false, error: "Docker system df 실행 실패" };
+
+  const images = df.Images ?? [];
+  const totalImageSize = images.reduce((sum, img) => sum + (img.Size ?? 0), 0);
+
+  const volumes = df.Volumes ?? [];
+  const totalVolumeSize = volumes.reduce((sum, v) => sum + (v.UsageData?.Size ?? 0), 0);
+
+  const buildCache = df.BuildCache ?? [];
+  const totalBuildCacheSize = buildCache.reduce((sum, b) => sum + (b.Size ?? 0), 0);
+
+  // Per-container writable layer sizes
+  const containerSizes = new Map<string, number>();
+  for (const c of df.Containers ?? []) {
+    const name = (c.Names?.[0] || "").replace(/^\//, "");
+    if (name) containerSizes.set(name, (c.SizeRw ?? 0) + (c.SizeRootFs ?? 0));
+  }
+
+  return {
+    available: true,
+    data: {
+      images: { sizeBytes: totalImageSize, sizeHuman: formatBytes(totalImageSize), count: images.length },
+      volumes: { sizeBytes: totalVolumeSize, sizeHuman: formatBytes(totalVolumeSize), count: volumes.length },
+      buildCache: { sizeBytes: totalBuildCacheSize, sizeHuman: formatBytes(totalBuildCacheSize) },
+      containerSizes,
+    },
+  };
+}
+
+function getProjectDirectorySizes(): MetricResult<DiskBreakdownItem[]> {
+  const appsDir = `${HOST_ROOTFS}/home/server/apps`;
+  try {
+    // Check if directory exists
+    if (!fs.existsSync(appsDir)) {
+      return { available: false, error: "apps 디렉토리를 찾을 수 없습니다" };
+    }
+
+    const output = execSync(`du -s --block-size=1 ${appsDir}/*/  2>/dev/null || true`, {
+      timeout: 10000,
+      encoding: "utf-8",
+    });
+
+    const items: DiskBreakdownItem[] = [];
+    for (const line of output.trim().split("\n")) {
+      if (!line) continue;
+      const parts = line.split("\t");
+      if (parts.length < 2) continue;
+      const sizeBytes = parseInt(parts[0], 10);
+      const dirPath = parts[1];
+      const name = dirPath.replace(appsDir + "/", "").replace(/\/$/, "");
+      if (!name || name === "." || name === "..") continue;
+      items.push({
+        name,
+        type: "project",
+        sizeBytes,
+        sizeHuman: formatBytes(sizeBytes),
+      });
+    }
+
+    items.sort((a, b) => b.sizeBytes - a.sizeBytes);
+    return { available: true, data: items };
+  } catch {
+    return { available: false, error: "프로젝트 디렉토리 크기 조회 실패" };
+  }
+}
+
+async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
+  try {
+    const pgMetaUrl = process.env.PG_META_URL || "https://api.hsweb.pics/pg";
+    const query = `
+      SELECT schema_name AS name,
+             pg_total_relation_size_sum AS size_bytes
+      FROM (
+        SELECT n.nspname AS schema_name,
+               COALESCE(SUM(pg_total_relation_size(c.oid)), 0) AS pg_total_relation_size_sum
+        FROM pg_catalog.pg_namespace n
+        LEFT JOIN pg_catalog.pg_class c ON c.relnamespace = n.oid
+        WHERE n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast', '_analytics', '_realtime', 'pgsodium', 'pgsodium_masks', 'vault', 'net', 'supabase_functions', 'supabase_migrations', 'graphql', 'graphql_public')
+          AND n.nspname NOT LIKE 'pg_%'
+        GROUP BY n.nspname
+        HAVING COALESCE(SUM(pg_total_relation_size(c.oid)), 0) > 0
+      ) sub
+      ORDER BY size_bytes DESC;
+    `;
+
+    const res = await fetch(`${pgMetaUrl}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!res.ok) return { available: false, error: "DB 크기 조회 실패" };
+
+    const rows: { name: string; size_bytes: number }[] = await res.json();
+    const items: DiskBreakdownItem[] = rows.map((r) => ({
+      name: r.name,
+      type: "database" as const,
+      sizeBytes: Number(r.size_bytes),
+      sizeHuman: formatBytes(Number(r.size_bytes)),
+    }));
+
+    return { available: true, data: items };
+  } catch {
+    return { available: false, error: "DB 크기 조회 실패" };
+  }
+}
+
 // ─── Main Handler ───
 
 export async function GET() {
@@ -487,7 +618,7 @@ export async function GET() {
     );
   }
 
-  const [memory, cpu, uptime, network, disk, ports, docker] =
+  const [memory, cpu, uptime, network, disk, ports, docker, dockerDisk, projectDirs, dbSizes] =
     await Promise.all([
       getMemoryInfo(),
       getCpuLoad(),
@@ -496,10 +627,18 @@ export async function GET() {
       getDiskUsage(),
       getListeningPorts(),
       getDockerContainers(),
+      getDockerDiskBreakdown(),
+      getProjectDirectorySizes(),
+      getDatabaseSizes(),
     ]);
 
   return NextResponse.json({
     system: { memory, cpu, uptime, network, disk, ports },
     docker,
+    diskBreakdown: {
+      projects: projectDirs,
+      databases: dbSizes,
+      dockerDisk,
+    },
   });
 }
