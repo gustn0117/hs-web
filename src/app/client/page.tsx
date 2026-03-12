@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function ClientLoginPage() {
   const [username, setUsername] = useState("");
@@ -94,9 +95,17 @@ export default function ClientLoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-[var(--color-gray-light)] text-xs mt-6">
-          계정 정보를 모르시면 관리자에게 문의하세요.
-        </p>
+        <div className="text-center mt-6 space-y-2">
+          <p className="text-[var(--color-gray-light)] text-xs">
+            계정 정보를 모르시면 관리자에게 문의하세요.
+          </p>
+          <Link href="/" className="inline-flex items-center gap-1 text-[var(--color-gray)] text-xs no-underline hover:text-[var(--color-dark)] transition-colors">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            메인 사이트로 돌아가기
+          </Link>
+        </div>
       </div>
     </div>
   );

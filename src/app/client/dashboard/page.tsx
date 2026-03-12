@@ -948,6 +948,12 @@ export default function ClientDashboardPage() {
               </div>
               <span className="text-sm text-[var(--color-dark)] font-medium">{data.client.name}</span>
             </div>
+            <Link
+              href="/"
+              className="px-3.5 py-2 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-sm rounded-xl no-underline hover:bg-gray-100 transition-all font-medium"
+            >
+              메인 사이트
+            </Link>
             <button
               onClick={handleLogout}
               className="px-3.5 py-2 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-sm rounded-xl cursor-pointer hover:bg-gray-100 transition-all font-medium"
