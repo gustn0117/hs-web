@@ -264,13 +264,7 @@ function getDiskUsage(): MetricResult<DiskData> {
           encoding: "utf-8",
         });
         const data = parseDfOutput(output);
-        // WSL2 가상 디스크(/dev/sdd)는 1TB로 잡히므로 건너뛰기
-        if (data && data.totalGB < 900) {
-          return { available: true, data };
-        }
-        // 1TB 이상이면 WSL2 가상 디스크일 가능성 → 다음 타겟 시도
-        if (data && target === targets[targets.length - 1]) {
-          // 마지막 fallback이면 그냥 반환
+        if (data) {
           return { available: true, data };
         }
       } catch {
