@@ -71,9 +71,9 @@ export default function Hero() {
             </div>
 
             <h1 className="text-4xl md:text-[3.2rem] font-black text-[var(--color-dark)] leading-[1.2] mb-4 tracking-tight">
-              당신의 비즈니스를
+              홈페이지 제작,
               <br />
-              <span className="shimmer-text">빛나게 할 웹사이트</span>
+              <span className="shimmer-text">비즈니스의 시작</span>
             </h1>
 
             {/* Sub-tagline */}
