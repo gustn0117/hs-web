@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item = getPortfolioItem(id);
+  const item = await getPortfolioItem(id);
   if (!item) {
     return NextResponse.json({ error: "항목을 찾을 수 없습니다." }, { status: 404 });
   }
@@ -20,7 +20,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
   const body = await request.json();
-  const item = updatePortfolioItem(id, body);
+  const item = await updatePortfolioItem(id, body);
 
   if (!item) {
     return NextResponse.json({ error: "항목을 찾을 수 없습니다." }, { status: 404 });
@@ -35,7 +35,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   }
 
   const { id } = await params;
-  const success = deletePortfolioItem(id);
+  const success = await deletePortfolioItem(id);
 
   if (!success) {
     return NextResponse.json({ error: "항목을 찾을 수 없습니다." }, { status: 404 });

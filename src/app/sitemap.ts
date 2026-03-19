@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/lib/services";
+import { getPortfolioItems } from "@/lib/portfolio";
 
 const SITE_URL = "https://hsweb.pics";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -70,5 +71,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  return [...staticPages, ...servicePages];
+  let portfolioPages: MetadataRoute.Sitemap = [];
+  try {
+    const items = await getPortfolioItems();
+    portfolioPages = items.map((item) => ({
+      url: `${SITE_URL}/portfolio/${item.id}`,
+      lastModified: item.updatedAt || now,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+  } catch {
+    // DB 연결 실패 시 포트폴리오 없이 진행
+  }
+
+  return [...staticPages, ...servicePages, ...portfolioPages];
 }

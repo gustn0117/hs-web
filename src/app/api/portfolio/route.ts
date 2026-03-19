@@ -5,7 +5,7 @@ import { isAuthenticated } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const items = getPortfolioItems();
+  const items = await getPortfolioItems();
   return NextResponse.json({ items });
 }
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const item = createPortfolioItem({
+  const item = await createPortfolioItem({
     title: body.title || "",
     category: body.category || "",
     client: body.client || "",

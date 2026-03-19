@@ -1,6 +1,4 @@
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
+import { supabase } from "./supabase";
 
 export interface PortfolioItem {
   id: string;
@@ -20,75 +18,141 @@ export interface PortfolioItem {
   updatedAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
-const DATA_FILE = path.join(DATA_DIR, "portfolio.json");
+const STORAGE_BUCKET = "hs-web-portfolio";
 
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+export function getStorageUrl(filePath: string): string {
+  const supabaseUrl = process.env.SUPABASE_URL!;
+  return `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${filePath}`;
 }
 
-const SEED_DATA: PortfolioItem[] = [];
-
-function readData(): PortfolioItem[] {
-  ensureDataDir();
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ items: SEED_DATA }, null, 2), "utf-8");
-    return SEED_DATA;
-  }
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw).items as PortfolioItem[];
-}
-
-function writeData(items: PortfolioItem[]) {
-  ensureDataDir();
-  fs.writeFileSync(DATA_FILE, JSON.stringify({ items }, null, 2), "utf-8");
-}
-
-export function getPortfolioItems(): PortfolioItem[] {
-  return readData().sort((a, b) => a.order - b.order);
-}
-
-export function getPortfolioItem(id: string): PortfolioItem | undefined {
-  return readData().find((item) => item.id === id);
-}
-
-export function createPortfolioItem(data: Omit<PortfolioItem, "id" | "createdAt" | "updatedAt">): PortfolioItem {
-  const items = readData();
-  const now = new Date().toISOString();
-  const newItem: PortfolioItem = {
-    ...data,
-    id: crypto.randomUUID(),
-    createdAt: now,
-    updatedAt: now,
+function rowToItem(row: Record<string, unknown>): PortfolioItem {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    category: row.category as string,
+    client: row.client as string,
+    date: row.date as string,
+    description: row.description as string,
+    content: row.content as string,
+    thumbnail: row.thumbnail as string,
+    images: (row.images as string[]) || [],
+    tags: (row.tags as string[]) || [],
+    url: row.url as string,
+    featured: row.featured as boolean,
+    order: row.order as number,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
   };
-  items.push(newItem);
-  writeData(items);
-  return newItem;
 }
 
-export function updatePortfolioItem(id: string, data: Partial<PortfolioItem>): PortfolioItem | null {
-  const items = readData();
-  const index = items.findIndex((item) => item.id === id);
-  if (index === -1) return null;
-  items[index] = {
-    ...items[index],
-    ...data,
-    id: items[index].id,
-    createdAt: items[index].createdAt,
-    updatedAt: new Date().toISOString(),
-  };
-  writeData(items);
-  return items[index];
+export async function getPortfolioItems(): Promise<PortfolioItem[]> {
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("*")
+    .order("order", { ascending: true });
+
+  if (error) throw new Error(`포트폴리오 조회 실패: ${error.message}`);
+  return (data || []).map(rowToItem);
 }
 
-export function deletePortfolioItem(id: string): boolean {
-  const items = readData();
-  const filtered = items.filter((item) => item.id !== id);
-  if (filtered.length === items.length) return false;
-  writeData(filtered);
-  return true;
+export async function getPortfolioItem(id: string): Promise<PortfolioItem | null> {
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) return null;
+  return rowToItem(data);
 }
 
-export { DATA_DIR, UPLOADS_DIR };
+export async function createPortfolioItem(
+  input: Omit<PortfolioItem, "id" | "createdAt" | "updatedAt">
+): Promise<PortfolioItem> {
+  const { data, error } = await supabase
+    .from("portfolio")
+    .insert({
+      title: input.title,
+      category: input.category,
+      client: input.client,
+      date: input.date,
+      description: input.description,
+      content: input.content,
+      thumbnail: input.thumbnail,
+      images: input.images,
+      tags: input.tags,
+      url: input.url,
+      featured: input.featured,
+      order: input.order,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(`포트폴리오 생성 실패: ${error.message}`);
+  return rowToItem(data);
+}
+
+export async function updatePortfolioItem(
+  id: string,
+  input: Partial<PortfolioItem>
+): Promise<PortfolioItem | null> {
+  const updateData: Record<string, unknown> = {};
+  if (input.title !== undefined) updateData.title = input.title;
+  if (input.category !== undefined) updateData.category = input.category;
+  if (input.client !== undefined) updateData.client = input.client;
+  if (input.date !== undefined) updateData.date = input.date;
+  if (input.description !== undefined) updateData.description = input.description;
+  if (input.content !== undefined) updateData.content = input.content;
+  if (input.thumbnail !== undefined) updateData.thumbnail = input.thumbnail;
+  if (input.images !== undefined) updateData.images = input.images;
+  if (input.tags !== undefined) updateData.tags = input.tags;
+  if (input.url !== undefined) updateData.url = input.url;
+  if (input.featured !== undefined) updateData.featured = input.featured;
+  if (input.order !== undefined) updateData.order = input.order;
+  updateData.updated_at = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("portfolio")
+    .update(updateData)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) return null;
+  return rowToItem(data);
+}
+
+export async function deletePortfolioItem(id: string): Promise<boolean> {
+  const { error } = await supabase
+    .from("portfolio")
+    .delete()
+    .eq("id", id);
+
+  return !error;
+}
+
+export async function uploadImage(file: File): Promise<string> {
+  const ext = file.name.split(".").pop() || "jpg";
+  const filename = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(filename, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) throw new Error(`이미지 업로드 실패: ${error.message}`);
+  return getStorageUrl(filename);
+}
+
+export async function deleteImage(imageUrl: string): Promise<void> {
+  const prefix = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+  const idx = imageUrl.indexOf(prefix);
+  if (idx === -1) return;
+  const filePath = imageUrl.slice(idx + prefix.length);
+
+  await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
+}
+
+export { STORAGE_BUCKET };

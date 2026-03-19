@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://hsweb.pics/portfolio" },
 };
 
-export default function PortfolioPage() {
-  const items = getPortfolioItems();
+export default async function PortfolioPage() {
+  const items = await getPortfolioItems();
 
   return (
     <>

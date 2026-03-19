@@ -8,12 +8,17 @@ import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 import Testimonials from "@/components/Testimonials";
 import CTA from "@/components/CTA";
-import { getPortfolioItems } from "@/lib/portfolio";
+import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
-export default function Home() {
-  const items = getPortfolioItems();
+export default async function Home() {
+  let items: PortfolioItem[] = [];
+  try {
+    items = await getPortfolioItems();
+  } catch {
+    // 빌드 시 DB 접근 불가 시 빈 배열
+  }
 
   return (
     <>
