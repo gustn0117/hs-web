@@ -576,7 +576,7 @@ function getProjectDirectorySizes(): MetricResult<DiskBreakdownItem[]> {
 
 async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
   try {
-    const pgMetaUrl = process.env.PG_META_URL || "http://supabase-meta:8080";
+    const pgMetaUrl = process.env.PG_META_URL || `${process.env.SUPABASE_URL}/pg`;
     const query = `
       SELECT n.nspname AS name,
              COALESCE(SUM(pg_total_relation_size(c.oid)), 0)::bigint AS size_bytes
