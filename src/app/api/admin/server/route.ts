@@ -591,7 +591,10 @@ async function getDatabaseSizes(): Promise<MetricResult<DiskBreakdownItem[]>> {
 
     const res = await fetch(`${pgMetaUrl}/query`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": process.env.SUPABASE_SERVICE_KEY || "",
+      },
       body: JSON.stringify({ query }),
     });
 
