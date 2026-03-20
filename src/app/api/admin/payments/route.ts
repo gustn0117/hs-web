@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   const [paymentsRes, clientsRes] = await Promise.all([
-    supabase.from("payments").select("id, client_id, amount, type, description, payment_date, status, created_at"),
+    supabase.from("payments").select("id, client_id, amount, type, description, payment_date, status, created_at").order("payment_date", { ascending: false }),
     supabase.from("clients").select("id, name"),
   ]);
 
