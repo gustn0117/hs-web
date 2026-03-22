@@ -10,15 +10,16 @@ export default function Icon() {
         style={{
           width: 32,
           height: 32,
-          background: "linear-gradient(135deg, #0f1a2d, #1e293b)",
-          borderRadius: "6px",
+          background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+          borderRadius: "8px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "15px",
+          fontSize: "18px",
           fontWeight: 900,
-          color: "#2563eb",
-          letterSpacing: "-1px",
+          color: "#ffffff",
+          letterSpacing: "-0.5px",
+          fontFamily: "sans-serif",
         }}
       >
         H

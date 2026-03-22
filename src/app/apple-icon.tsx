@@ -10,23 +10,23 @@ export default function AppleIcon() {
         style={{
           width: 180,
           height: 180,
-          background: "linear-gradient(135deg, #0f1a2d, #1e293b)",
-          borderRadius: "36px",
+          background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+          borderRadius: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "4px",
         }}
       >
         <span
           style={{
-            fontSize: "56px",
+            fontSize: "90px",
             fontWeight: 900,
             color: "#ffffff",
-            letterSpacing: "-2px",
+            letterSpacing: "-3px",
+            fontFamily: "sans-serif",
           }}
         >
-          HS
+          H
         </span>
       </div>
     ),
