@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, FormEvent, useState } from "react";
-import Link from "next/link";
 
 const contactItems = [
   {
@@ -24,11 +23,6 @@ const contactItems = [
   },
 ];
 
-const quickFaqs = [
-  { q: "제작 비용은?", a: "상담 시 안내" },
-  { q: "제작 기간은?", a: "빠르게 진행" },
-  { q: "유지보수는?", a: "무상 포함" },
-];
 
 function FloatingInput({ label, name, type = "text", placeholder, required = false }: { label: string; name: string; type?: string; placeholder: string; required?: boolean }) {
   const [focused, setFocused] = useState(false);
@@ -213,22 +207,6 @@ export default function Contact() {
               ))}
             </div>
 
-            {/* Quick FAQ */}
-            <div>
-              <h4 className="font-bold text-[0.9rem] text-[var(--color-dark)] mb-3">빠른 FAQ</h4>
-              <div className="flex flex-wrap gap-2">
-                {quickFaqs.map((faq) => (
-                  <Link
-                    key={faq.q}
-                    href="/#faq"
-                    className="inline-flex items-center gap-2 bg-white border border-gray-100 rounded-lg px-3 py-2 text-[0.8rem] no-underline text-[var(--color-dark-2)] hover:border-[var(--color-primary)]/30 transition-all duration-300"
-                  >
-                    <span className="font-semibold">{faq.q}</span>
-                    <span className="text-[var(--color-primary)] font-medium">{faq.a}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
           </div>
 
           <form
