@@ -237,7 +237,7 @@ ${printArea.innerHTML}
                               const raw = e.target.value.replace(/[^0-9]/g, "");
                               updateItem(idx, "unitPrice", Number(raw) || 0);
                             }}
-                            className="w-full px-3 py-2 pr-8 border border-gray-200 rounded-lg text-sm"
+                            className="w-full px-3 py-2 pr-10 border border-gray-200 rounded-lg text-sm"
                             placeholder="1,000,000"
                           />
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[var(--color-gray)]">원</span>
