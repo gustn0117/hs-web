@@ -6,7 +6,6 @@ import AdminHeader from "../components/AdminHeader";
 interface LineItem {
   name: string;
   method: string;
-  quantity: string;
   unitPrice: number;
 }
 
@@ -59,7 +58,7 @@ export default function QuotationPage() {
   const [includeVat, setIncludeVat] = useState(true);
 
   const [items, setItems] = useState<LineItem[]>([
-    { name: "맞춤형 홈페이지 제작", method: "기획·디자인·퍼블리싱", quantity: "1 식", unitPrice: 1000000 },
+    { name: "맞춤형 홈페이지 제작", method: "기획·디자인·퍼블리싱", unitPrice: 1000000 },
   ]);
 
   const [specs, setSpecs] = useState<Spec[]>(DEFAULT_SPECS);
@@ -81,7 +80,7 @@ export default function QuotationPage() {
   };
 
   const addItem = () => {
-    setItems((prev) => [...prev, { name: "", method: "", quantity: "1 식", unitPrice: 0 }]);
+    setItems((prev) => [...prev, { name: "", method: "", unitPrice: 0 }]);
   };
 
   const removeItem = (idx: number) => {
@@ -218,13 +217,9 @@ ${printArea.innerHTML}
                         <label className="block text-xs text-[var(--color-gray)] mb-1">항목명</label>
                         <input value={item.name} onChange={(e) => updateItem(idx, "name", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="맞춤형 홈페이지 제작" />
                       </div>
-                      <div>
+                      <div className="col-span-2">
                         <label className="block text-xs text-[var(--color-gray)] mb-1">제작 방식</label>
                         <input value={item.method} onChange={(e) => updateItem(idx, "method", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="기획·디자인·퍼블리싱" />
-                      </div>
-                      <div>
-                        <label className="block text-xs text-[var(--color-gray)] mb-1">수량</label>
-                        <input value={item.quantity} onChange={(e) => updateItem(idx, "quantity", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="1 식" />
                       </div>
                       <div className="col-span-2">
                         <label className="block text-xs text-[var(--color-gray)] mb-1">단가</label>
@@ -344,7 +339,6 @@ ${printArea.innerHTML}
                           <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "24px" }}>No.</th>
                           <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd" }}>항 목</th>
                           <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd" }}>제작 방식</th>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "36px" }}>수량</th>
                           <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "60px" }}>단 가</th>
                           <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "60px" }}>금 액</th>
                         </tr>
@@ -355,7 +349,6 @@ ${printArea.innerHTML}
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{idx + 1}</td>
                             <td style={{ padding: "8px 8px", fontSize: "7.5px", border: "1px solid #ddd", fontWeight: 600 }}>{item.name}</td>
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{item.method}</td>
-                            <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{item.quantity}</td>
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right" }}>{fmtNum(item.unitPrice)} 원</td>
                             <td style={{ padding: "8px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>{fmtNum(item.unitPrice)} 원</td>
                           </tr>
@@ -368,23 +361,22 @@ ${printArea.innerHTML}
                             <td style={{ border: "1px solid #ddd" }}></td>
                             <td style={{ border: "1px solid #ddd" }}></td>
                             <td style={{ border: "1px solid #ddd" }}></td>
-                            <td style={{ border: "1px solid #ddd" }}></td>
                           </tr>
                         ))}
                         <tr>
-                          <td colSpan={4} style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700, borderTop: "2px solid #ccc" }}>소 계</td>
+                          <td colSpan={3} style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700, borderTop: "2px solid #ccc" }}>소 계</td>
                           <td style={{ padding: "6px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", borderTop: "2px solid #ccc" }}>{fmtNum(subtotal)} 원</td>
                           <td style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700, borderTop: "2px solid #ccc" }}>{fmtNum(subtotal)} 원</td>
                         </tr>
                         <tr>
-                          <td colSpan={4} style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>
+                          <td colSpan={3} style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>
                             부가세 (세금계산서 발행 시 +10%)
                           </td>
                           <td style={{ padding: "6px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right" }}>{fmtNum(vat)} 원</td>
                           <td style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right" }}>{fmtNum(vat)} 원</td>
                         </tr>
                         <tr>
-                          <td colSpan={4} style={{ padding: "8px 8px", fontSize: "8px", background: "#1a1a1a", color: "#fff", fontWeight: 800, textAlign: "center", border: "1px solid #1a1a1a", letterSpacing: "2px" }}>
+                          <td colSpan={3} style={{ padding: "8px 8px", fontSize: "8px", background: "#1a1a1a", color: "#fff", fontWeight: 800, textAlign: "center", border: "1px solid #1a1a1a", letterSpacing: "2px" }}>
                             최 종 합 계 (VAT 포함)
                           </td>
                           <td colSpan={2} style={{ padding: "8px 8px", fontSize: "10px", background: "#1a1a1a", color: "#fff", fontWeight: 800, textAlign: "right", border: "1px solid #1a1a1a" }}>
