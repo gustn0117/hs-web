@@ -336,11 +336,11 @@ ${printArea.innerHTML}
                     <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
                       <thead>
                         <tr>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "24px" }}>No.</th>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd" }}>항 목</th>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd" }}>제작 방식</th>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "60px" }}>단 가</th>
-                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "60px" }}>금 액</th>
+                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "20px" }}>No.</th>
+                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "30%" }}>항 목</th>
+                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>제작 방식</th>
+                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>단 가</th>
+                          <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>금 액</th>
                         </tr>
                       </thead>
                       <tbody>
