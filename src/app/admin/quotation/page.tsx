@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminHeader from "../components/AdminHeader";
 
 interface LineItem {
@@ -48,9 +48,30 @@ function fmtNum(n: number) {
   return n.toLocaleString();
 }
 
-export default function QuotationPage() {
+interface SavedQuotation {
+  id: string;
+  quote_number: string;
+  quote_date: string;
+  manager: string;
+  total: number;
+  status: string;
+  created_at: string;
+  items: LineItem[];
+  specs: Spec[];
+  notes: string;
+  validity: string;
+  include_vat: boolean;
+  subtotal: number;
+  vat: number;
+}
 
-  const [quoteNumber] = useState(genQuoteNumber);
+export default function QuotationPage() {
+  const [tab, setTab] = useState<"new" | "list">("new");
+  const [saved, setSaved] = useState<SavedQuotation[]>([]);
+  const [listLoading, setListLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [quoteNumber, setQuoteNumber] = useState(genQuoteNumber);
   const [quoteDate, setQuoteDate] = useState(todayStr);
   const [manager, setManager] = useState("HS WEB 담당자");
   const [validity, setValidity] = useState("견적일로부터 30 일");
@@ -62,6 +83,51 @@ export default function QuotationPage() {
 
   const [specs, setSpecs] = useState<Spec[]>(DEFAULT_SPECS);
   const [notes, setNotes] = useState(DEFAULT_NOTES.join("\n"));
+
+  const fetchList = useCallback(async () => {
+    setListLoading(true);
+    try {
+      const res = await fetch("/api/admin/quotations");
+      if (res.ok) {
+        const data = await res.json();
+        setSaved(data.quotations ?? []);
+      }
+    } catch { /* ignore */ }
+    setListLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (tab === "list") fetchList();
+  }, [tab, fetchList]);
+
+  const resetForm = () => {
+    setQuoteNumber(genQuoteNumber());
+    setQuoteDate(todayStr());
+    setManager("HS WEB 담당자");
+    setValidity("견적일로부터 30 일");
+    setIncludeVat(true);
+    setItems([{ name: "맞춤형 홈페이지 제작", method: "기획·디자인·퍼블리싱", unitPrice: 1000000 }]);
+    setSpecs(DEFAULT_SPECS);
+    setNotes(DEFAULT_NOTES.join("\n"));
+  };
+
+  const loadQuotation = (q: SavedQuotation) => {
+    setQuoteNumber(q.quote_number);
+    setQuoteDate(q.quote_date);
+    setManager(q.manager);
+    setValidity(q.validity);
+    setIncludeVat(q.include_vat);
+    setItems(q.items);
+    setSpecs(q.specs);
+    setNotes(q.notes);
+    setTab("new");
+  };
+
+  const deleteQuotation = async (id: string) => {
+    if (!confirm("이 견적서를 삭제하시겠습니까?")) return;
+    await fetch(`/api/admin/quotations/${id}`, { method: "DELETE" });
+    fetchList();
+  };
 
   const subtotal = items.reduce((s, item) => s + item.unitPrice, 0);
   const vat = includeVat ? Math.round(subtotal * 0.1) : 0;
@@ -91,7 +157,32 @@ export default function QuotationPage() {
     setSpecs((prev) => prev.map((s, i) => (i === idx ? { ...s, value } : s)));
   };
 
+  const saveToDb = async () => {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/quotations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quote_number: quoteNumber,
+          quote_date: quoteDate,
+          manager,
+          validity,
+          include_vat: includeVat,
+          items,
+          specs: specsWithPrice,
+          notes,
+          subtotal,
+          vat,
+          total,
+        }),
+      });
+    } catch { /* ignore */ }
+    setSaving(false);
+  };
+
   const handlePrint = () => {
+    saveToDb();
     const itemsHtml = items.map((item, idx) => `
       <tr>
         <td class="c">${idx + 1}</td>
@@ -233,16 +324,94 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
       <div className="max-w-[1100px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold text-[var(--color-dark)]">견적서 발행</h2>
-            <p className="text-[var(--color-gray)] text-sm mt-1">내용을 입력하고 PDF로 발행하세요.</p>
+            <h2 className="text-xl font-bold text-[var(--color-dark)]">견적서</h2>
+            <p className="text-[var(--color-gray)] text-sm mt-1">견적서를 작성하고 PDF로 발행하세요.</p>
           </div>
+          <div className="flex items-center gap-3">
+            {tab === "new" && (
+              <button
+                onClick={handlePrint}
+                disabled={saving}
+                className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none shadow-sm disabled:opacity-50"
+              >
+                {saving ? "저장 중..." : "PDF 발행"}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 w-fit">
           <button
-            onClick={handlePrint}
-            className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none shadow-sm"
+            onClick={() => setTab("new")}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold cursor-pointer border-none transition-all ${
+              tab === "new" ? "bg-white text-[var(--color-dark)] shadow-sm" : "bg-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)]"
+            }`}
           >
-            PDF 발행
+            새 견적서
+          </button>
+          <button
+            onClick={() => setTab("list")}
+            className={`px-5 py-2 rounded-lg text-sm font-semibold cursor-pointer border-none transition-all ${
+              tab === "list" ? "bg-white text-[var(--color-dark)] shadow-sm" : "bg-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)]"
+            }`}
+          >
+            발행 내역
           </button>
         </div>
+
+        {tab === "list" ? (
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
+            {listLoading ? (
+              <div className="p-8 text-center text-[var(--color-gray)] text-sm">불러오는 중...</div>
+            ) : saved.length === 0 ? (
+              <div className="p-8 text-center text-[var(--color-gray)] text-sm">발행된 견적서가 없습니다.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="text-left py-3 px-6 text-[var(--color-gray)] font-medium text-xs">견적번호</th>
+                      <th className="text-left py-3 px-3 text-[var(--color-gray)] font-medium text-xs">견적일자</th>
+                      <th className="text-left py-3 px-3 text-[var(--color-gray)] font-medium text-xs">항목</th>
+                      <th className="text-right py-3 px-3 text-[var(--color-gray)] font-medium text-xs">합계</th>
+                      <th className="text-center py-3 px-6 text-[var(--color-gray)] font-medium text-xs">관리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {saved.map((q) => (
+                      <tr key={q.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        <td className="py-3 px-6 font-medium text-[var(--color-dark)]">{q.quote_number}</td>
+                        <td className="py-3 px-3 text-[var(--color-gray)]">{q.quote_date}</td>
+                        <td className="py-3 px-3 text-[var(--color-dark-2)]">
+                          {(q.items as LineItem[])?.[0]?.name || "-"}
+                          {(q.items as LineItem[])?.length > 1 && ` 외 ${(q.items as LineItem[]).length - 1}건`}
+                        </td>
+                        <td className="py-3 px-3 text-right font-semibold text-[var(--color-dark)] tabular-nums">{fmtNum(q.total)}원</td>
+                        <td className="py-3 px-6 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => loadQuotation(q)}
+                              className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none"
+                            >
+                              불러오기
+                            </button>
+                            <button
+                              onClick={() => deleteQuotation(q.id)}
+                              className="text-xs text-red-500 font-semibold hover:underline cursor-pointer bg-transparent border-none"
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        ) : (
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* ===== 입력 폼 ===== */}
@@ -503,6 +672,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
