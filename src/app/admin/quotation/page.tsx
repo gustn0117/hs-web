@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import AdminHeader from "../components/AdminHeader";
 
 interface LineItem {
@@ -49,7 +49,6 @@ function fmtNum(n: number) {
 }
 
 export default function QuotationPage() {
-  const printRef = useRef<HTMLDivElement>(null);
 
   const [quoteNumber] = useState(genQuoteNumber);
   const [quoteDate, setQuoteDate] = useState(todayStr);
@@ -93,8 +92,23 @@ export default function QuotationPage() {
   };
 
   const handlePrint = () => {
-    const printArea = printRef.current;
-    if (!printArea) return;
+    const itemsHtml = items.map((item, idx) => `
+      <tr>
+        <td class="c">${idx + 1}</td>
+        <td class="name">${item.name}</td>
+        <td class="c">${item.method}</td>
+        <td class="r">${fmtNum(item.unitPrice)} 원</td>
+        <td class="r b">${fmtNum(item.unitPrice)} 원</td>
+      </tr>`).join("");
+
+    const emptyRows = items.length < 3
+      ? [...Array(3 - items.length)].map(() => `<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>`).join("")
+      : "";
+
+    const specsHtml = specsWithPrice.map((s) => `
+      <tr><td class="lbl">${s.label}</td><td>${s.value}</td></tr>`).join("");
+
+    const notesHtml = notes.split("\n").filter(Boolean).map((l) => `<p>· ${l}</p>`).join("");
 
     const win = window.open("", "_blank");
     if (!win) return;
@@ -105,45 +119,107 @@ export default function QuotationPage() {
 <meta charset="UTF-8" />
 <title>견적서 - ${quoteNumber}</title>
 <style>
-@page { size: A4; margin: 20mm 15mm; }
+@page { size: A4; margin: 12mm 15mm; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif; color: #1a1a1a; font-size: 11pt; line-height: 1.6; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.page { max-width: 210mm; margin: 0 auto; }
-.header-line { border-top: 3px solid #1a1a1a; margin-bottom: 8px; }
-.company { font-size: 22pt; font-weight: 900; letter-spacing: -0.5px; }
-.company span { font-size: 11pt; font-weight: 400; color: #666; margin-left: 8px; }
-.title-wrap { text-align: center; margin: 32px 0 28px; }
-.title { font-size: 28pt; font-weight: 900; letter-spacing: 16px; }
-.title-sub { font-size: 9pt; color: #999; letter-spacing: 6px; margin-top: 4px; }
-.info-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
-.info-table td { padding: 8px 14px; font-size: 10pt; border: 1px solid #ddd; }
-.info-table .label { background: #f5f5f5; font-weight: 700; width: 100px; text-align: center; letter-spacing: 4px; }
-.section-title { font-size: 11pt; font-weight: 800; margin-bottom: 10px; }
-.section-title::before { content: '■'; margin-right: 6px; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
-.items-table th { background: #f5f5f5; padding: 10px 8px; font-size: 9.5pt; font-weight: 700; border: 1px solid #ddd; text-align: center; letter-spacing: 2px; }
-.items-table td { padding: 10px 8px; font-size: 10pt; border: 1px solid #ddd; text-align: center; }
-.items-table .name { text-align: left; padding-left: 14px; font-weight: 600; }
-.items-table .amount { text-align: right; padding-right: 14px; font-weight: 700; }
-.items-table .subtotal-row td { border-top: 2px solid #ccc; }
-.items-table .vat-row td { }
-.items-table .total-row td { background: #1a1a1a; color: #fff; font-weight: 800; font-size: 11pt; border-color: #1a1a1a; }
-.items-table .total-row .amount { font-size: 13pt; }
-.spec-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
-.spec-table td { padding: 8px 14px; font-size: 10pt; border: 1px solid #ddd; }
-.spec-table .label { background: #f5f5f5; font-weight: 700; width: 100px; text-align: center; }
-.notes-box { border: 1px solid #ddd; padding: 16px 20px; margin-bottom: 40px; font-size: 9.5pt; color: #444; line-height: 1.8; }
-.notes-box p::before { content: '·'; margin-right: 6px; }
-.divider { border: none; border-top: 2px solid #1a1a1a; margin: 32px 0; }
-.supplier { text-align: center; margin-bottom: 32px; }
-.supplier h3 { font-size: 14pt; font-weight: 900; letter-spacing: 8px; margin-bottom: 16px; }
-.supplier p { font-size: 10pt; color: #333; line-height: 2; }
-.supplier p strong { font-weight: 700; margin-right: 4px; }
-.footer { text-align: center; border-top: 1px solid #ddd; padding-top: 12px; font-size: 8.5pt; color: #999; }
+body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: #1a1a1a; font-size: 10pt; line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+table { width: 100%; border-collapse: collapse; }
+td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 9pt; }
+th { background: #f5f5f5; font-weight: 700; text-align: center; letter-spacing: 1px; }
+.c { text-align: center; }
+.r { text-align: right; }
+.b { font-weight: 700; }
+.lbl { background: #f5f5f5; font-weight: 700; width: 90px; text-align: center; }
+.name { text-align: left; font-weight: 600; }
+.hdr { border-top: 3px solid #1a1a1a; padding-top: 6px; margin-bottom: 4px; }
+.hdr h1 { font-size: 18pt; font-weight: 900; display: inline; }
+.hdr span { font-size: 9pt; color: #666; margin-left: 6px; }
+.title { text-align: center; margin: 20px 0 16px; }
+.title h2 { font-size: 22pt; font-weight: 900; letter-spacing: 12px; }
+.title p { font-size: 8pt; color: #999; letter-spacing: 4px; margin-top: 2px; }
+.sec { font-size: 10pt; font-weight: 800; margin: 16px 0 6px; }
+.sec::before { content: '■ '; }
+.total-row td { background: #1a1a1a; color: #fff; font-weight: 800; border-color: #1a1a1a; }
+.total-row .r { font-size: 12pt; }
+.sub-row td { border-top: 2px solid #aaa; }
+.notes { border: 1px solid #ccc; padding: 10px 14px; font-size: 8.5pt; color: #444; line-height: 1.7; margin-bottom: 20px; }
+.notes p { margin: 0; }
+hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
+.supplier { text-align: center; margin-bottom: 16px; }
+.supplier h3 { font-size: 12pt; font-weight: 900; letter-spacing: 6px; margin-bottom: 8px; }
+.supplier p { font-size: 9pt; color: #333; line-height: 1.9; }
+.footer { text-align: center; border-top: 1px solid #ddd; padding-top: 8px; font-size: 7.5pt; color: #999; }
 </style>
 </head>
 <body>
-${printArea.innerHTML}
+
+<div class="hdr"><h1>HS WEB</h1><span>Web Agency</span></div>
+
+<div class="title">
+  <h2>견 적 서</h2>
+  <p>QUOTATION</p>
+</div>
+
+<table style="margin-bottom:16px">
+  <tr>
+    <td class="lbl">견적번호</td><td>${quoteNumber}</td>
+    <td class="lbl">견적일자</td><td>${quoteDate}</td>
+  </tr>
+  <tr>
+    <td class="lbl">담 당 자</td><td>${manager}</td>
+    <td class="lbl">유효기간</td><td>${validity}</td>
+  </tr>
+</table>
+
+<div class="sec">견적 내역</div>
+<table style="margin-bottom:16px">
+  <thead>
+    <tr>
+      <th style="width:28px">No.</th>
+      <th style="width:32%">항 목</th>
+      <th style="width:22%">제작 방식</th>
+      <th style="width:20%">단 가</th>
+      <th style="width:20%">금 액</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${itemsHtml}
+    ${emptyRows}
+    <tr class="sub-row">
+      <td colspan="3" class="r b">소 계</td>
+      <td class="r">${fmtNum(subtotal)} 원</td>
+      <td class="r b">${fmtNum(subtotal)} 원</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="r b">부가세 (세금계산서 발행 시 +10%)</td>
+      <td class="r">${fmtNum(vat)} 원</td>
+      <td class="r">${fmtNum(vat)} 원</td>
+    </tr>
+    <tr class="total-row">
+      <td colspan="3" class="c b" style="letter-spacing:2px">최 종 합 계 (VAT 포함)</td>
+      <td colspan="2" class="r b">${fmtNum(total)} 원</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="sec">제작 사양</div>
+<table style="margin-bottom:16px">
+  ${specsHtml}
+</table>
+
+<div class="sec">비고 및 유의사항</div>
+<div class="notes">${notesHtml}</div>
+
+<hr class="div" />
+<div class="supplier">
+  <h3>공 급 자</h3>
+  <p>
+    <strong>상 호 :</strong> HS WEB / HARAM<br/>
+    <strong>대 표 :</strong> 심현수<br/>
+    <strong>연락처 :</strong> 010-3319-2509
+  </p>
+</div>
+<div class="footer">HS WEB &nbsp;|&nbsp; 본 견적서는 발행일로부터 30 일간 유효합니다.</div>
+
 <script>window.onload=function(){window.print();}<\/script>
 </body>
 </html>`);
@@ -299,7 +375,7 @@ ${printArea.innerHTML}
             <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">미리보기</h3>
             <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
               <div className="p-6 text-[8px] leading-[1.5] origin-top-left" style={{ fontSize: "8px" }}>
-                <div ref={printRef}>
+                <div>
                   <div className="page">
                     {/* Header */}
                     <div className="header-line" style={{ borderTop: "3px solid #1a1a1a", marginBottom: "6px" }} />
