@@ -177,12 +177,12 @@ export default function ContractsPage() {
     fetchContracts();
   };
 
-  const copySignLink = (token: string) => {
-    const url = `${window.location.origin}/contract/sign?token=${token}`;
-    navigator.clipboard.writeText(url);
+  const copyCode = (token: string) => {
+    navigator.clipboard.writeText(token);
     setCopied(token);
     setTimeout(() => setCopied(null), 2000);
   };
+
 
   const statusLabel: Record<string, { text: string; cls: string }> = {
     draft: { text: "임시", cls: "bg-gray-100 text-gray-600" },
@@ -265,12 +265,13 @@ export default function ContractsPage() {
                             <span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${st.cls}`}>{st.text}</span>
                           </td>
                           <td className="py-3 px-6 text-center">
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center justify-center gap-3">
                               <button
-                                onClick={() => copySignLink(c.sign_token)}
-                                className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none"
+                                onClick={() => copyCode(c.sign_token)}
+                                className="inline-flex items-center gap-1 text-xs font-semibold cursor-pointer bg-transparent border-none text-[var(--color-accent)] hover:underline"
                               >
-                                {copied === c.sign_token ? "복사됨!" : "서명 링크"}
+                                <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-[var(--color-dark)]">{c.sign_token}</span>
+                                {copied === c.sign_token ? "복사됨!" : "복사"}
                               </button>
                               <button
                                 onClick={() => deleteContract(c.id)}

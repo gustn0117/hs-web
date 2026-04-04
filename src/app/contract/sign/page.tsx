@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useState, useRef } from "react";
 
 interface PaymentTerm { label: string; amount: number; due: string; }
 interface LineItem { name: string; method: string; unitPrice: number; }
@@ -24,36 +22,48 @@ interface Contract {
   status: string;
   signed_at: string | null;
   client_signature: string | null;
+  sign_token: string;
 }
 
 function fmtNum(n: number) { return n.toLocaleString(); }
 
-function SignPageInner() {
-  const params = useSearchParams();
-  const token = params.get("token");
+export default function SignPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Steps: code → contract → done
+  const [step, setStep] = useState<"code" | "contract" | "done">("code");
+  const [code, setCode] = useState("");
+  const [token, setToken] = useState("");
   const [contract, setContract] = useState<Contract | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [signing, setSigning] = useState(false);
-  const [done, setDone] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
   const [agreed, setAgreed] = useState(false);
 
-  const fetchContract = useCallback(async () => {
-    if (!token) { setError("유효하지 않은 링크입니다."); setLoading(false); return; }
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    setError("");
+    setLoading(true);
+
     try {
-      const res = await fetch(`/api/contracts/sign?token=${token}`);
-      if (!res.ok) { setError("계약서를 찾을 수 없습니다."); setLoading(false); return; }
+      const res = await fetch(`/api/contracts/sign?token=${code.trim()}`);
+      if (!res.ok) { setError("유효하지 않은 인증 코드입니다."); setLoading(false); return; }
       const data = await res.json();
       setContract(data.contract);
-      if (data.contract.status === "signed") setDone(true);
-    } catch { setError("오류가 발생했습니다."); }
+      setToken(code.trim());
+      if (data.contract.status === "signed") {
+        setStep("done");
+      } else {
+        setStep("contract");
+      }
+    } catch {
+      setError("오류가 발생했습니다. 다시 시도해주세요.");
+    }
     setLoading(false);
-  }, [token]);
-
-  useEffect(() => { fetchContract(); }, [fetchContract]);
+  };
 
   // Canvas drawing
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
@@ -64,7 +74,7 @@ function SignPageInner() {
     if ("touches" in e) {
       return { x: (e.touches[0].clientX - rect.left) * scaleX, y: (e.touches[0].clientY - rect.top) * scaleY };
     }
-    return { x: (e.nativeEvent.offsetX) * scaleX, y: (e.nativeEvent.offsetY) * scaleY };
+    return { x: e.nativeEvent.offsetX * scaleX, y: e.nativeEvent.offsetY * scaleY };
   };
 
   const startDraw = (e: React.MouseEvent | React.TouchEvent) => {
@@ -93,8 +103,7 @@ function SignPageInner() {
 
   const clearCanvas = () => {
     const canvas = canvasRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.getContext("2d")!.clearRect(0, 0, canvas.width, canvas.height);
     setHasDrawn(false);
   };
 
@@ -110,47 +119,74 @@ function SignPageInner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, signature }),
       });
-      if (res.ok) setDone(true);
+      if (res.ok) setStep("done");
       else alert("서명 처리 중 오류가 발생했습니다.");
     } catch { alert("네트워크 오류가 발생했습니다."); }
     setSigning(false);
   };
 
-  if (loading) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <p className="text-gray-500">계약서를 불러오는 중...</p>
-    </div>
-  );
-
-  if (error) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <p className="text-red-500 font-semibold mb-2">{error}</p>
-        <p className="text-gray-400 text-sm">링크를 다시 확인해주세요.</p>
-      </div>
-    </div>
-  );
-
-  if (done) return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-      <div className="bg-white rounded-2xl p-10 border border-gray-200 shadow-sm text-center max-w-md w-full">
-        <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">서명이 완료되었습니다</h2>
-        <p className="text-gray-500 text-sm">계약서 서명이 정상적으로 처리되었습니다.<br />감사합니다.</p>
-        {contract?.client_signature && (
-          <div className="mt-6 pt-4 border-t border-gray-100">
-            <p className="text-xs text-gray-400 mb-2">서명</p>
-            <img src={contract.client_signature} alt="서명" className="h-16 mx-auto" />
+  // Step 1: 인증 코드 입력
+  if (step === "code") {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-xl font-bold text-gray-900">전자 계약</h1>
+            <p className="text-gray-500 text-sm mt-2">전달받은 인증 코드를 입력해주세요.</p>
           </div>
-        )}
-      </div>
-    </div>
-  );
 
+          <form onSubmit={handleCodeSubmit} className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <label className="block text-sm font-medium text-gray-700 mb-2">인증 코드</label>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={code}
+              onChange={(e) => { setCode(e.target.value.replace(/[^0-9]/g, "")); setError(""); }}
+              placeholder="6자리 숫자"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-center text-2xl font-mono tracking-[0.5em] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              autoFocus
+            />
+            {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
+            <button
+              type="submit"
+              disabled={code.length < 6 || loading}
+              className="w-full mt-5 py-3 bg-blue-600 text-white rounded-xl font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {loading ? "확인 중..." : "확인"}
+            </button>
+          </form>
+
+          <p className="text-center text-xs text-gray-400 mt-6">HS WEB 전자 계약 시스템</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 3: 완료
+  if (step === "done") {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="bg-white rounded-2xl p-10 border border-gray-200 shadow-sm text-center max-w-md w-full">
+          <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">서명이 완료되었습니다</h2>
+          <p className="text-gray-500 text-sm">계약서 서명이 정상적으로 처리되었습니다.<br />감사합니다.</p>
+          {contract?.client_signature && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-400 mb-2">서명</p>
+              <img src={contract.client_signature} alt="서명" className="h-16 mx-auto" />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: 계약 내용 확인 + 서명
   if (!contract) return null;
 
   return (
@@ -281,10 +317,7 @@ function SignPageInner() {
           </div>
           <div className="flex items-center justify-between mb-4">
             <p className="text-xs text-gray-400">위 영역에 서명해주세요</p>
-            <button
-              onClick={clearCanvas}
-              className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none"
-            >
+            <button onClick={clearCanvas} className="text-xs text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none">
               서명 지우기
             </button>
           </div>
@@ -301,13 +334,5 @@ function SignPageInner() {
         <p className="text-center text-xs text-gray-400 pb-4">HS WEB 전자 계약 시스템</p>
       </div>
     </div>
-  );
-}
-
-export default function SignPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">로딩 중...</p></div>}>
-      <SignPageInner />
-    </Suspense>
   );
 }

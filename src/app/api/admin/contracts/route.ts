@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-import crypto from "crypto";
-
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -25,7 +23,8 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const signToken = crypto.randomUUID();
+  // 6자리 인증 코드 생성
+  const signToken = String(Math.floor(100000 + Math.random() * 900000));
 
   const d = new Date();
   const contractNumber = `CT-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}-${String(Math.floor(Math.random() * 900) + 100)}`;
