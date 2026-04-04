@@ -17,6 +17,7 @@ export default function AdminHeader() {
     { label: "포트폴리오", href: "/admin/portfolio" },
     { label: "클라이언트", href: "/admin/clients" },
     { label: "견적서", href: "/admin/quotation" },
+    { label: "계약", href: "/admin/contracts" },
     { label: "문의", href: "/admin/inquiries" },
     { label: "서버", href: "/admin/server" },
   ];
