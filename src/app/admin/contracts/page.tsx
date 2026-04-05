@@ -273,6 +273,13 @@ export default function ContractsPage() {
                                 <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-[var(--color-dark)]">{c.sign_token}</span>
                                 {copied === c.sign_token ? "복사됨!" : "복사"}
                               </button>
+                              <a
+                                href="/contract/sign"
+                                target="_blank"
+                                className="text-xs text-[var(--color-accent)] font-semibold hover:underline no-underline"
+                              >
+                                서명 페이지
+                              </a>
                               <button
                                 onClick={() => deleteContract(c.id)}
                                 className="text-xs text-red-500 font-semibold hover:underline cursor-pointer bg-transparent border-none"
