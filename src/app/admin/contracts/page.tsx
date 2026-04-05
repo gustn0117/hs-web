@@ -80,6 +80,7 @@ export default function ContractsPage() {
   const [saving, setSaving] = useState(false);
   const [selectedQuotation, setSelectedQuotation] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [detail, setDetail] = useState<Contract | null>(null);
 
   // Form
   const [clientName, setClientName] = useState("");
@@ -276,6 +277,12 @@ export default function ContractsPage() {
                           </td>
                           <td className="py-3 px-6 text-center">
                             <div className="flex items-center justify-center gap-3">
+                              <button
+                                onClick={() => setDetail(c)}
+                                className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none"
+                              >
+                                상세
+                              </button>
                               <a
                                 href="/contract/sign"
                                 target="_blank"
@@ -445,6 +452,104 @@ export default function ContractsPage() {
           </div>
         )}
       </div>
+
+      {/* Detail Modal */}
+      {detail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setDetail(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="font-bold text-[var(--color-dark)]">{detail.contract_number}</h3>
+                <p className="text-xs text-[var(--color-gray)] mt-0.5">{detail.client_name}{detail.client_company ? ` · ${detail.client_company}` : ""}</p>
+              </div>
+              <button onClick={() => setDetail(null)} className="text-[var(--color-gray)] hover:text-[var(--color-dark)] cursor-pointer bg-transparent border-none text-xl">×</button>
+            </div>
+            <div className="px-6 py-5 space-y-5">
+              {/* 요약 */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-[var(--color-gray)]">프로젝트</p>
+                  <p className="text-sm font-semibold text-[var(--color-dark)] mt-0.5">{detail.project_name}</p>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-[var(--color-gray)]">계약 금액</p>
+                  <p className="text-sm font-bold text-[var(--color-dark)] mt-0.5">{fmtNum(detail.total_amount)}원</p>
+                </div>
+                {detail.start_date && (
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-xs text-[var(--color-gray)]">기간</p>
+                    <p className="text-sm font-medium text-[var(--color-dark)] mt-0.5">{detail.start_date} ~ {detail.end_date || "협의"}</p>
+                  </div>
+                )}
+                <div className="bg-gray-50 rounded-xl p-3">
+                  <p className="text-xs text-[var(--color-gray)]">상태</p>
+                  <p className="mt-0.5">
+                    <span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${(statusLabel[detail.status] ?? statusLabel.draft).cls}`}>
+                      {(statusLabel[detail.status] ?? statusLabel.draft).text}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* 결제 조건 */}
+              {detail.payment_terms.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-[var(--color-gray)] mb-2">결제 조건</p>
+                  <div className="space-y-1.5">
+                    {detail.payment_terms.map((pt, i) => (
+                      <div key={i} className="flex justify-between text-sm bg-gray-50 rounded-lg px-3 py-2">
+                        <span className="text-[var(--color-dark-2)]">{pt.label}</span>
+                        <span className="font-semibold text-[var(--color-dark)]">{fmtNum(pt.amount)}원 <span className="text-xs text-[var(--color-gray)] font-normal">({pt.due})</span></span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 연락처 */}
+              {(detail.client_phone || detail.client_email) && (
+                <div>
+                  <p className="text-xs font-semibold text-[var(--color-gray)] mb-2">고객 연락처</p>
+                  <div className="text-sm text-[var(--color-dark-2)] space-y-1">
+                    {detail.client_phone && <p>{detail.client_phone}</p>}
+                    {detail.client_email && <p>{detail.client_email}</p>}
+                  </div>
+                </div>
+              )}
+
+              {/* 서명 */}
+              <div>
+                <p className="text-xs font-semibold text-[var(--color-gray)] mb-2">전자 서명</p>
+                {detail.status === "signed" && detail.client_signature ? (
+                  <div className="border border-emerald-200 bg-emerald-50/50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                      </div>
+                      <span className="text-sm font-semibold text-emerald-700">서명 완료</span>
+                      {detail.signed_at && <span className="text-xs text-emerald-600 ml-auto">{new Date(detail.signed_at).toLocaleString("ko-KR")}</span>}
+                    </div>
+                    <div className="bg-white rounded-lg border border-emerald-100 p-3 flex items-center justify-center">
+                      <img src={detail.client_signature} alt="고객 서명" className="h-20 max-w-full" />
+                    </div>
+                    <p className="text-xs text-emerald-600 mt-2 text-center">{detail.client_name} 님의 전자 서명</p>
+                  </div>
+                ) : (
+                  <div className="border border-amber-200 bg-amber-50/50 rounded-xl p-4 flex items-center gap-3">
+                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-amber-800">서명 대기 중</p>
+                      <p className="text-xs text-amber-600 mt-0.5">고객에게 인증 코드 <strong className="font-mono">{detail.sign_token}</strong>을 전달해주세요.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
