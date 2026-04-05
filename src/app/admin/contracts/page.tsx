@@ -249,6 +249,7 @@ export default function ContractsPage() {
                       <th className="text-left py-3 px-3 text-[var(--color-gray)] font-medium text-xs">프로젝트</th>
                       <th className="text-right py-3 px-3 text-[var(--color-gray)] font-medium text-xs">금액</th>
                       <th className="text-center py-3 px-3 text-[var(--color-gray)] font-medium text-xs">상태</th>
+                      <th className="text-center py-3 px-3 text-[var(--color-gray)] font-medium text-xs">인증 코드</th>
                       <th className="text-center py-3 px-6 text-[var(--color-gray)] font-medium text-xs">관리</th>
                     </tr>
                   </thead>
@@ -264,15 +265,17 @@ export default function ContractsPage() {
                           <td className="py-3 px-3 text-center">
                             <span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${st.cls}`}>{st.text}</span>
                           </td>
+                          <td className="py-3 px-3 text-center">
+                            <button
+                              onClick={() => copyCode(c.sign_token)}
+                              className="inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-none"
+                            >
+                              <span className="font-mono text-sm bg-gray-100 px-3 py-1 rounded-lg text-[var(--color-dark)] font-bold tracking-widest">{c.sign_token}</span>
+                              <span className="text-xs text-[var(--color-accent)] font-semibold">{copied === c.sign_token ? "복사됨!" : "복사"}</span>
+                            </button>
+                          </td>
                           <td className="py-3 px-6 text-center">
                             <div className="flex items-center justify-center gap-3">
-                              <button
-                                onClick={() => copyCode(c.sign_token)}
-                                className="inline-flex items-center gap-1 text-xs font-semibold cursor-pointer bg-transparent border-none text-[var(--color-accent)] hover:underline"
-                              >
-                                <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-[var(--color-dark)]">{c.sign_token}</span>
-                                {copied === c.sign_token ? "복사됨!" : "복사"}
-                              </button>
                               <a
                                 href="/contract/sign"
                                 target="_blank"
