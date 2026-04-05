@@ -255,7 +255,7 @@ export default function SignPage() {
 
             {/* 계약 조항 */}
             <h2 className="text-base font-bold text-[#2c2418] mb-3">제 4 조 ~ (일반 조항)</h2>
-            <div className="text-[0.85rem] text-[#4a4035] leading-[1.9] whitespace-pre-line mb-6 max-h-80 overflow-y-auto print:max-h-none">
+            <div className="text-[0.85rem] text-[#4a4035] leading-[1.9] whitespace-pre-line mb-6">
               {contract.terms}
             </div>
 

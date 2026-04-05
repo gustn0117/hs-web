@@ -546,10 +546,123 @@ export default function ContractsPage() {
                   </div>
                 )}
               </div>
+
+              {/* PDF 출력 */}
+              {detail.status === "signed" && (
+                <button
+                  onClick={() => printContractPdf(detail)}
+                  className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none"
+                >
+                  PDF 출력
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
     </div>
   );
+}
+
+function printContractPdf(c: Contract) {
+  const fmtN = (n: number) => n.toLocaleString();
+  const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
+  const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
+
+  const paymentRows = (c.payment_terms || []).map((pt: PaymentTerm) =>
+    `<tr><td class="l b">${pt.label}</td><td class="r b">${fmtN(pt.amount)}원</td><td class="l">${pt.due}</td></tr>`
+  ).join("");
+
+  const specRows = (c.specs || []).map((s: Spec) =>
+    `<tr><td class="lbl">${s.label}</td><td class="l">${s.value}</td></tr>`
+  ).join("");
+
+  const win = window.open("", "_blank");
+  if (!win) return;
+
+  win.document.write(`<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8" /><title>계약서 - ${c.contract_number}</title>
+<style>
+@page { size: A4; margin: 15mm 18mm; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: #222; font-size: 10pt; line-height: 1.7; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+table { width: 100%; border-collapse: collapse; }
+td, th { border: 1px solid #bbb; padding: 5px 8px; font-size: 9pt; }
+th { background: #f0ece6; font-weight: 700; text-align: center; }
+.l { text-align: left; }
+.r { text-align: right; }
+.c { text-align: center; }
+.b { font-weight: 700; }
+.lbl { background: #f0ece6; font-weight: 700; width: 80px; text-align: center; font-size: 8.5pt; }
+h2 { font-size: 11pt; margin: 16px 0 6px; }
+.top-line { border-top: 3px solid #222; }
+.sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 24px; }
+.sig-box { text-align: center; }
+.sig-box .line { border-bottom: 2px solid #222; min-height: 50px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; margin-bottom: 4px; }
+.sig-box p { font-size: 9pt; }
+.sig-box img { height: 40px; }
+.footer { text-align: center; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 24px; font-size: 7.5pt; color: #999; }
+</style></head><body>
+<div class="top-line" style="padding-top:6px;display:flex;justify-content:space-between;margin-bottom:4px">
+  <span style="font-size:8pt;color:#888">HS WEB · Web Agency</span>
+  <span style="font-size:8pt;color:#888">${c.contract_number}</span>
+</div>
+<div style="text-align:center;margin:28px 0 20px">
+  <h1 style="font-size:22pt;letter-spacing:10px;font-weight:900">계 약 서</h1>
+  <p style="font-size:8pt;color:#999;letter-spacing:4px;margin-top:2px">CONTRACT</p>
+</div>
+
+<p style="margin-bottom:14px;font-size:9.5pt;line-height:1.8">
+  <strong>${c.client_name}</strong>${c.client_company ? ` (${c.client_company})` : ""} (이하 "갑"이라 한다)과 <strong>HS WEB</strong> (대표 심현수, 이하 "을"이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
+</p>
+
+<hr style="border:none;border-top:1px solid #ddd;margin:14px 0" />
+
+<h2>제 1 조 (프로젝트 개요)</h2>
+<table style="margin-bottom:14px">
+  <tr><td class="lbl">프로젝트명</td><td class="l b">${c.project_name}</td></tr>
+  ${c.project_scope ? `<tr><td class="lbl">제작 범위</td><td class="l">${c.project_scope}</td></tr>` : ""}
+  ${c.start_date ? `<tr><td class="lbl">제작 기간</td><td class="l">${c.start_date} ~ ${c.end_date || "협의"}</td></tr>` : ""}
+  <tr><td class="lbl">계약 금액</td><td class="l b" style="font-size:10pt">${fmtN(c.total_amount)}원 (VAT 포함)</td></tr>
+</table>
+
+${paymentRows ? `
+<h2>제 2 조 (대금 지급)</h2>
+<p style="font-size:9pt;margin-bottom:6px">"갑"은 아래의 일정에 따라 대금을 지급한다.</p>
+<table style="margin-bottom:14px">
+  <thead><tr><th>구분</th><th>금액</th><th>지급 시기</th></tr></thead>
+  <tbody>${paymentRows}</tbody>
+</table>` : ""}
+
+${specRows ? `
+<h2>제 3 조 (제작 사양)</h2>
+<table style="margin-bottom:14px">${specRows}</table>` : ""}
+
+<h2>제 4 조 ~ (일반 조항)</h2>
+<div style="font-size:9pt;line-height:1.8;white-space:pre-line;margin-bottom:14px">${c.terms || ""}</div>
+
+<hr style="border:none;border-top:1px solid #ddd;margin:14px 0" />
+
+<p style="text-align:center;font-size:9.5pt;margin-bottom:16px">${dateStr}</p>
+
+<div class="sig-grid">
+  <div class="sig-box">
+    <p style="font-size:8pt;color:#888;margin-bottom:6px;font-weight:700;letter-spacing:2px">갑 (의뢰인)</p>
+    <div class="line">${c.client_signature ? `<img src="${c.client_signature}" alt="서명" />` : ""}</div>
+    <p class="b">${c.client_name}</p>
+    ${c.client_company ? `<p style="color:#888">${c.client_company}</p>` : ""}
+  </div>
+  <div class="sig-box">
+    <p style="font-size:8pt;color:#888;margin-bottom:6px;font-weight:700;letter-spacing:2px">을 (수급인)</p>
+    <div class="line"><span style="font-size:14pt;font-weight:900;font-style:italic">HS WEB</span></div>
+    <p class="b">심현수</p>
+    <p style="color:#888">HS WEB 대표</p>
+  </div>
+</div>
+
+<div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
+
+<script>window.onload=function(){window.print();}<\/script>
+</body></html>`);
+  win.document.close();
 }
