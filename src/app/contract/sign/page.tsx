@@ -68,7 +68,7 @@ export default function SignPage() {
   const draw = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDrawing) return; e.preventDefault();
     const ctx = canvasRef.current!.getContext("2d")!, p = getPos(e);
-    ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#111";
     ctx.lineTo(p.x, p.y); ctx.stroke();
   };
   const stopDraw = () => setIsDrawing(false);
@@ -88,88 +88,53 @@ export default function SignPage() {
     setSigning(false);
   };
 
-  /* ════════ Step 1: 인증 코드 ════════ */
+  /* ═══ Step 1: 인증 코드 ═══ */
   if (step === "code") {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-4">
-        {/* bg noise */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='1'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E\")" }} />
-        <div className="w-full max-w-[420px] relative z-10">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-300 to-amber-500 rounded-xl flex items-center justify-center">
-                <span className="text-[#0f172a] font-black text-base">H</span>
-              </div>
-              <span className="text-white/90 font-bold text-lg tracking-tight">HS WEB</span>
-            </div>
-            <h1 className="text-white text-2xl font-bold">전자 계약 시스템</h1>
-            <p className="text-white/40 text-sm mt-2">Electronic Contract Signing</p>
+      <div className="min-h-screen bg-[#f5f3ef] flex items-center justify-center px-4">
+        <div className="w-full max-w-[400px]">
+          <div className="text-center mb-8">
+            <p className="text-[0.7rem] text-[#8a7e6b] tracking-[0.3em] uppercase font-medium mb-2">HS WEB</p>
+            <h1 className="text-xl font-bold text-[#2c2418]">전자 계약 시스템</h1>
           </div>
-
-          <form onSubmit={handleCodeSubmit} className="bg-white/[0.06] backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-            <p className="text-white/60 text-sm mb-6 text-center">전달받은 <span className="text-amber-300 font-semibold">인증 코드</span>를 입력해주세요.</p>
-            <div className="flex justify-center gap-2.5 mb-2">
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className={`w-12 h-14 rounded-xl flex items-center justify-center text-2xl font-bold transition-all duration-200 ${
-                    code[i]
-                      ? "bg-amber-400/20 border-2 border-amber-400/60 text-white"
-                      : i === code.length
-                      ? "bg-white/5 border-2 border-amber-400/40"
-                      : "bg-white/5 border border-white/10 text-white/20"
-                  }`}
-                >
-                  {code[i] || ""}
-                </div>
-              ))}
-            </div>
+          <form onSubmit={handleCodeSubmit} className="bg-white rounded-xl p-8 border border-[#e5ddd0] shadow-sm">
+            <p className="text-sm text-[#6b5d4d] mb-5 text-center">전달받은 인증 코드를 입력해주세요.</p>
             <input
               type="text" inputMode="numeric" maxLength={6} value={code}
               onChange={(e) => { setCode(e.target.value.replace(/[^0-9]/g, "")); setError(""); }}
-              className="opacity-0 absolute -z-10" autoFocus
+              placeholder="000000"
+              className="w-full px-4 py-3 border border-[#d4cbbf] rounded-lg text-center text-2xl font-mono tracking-[0.5em] focus:outline-none focus:border-[#8a7e6b] bg-[#faf8f5] text-[#2c2418]"
+              autoFocus
             />
-            <div
-              className="cursor-text -mt-[72px] h-[72px] relative z-10"
-              onClick={() => document.querySelector<HTMLInputElement>("input[inputmode='numeric']")?.focus()}
-            />
-            {error && (
-              <p className="text-red-400 text-sm mt-3 text-center">{error}</p>
-            )}
+            {error && <p className="text-red-600 text-sm mt-3 text-center">{error}</p>}
             <button
               type="submit" disabled={code.length < 6 || loading}
-              className="w-full mt-6 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 text-[#0f172a] rounded-2xl font-bold text-sm hover:shadow-lg hover:shadow-amber-500/20 transition-all cursor-pointer border-none disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-full mt-5 py-3 bg-[#2c2418] text-white rounded-lg font-semibold text-sm hover:bg-[#3d3226] transition-colors cursor-pointer border-none disabled:opacity-30"
             >
               {loading ? "확인 중..." : "계약서 열기"}
             </button>
           </form>
-
-          <div className="flex items-center justify-center gap-2 mt-8 text-xs text-white/25">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-            Secured Connection
-          </div>
+          <p className="text-center text-[0.65rem] text-[#b0a694] mt-6">Secured Electronic Contract System</p>
         </div>
       </div>
     );
   }
 
-  /* ════════ Step 3: 완료 ════════ */
+  /* ═══ Step 3: 완료 ═══ */
   if (step === "done") {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-6">
-        <div className="bg-white rounded-3xl p-12 text-center max-w-md w-full shadow-2xl">
-          <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+      <div className="min-h-screen bg-[#f5f3ef] flex items-center justify-center px-6">
+        <div className="bg-white rounded-xl p-10 border border-[#e5ddd0] text-center max-w-md w-full">
+          <div className="w-16 h-16 border-2 border-[#2c2418] rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg className="w-7 h-7 text-[#2c2418]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">계약 체결 완료</h2>
-          <p className="text-gray-500 text-sm">전자 서명이 정상적으로 처리되었습니다.</p>
+          <h2 className="text-xl font-bold text-[#2c2418] mb-2">계약 체결 완료</h2>
+          <p className="text-[#8a7e6b] text-sm">전자 서명이 정상적으로 처리되었습니다.</p>
           {contract?.client_signature && (
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <p className="text-xs text-gray-400 mb-3">전자 서명</p>
-              <div className="inline-block border border-gray-100 rounded-xl p-4 bg-gray-50">
-                <img src={contract.client_signature} alt="서명" className="h-14" />
-              </div>
-              <p className="text-xs text-gray-400 mt-3">{contract.contract_number}</p>
+            <div className="mt-8 pt-6 border-t border-[#e5ddd0]">
+              <p className="text-xs text-[#b0a694] mb-3">전자 서명</p>
+              <img src={contract.client_signature} alt="서명" className="h-14 mx-auto" />
+              <p className="text-xs text-[#b0a694] mt-4">{contract.contract_number}</p>
             </div>
           )}
         </div>
@@ -177,195 +142,205 @@ export default function SignPage() {
     );
   }
 
-  /* ════════ Step 2: 계약서 본문 ════════ */
+  /* ═══ Step 2: 계약서 본문 ═══ */
   if (!contract) return null;
 
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+
   return (
-    <div className="min-h-screen bg-[#f8f7f4]">
-      {/* Dark Header */}
-      <div className="bg-[#0f172a] text-white">
-        <div className="max-w-3xl mx-auto px-6">
-          {/* Top bar */}
-          <div className="flex items-center justify-between py-4 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-gradient-to-br from-amber-300 to-amber-500 rounded-lg flex items-center justify-center">
-                <span className="text-[#0f172a] font-black text-xs">H</span>
-              </div>
-              <span className="text-white/80 font-semibold text-sm">HS WEB</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-white/40">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-              서명 대기
-            </div>
-          </div>
-          {/* Title */}
-          <div className="py-12 text-center">
-            <p className="text-amber-400/80 text-[0.7rem] font-semibold tracking-[0.3em] uppercase mb-3">Web Development Contract</p>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">웹사이트 제작 계약서</h1>
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <span className="h-px w-12 bg-white/20" />
-              <span className="text-white/30 text-xs font-mono">{contract.contract_number}</span>
-              <span className="h-px w-12 bg-white/20" />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#f5f3ef] py-8 px-4 print:bg-white print:py-0">
+      <div className="max-w-[720px] mx-auto">
+        {/* ── 계약서 용지 ── */}
+        <div className="bg-white border border-[#d4cbbf] shadow-sm print:border-none print:shadow-none">
 
-      {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 -mt-1">
-        <div className="bg-white rounded-t-3xl shadow-sm border border-gray-200/60 border-b-0">
-          {/* 계약 당사자 */}
-          <div className="p-8 border-b border-gray-100">
-            <p className="text-[0.65rem] text-amber-600 font-bold tracking-[0.2em] uppercase mb-5">Article 1 — 계약 당사자</p>
-            <div className="grid grid-cols-2 gap-5">
-              <div className="relative p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/60">
-                <span className="absolute top-3 right-4 text-[0.6rem] text-slate-400 font-semibold tracking-wider uppercase">갑</span>
-                <p className="text-lg font-bold text-slate-900 mt-1">{contract.client_name}</p>
-                {contract.client_company && <p className="text-sm text-slate-500 mt-0.5">{contract.client_company}</p>}
+          {/* 상단 */}
+          <div className="px-12 pt-12 pb-8 border-b-2 border-[#2c2418]">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[0.65rem] text-[#8a7e6b] tracking-[0.2em] uppercase">HS WEB · Web Agency</p>
               </div>
-              <div className="relative p-5 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/60">
-                <span className="absolute top-3 right-4 text-[0.6rem] text-slate-400 font-semibold tracking-wider uppercase">을</span>
-                <p className="text-lg font-bold text-slate-900 mt-1">HS WEB</p>
-                <p className="text-sm text-slate-500 mt-0.5">대표 심현수</p>
+              <div className="text-right">
+                <p className="text-[0.65rem] text-[#8a7e6b]">계약번호</p>
+                <p className="text-xs font-mono text-[#2c2418]">{contract.contract_number}</p>
               </div>
+            </div>
+            <div className="text-center mt-8 mb-2">
+              <h1 className="text-3xl font-bold text-[#2c2418] tracking-[0.15em]">계 약 서</h1>
+              <p className="text-[0.7rem] text-[#8a7e6b] mt-1.5 tracking-[0.2em]">CONTRACT</p>
             </div>
           </div>
 
-          {/* 프로젝트 개요 */}
-          <div className="p-8 border-b border-gray-100">
-            <p className="text-[0.65rem] text-amber-600 font-bold tracking-[0.2em] uppercase mb-5">Article 2 — 프로젝트 개요</p>
-            <div className="space-y-0">
-              {[
-                { l: "프로젝트명", v: contract.project_name },
-                ...(contract.project_scope ? [{ l: "제작 범위", v: contract.project_scope }] : []),
-                ...(contract.start_date ? [{ l: "제작 기간", v: `${contract.start_date} ~ ${contract.end_date || "협의"}` }] : []),
-              ].map((r, i) => (
-                <div key={i} className="flex justify-between items-center py-3.5 border-b border-dashed border-gray-100 last:border-0">
-                  <span className="text-sm text-slate-500">{r.l}</span>
-                  <span className="text-sm font-semibold text-slate-900">{r.v}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 bg-[#0f172a] rounded-2xl p-5 flex items-center justify-between">
-              <span className="text-white/60 text-sm font-medium">계약 금액 (VAT 포함)</span>
-              <span className="text-white text-2xl font-bold tracking-tight">{fmtNum(contract.total_amount)}<span className="text-base font-semibold ml-0.5">원</span></span>
-            </div>
-          </div>
+          {/* 본문 */}
+          <div className="px-12 py-8 text-[0.9rem] text-[#333] leading-[1.9]">
 
-          {/* 결제 조건 */}
-          {contract.payment_terms.length > 0 && (
-            <div className="p-8 border-b border-gray-100">
-              <p className="text-[0.65rem] text-amber-600 font-bold tracking-[0.2em] uppercase mb-5">Article 3 — 결제 조건</p>
-              <div className="space-y-3">
-                {contract.payment_terms.map((pt, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                    <div className="w-8 h-8 bg-[#0f172a] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">{pt.label}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{pt.due}</p>
-                    </div>
-                    <span className="text-base font-bold text-slate-900 tabular-nums">{fmtNum(pt.amount)}원</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            {/* 전문 */}
+            <p className="mb-6">
+              <strong className="text-[#2c2418]">{contract.client_name}</strong>
+              {contract.client_company && <span> ({contract.client_company})</span>}
+              (이하 &ldquo;갑&rdquo;이라 한다)과 <strong className="text-[#2c2418]">HS WEB</strong> (대표 심현수, 이하 &ldquo;을&rdquo;이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
+            </p>
 
-          {/* 제작 사양 */}
-          {contract.specs.length > 0 && (
-            <div className="p-8 border-b border-gray-100">
-              <p className="text-[0.65rem] text-amber-600 font-bold tracking-[0.2em] uppercase mb-5">Article 4 — 제작 사양</p>
-              <div className="space-y-0">
-                {contract.specs.map((s, i) => (
-                  <div key={i} className="flex justify-between py-3 border-b border-dashed border-gray-100 last:border-0">
-                    <span className="text-sm text-slate-500 shrink-0">{s.label}</span>
-                    <span className="text-sm font-medium text-slate-900 text-right ml-4">{s.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            <div className="w-full h-px bg-[#e5ddd0] my-6" />
 
-          {/* 계약 조항 */}
-          <div className="p-8 border-b border-gray-100">
-            <p className="text-[0.65rem] text-amber-600 font-bold tracking-[0.2em] uppercase mb-5">Article 5 — 계약 조항</p>
-            <div className="text-[0.85rem] text-slate-600 leading-[1.8] whitespace-pre-line max-h-80 overflow-y-auto pr-2">
+            {/* 제1조 */}
+            <h2 className="text-base font-bold text-[#2c2418] mb-3">제 1 조 (프로젝트 개요)</h2>
+            <table className="w-full mb-6 text-sm border-collapse">
+              <tbody>
+                <tr className="border-b border-[#e5ddd0]">
+                  <td className="py-2.5 text-[#8a7e6b] w-28">프로젝트명</td>
+                  <td className="py-2.5 font-medium text-[#2c2418]">{contract.project_name}</td>
+                </tr>
+                {contract.project_scope && (
+                  <tr className="border-b border-[#e5ddd0]">
+                    <td className="py-2.5 text-[#8a7e6b]">제작 범위</td>
+                    <td className="py-2.5 font-medium text-[#2c2418]">{contract.project_scope}</td>
+                  </tr>
+                )}
+                {contract.start_date && (
+                  <tr className="border-b border-[#e5ddd0]">
+                    <td className="py-2.5 text-[#8a7e6b]">제작 기간</td>
+                    <td className="py-2.5 font-medium text-[#2c2418]">{contract.start_date} ~ {contract.end_date || "협의"}</td>
+                  </tr>
+                )}
+                <tr>
+                  <td className="py-2.5 text-[#8a7e6b]">계약 금액</td>
+                  <td className="py-2.5 font-bold text-[#2c2418] text-base">{fmtNum(contract.total_amount)}원 (VAT 포함)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* 제2조 결제 조건 */}
+            {contract.payment_terms.length > 0 && (
+              <>
+                <h2 className="text-base font-bold text-[#2c2418] mb-3">제 2 조 (대금 지급)</h2>
+                <p className="mb-3">&ldquo;갑&rdquo;은 아래의 일정에 따라 대금을 지급한다.</p>
+                <table className="w-full mb-6 text-sm border-collapse border border-[#d4cbbf]">
+                  <thead>
+                    <tr className="bg-[#f5f3ef]">
+                      <th className="py-2 px-3 text-left border border-[#d4cbbf] text-[#8a7e6b] font-semibold text-xs">구분</th>
+                      <th className="py-2 px-3 text-right border border-[#d4cbbf] text-[#8a7e6b] font-semibold text-xs">금액</th>
+                      <th className="py-2 px-3 text-left border border-[#d4cbbf] text-[#8a7e6b] font-semibold text-xs">지급 시기</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {contract.payment_terms.map((pt, i) => (
+                      <tr key={i}>
+                        <td className="py-2 px-3 border border-[#d4cbbf] font-medium text-[#2c2418]">{pt.label}</td>
+                        <td className="py-2 px-3 border border-[#d4cbbf] text-right font-bold text-[#2c2418] tabular-nums">{fmtNum(pt.amount)}원</td>
+                        <td className="py-2 px-3 border border-[#d4cbbf] text-[#6b5d4d]">{pt.due}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+
+            {/* 제작 사양 */}
+            {contract.specs.length > 0 && (
+              <>
+                <h2 className="text-base font-bold text-[#2c2418] mb-3">제 3 조 (제작 사양)</h2>
+                <table className="w-full mb-6 text-sm border-collapse border border-[#d4cbbf]">
+                  <tbody>
+                    {contract.specs.map((s, i) => (
+                      <tr key={i}>
+                        <td className="py-2 px-3 border border-[#d4cbbf] bg-[#f5f3ef] text-[#8a7e6b] font-semibold w-28 text-xs">{s.label}</td>
+                        <td className="py-2 px-3 border border-[#d4cbbf] text-[#2c2418]">{s.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+
+            {/* 계약 조항 */}
+            <h2 className="text-base font-bold text-[#2c2418] mb-3">제 4 조 ~ (일반 조항)</h2>
+            <div className="text-[0.85rem] text-[#4a4035] leading-[1.9] whitespace-pre-line mb-6 max-h-80 overflow-y-auto print:max-h-none">
               {contract.terms}
             </div>
-          </div>
-        </div>
 
-        {/* 서명 영역 — 카드 하단에 연결 */}
-        <div className="bg-white border border-gray-200/60 border-t-0 rounded-b-3xl shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] px-8 py-5">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-amber-400/20 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                </svg>
+            <div className="w-full h-px bg-[#e5ddd0] my-6" />
+
+            {/* 날짜 */}
+            <p className="text-center text-sm text-[#6b5d4d] mb-8">
+              {dateStr}
+            </p>
+
+            {/* 당사자 서명란 */}
+            <div className="grid grid-cols-2 gap-8 mb-2">
+              <div className="text-center">
+                <p className="text-xs text-[#8a7e6b] mb-3 font-semibold tracking-wider">갑 (의뢰인)</p>
+                <div className="border-b-2 border-[#2c2418] pb-2 mb-2 min-h-[60px] flex items-end justify-center">
+                  {/* 클라이언트 서명이 들어갈 자리 */}
+                </div>
+                <p className="text-sm font-bold text-[#2c2418]">{contract.client_name}</p>
+                {contract.client_company && <p className="text-xs text-[#8a7e6b]">{contract.client_company}</p>}
               </div>
-              <div>
-                <p className="text-white font-semibold text-sm">전자 서명</p>
-                <p className="text-white/40 text-xs">Electronic Signature</p>
+              <div className="text-center">
+                <p className="text-xs text-[#8a7e6b] mb-3 font-semibold tracking-wider">을 (수급인)</p>
+                <div className="border-b-2 border-[#2c2418] pb-2 mb-2 min-h-[60px] flex items-end justify-center">
+                  <p className="text-lg font-bold text-[#2c2418] italic">HS WEB</p>
+                </div>
+                <p className="text-sm font-bold text-[#2c2418]">심현수</p>
+                <p className="text-xs text-[#8a7e6b]">HS WEB 대표</p>
               </div>
             </div>
           </div>
 
-          <div className="p-8">
+          {/* 하단 */}
+          <div className="px-12 py-4 bg-[#f5f3ef] border-t border-[#e5ddd0] text-center">
+            <p className="text-[0.6rem] text-[#b0a694]">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</p>
+          </div>
+        </div>
+
+        {/* ── 서명 영역 (계약서 용지 밖) ── */}
+        <div className="mt-6 bg-white border border-[#d4cbbf] rounded-xl overflow-hidden shadow-sm">
+          <div className="px-8 py-5 bg-[#2c2418]">
+            <p className="text-white font-semibold text-sm">전자 서명</p>
+            <p className="text-white/50 text-xs mt-0.5">아래에 서명하면 위 계약에 동의하는 것으로 간주됩니다.</p>
+          </div>
+          <div className="px-8 py-6">
             {/* 동의 */}
-            <label className="flex items-start gap-3 mb-6 cursor-pointer group">
-              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${agreed ? "bg-[#0f172a] border-[#0f172a]" : "border-slate-300 group-hover:border-slate-400"}`}>
+            <label className="flex items-start gap-3 mb-5 cursor-pointer group">
+              <div className={`w-[18px] h-[18px] rounded border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${agreed ? "bg-[#2c2418] border-[#2c2418]" : "border-[#c4b9a8] group-hover:border-[#8a7e6b]"}`}>
                 {agreed && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>}
               </div>
               <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="hidden" />
-              <span className="text-sm text-slate-600 leading-relaxed">
-                본인 <strong className="text-slate-900">{contract.client_name}</strong>은(는) 위 계약 내용을 모두 확인하였으며, 이에 동의합니다.
+              <span className="text-sm text-[#4a4035] leading-relaxed">
+                본인 <strong>{contract.client_name}</strong>은(는) 위 계약 내용을 확인하였으며, 이에 동의합니다.
               </span>
             </label>
 
-            {/* 서명 캔버스 */}
-            <p className="text-xs text-slate-400 mb-2 font-medium">서명란</p>
-            <div className={`border-2 rounded-2xl overflow-hidden transition-all ${hasDrawn ? "border-[#0f172a]/30" : "border-dashed border-slate-200"}`}>
+            {/* 캔버스 */}
+            <p className="text-[0.7rem] text-[#8a7e6b] mb-1.5 font-medium">서명란</p>
+            <div className={`border rounded-lg overflow-hidden transition-colors ${hasDrawn ? "border-[#2c2418]" : "border-[#d4cbbf]"}`}>
               <canvas
                 ref={canvasRef} width={600} height={200}
-                className="w-full bg-[#fafaf8] cursor-crosshair touch-none"
-                style={{ height: "150px" }}
+                className="w-full cursor-crosshair touch-none"
+                style={{ height: "130px", background: "#fdfcfa" }}
                 onMouseDown={startDraw} onMouseMove={draw} onMouseUp={stopDraw} onMouseLeave={stopDraw}
                 onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={stopDraw}
               />
             </div>
-            <div className="flex items-center justify-between mt-2 mb-6">
-              <p className="text-[0.7rem] text-slate-400">{contract.client_name} 님의 자필 서명</p>
+            <div className="flex items-center justify-between mt-1.5 mb-5">
+              <p className="text-[0.65rem] text-[#b0a694]">{contract.client_name} 자필 서명</p>
               {hasDrawn && (
-                <button onClick={clearCanvas} className="text-xs text-slate-400 hover:text-red-500 cursor-pointer bg-transparent border-none transition-colors">
+                <button onClick={clearCanvas} className="text-[0.7rem] text-[#8a7e6b] hover:text-red-600 cursor-pointer bg-transparent border-none transition-colors">
                   다시 서명
                 </button>
               )}
             </div>
 
-            {/* 서명 버튼 */}
             <button
               onClick={handleSign} disabled={signing || !agreed || !hasDrawn}
-              className="w-full py-4 bg-[#0f172a] text-white rounded-2xl font-bold text-[0.95rem] hover:bg-[#1e293b] transition-all cursor-pointer border-none disabled:opacity-20 disabled:cursor-not-allowed"
+              className="w-full py-3.5 bg-[#2c2418] text-white rounded-lg font-semibold text-sm hover:bg-[#3d3226] transition-colors cursor-pointer border-none disabled:opacity-20 disabled:cursor-not-allowed"
             >
-              {signing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                  처리 중...
-                </span>
-              ) : "서명하고 계약 체결"}
+              {signing ? "처리 중..." : "서명 완료"}
             </button>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center py-10 space-y-2">
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-            암호화된 전자 계약 · 법적 효력을 가지는 전자 서명
-          </div>
-          <p className="text-[0.65rem] text-slate-300">Powered by HS WEB Electronic Contract System</p>
-        </div>
+        <p className="text-center text-[0.6rem] text-[#b0a694] mt-6 mb-4">HS WEB Electronic Contract System</p>
       </div>
     </div>
   );
