@@ -55,7 +55,10 @@ export default function DailyPage() {
   useEffect(() => { fetchClients(); }, [fetchClients]);
 
   const filtered = search.trim()
-    ? clients.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.phone?.includes(search))
+    ? clients.filter((c) => {
+        const q = search.toLowerCase();
+        return c.name.toLowerCase().includes(q) || c.phone?.includes(q) || c.projects.some((p) => p.name.toLowerCase().includes(q));
+      })
     : [];
 
   const selectClient = (c: ClientInfo) => {
