@@ -70,10 +70,6 @@ const DEFAULT_TERMS = `제 1 조 (목적)
 일방이 계약을 해지할 경우, 진행 단계에 따라 비용을 정산합니다.`;
 
 function fmtNum(n: number) { return n.toLocaleString(); }
-function todayInput() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
 
 export default function ContractsPage() {
   const [tab, setTab] = useState<"new" | "list">("new");
@@ -92,8 +88,6 @@ export default function ContractsPage() {
   const [clientEmail, setClientEmail] = useState("");
   const [projectName, setProjectName] = useState("");
   const [projectScope, setProjectScope] = useState("");
-  const [startDate, setStartDate] = useState(todayInput);
-  const [endDate, setEndDate] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
   const [items, setItems] = useState<LineItem[]>([]);
   const [specs, setSpecs] = useState<Spec[]>([]);
@@ -157,8 +151,6 @@ export default function ContractsPage() {
           client_email: clientEmail,
           project_name: projectName,
           project_scope: projectScope,
-          start_date: startDate,
-          end_date: endDate,
           total_amount: totalAmount,
           payment_terms: paymentTerms,
           terms,
@@ -368,16 +360,6 @@ export default function ContractsPage() {
                   <div>
                     <label className="block text-xs text-[var(--color-gray)] mb-1">제작 범위</label>
                     <input value={projectScope} onChange={(e) => setProjectScope(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="메인 + 내부 페이지 5P" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-[var(--color-gray)] mb-1">시작일</label>
-                      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-[var(--color-gray)] mb-1">완료 예정일</label>
-                      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-                    </div>
                   </div>
                   <div>
                     <label className="block text-xs text-[var(--color-gray)] mb-1">계약 금액</label>
