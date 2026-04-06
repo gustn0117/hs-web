@@ -354,7 +354,7 @@ export default function DomainHostingPage() {
           <div className="mt-8 bg-blue-50 rounded-2xl p-6 border border-blue-100 text-center">
             <p className="text-[var(--color-dark)] font-semibold mb-1">HS WEB에서는?</p>
             <p className="text-sm text-[var(--color-gray)]">
-              도메인 등록과 호스팅 설정을 대행해드리며, 관련 비용은 <strong className="text-[var(--color-dark)]">실비</strong>로만 청구합니다.
+              도메인 등록과 호스팅 설정을 대행해드리며, 관련 비용은 <strong className="text-[var(--color-dark)]">실비</strong>로만 청구합니다.<br />
               별도의 대행 수수료 없이 투명하게 안내드립니다.
             </p>
           </div>
