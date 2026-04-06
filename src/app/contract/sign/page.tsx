@@ -259,6 +259,14 @@ export default function SignPage() {
               {contract.terms}
             </div>
 
+            {/* 전자서명 법적 고지 */}
+            <div className="bg-[#f5f3ef] border border-[#e5ddd0] rounded p-4 mb-6 text-[0.75rem] text-[#6b5d4d] leading-[1.8]">
+              <p className="font-bold text-[#2c2418] mb-1 text-xs">전자서명 법적 고지</p>
+              <p>본 계약서는 「전자문서 및 전자거래 기본법」 제4조 및 「전자서명법」 제3조에 따라 전자적 형태로 작성되었으며, 전자 서명을 통해 체결됩니다.</p>
+              <p>전자 서명 시 서명자의 IP 주소, 브라우저 정보, 서명 일시가 기록되며, 계약 내용의 무결성 검증을 위한 해시값이 생성·보관됩니다.</p>
+              <p>본 전자 계약서는 서면 계약서와 동일한 법적 효력을 가집니다.</p>
+            </div>
+
             <div className="w-full h-px bg-[#e5ddd0] my-6" />
 
             {/* 날짜 */}

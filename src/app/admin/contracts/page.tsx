@@ -27,6 +27,9 @@ interface Contract {
   sign_token: string;
   client_signature: string | null;
   signed_at: string | null;
+  sign_ip: string | null;
+  sign_user_agent: string | null;
+  content_hash: string | null;
   status: string;
   created_at: string;
 }
@@ -538,6 +541,15 @@ export default function ContractsPage() {
                       <img src={detail.client_signature} alt="고객 서명" className="h-20 max-w-full" />
                     </div>
                     <p className="text-xs text-emerald-600 mt-2 text-center">{detail.client_name} 님의 전자 서명</p>
+
+                    {/* 서명 증거 */}
+                    <div className="mt-3 pt-3 border-t border-emerald-200 space-y-1.5 text-xs text-emerald-700/70">
+                      <p className="font-semibold text-emerald-700 text-[0.7rem]">서명 증거 (Legal Evidence)</p>
+                      {detail.signed_at && <p>서명 일시: {new Date(detail.signed_at).toLocaleString("ko-KR")}</p>}
+                      {detail.sign_ip && <p>서명자 IP: {detail.sign_ip}</p>}
+                      {detail.sign_user_agent && <p className="truncate">브라우저: {detail.sign_user_agent}</p>}
+                      {detail.content_hash && <p className="font-mono break-all">무결성 해시: {detail.content_hash}</p>}
+                    </div>
                   </div>
                 ) : (
                   <div className="border border-amber-200 bg-amber-50/50 rounded-xl p-4 flex items-center gap-3">
@@ -663,6 +675,19 @@ ${specRows ? `
     <p class="b">심현수</p>
     <p style="color:#888">HS WEB 대표</p>
   </div>
+</div>
+
+<div style="background:#f0ece6;border:1px solid #d4cbbf;padding:10px 14px;margin-top:20px;font-size:7.5pt;color:#6b5d4d;line-height:1.7">
+  <p style="font-weight:700;margin-bottom:2px;font-size:8pt;color:#2c2418">전자서명 법적 고지</p>
+  <p>본 계약서는 「전자문서 및 전자거래 기본법」 제4조 및 「전자서명법」 제3조에 따라 전자적 형태로 작성되었으며, 전자 서명을 통해 체결되었습니다. 본 전자 계약서는 서면 계약서와 동일한 법적 효력을 가집니다.</p>
+</div>
+
+<div style="margin-top:16px;padding:10px 14px;border:1px solid #ddd;font-size:7pt;color:#888;line-height:1.8">
+  <p style="font-weight:700;margin-bottom:2px;font-size:7.5pt;color:#555">서명 증거 (Signing Evidence)</p>
+  <p>서명 일시: ${c.signed_at ? new Date(c.signed_at).toLocaleString("ko-KR") : "-"}</p>
+  <p>서명자 IP: ${c.sign_ip || "-"}</p>
+  <p>브라우저: ${c.sign_user_agent || "-"}</p>
+  <p>무결성 해시 (SHA-256): ${c.content_hash || "-"}</p>
 </div>
 
 <div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
