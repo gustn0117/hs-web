@@ -39,6 +39,8 @@ export default function DailyPage() {
   const [selectedProject, setSelectedProject] = useState("");
   const [taskInput, setTaskInput] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
 
   const fetchClients = useCallback(async () => {
     try {
@@ -84,6 +86,24 @@ export default function DailyPage() {
 
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const startEdit = (t: TaskItem) => {
+    setEditingId(t.id);
+    setEditValue(t.task);
+  };
+
+  const saveEdit = () => {
+    if (!editingId || !editValue.trim()) return;
+    setTasks((prev) => prev.map((t) => t.id === editingId ? { ...t, task: editValue.trim() } : t));
+    setEditingId(null);
+    setEditValue("");
+  };
+
+  const clearAll = () => {
+    if (tasks.length === 0) return;
+    if (!confirm("모든 할 일을 삭제하시겠습니까?")) return;
+    setTasks([]);
   };
 
   // 클라이언트별로 그룹핑
@@ -290,6 +310,11 @@ ${groupHtml}
                   <span className="text-[var(--color-gray)]">총 <strong className="text-[var(--color-dark)]">{tasks.length}</strong>건</span>
                   <span className="text-emerald-600">완료 <strong>{tasks.filter(t => t.done).length}</strong></span>
                   <span className="text-amber-600">미완료 <strong>{tasks.filter(t => !t.done).length}</strong></span>
+                  {tasks.length > 0 && (
+                    <button onClick={clearAll} className="text-red-400 hover:text-red-600 cursor-pointer bg-transparent border-none text-xs font-medium transition-colors">
+                      전체 삭제
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -315,8 +340,8 @@ ${groupHtml}
                         </div>
                         {/* 작업 목록 */}
                         {items.map((t, idx) => (
-                          <div key={t.id} className="px-6 py-2.5 flex items-center gap-3 hover:bg-gray-50/50 transition-colors">
-                            <span className="text-xs text-[var(--color-gray)] w-5 text-center">{idx + 1}</span>
+                          <div key={t.id} className="px-6 py-2.5 flex items-center gap-3 hover:bg-gray-50/50 transition-colors group">
+                            <span className="text-xs text-[var(--color-gray)] w-5 text-center shrink-0">{idx + 1}</span>
                             <button
                               onClick={() => toggleTask(t.id)}
                               className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-all bg-transparent ${
@@ -325,15 +350,39 @@ ${groupHtml}
                             >
                               {t.done && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>}
                             </button>
-                            <span className={`flex-1 text-sm ${t.done ? "line-through text-[var(--color-gray)]" : "text-[var(--color-dark)]"}`}>
-                              {t.task}
-                            </span>
-                            <button
-                              onClick={() => removeTask(t.id)}
-                              className="text-[var(--color-gray)] hover:text-red-500 cursor-pointer bg-transparent border-none text-sm opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity"
-                            >
-                              ×
-                            </button>
+                            {editingId === t.id ? (
+                              <input
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditingId(null); }}
+                                onBlur={saveEdit}
+                                className="flex-1 text-sm px-2 py-1 border border-blue-300 rounded-lg outline-none"
+                                autoFocus
+                              />
+                            ) : (
+                              <span
+                                className={`flex-1 text-sm cursor-pointer ${t.done ? "line-through text-[var(--color-gray)]" : "text-[var(--color-dark)]"}`}
+                                onDoubleClick={() => startEdit(t)}
+                              >
+                                {t.task}
+                              </span>
+                            )}
+                            <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {editingId !== t.id && (
+                                <button
+                                  onClick={() => startEdit(t)}
+                                  className="text-[var(--color-gray)] hover:text-blue-500 cursor-pointer bg-transparent border-none text-xs"
+                                >
+                                  수정
+                                </button>
+                              )}
+                              <button
+                                onClick={() => removeTask(t.id)}
+                                className="text-[var(--color-gray)] hover:text-red-500 cursor-pointer bg-transparent border-none text-xs"
+                              >
+                                삭제
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
