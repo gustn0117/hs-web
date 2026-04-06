@@ -66,6 +66,12 @@ export default function DailyPage() {
     else setSelectedProject("");
   };
 
+  const selectCustom = () => {
+    setSelectedClient({ id: "custom", name: search.trim() || "기타", phone: null, email: null, projects: [] });
+    setShowDropdown(false);
+    setSelectedProject("");
+  };
+
   const addTask = () => {
     if (!selectedClient || !taskInput.trim()) return;
     const newTask: TaskItem = {
@@ -150,25 +156,25 @@ export default function DailyPage() {
 <style>
 @page { size: A4; margin: 15mm 18mm; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: #222; font-size: 10pt; line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: #222; font-size: 10pt; line-height: 1.5; }
 table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-td, th { border: 1px solid #bbb; padding: 6px 10px; font-size: 9pt; }
-th { background: #f0ece6; font-weight: 700; text-align: center; font-size: 8.5pt; }
+td, th { border: 1px solid #999; padding: 6px 10px; font-size: 9pt; }
+th { font-weight: 700; text-align: center; font-size: 8.5pt; }
 .c { text-align: center; }
 .l { text-align: left; }
-.top-line { border-top: 3px solid #222; padding-top: 6px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-.top-line span { font-size: 8pt; color: #888; }
+.top-line { border-top: 2px solid #222; padding-top: 6px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+.top-line span { font-size: 8pt; color: #666; }
 .title-wrap { text-align: center; margin: 24px 0 20px; }
 .title-wrap h1 { font-size: 20pt; font-weight: 900; letter-spacing: 6px; }
 .title-wrap p { font-size: 9pt; color: #666; margin-top: 4px; }
 .summary { display: flex; justify-content: flex-end; gap: 16px; margin-bottom: 20px; font-size: 9pt; color: #555; }
 .summary strong { color: #222; }
 .client-block { margin-bottom: 20px; }
-.client-header { background: #f5f3ef; border: 1px solid #d4cbbf; border-bottom: none; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
-.client-name { font-size: 10pt; font-weight: 800; color: #2c2418; }
-.client-meta { font-size: 8pt; color: #8a7e6b; display: flex; gap: 12px; }
+.client-header { border: 1px solid #999; border-bottom: none; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+.client-name { font-size: 10pt; font-weight: 800; }
+.client-meta { font-size: 8pt; color: #666; display: flex; gap: 12px; }
 .footer { text-align: center; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 24px; font-size: 7.5pt; color: #999; }
-.memo-area { border: 1px solid #bbb; padding: 12px; min-height: 80px; margin-top: 8px; }
+.memo-area { border: 1px solid #999; padding: 12px; min-height: 80px; margin-top: 8px; }
 .memo-area p { font-size: 8.5pt; color: #888; }
 </style></head><body>
 <div class="top-line">
@@ -229,7 +235,7 @@ ${groupHtml}
                     placeholder="이름 또는 연락처 검색"
                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm"
                   />
-                  {showDropdown && filtered.length > 0 && (
+                  {showDropdown && search.trim() && (
                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-48 overflow-y-auto">
                       {filtered.map((c) => (
                         <button
@@ -244,6 +250,13 @@ ${groupHtml}
                           )}
                         </button>
                       ))}
+                      <button
+                        onClick={selectCustom}
+                        className="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors cursor-pointer bg-transparent border-none text-sm border-t border-gray-100"
+                      >
+                        <span className="text-[var(--color-accent)] font-medium">&quot;{search.trim()}&quot;</span>
+                        <span className="text-[var(--color-gray)] ml-1">(으)로 직접 추가</span>
+                      </button>
                     </div>
                   )}
                 </div>
