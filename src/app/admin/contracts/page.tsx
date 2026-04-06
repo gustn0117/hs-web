@@ -180,7 +180,13 @@ export default function ContractsPage() {
 
   const copyCode = (token: string) => {
     navigator.clipboard.writeText(token);
-    setCopied(token);
+    setCopied("code-" + token);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const copySignLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/contract/sign`);
+    setCopied("link");
     setTimeout(() => setCopied(null), 2000);
   };
 
@@ -272,7 +278,7 @@ export default function ContractsPage() {
                               className="inline-flex items-center gap-1.5 cursor-pointer bg-transparent border-none"
                             >
                               <span className="font-mono text-sm bg-gray-100 px-3 py-1 rounded-lg text-[var(--color-dark)] font-bold tracking-widest">{c.sign_token}</span>
-                              <span className="text-xs text-[var(--color-accent)] font-semibold">{copied === c.sign_token ? "복사됨!" : "복사"}</span>
+                              <span className="text-xs text-[var(--color-accent)] font-semibold">{copied === "code-" + c.sign_token ? "복사됨!" : "복사"}</span>
                             </button>
                           </td>
                           <td className="py-3 px-6 text-center">
@@ -283,13 +289,12 @@ export default function ContractsPage() {
                               >
                                 상세
                               </button>
-                              <a
-                                href="/contract/sign"
-                                target="_blank"
-                                className="text-xs text-[var(--color-accent)] font-semibold hover:underline no-underline"
+                              <button
+                                onClick={copySignLink}
+                                className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none"
                               >
-                                서명 페이지
-                              </a>
+                                {copied === "link" ? "링크 복사됨!" : "서명 링크 복사"}
+                              </button>
                               <button
                                 onClick={() => deleteContract(c.id)}
                                 className="text-xs text-red-500 font-semibold hover:underline cursor-pointer bg-transparent border-none"
