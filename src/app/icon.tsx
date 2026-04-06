@@ -10,19 +10,38 @@ export default function Icon() {
         style={{
           width: 32,
           height: 32,
-          background: "linear-gradient(135deg, #2563eb, #3b82f6)",
-          borderRadius: "8px",
+          background: "#0f172a",
+          borderRadius: "7px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "18px",
-          fontWeight: 900,
-          color: "#ffffff",
-          letterSpacing: "-0.5px",
-          fontFamily: "sans-serif",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        H
+        {/* 악센트 라인 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "3px",
+            background: "linear-gradient(90deg, #3b82f6, #60a5fa)",
+          }}
+        />
+        <span
+          style={{
+            fontSize: "19px",
+            fontWeight: 900,
+            color: "#ffffff",
+            letterSpacing: "-1px",
+            fontFamily: "sans-serif",
+            marginTop: "1px",
+          }}
+        >
+          H
+        </span>
       </div>
     ),
     { ...size }

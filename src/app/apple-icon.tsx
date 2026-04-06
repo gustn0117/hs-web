@@ -10,20 +10,34 @@ export default function AppleIcon() {
         style={{
           width: 180,
           height: 180,
-          background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+          background: "#0f172a",
           borderRadius: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        {/* 상단 악센트 라인 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "6px",
+            background: "linear-gradient(90deg, #3b82f6, #60a5fa)",
+          }}
+        />
         <span
           style={{
-            fontSize: "90px",
+            fontSize: "100px",
             fontWeight: 900,
             color: "#ffffff",
-            letterSpacing: "-3px",
+            letterSpacing: "-4px",
             fontFamily: "sans-serif",
+            marginTop: "4px",
           }}
         >
           H
