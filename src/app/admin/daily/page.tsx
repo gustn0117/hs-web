@@ -20,8 +20,6 @@ interface TaskItem {
   done: boolean;
 }
 
-function fmtNum(n: number) { return n.toLocaleString(); }
-
 function todayTitle() {
   const d = new Date();
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
@@ -198,40 +196,51 @@ ${groupHtml}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 입력 영역 */}
-          <div className="space-y-4">
-            {/* 클라이언트 검색 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-              <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-3">클라이언트 선택</h3>
-              <div className="relative">
-                <input
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setShowDropdown(true); setSelectedClient(null); }}
-                  onFocus={() => search && setShowDropdown(true)}
-                  placeholder="이름 또는 연락처 검색"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm"
-                />
-                {showDropdown && filtered.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-48 overflow-y-auto">
-                    {filtered.map((c) => (
-                      <button
-                        key={c.id}
-                        onClick={() => selectClient(c)}
-                        className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors cursor-pointer bg-transparent border-none text-sm"
-                      >
-                        <span className="font-medium text-[var(--color-dark)]">{c.name}</span>
-                        {c.phone && <span className="text-[var(--color-gray)] ml-2">{c.phone}</span>}
-                        {c.projects.length > 0 && (
-                          <span className="text-xs text-[var(--color-accent)] ml-2">{c.projects[0].name}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
+          <div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+              {/* 클라이언트 검색 */}
+              <div>
+                <label className="block text-xs font-semibold text-[var(--color-gray)] mb-1.5">클라이언트</label>
+                <div className="relative">
+                  <input
+                    value={search}
+                    onChange={(e) => { setSearch(e.target.value); setShowDropdown(true); setSelectedClient(null); }}
+                    onFocus={() => search && setShowDropdown(true)}
+                    placeholder="이름 또는 연락처 검색"
+                    className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm"
+                  />
+                  {showDropdown && filtered.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-48 overflow-y-auto">
+                      {filtered.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => selectClient(c)}
+                          className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors cursor-pointer bg-transparent border-none text-sm"
+                        >
+                          <span className="font-medium text-[var(--color-dark)]">{c.name}</span>
+                          {c.phone && <span className="text-[var(--color-gray)] ml-2">{c.phone}</span>}
+                          {c.projects.length > 0 && (
+                            <span className="text-xs text-[var(--color-accent)] ml-2">{c.projects[0].name}</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
+              {/* 선택된 클라이언트 정보 + 프로젝트 */}
+              {selectedClient && (
+                <div className="p-3 bg-blue-50 rounded-lg text-xs space-y-1 border border-blue-100">
+                  <p className="font-bold text-[var(--color-dark)]">{selectedClient.name}</p>
+                  {selectedClient.phone && <p className="text-[var(--color-gray)]">{selectedClient.phone}</p>}
+                  {selectedClient.projects.length > 0 && <p className="text-[var(--color-accent)]">프로젝트: {selectedClient.projects.map(p => p.name).join(", ")}</p>}
+                </div>
+              )}
+
               {selectedClient && selectedClient.projects.length > 1 && (
-                <div className="mt-3">
-                  <label className="block text-xs text-[var(--color-gray)] mb-1">프로젝트 선택</label>
+                <div>
+                  <label className="block text-xs font-semibold text-[var(--color-gray)] mb-1.5">프로젝트</label>
                   <select
                     value={selectedProject}
                     onChange={(e) => setSelectedProject(e.target.value)}
@@ -245,35 +254,26 @@ ${groupHtml}
                 </div>
               )}
 
-              {selectedClient && (
-                <div className="mt-3 p-3 bg-gray-50 rounded-lg text-xs text-[var(--color-gray)] space-y-0.5">
-                  <p><strong className="text-[var(--color-dark)]">{selectedClient.name}</strong></p>
-                  {selectedClient.phone && <p>{selectedClient.phone}</p>}
-                  {selectedClient.projects.length > 0 && <p>프로젝트: {selectedClient.projects.map(p => p.name).join(", ")}</p>}
-                </div>
-              )}
-            </div>
-
-            {/* 할 일 입력 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-              <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-3">할 일 추가</h3>
-              <div className="flex gap-2">
+              {/* 할 일 입력 */}
+              <div>
+                <label className="block text-xs font-semibold text-[var(--color-gray)] mb-1.5">할 일</label>
                 <input
                   value={taskInput}
                   onChange={(e) => setTaskInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addTask()}
-                  placeholder={selectedClient ? "작업 내용 입력" : "클라이언트를 먼저 선택하세요"}
+                  placeholder={selectedClient ? "작업 내용 입력 후 Enter" : "클라이언트를 먼저 선택하세요"}
                   disabled={!selectedClient}
-                  className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm disabled:bg-gray-50 disabled:text-gray-400"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm disabled:bg-gray-50 disabled:text-gray-400"
                 />
-                <button
-                  onClick={addTask}
-                  disabled={!selectedClient || !taskInput.trim()}
-                  className="px-4 py-2.5 bg-[var(--color-dark)] text-white rounded-lg text-sm font-semibold cursor-pointer border-none disabled:opacity-30"
-                >
-                  추가
-                </button>
               </div>
+
+              <button
+                onClick={addTask}
+                disabled={!selectedClient || !taskInput.trim()}
+                className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-lg text-sm font-semibold cursor-pointer border-none disabled:opacity-30 transition-opacity"
+              >
+                할 일 추가
+              </button>
             </div>
           </div>
 
