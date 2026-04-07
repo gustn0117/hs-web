@@ -30,7 +30,6 @@ export default function Navbar() {
     { href: "/process", label: "제작 과정" },
     { href: "/pricing", label: "가격 안내" },
     { href: "/domain-hosting", label: "도메인·호스팅" },
-    { href: "/testimonials", label: "고객 후기" },
     { href: "/client", label: "사이트 관리" },
   ];
 
