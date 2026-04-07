@@ -8,6 +8,8 @@ const plans = [
     name: "Basic",
     subtitle: "소규모 비즈니스",
     desc: "깔끔한 홈페이지가 필요한 개인사업자와 스타트업을 위한 패키지",
+    price: "249,000원",
+    priceSuffix: "부터 ~",
     icon: "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418",
     features: [
       "반응형 디자인 (5페이지)",
@@ -22,6 +24,8 @@ const plans = [
     name: "Professional",
     subtitle: "성장하는 비즈니스",
     desc: "브랜딩과 기능 모두 잡고 싶은 중소기업을 위한 전문 패키지",
+    price: "700,000원",
+    priceSuffix: "부터 ~",
     icon: "M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605",
     features: [
       "맞춤형 디자인 (10페이지)",
@@ -36,6 +40,8 @@ const plans = [
     name: "Enterprise",
     subtitle: "대규모 프로젝트",
     desc: "쇼핑몰, 웹앱 등 복잡한 요구사항에 맞춘 풀 커스텀 솔루션",
+    price: "",
+    priceSuffix: "상담 후 맞춤 견적",
     icon: "M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3H21m-3.75 3H21",
     features: [
       "풀 커스텀 디자인 & 개발",
@@ -203,20 +209,25 @@ export default function Pricing() {
                     p.popular ? "bg-white/[0.05]" : "bg-[var(--color-light)]"
                   }`}
                 >
-                  <div
-                    className={`text-xs font-medium mb-1 ${
-                      p.popular ? "text-gray-500" : "text-[var(--color-gray)]"
-                    }`}
-                  >
-                    견적 안내
-                  </div>
-                  <div
-                    className={`text-lg font-bold ${
-                      p.popular ? "text-white" : "text-[var(--color-dark)]"
-                    }`}
-                  >
-                    상담 후 맞춤 견적
-                  </div>
+                  {p.price ? (
+                    <>
+                      <div className={`text-2xl font-black ${p.popular ? "text-white" : "text-[var(--color-dark)]"}`}>
+                        {p.price}
+                      </div>
+                      <div className={`text-xs font-medium mt-1 ${p.popular ? "text-gray-500" : "text-[var(--color-gray)]"}`}>
+                        {p.priceSuffix}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={`text-xs font-medium mb-1 ${p.popular ? "text-gray-500" : "text-[var(--color-gray)]"}`}>
+                        견적 안내
+                      </div>
+                      <div className={`text-lg font-bold ${p.popular ? "text-white" : "text-[var(--color-dark)]"}`}>
+                        {p.priceSuffix}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Features */}
