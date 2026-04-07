@@ -26,7 +26,7 @@ export default function CTA() {
             <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
           <a
-            href="tel:010-0000-0000"
+            href="tel:010-3319-2509"
             className="inline-flex items-center gap-2 text-gray-300 border border-white/15 px-9 py-4 rounded-xl font-semibold hover:bg-white/5 transition-all duration-300 no-underline"
           >
             <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
