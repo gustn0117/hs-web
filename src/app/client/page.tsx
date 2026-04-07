@@ -42,9 +42,9 @@ export default function ClientLoginPage() {
     <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4">
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-extrabold text-[var(--color-dark)] mb-1">
+          <a href="/" className="text-2xl font-extrabold text-[var(--color-dark)] mb-1 no-underline inline-block hover:opacity-80 transition-opacity">
             HS <span className="gradient-text">WEB</span>
-          </h1>
+          </a>
           <p className="text-[var(--color-gray)] text-sm">고객 포털</p>
         </div>
 
