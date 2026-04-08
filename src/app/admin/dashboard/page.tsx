@@ -290,10 +290,12 @@ export default function AdminDashboard() {
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="text-[var(--color-dark)] font-semibold text-sm">진행 중인 프로젝트</h3>
-              <span className="text-xs text-[var(--color-gray)]">{activeProjects.length}건</span>
+              <Link href="/admin/projects" className="text-xs text-[var(--color-accent)] font-semibold no-underline hover:underline">
+                전체보기 ({activeProjects.length}) &rarr;
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100">
-              {activeProjects.map((p) => {
+              {activeProjects.slice(0, 9).map((p) => {
                 const sc = statusColors[p.status] ?? { dot: "bg-gray-400", text: "text-gray-700", bar: "bg-gray-400" };
                 return (
                   <a
