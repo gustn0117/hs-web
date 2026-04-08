@@ -38,7 +38,7 @@ interface Stats {
   }[];
   projectStatusCounts: Record<string, number>;
   activeProjects: { id: string; name: string; status: string; client_id: string; client_name: string }[];
-  hostingUnconfirmed: { id: string; provider: string; plan: string; amount: number; end_date: string; client_id: string; client_name: string }[];
+  hostingUnconfirmed: { id: string; project_name: string; project_status: string; provider: string; plan: string; amount: number; end_date: string; client_id: string; client_name: string }[];
   hostingRenewals: { id: string; provider: string; plan: string; end_date: string; client_id: string }[];
   domainRenewals: { id: string; domain_name: string; expires_date: string; client_id: string }[];
   expiredHosting: { id: string; provider: string; end_date: string; client_id: string }[];
@@ -342,7 +342,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[var(--color-dark)] truncate">{h.client_name}</p>
-                      <p className="text-xs text-[var(--color-gray)]">{h.provider}{h.plan ? ` · ${h.plan}` : ""}</p>
+                      <p className="text-xs text-[var(--color-gray)] truncate">{h.project_name}{h.provider ? ` · ${h.provider}` : ""}{h.plan ? ` · ${h.plan}` : ""}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 ml-3">

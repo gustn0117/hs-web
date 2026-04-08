@@ -134,17 +134,28 @@ export async function GET() {
       return (order[a.status] ?? 9) - (order[b.status] ?? 9);
     });
 
-  // Hosting without any hosting-type payment (pending/paid/confirming)
-  const clientsWithHostingPayment = new Set(
+  // Projects without hosting payment in pending state
+  const clientsWithHostingPending = new Set(
     payments
-      .filter((p) => p.type === "호스팅" && (p.status === "pending" || p.status === "paid" || p.status === "confirming"))
+      .filter((p) => p.type === "호스팅" && (p.status === "pending" || p.status === "confirming"))
       .map((p) => p.client_id)
   );
-  const hostingUnconfirmed = hosting
-    .filter((h) => !clientsWithHostingPayment.has(h.client_id))
-    .map((h) => {
-      const client = clients.find((c) => c.id === h.client_id);
-      return { id: h.id, provider: h.provider, plan: h.plan, amount: h.amount, end_date: h.end_date, client_id: h.client_id, client_name: client?.name ?? "알 수 없음" };
+  const hostingUnconfirmed = projects
+    .filter((p) => p.status !== "완료" && !clientsWithHostingPending.has(p.client_id))
+    .map((p) => {
+      const client = clients.find((c) => c.id === p.client_id);
+      const h = hosting.find((h) => h.client_id === p.client_id);
+      return {
+        id: p.id,
+        project_name: p.name,
+        project_status: p.status,
+        provider: h?.provider ?? "",
+        plan: h?.plan ?? "",
+        amount: h?.amount ?? 0,
+        end_date: h?.end_date ?? "",
+        client_id: p.client_id,
+        client_name: client?.name ?? "알 수 없음",
+      };
     });
 
   return NextResponse.json({
