@@ -134,6 +134,19 @@ export async function GET() {
       return (order[a.status] ?? 9) - (order[b.status] ?? 9);
     });
 
+  // Hosting without any hosting-type payment (pending/paid/confirming)
+  const clientsWithHostingPayment = new Set(
+    payments
+      .filter((p) => p.type === "호스팅" && (p.status === "pending" || p.status === "paid" || p.status === "confirming"))
+      .map((p) => p.client_id)
+  );
+  const hostingUnconfirmed = hosting
+    .filter((h) => !clientsWithHostingPayment.has(h.client_id))
+    .map((h) => {
+      const client = clients.find((c) => c.id === h.client_id);
+      return { id: h.id, provider: h.provider, plan: h.plan, amount: h.amount, end_date: h.end_date, client_id: h.client_id, client_name: client?.name ?? "알 수 없음" };
+    });
+
   return NextResponse.json({
     overview: {
       totalClients: clients.length,
@@ -151,6 +164,7 @@ export async function GET() {
     overduePayments,
     projectStatusCounts,
     activeProjects,
+    hostingUnconfirmed,
     hostingRenewals,
     domainRenewals,
     expiredHosting,

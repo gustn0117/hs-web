@@ -38,6 +38,7 @@ interface Stats {
   }[];
   projectStatusCounts: Record<string, number>;
   activeProjects: { id: string; name: string; status: string; client_id: string; client_name: string }[];
+  hostingUnconfirmed: { id: string; provider: string; plan: string; amount: number; end_date: string; client_id: string; client_name: string }[];
   hostingRenewals: { id: string; provider: string; plan: string; end_date: string; client_id: string }[];
   domainRenewals: { id: string; domain_name: string; expires_date: string; client_id: string }[];
   expiredHosting: { id: string; provider: string; end_date: string; client_id: string }[];
@@ -109,7 +110,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, activeProjects, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
+  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const maxMonthly = Math.max(...monthlyRevenue.map((m) => m.amount), 1);
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
@@ -312,6 +313,44 @@ export default function AdminDashboard() {
                   </a>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Hosting Unconfirmed */}
+        {hostingUnconfirmed && hostingUnconfirmed.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-orange-400 rounded-full" />
+                <h3 className="text-[var(--color-dark)] font-semibold text-sm">호스팅 결제 미확인</h3>
+              </div>
+              <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">{hostingUnconfirmed.length}건</span>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {hostingUnconfirmed.map((h) => (
+                <a
+                  key={h.id}
+                  href={`/admin/clients/${h.client_id}`}
+                  className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50/50 transition-colors no-underline"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3" />
+                      </svg>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[var(--color-dark)] truncate">{h.client_name}</p>
+                      <p className="text-xs text-[var(--color-gray)]">{h.provider}{h.plan ? ` · ${h.plan}` : ""}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0 ml-3">
+                    {h.amount > 0 && <span className="text-sm font-semibold text-[var(--color-dark)] tabular-nums">{fmtShort(h.amount)}</span>}
+                    {h.end_date && <span className="text-xs text-[var(--color-gray)]">~{h.end_date}</span>}
+                  </div>
+                </a>
+              ))}
             </div>
           </div>
         )}
