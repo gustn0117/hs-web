@@ -37,6 +37,7 @@ interface Stats {
     status: string;
   }[];
   projectStatusCounts: Record<string, number>;
+  activeProjects: { id: string; name: string; status: string; client_id: string; client_name: string }[];
   hostingRenewals: { id: string; provider: string; plan: string; end_date: string; client_id: string }[];
   domainRenewals: { id: string; domain_name: string; expires_date: string; client_id: string }[];
   expiredHosting: { id: string; provider: string; end_date: string; client_id: string }[];
@@ -108,7 +109,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
+  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, activeProjects, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const maxMonthly = Math.max(...monthlyRevenue.map((m) => m.amount), 1);
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
@@ -283,6 +284,35 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Active Projects Detail */}
+        {activeProjects.length > 0 && (
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-[var(--color-dark)] font-semibold text-sm">진행 중인 프로젝트</h3>
+              <span className="text-xs text-[var(--color-gray)]">{activeProjects.length}건</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100">
+              {activeProjects.map((p) => {
+                const sc = statusColors[p.status] ?? { dot: "bg-gray-400", text: "text-gray-700", bar: "bg-gray-400" };
+                return (
+                  <a
+                    key={p.id}
+                    href={`/admin/clients/${p.client_id}`}
+                    className="bg-white p-5 hover:bg-gray-50/50 transition-colors no-underline block"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`w-2 h-2 ${sc.dot} rounded-full shrink-0`} />
+                      <span className={`text-xs font-semibold ${sc.text}`}>{p.status}</span>
+                    </div>
+                    <p className="text-sm font-bold text-[var(--color-dark)] mb-1 truncate">{p.name}</p>
+                    <p className="text-xs text-[var(--color-gray)]">{p.client_name}</p>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Revenue by Type + Alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

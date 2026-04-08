@@ -122,6 +122,18 @@ export async function GET() {
     projectStatusCounts[p.status] = (projectStatusCounts[p.status] || 0) + 1;
   });
 
+  // Active projects with client names
+  const activeProjects = projects
+    .filter((p) => p.status !== "완료")
+    .map((p) => {
+      const client = clients.find((c) => c.id === p.client_id);
+      return { id: p.id, name: p.name, status: p.status, client_id: p.client_id, client_name: client?.name ?? "알 수 없음" };
+    })
+    .sort((a, b) => {
+      const order: Record<string, number> = { "진행중": 0, "상담중": 1, "유지보수": 2 };
+      return (order[a.status] ?? 9) - (order[b.status] ?? 9);
+    });
+
   return NextResponse.json({
     overview: {
       totalClients: clients.length,
@@ -138,6 +150,7 @@ export async function GET() {
     recentPayments,
     overduePayments,
     projectStatusCounts,
+    activeProjects,
     hostingRenewals,
     domainRenewals,
     expiredHosting,
