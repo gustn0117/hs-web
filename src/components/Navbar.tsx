@@ -19,10 +19,6 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [mobileOpen]);
 
   const links = [
     { href: "/services", label: "서비스" },
@@ -87,30 +83,43 @@ export default function Navbar() {
         </button>
       </div>
 
+      {/* Mobile menu overlay */}
       <div
-        className={`md:hidden fixed inset-0 top-[72px] bg-white/95 backdrop-blur-lg z-50 flex flex-col items-center justify-center gap-8 transition-all duration-300 ${
-          mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        className={`md:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileOpen(false)}
+      />
+
+      {/* Mobile menu panel */}
+      <div
+        className={`md:hidden fixed top-[72px] right-0 bottom-0 w-[280px] bg-white shadow-2xl z-40 flex flex-col py-6 transition-transform duration-300 ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {links.map((link, i) => (
+        <nav className="flex flex-col flex-1 overflow-y-auto px-4">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`px-4 py-3.5 rounded-xl text-[0.95rem] no-underline font-medium transition-colors ${
+                pathname === link.href
+                  ? "bg-blue-50 text-[var(--color-primary)]"
+                  : "text-[var(--color-dark)] hover:bg-gray-50"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="px-4 pt-4 border-t border-gray-100">
           <Link
-            key={link.href}
-            href={link.href}
-            className={`text-xl no-underline font-medium transition-all duration-300 ${
-              pathname === link.href ? "text-[var(--color-primary)]" : "text-[var(--color-dark)]"
-            }`}
-            style={{ transitionDelay: mobileOpen ? `${i * 50}ms` : "0ms", transform: mobileOpen ? "translateY(0)" : "translateY(20px)" }}
+            href="/contact"
+            className="block text-center bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white py-3 rounded-xl font-semibold no-underline"
           >
-            {link.label}
+            견적문의
           </Link>
-        ))}
-        <Link
-          href="/contact"
-          className="bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white px-8 py-3 rounded-lg font-semibold no-underline"
-          style={{ transitionDelay: mobileOpen ? `${links.length * 50}ms` : "0ms" }}
-        >
-          견적문의
-        </Link>
+        </div>
       </div>
     </nav>
   );
