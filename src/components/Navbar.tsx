@@ -84,34 +84,65 @@ export default function Navbar() {
 
       {/* Mobile menu overlay */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300 ${
+        className={`md:hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
           mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu panel — full height */}
       <div
-        className={`md:hidden fixed top-[72px] right-0 bottom-0 w-[280px] bg-white shadow-2xl z-40 flex flex-col py-6 transition-transform duration-300 ${
+        className={`md:hidden fixed top-0 right-0 bottom-0 w-[85%] max-w-[340px] bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <nav className="flex flex-col flex-1 overflow-y-auto px-4">
+        {/* 패널 헤더 */}
+        <div className="flex items-center justify-between px-6 h-[72px] border-b border-gray-100">
+          <span className="text-[1.25rem] font-extrabold tracking-tight text-[var(--color-dark)]">
+            HS <span className="gradient-text">WEB</span>
+          </span>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 cursor-pointer bg-transparent border-none transition-colors"
+            aria-label="메뉴 닫기"
+          >
+            <svg className="w-5 h-5 text-[var(--color-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* 메뉴 목록 */}
+        <nav className="flex flex-col flex-1 overflow-y-auto px-4 py-6 gap-1">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`px-4 py-3.5 rounded-xl text-[0.95rem] no-underline font-medium transition-colors ${
+              className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-[0.95rem] no-underline font-semibold transition-colors ${
                 pathname === link.href
                   ? "bg-blue-50 text-[var(--color-primary)]"
                   : "text-[var(--color-dark)] hover:bg-gray-50"
               }`}
             >
               {link.label}
+              <svg className={`w-4 h-4 ${pathname === link.href ? "text-[var(--color-primary)]" : "text-gray-300"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
             </Link>
           ))}
         </nav>
-        <div className="px-4 pt-4 border-t border-gray-100">
+
+        {/* 하단 CTA */}
+        <div className="px-4 py-4 border-t border-gray-100 space-y-2">
+          <a
+            href="tel:010-3319-2509"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-[var(--color-dark)] border border-gray-200 font-semibold text-sm no-underline"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+            010-3319-2509
+          </a>
           <Link
             href="/contact"
             className="block text-center bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white py-3 rounded-xl font-semibold no-underline"
