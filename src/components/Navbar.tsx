@@ -29,6 +29,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         scrolled
@@ -81,8 +82,9 @@ export default function Navbar() {
           <span className={`w-6 h-[2px] bg-[var(--color-dark)] transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[7px]" : ""}`} />
         </button>
       </div>
+    </nav>
 
-      {/* Mobile menu overlay */}
+    {/* Mobile menu overlay */}
       <div
         className={`md:hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
           mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -151,6 +153,6 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
