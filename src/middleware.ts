@@ -3,9 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // favicon.ico → icon (동적 파비콘 재사용)
+  // favicon.ico → icon (동적 파비콘 재사용, 캐시 재검증 강제)
   if (pathname === "/favicon.ico") {
-    return NextResponse.rewrite(new URL("/icon", request.url));
+    const response = NextResponse.rewrite(new URL("/icon", request.url));
+    response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+    return response;
   }
 
   // Admin routes protection
