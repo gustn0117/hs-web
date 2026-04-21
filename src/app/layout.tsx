@@ -43,6 +43,13 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico?v=2", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico?v=2",
+    apple: "/apple-icon?v=2",
+  },
   alternates: {
     canonical: SITE_URL,
     types: {

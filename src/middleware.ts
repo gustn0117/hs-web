@@ -3,13 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // favicon.ico → icon (동적 파비콘 재사용, 캐시 재검증 강제)
-  if (pathname === "/favicon.ico") {
-    const response = NextResponse.rewrite(new URL("/icon", request.url));
-    response.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
-    return response;
-  }
-
   // Admin routes protection
   if (pathname.startsWith("/admin") && pathname !== "/admin") {
     const token = request.cookies.get("hs-admin-token")?.value;
@@ -85,5 +78,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/favicon.ico", "/admin/:path+", "/client/dashboard/:path*", "/((?!_next|api|favicon).*)"],
+  matcher: ["/admin/:path+", "/client/dashboard/:path*", "/((?!_next|api|favicon).*)"],
 };
