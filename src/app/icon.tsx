@@ -45,6 +45,11 @@ export default function Icon() {
         </span>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      headers: {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+      },
+    }
   );
 }
