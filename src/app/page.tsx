@@ -11,17 +11,74 @@ function fmtDate(iso: string) {
 }
 
 const TRUST_BRANDS = [
-  "제조", "쇼핑몰", "병원·의료", "교육", "부동산", "F&B", "스타트업",
-  "전문직", "커뮤니티", "브랜드몰", "엔터테인먼트", "IT 서비스",
+  "외식·F&B", "제조업", "쇼핑몰", "병원·의료", "교육·학원", "부동산", "전문직",
+  "IT·SaaS", "엔터테인먼트", "커뮤니티", "브랜드몰", "뷰티·패션",
+];
+
+const WHY_POINTS = [
+  {
+    t: "합리적인 가격",
+    d: "249,000원부터 시작. 불필요한 오버헤드 없이 실속 있게.",
+    stat: "249,000원~",
+    icon: "M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    large: true,
+  },
+  {
+    t: "빠른 납기",
+    d: "Basic 1~2주. 자료 전달 완료 시점부터 일정 시작.",
+    stat: "1~2주",
+    icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z",
+  },
+  {
+    t: "무료 유지보수",
+    d: "플랜별 1~6개월 무상 지원. 텍스트·이미지 수정 포함.",
+    stat: "최대 6개월",
+    icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
+  },
+  {
+    t: "소스코드 100% 제공",
+    d: "납품 후 모든 저작권 이전. 원하는 어디든 이전 가능.",
+    stat: "100% 이전",
+    icon: "M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5",
+  },
+  {
+    t: "전자 계약",
+    d: "모든 프로젝트는 전자 계약서 기반. 범위·일정 명확히.",
+    stat: "법적 효력",
+    icon: "M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5",
+    dark: true,
+  },
+  {
+    t: "실제 대표가 직접 응대",
+    d: "디자이너 + 엔지니어 대표가 모든 프로젝트를 직접 관리.",
+    stat: "대표 직접",
+    icon: "M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z",
+  },
+];
+
+const MICRO_TESTIMONIALS = [
+  {
+    quote: "초보 사장인데 매번 친절히 설명해주시고, 요구사항 반영이 빨랐어요. 오픈 후 매장 문의가 확 늘었습니다.",
+    by: "외식업 · ○○ 카페",
+    rating: 5,
+  },
+  {
+    quote: "관리자 기능까지 풀 패키지. 학원 운영이 확실히 편해졌고 모바일 최적화도 완벽합니다.",
+    by: "교육 · ○○ 학원",
+    rating: 5,
+  },
+  {
+    quote: "B2B 영업용 사이트가 필요했는데 전문적이면서 신뢰감 있게 잘 만들어주셨어요.",
+    by: "제조업 · ○○ 테크",
+    rating: 5,
+  },
 ];
 
 export default async function Home() {
   let portfolio: PortfolioItem[] = [];
   try {
     portfolio = await getPortfolioItems();
-  } catch {
-    /* build-time fallback */
-  }
+  } catch {}
 
   const featured = portfolio[0];
   const rest = portfolio.slice(1, 5);
@@ -29,60 +86,134 @@ export default async function Home() {
   return (
     <>
       {/* ═════════ HERO ═════════ */}
-      <section className="relative overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32">
-        {/* Background */}
-        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-60" />
+      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28">
+        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-50" />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white via-white/95 to-transparent" />
 
         <div className="relative max-w-[1280px] mx-auto px-5">
-          <div className="mb-8">
-            <span className="p-eyebrow">
-              <span className="keep">2026 업데이트</span>
-              <span className="text-[var(--c-sub)] font-normal ml-1">· 무료 유지보수 포함</span>
-            </span>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
+            {/* Left: main copy */}
+            <div>
+              <div className="mb-7">
+                <span className="p-eyebrow">
+                  <span className="keep">2026 업데이트</span>
+                  <span className="text-[var(--c-sub)] font-normal ml-1">· 무료 유지보수 포함</span>
+                </span>
+              </div>
+
+              <h1 className="p-display mb-7">
+                <span className="block">비즈니스의 시작,</span>
+                <span className="block">
+                  <span className="relative inline-block">
+                    제대로 된 홈페이지
+                    <span
+                      aria-hidden
+                      className="absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15"
+                    />
+                  </span>
+                  <wbr />
+                  부터.
+                </span>
+              </h1>
+
+              <p className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[540px] leading-[1.7] mb-10">
+                기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
+                10분 상담으로 견적·일정을 확인하세요.
+              </p>
+
+              <div className="flex items-center gap-3 flex-wrap mb-8">
+                <Link href="/contact" className="p-btn p-btn-dark p-btn-xl">
+                  무료 상담 신청
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
+                <Link href="/portfolio" className="p-btn p-btn-xl">
+                  포트폴리오 보기
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-5 flex-wrap text-[12px] text-[var(--c-sub)]">
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
+                  <span>지금 상담 접수 가능</span>
+                </div>
+                <span className="p-sep" />
+                <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
+              </div>
+            </div>
+
+            {/* Right: visual stack — layered browser mockups */}
+            <div className="hidden lg:block relative h-[440px]">
+              {/* Back browser card */}
+              <div className="absolute top-8 right-16 w-[320px] rounded-[14px] border border-[var(--c-line)] bg-white overflow-hidden rotate-3" style={{ boxShadow: "0 20px 40px -10px rgba(0,0,0,0.08)" }}>
+                <div className="flex items-center gap-1.5 px-3 h-8 bg-[var(--c-bg-1)] border-b border-[var(--c-line)]">
+                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
+                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
+                  <span className="ml-2 text-[10px] text-[var(--c-sub-2)] tnum">shop.example.com</span>
+                </div>
+                <div className="aspect-[4/3] bg-gradient-to-br from-[var(--c-bg-1)] to-[var(--c-bg-2)] p-4 space-y-2">
+                  <div className="h-2 w-3/4 rounded-full bg-[var(--c-line)]" />
+                  <div className="h-2 w-1/2 rounded-full bg-[var(--c-line)]" />
+                  <div className="grid grid-cols-3 gap-1.5 mt-3">
+                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
+                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
+                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Front browser card */}
+              <div className="absolute top-20 left-0 w-[400px] rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden -rotate-2" style={{ boxShadow: "0 30px 60px -15px rgba(0,0,0,0.15)" }}>
+                <div className="flex items-center gap-1.5 px-3 h-9 bg-[var(--c-bg-1)] border-b border-[var(--c-line)]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
+                  <span className="ml-2 text-[10px] text-[var(--c-sub)] tnum">hsweb.pics</span>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-1">
+                      <span className="inline-flex w-5 h-5 rounded-[5px] bg-[var(--c-text)] text-white font-bold text-[10px] items-center justify-center">H</span>
+                      <span className="text-[11px] font-bold">HS WEB</span>
+                    </div>
+                    <div className="flex gap-3 text-[9px] text-[var(--c-sub)]">
+                      <span>서비스</span>
+                      <span>포트폴리오</span>
+                      <span>가격</span>
+                    </div>
+                  </div>
+                  <div className="h-5 w-[70%] rounded bg-[var(--c-text)] mb-2" />
+                  <div className="h-5 w-[50%] rounded bg-[var(--c-main)] mb-4" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="aspect-video rounded-lg bg-gradient-to-br from-[var(--c-main-soft)] to-[var(--c-bg-2)]" />
+                    <div className="aspect-video rounded-lg bg-gradient-to-br from-[var(--c-bg-2)] to-[var(--c-bg-3)]" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating stat bubble */}
+              <div className="absolute bottom-8 right-4 w-[180px] rounded-[14px] bg-white border border-[var(--c-line)] p-4" style={{ boxShadow: "0 12px 28px -8px rgba(0,0,0,0.12)" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex w-6 h-6 rounded-full bg-[var(--c-new-bg)] items-center justify-center">
+                    <svg className="w-3.5 h-3.5 text-[var(--c-new)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </span>
+                  <span className="text-[11px] font-bold text-[var(--c-new)]">LIVE</span>
+                </div>
+                <p className="text-[11px] text-[var(--c-sub)] mb-1">현재 진행중 프로젝트</p>
+                <p className="p-stat text-[24px] leading-none nowrap">
+                  <span>{portfolio.length || 12}</span>
+                  <span className="text-[12px] text-[var(--c-sub)] ml-1">건</span>
+                </p>
+              </div>
+            </div>
           </div>
 
-          <h1 className="p-display mb-8 max-w-[1100px]">
-            <span className="block">비즈니스의 시작,</span>
-            <span className="block">
-              <span className="relative inline-block">
-                제대로 된 홈페이지
-                <span
-                  aria-hidden
-                  className="absolute left-0 right-0 bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/18"
-                />
-              </span>
-              <wbr />
-              부터.
-            </span>
-          </h1>
-
-          <p className="text-[17px] md:text-[20px] text-[var(--c-text-2)] max-w-[640px] leading-[1.7] mb-12">
-            기획 · 디자인 · 개발 · 운영까지.
-            <br className="hidden md:block" />
-            10분 상담으로 견적·일정을 확인하세요.
-          </p>
-
-          <div className="flex items-center gap-3 flex-wrap mb-16">
-            <Link href="/contact" className="p-btn p-btn-dark p-btn-xl">
-              무료 상담 신청
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <Link href="/portfolio" className="p-btn p-btn-xl">
-              포트폴리오 보기
-            </Link>
-            <a href="tel:010-3319-2509" className="hidden sm:inline-flex items-center gap-2 h-[60px] px-4 text-[var(--c-text-2)] hover:text-[var(--c-text)] no-underline tnum text-[15px] font-semibold">
-              <svg className="w-4 h-4 text-[var(--c-main)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-              </svg>
-              010-3319-2509
-            </a>
-          </div>
-
-          {/* Stats in a row — big numbers */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
+          {/* Stats bar — compact */}
+          <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
             {[
               { num: "249,000", unit: "원~", label: "제작 시작가" },
               { num: "1~2", unit: "주", label: "평균 제작 기간" },
@@ -91,16 +222,12 @@ export default async function Home() {
             ].map((s, i) => (
               <div
                 key={s.label}
-                className={`py-8 md:py-10 px-4 md:px-6 ${
-                  i !== 0 ? "md:border-l" : ""
-                } ${i < 2 ? "border-b md:border-b-0" : ""} ${
-                  i % 2 === 1 ? "border-l" : ""
-                } border-[var(--c-line)]`}
+                className={`py-7 md:py-9 px-4 md:px-6 ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
               >
-                <p className="text-[12px] text-[var(--c-sub)] font-medium mb-3 keep">{s.label}</p>
+                <p className="text-[11px] text-[var(--c-sub)] font-semibold mb-3 keep tracking-wider uppercase">{s.label}</p>
                 <p className="p-number nowrap">
                   <span>{s.num}</span>
-                  <span className="text-[16px] md:text-[20px] text-[var(--c-sub)] font-bold ml-1">{s.unit}</span>
+                  <span className="text-[15px] md:text-[18px] text-[var(--c-sub)] font-bold ml-1">{s.unit}</span>
                 </p>
               </div>
             ))}
@@ -108,8 +235,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Trust band — marquee ═════════ */}
-      <section className="border-t border-b border-[var(--c-line)] bg-[var(--c-bg-1)] py-8">
+      {/* ═════════ Trust marquee ═════════ */}
+      <section className="border-t border-b border-[var(--c-line)] bg-[var(--c-bg-1)] py-7">
         <div className="flex items-center gap-6 max-w-[1280px] mx-auto px-5 mb-5">
           <span className="text-[12px] font-bold text-[var(--c-sub)] tracking-wider uppercase keep">Trusted by</span>
           <div className="flex-1 h-px bg-[var(--c-line)]" />
@@ -119,7 +246,7 @@ export default async function Home() {
           {[0, 1].map((k) => (
             <div key={k} className="p-marquee-track" aria-hidden={k === 1}>
               {TRUST_BRANDS.map((b, i) => (
-                <span key={i} className="flex items-center gap-3 text-[20px] md:text-[26px] font-bold text-[var(--c-text-2)] tracking-tight keep">
+                <span key={i} className="flex items-center gap-3 text-[20px] md:text-[24px] font-bold text-[var(--c-text-2)] tracking-tight keep">
                   {b}
                   <span className="text-[var(--c-line-3)] text-[16px]">●</span>
                 </span>
@@ -129,16 +256,64 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Services — Bento grid ═════════ */}
+      {/* ═════════ Why HS WEB — Bento ═════════ */}
       <section className="py-24 md:py-32">
         <div className="max-w-[1280px] mx-auto px-5">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
-            <div className="max-w-[720px]">
+            <div className="max-w-[680px]">
+              <p className="p-overline mb-3">WHY HS WEB</p>
+              <h2 className="p-h1-xl mb-4">
+                다른 에이전시와<br />
+                6가지가 다릅니다.
+              </h2>
+              <p className="text-[16px] text-[var(--c-sub)] leading-[1.7]">
+                작은 팀이지만 투명하고 빠르게. 합리적 가격으로 최고의 결과를 만듭니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+            {WHY_POINTS.map((p, i) => {
+              const span = p.large ? "md:col-span-3 md:row-span-2" : "md:col-span-2";
+              return (
+                <div
+                  key={i}
+                  className={`p-bento ${p.dark ? "p-bento-dark" : ""} ${span} flex flex-col ${p.large ? "min-h-[320px]" : "min-h-[180px]"}`}
+                >
+                  <div className="flex items-start justify-between mb-auto">
+                    <div className={`w-11 h-11 rounded-[10px] flex items-center justify-center ${p.dark ? "bg-white/10" : "bg-[var(--c-bg-2)]"}`}>
+                      <svg className={`w-5 h-5 ${p.dark ? "text-white" : "text-[var(--c-text)]"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d={p.icon} />
+                      </svg>
+                    </div>
+                    <span className={`text-[13px] font-bold tracking-wider keep ${p.dark ? "text-white/60" : "text-[var(--c-sub)]"}`}>
+                      {p.stat}
+                    </span>
+                  </div>
+                  <div className="mt-auto pt-8">
+                    <h3 className={`${p.large ? "text-[24px] md:text-[30px]" : "text-[18px]"} font-bold tracking-tight mb-2 ${p.dark ? "text-white" : "text-[var(--c-text)]"}`}>
+                      {p.t}
+                    </h3>
+                    <p className={`text-[13.5px] leading-[1.65] ${p.dark ? "text-white/70" : "text-[var(--c-sub)]"} ${p.large ? "max-w-[340px]" : ""}`}>
+                      {p.d}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════ Services — Bento ═════════ */}
+      <section className="py-24 md:py-32 border-t border-[var(--c-line)]">
+        <div className="max-w-[1280px] mx-auto px-5">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
+            <div className="max-w-[680px]">
               <p className="p-overline mb-3">SERVICES</p>
               <h2 className="p-h1-xl mb-4">
-                필요한 모든 웹 서비스,
-                <br />
-                HS WEB 한 곳에서.
+                필요한 모든 웹 서비스,<br />
+                한 곳에서.
               </h2>
               <p className="text-[16px] text-[var(--c-sub)] leading-[1.7]">
                 단순한 홈페이지 제작을 넘어 브랜드 성장에 필요한 전반을 지원합니다.
@@ -152,7 +327,6 @@ export default async function Home() {
             </Link>
           </div>
 
-          {/* Bento — first card is large */}
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
             {services.slice(0, 6).map((s, i) => {
               const isLarge = i === 0;
@@ -198,16 +372,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Portfolio — Magazine ═════════ */}
+      {/* ═════════ Portfolio ═════════ */}
       <section className="p-section-dark py-24 md:py-32">
         <div className="max-w-[1280px] mx-auto px-5">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
             <div>
               <p className="p-overline mb-3 text-[var(--c-main-l)]">PORTFOLIO</p>
               <h2 className="p-h1-xl text-white mb-4">
-                숫자로 증명하는
-                <br />
-                프로젝트 성과.
+                숫자로 증명하는<br />프로젝트 성과.
               </h2>
               <p className="text-[16px] text-white/60 leading-[1.7] max-w-[560px]">
                 {portfolio.length > 0
@@ -282,16 +454,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Process — Timeline ═════════ */}
+      {/* ═════════ Process ═════════ */}
       <section className="py-24 md:py-32 border-b border-[var(--c-line)]">
         <div className="max-w-[1280px] mx-auto px-5">
           <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-16">
             <div className="lg:sticky lg:top-24 lg:self-start">
               <p className="p-overline mb-3">HOW IT WORKS</p>
               <h2 className="p-h1-xl mb-5">
-                상담부터 런칭까지,
-                <br />
-                단계별 진행.
+                상담부터 런칭까지,<br />단계별 진행.
               </h2>
               <p className="text-[15px] text-[var(--c-sub)] leading-[1.7] mb-8">
                 모든 프로젝트는 동일한 체계로 진행됩니다. 각 단계마다 고객과 공유하며 투명하게.
@@ -338,11 +508,7 @@ export default async function Home() {
             ].map((plan) => (
               <div
                 key={plan.name}
-                className={`relative p-8 rounded-[18px] border ${
-                  plan.featured
-                    ? "bg-[var(--c-text)] text-white border-[var(--c-text)]"
-                    : "bg-white border-[var(--c-line)]"
-                }`}
+                className={`relative p-8 rounded-[18px] border ${plan.featured ? "bg-[var(--c-text)] text-white border-[var(--c-text)]" : "bg-white border-[var(--c-line)]"}`}
               >
                 {plan.featured && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center h-6 px-3 rounded-full bg-white text-[var(--c-text)] text-[11px] font-bold tracking-[0.12em]">
@@ -350,22 +516,16 @@ export default async function Home() {
                   </span>
                 )}
                 <div className="mb-6">
-                  <p className={`text-[12px] font-bold uppercase tracking-[0.15em] mb-1 ${plan.featured ? "text-white/70" : "text-[var(--c-main)]"}`}>
-                    {plan.name}
-                  </p>
-                  <h3 className={`text-[22px] font-bold tracking-tight ${plan.featured ? "text-white" : "text-[var(--c-text)]"}`}>
-                    {plan.subtitle}
-                  </h3>
+                  <p className={`text-[12px] font-bold uppercase tracking-wider mb-1 ${plan.featured ? "text-white/70" : "text-[var(--c-sub)]"}`}>{plan.name}</p>
+                  <h3 className={`text-[18px] font-bold ${plan.featured ? "text-white" : "text-[var(--c-text)]"}`}>{plan.subtitle}</h3>
                 </div>
-
                 <div className="mb-8 flex items-baseline gap-1 nowrap">
                   <span className={`p-stat text-[44px] leading-none ${plan.featured ? "text-white" : ""}`}>{plan.price}</span>
                   <span className={`text-[14px] font-semibold ${plan.featured ? "text-white/60" : "text-[var(--c-sub)]"}`}>{plan.suffix}</span>
                 </div>
-
-                <ul className="list-none space-y-3 mb-8">
+                <ul className="list-none space-y-3 mb-7">
                   {plan.features.map((f) => (
-                    <li key={f} className={`flex items-start gap-2 text-[14px] ${plan.featured ? "text-white/85" : "text-[var(--c-text-2)]"}`}>
+                    <li key={f} className={`flex items-start gap-2 text-[13.5px] ${plan.featured ? "text-white/85" : "text-[var(--c-text-2)]"}`}>
                       <svg className={`w-4 h-4 shrink-0 mt-0.5 ${plan.featured ? "text-white" : "text-[var(--c-main)]"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
@@ -373,14 +533,9 @@ export default async function Home() {
                     </li>
                   ))}
                 </ul>
-
                 <Link
                   href="/contact"
-                  className={`inline-flex items-center justify-center w-full h-12 rounded-[10px] font-bold text-[14px] no-underline transition-colors ${
-                    plan.featured
-                      ? "bg-white text-[var(--c-text)] hover:bg-[var(--c-bg-2)]"
-                      : "bg-[var(--c-text)] text-white hover:bg-black"
-                  }`}
+                  className={`inline-flex items-center justify-center w-full h-12 rounded-[10px] font-bold text-[14px] no-underline transition-colors ${plan.featured ? "bg-white text-[var(--c-text)] hover:bg-[var(--c-bg-2)]" : "bg-[var(--c-text)] text-white hover:bg-black"}`}
                 >
                   상담 신청
                 </Link>
@@ -390,20 +545,54 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ═════════ Testimonials ═════════ */}
+      <section className="py-24 md:py-32 border-t border-[var(--c-line)]">
+        <div className="max-w-[1280px] mx-auto px-5">
+          <div className="text-center mb-14">
+            <p className="p-overline mb-3">TESTIMONIALS</p>
+            <h2 className="p-h1-xl mb-4">
+              고객이 직접 남긴<br />후기로 증명합니다.
+            </h2>
+            <p className="text-[16px] text-[var(--c-sub)] leading-[1.7]">평균 만족도 4.9/5.0 · 재의뢰율 95%</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {MICRO_TESTIMONIALS.map((t, i) => (
+              <div key={i} className="p-7 rounded-[14px] border border-[var(--c-line)] bg-white flex flex-col">
+                <div className="flex items-center gap-0.5 text-[var(--c-event)] mb-4">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <svg key={j} className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-[15px] text-[var(--c-text)] leading-[1.7] mb-5 flex-1">
+                  <span className="text-[var(--c-main)] text-[18px] font-bold">“</span>
+                  {t.quote}
+                  <span className="text-[var(--c-main)] text-[18px] font-bold">”</span>
+                </p>
+                <p className="text-[12.5px] text-[var(--c-sub)] pt-4 border-t border-[var(--c-line)]">— {t.by}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href="/testimonials" className="p-btn">전체 후기 보기</Link>
+          </div>
+        </div>
+      </section>
+
       {/* ═════════ FAQ ═════════ */}
-      <section className="py-24 md:py-32 border-b border-[var(--c-line)]">
+      <section className="py-24 md:py-32 bg-[var(--c-bg-1)] border-t border-[var(--c-line)]">
         <div className="max-w-[1080px] mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr] gap-14">
             <div>
               <p className="p-overline mb-3">FAQ</p>
               <h2 className="p-h1-xl mb-5">
-                궁금한 점이
-                <br />
-                있으신가요?
+                궁금한 점이<br />있으신가요?
               </h2>
               <p className="text-[15px] text-[var(--c-sub)] leading-[1.7] mb-8">
-                자주 묻는 질문을 모아뒀습니다.
-                <br />더 궁금하신 사항은 편하게 연락 주세요.
+                자주 묻는 질문을 모아뒀습니다.<br />더 궁금하신 사항은 편하게 연락 주세요.
               </p>
               <div className="flex items-center gap-2 flex-wrap">
                 <a href="tel:010-3319-2509" className="p-btn tnum">010-3319-2509</a>
@@ -437,15 +626,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Final CTA — big dark ═════════ */}
+      {/* ═════════ Final CTA ═════════ */}
       <section className="p-section-dark py-28 md:py-36 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.08]" />
         <div className="relative max-w-[1000px] mx-auto px-5 text-center">
           <p className="p-overline mb-4 text-[var(--c-main-l)]">GET STARTED</p>
           <h2 className="p-display text-white mb-6">
-            이제,
-            <br />
-            당신의 차례입니다.
+            이제,<br />당신의 차례입니다.
           </h2>
           <p className="text-[18px] text-white/70 mb-10 max-w-[520px] mx-auto leading-[1.7]">
             첫 상담은 무료입니다. 어떤 프로젝트든 편하게 문의해주세요.
