@@ -323,21 +323,21 @@ export default async function Home() {
       </section>
 
       {/* ═════════ Portfolio ═════════ */}
-      <section className="p-section-dark py-24 md:py-32">
+      <section className="py-24 md:py-32 border-t border-[var(--c-line)]">
         <div className="max-w-[1280px] mx-auto px-5">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
             <div>
-              <p className="p-overline mb-3 text-[var(--c-main-l)]">PORTFOLIO</p>
-              <h2 className="p-h1-xl text-white mb-4">
+              <p className="p-overline mb-3">PORTFOLIO</p>
+              <h2 className="p-h1-xl mb-4">
                 숫자로 증명하는<br />프로젝트 성과.
               </h2>
-              <p className="text-[16px] text-white/60 leading-[1.7] max-w-[560px]">
+              <p className="text-[16px] text-[var(--c-sub)] leading-[1.7] max-w-[560px]">
                 {portfolio.length > 0
                   ? `총 ${portfolio.length}개의 프로젝트를 성공적으로 런칭했습니다.`
                   : "곧 새로운 프로젝트들을 공개합니다."}
               </p>
             </div>
-            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[14px] font-semibold no-underline text-white p-anim-link">
+            <Link href="/portfolio" className="inline-flex items-center gap-2 text-[14px] font-semibold no-underline text-[var(--c-text)] p-anim-link">
               전체 보기
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -347,10 +347,8 @@ export default async function Home() {
 
           {portfolio.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-white/60 mb-4">포트폴리오가 곧 업데이트됩니다.</p>
-              <Link href="/contact" className="p-btn">
-                <span className="text-[var(--c-text)]">첫 프로젝트 상담 신청</span>
-              </Link>
+              <p className="text-[var(--c-sub)] mb-4">포트폴리오가 곧 업데이트됩니다.</p>
+              <Link href="/contact" className="p-btn p-btn-dark">첫 프로젝트 상담 신청</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4">
@@ -361,41 +359,41 @@ export default async function Home() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={featured.thumbnail} alt={featured.title} />
                     ) : (
-                      <div className="w-full h-full bg-[#1a1a1c]" />
+                      <div className="w-full h-full bg-[var(--c-bg-2)]" />
                     )}
                     {featured.featured && (
                       <span className="absolute top-4 left-4 b-hot">FEATURED</span>
                     )}
-                    <div className="absolute bottom-4 right-4 p-arrow-btn !bg-white !text-[var(--c-text)]">
+                    <div className="absolute bottom-4 right-4 p-arrow-btn">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                       </svg>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mb-2 text-[12px] text-white/60">
-                    <span className="p-chip !border-white/15 !bg-white/5 !text-white/80">{featured.category || "프로젝트"}</span>
+                  <div className="flex items-center gap-2 mb-2 text-[12px] text-[var(--c-sub)]">
+                    <span className="p-chip">{featured.category || "프로젝트"}</span>
                     <span className="tnum">{fmtDate(featured.createdAt)}</span>
                   </div>
-                  <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-1 text-white">{featured.title}</h3>
-                  <p className="text-[14px] text-white/60 line-clamp-2 max-w-[560px]">{featured.description || featured.client}</p>
+                  <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-1 text-[var(--c-text)]">{featured.title}</h3>
+                  <p className="text-[14px] text-[var(--c-sub)] line-clamp-2 max-w-[560px]">{featured.description || featured.client}</p>
                 </Link>
               )}
 
               <div className="grid grid-cols-2 gap-3">
                 {rest.map((p) => (
                   <Link key={p.id} href={`/portfolio/${p.id}`} className="group no-underline block">
-                    <div className="p-showcase !aspect-square !rounded-[12px] mb-2 relative bg-[#1a1a1c]">
+                    <div className="p-showcase !aspect-square !rounded-[12px] mb-2 relative bg-[var(--c-bg-2)]">
                       {p.thumbnail && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.thumbnail} alt={p.title} />
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-white/50 mb-0.5">
+                    <div className="flex items-center gap-1.5 text-[11px] text-[var(--c-sub)] mb-0.5">
                       <span>{p.category || "프로젝트"}</span>
                       <span>·</span>
                       <span className="tnum">{fmtDate(p.createdAt)}</span>
                     </div>
-                    <h4 className="text-[15px] font-semibold tracking-tight text-white line-clamp-1">{p.title}</h4>
+                    <h4 className="text-[15px] font-semibold tracking-tight text-[var(--c-text)] line-clamp-1">{p.title}</h4>
                   </Link>
                 ))}
               </div>
