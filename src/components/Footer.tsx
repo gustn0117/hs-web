@@ -35,9 +35,13 @@ export default function Footer() {
       <div className="max-w-[1280px] mx-auto px-5 py-14">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
           <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-1.5 no-underline mb-4">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-[8px] bg-[var(--c-text)] text-white font-extrabold text-[14px]">H</span>
-              <span className="text-[18px] font-extrabold tracking-tight text-[var(--c-text)]">HS WEB</span>
+            <Link href="/" className="flex items-baseline gap-1.5 no-underline mb-4 group">
+              <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                HS WEB
+              </span>
+              <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase hidden sm:inline">
+                Web Agency
+              </span>
             </Link>
             <p className="text-[13.5px] text-[var(--c-sub)] leading-[1.75] max-w-[360px] mb-5">
               홈페이지 제작부터 운영까지, 비즈니스 성장에 필요한 모든 웹 솔루션을 제공하는 전문 웹에이전시입니다.
