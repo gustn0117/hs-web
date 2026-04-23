@@ -38,7 +38,7 @@ export default async function PortfolioPage() {
       stats={[
         { label: "총 프로젝트", value: String(items.length), suffix: "건" },
         { label: "분야", value: String(categories.length || 0), suffix: "개" },
-        { label: "평균 만족도", value: "4.9", suffix: "/ 5.0" },
+        { label: "평균 만족도", value: "5.0", suffix: "/ 5.0" },
         { label: "재의뢰율", value: "95", suffix: "%" },
       ]}
     >

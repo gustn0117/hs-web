@@ -147,7 +147,7 @@ export default async function Home() {
               <svg className="w-3 h-3 text-[var(--c-event)]" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              평균 만족도 <strong className="text-[var(--c-text)]">4.9/5.0</strong>
+              평균 만족도 <strong className="text-[var(--c-text)]">5.0/5.0</strong>
             </span>
           </div>
 
@@ -216,35 +216,40 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-            {WHY_POINTS.map((p, i) => {
-              const span = p.large ? "md:col-span-3 md:row-span-2" : "md:col-span-2";
-              return (
-                <div
-                  key={i}
-                  className={`p-bento ${p.dark ? "p-bento-dark" : ""} ${span} flex flex-col ${p.large ? "min-h-[320px]" : "min-h-[180px]"}`}
-                >
-                  <div className="flex items-start justify-between mb-auto">
-                    <div className={`w-11 h-11 rounded-[10px] flex items-center justify-center ${p.dark ? "bg-white/10" : "bg-[var(--c-bg-2)]"}`}>
-                      <svg className={`w-5 h-5 ${p.dark ? "text-white" : "text-[var(--c-text)]"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d={p.icon} />
-                      </svg>
-                    </div>
-                    <span className={`text-[13px] font-bold tracking-wider keep ${p.dark ? "text-white/60" : "text-[var(--c-sub)]"}`}>
-                      {p.stat}
-                    </span>
-                  </div>
-                  <div className="mt-auto pt-8">
-                    <h3 className={`${p.large ? "text-[24px] md:text-[30px]" : "text-[18px]"} font-bold tracking-tight mb-2 ${p.dark ? "text-white" : "text-[var(--c-text)]"}`}>
-                      {p.t}
-                    </h3>
-                    <p className={`text-[13.5px] leading-[1.65] ${p.dark ? "text-white/70" : "text-[var(--c-sub)]"} ${p.large ? "max-w-[340px]" : ""}`}>
-                      {p.d}
-                    </p>
-                  </div>
+          {/* Horizontal split list — big stat left, title/desc right */}
+          <div className="border-t border-[var(--c-line)]">
+            {WHY_POINTS.map((p, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-[60px_1fr] md:grid-cols-[90px_280px_1fr_60px] gap-4 md:gap-8 items-center py-7 md:py-9 border-b border-[var(--c-line)] group"
+              >
+                {/* Number */}
+                <div className="text-[28px] md:text-[36px] font-black tracking-tight text-[var(--c-line-3)] group-hover:text-[var(--c-text)] transition-colors tnum">
+                  {String(i + 1).padStart(2, "0")}
                 </div>
-              );
-            })}
+
+                {/* Title */}
+                <div>
+                  <h3 className="text-[18px] md:text-[22px] font-bold tracking-tight text-[var(--c-text)]">
+                    {p.t}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                <div className="col-span-2 md:col-span-1">
+                  <p className="text-[14px] md:text-[15px] text-[var(--c-sub)] leading-[1.7]">
+                    {p.d}
+                  </p>
+                </div>
+
+                {/* Stat highlight */}
+                <div className="col-span-2 md:col-span-1 hidden md:flex justify-end">
+                  <span className="inline-flex items-center h-8 px-3 rounded-full bg-[var(--c-main-bg)] text-[var(--c-main)] text-[12.5px] font-bold tracking-wide tnum keep">
+                    {p.stat}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -271,43 +276,46 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-            {services.slice(0, 6).map((s, i) => {
-              const isLarge = i === 0;
-              const isDark = i === 3;
-              const span = isLarge ? "md:col-span-3 md:row-span-2" : "md:col-span-2";
-              return (
-                <Link
-                  key={s.slug}
-                  href={`/services/${s.slug}`}
-                  className={`p-bento ${isDark ? "p-bento-dark" : ""} ${span} no-underline flex flex-col group ${isLarge ? "min-h-[340px]" : "min-h-[180px]"}`}
-                >
-                  <div className="flex items-start justify-between mb-auto">
-                    <span className={`text-[11px] font-bold tracking-[0.14em] ${isDark ? "text-white/60" : "text-[var(--c-sub)]"}`}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <svg className={`w-5 h-5 ${isDark ? "text-white/80" : "text-[var(--c-sub-2)]"} group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                    </svg>
-                  </div>
-                  <div className="mt-auto pt-10">
-                    <h3 className={`${isLarge ? "text-[28px] md:text-[36px]" : "text-[20px]"} font-bold tracking-tight mb-2 ${isDark ? "text-white" : "text-[var(--c-text)]"}`}>
-                      {s.title}
-                    </h3>
-                    <p className={`text-[14px] leading-[1.6] ${isDark ? "text-white/70" : "text-[var(--c-sub)]"} ${isLarge ? "max-w-[420px]" : "line-clamp-2"}`}>
-                      {s.subtitle}
-                    </p>
-                    {isLarge && (
-                      <div className="flex flex-wrap gap-1.5 mt-4">
-                        {s.tags.slice(0, 4).map((t) => (
-                          <span key={t} className={`p-chip ${isDark ? "!border-white/20 !bg-white/5 !text-white" : ""}`}>{t}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
+          {/* Horizontal list — same pattern as Why */}
+          <div className="border-t border-[var(--c-line)]">
+            {services.slice(0, 6).map((s, i) => (
+              <Link
+                key={s.slug}
+                href={`/services/${s.slug}`}
+                className="grid grid-cols-[60px_1fr_24px] md:grid-cols-[90px_280px_1fr_100px_24px] gap-4 md:gap-8 items-center py-7 md:py-9 border-b border-[var(--c-line)] group no-underline hover:bg-[var(--c-bg-1)] -mx-5 px-5 md:-mx-6 md:px-6 transition-colors"
+              >
+                {/* Number */}
+                <div className="text-[28px] md:text-[36px] font-black tracking-tight text-[var(--c-line-3)] group-hover:text-[var(--c-text)] transition-colors tnum">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+
+                {/* Title */}
+                <div className="min-w-0">
+                  <h3 className="text-[18px] md:text-[22px] font-bold tracking-tight text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                    {s.title}
+                  </h3>
+                </div>
+
+                {/* Description */}
+                <div className="hidden md:block">
+                  <p className="text-[15px] text-[var(--c-sub)] leading-[1.6] line-clamp-2">
+                    {s.subtitle}
+                  </p>
+                </div>
+
+                {/* Tag */}
+                <div className="hidden md:flex justify-end">
+                  <span className="p-chip">{s.tags[0]}</span>
+                </div>
+
+                {/* Arrow */}
+                <div className="flex justify-end">
+                  <svg className="w-4 h-4 text-[var(--c-sub-2)] group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </Link>
+            ))}
           </div>
 
           <div className="md:hidden mt-6 text-center">
@@ -497,7 +505,7 @@ export default async function Home() {
             <h2 className="p-h1-xl mb-4">
               고객이 직접 남긴<br />후기로 증명합니다.
             </h2>
-            <p className="text-[16px] text-[var(--c-sub)] leading-[1.7]">평균 만족도 4.9/5.0 · 재의뢰율 95%</p>
+            <p className="text-[16px] text-[var(--c-sub)] leading-[1.7]">평균 만족도 5.0/5.0 · 재의뢰율 95%</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

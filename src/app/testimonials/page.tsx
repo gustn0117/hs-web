@@ -63,10 +63,10 @@ export default function TestimonialsPage() {
       breadcrumb={[{ label: "고객 후기" }]}
       overline="TESTIMONIALS"
       title="실제 클라이언트 후기."
-      subtitle={`${reviews.length}건의 실제 프로젝트 후기. 평균 만족도 4.9/5.0`}
+      subtitle={`${reviews.length}건의 실제 프로젝트 후기. 평균 만족도 5.0/5.0`}
       stats={[
         { label: "총 후기", value: String(reviews.length), suffix: "건" },
-        { label: "평균 만족도", value: "4.9", suffix: "/ 5.0" },
+        { label: "평균 만족도", value: "5.0", suffix: "/ 5.0" },
         { label: "재의뢰율", value: "95", suffix: "%" },
         { label: "추천 의향", value: "98", suffix: "%" },
       ]}
