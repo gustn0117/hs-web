@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
 
 const CATEGORIES = [
@@ -34,10 +34,9 @@ export default function ContactForm() {
   const [error, setError] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const emailValid = useMemo(() => !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), [email]);
   const phoneFilled = phone.trim().length > 0;
   const canSubmit =
-    name.trim().length > 0 && phoneFilled && category && message.trim().length >= 10 && agree && emailValid;
+    name.trim().length > 0 && phoneFilled && category && message.trim().length >= 10 && agree;
 
   const completedCount = [
     name.trim().length > 0,
@@ -50,7 +49,7 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setTouched({ name: true, phone: true, email: true, category: true, message: true });
+    setTouched({ name: true, phone: true, category: true, message: true });
     if (!canSubmit) return;
 
     setError("");
@@ -231,16 +230,10 @@ export default function ContactForm() {
               autoComplete="tel"
             />
           </Field>
-          <Field
-            label="이메일"
-            hint="선택"
-            error={touched.email && !emailValid ? "이메일 형식이 올바르지 않습니다." : ""}
-          >
+          <Field label="이메일" hint="선택">
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-              type="email"
               className="p-input"
               placeholder="name@example.com"
               autoComplete="email"
