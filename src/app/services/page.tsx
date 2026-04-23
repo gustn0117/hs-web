@@ -36,45 +36,50 @@ export default function ServicesPage() {
         { label: "소스코드", value: "100", suffix: "% 제공" },
       ]}
     >
-      {/* Bento grid services */}
+      {/* Uniform service grid */}
       <Section overline="ALL SERVICES" title="서비스 목록">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((s, i) => {
-            const isLarge = i === 0 || i === 3;
-            const isDark = i === 1;
-            const span = isLarge ? "md:col-span-3" : "md:col-span-2";
+            const isLast = i === services.length - 1;
+            const lastFeature = isLast && services.length % 3 === 1;
             return (
               <Link
                 key={s.slug}
                 href={`/services/${s.slug}`}
-                className={`p-bento ${isDark ? "p-bento-dark" : ""} ${span} no-underline flex flex-col group ${isLarge ? "min-h-[280px]" : "min-h-[200px]"}`}
+                className={`group relative flex flex-col justify-between p-7 md:p-8 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] hover:shadow-sm transition-all no-underline min-h-[260px] ${
+                  lastFeature ? "lg:col-span-3 lg:flex-row lg:items-center lg:gap-10 lg:min-h-0" : ""
+                }`}
               >
-                <div className="flex items-start justify-between mb-auto">
-                  <div className={`flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] ${isDark ? "text-white/60" : "text-[var(--c-main)]"}`}>
+                <div className={`${lastFeature ? "lg:flex-1" : ""}`}>
+                  <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.14em] text-[var(--c-main)] mb-5">
                     <span className="tnum">{String(i + 1).padStart(2, "0")}</span>
                     <span>SERVICE</span>
                   </div>
-                  <svg className={`w-5 h-5 ${isDark ? "text-white/80" : "text-[var(--c-sub-2)]"} group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                  </svg>
-                </div>
-                <div className="mt-auto pt-8">
-                  <h3 className={`${isLarge ? "text-[24px] md:text-[28px]" : "text-[18px]"} font-bold tracking-tight mb-2 ${isDark ? "text-white" : "text-[var(--c-text)]"}`}>
+                  <h3 className="text-[20px] md:text-[22px] font-bold tracking-tight text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors mb-3">
                     {s.title}
                   </h3>
-                  <p className={`text-[13.5px] leading-[1.65] mb-3 ${isDark ? "text-white/70" : "text-[var(--c-sub)]"} ${isLarge ? "" : "line-clamp-2"}`}>
+                  <p className="text-[13.5px] text-[var(--c-sub)] leading-[1.7] line-clamp-3">
                     {s.description}
                   </p>
+                </div>
+
+                <div className={`flex items-end justify-between gap-4 mt-6 ${lastFeature ? "lg:mt-0 lg:flex-col lg:items-end lg:shrink-0" : ""}`}>
                   <div className="flex flex-wrap gap-1.5">
                     {s.tags.slice(0, 3).map((t) => (
-                      <span
-                        key={t}
-                        className={`p-chip ${isDark ? "!border-white/20 !bg-white/5 !text-white" : ""}`}
-                      >
+                      <span key={t} className="p-chip">
                         {t}
                       </span>
                     ))}
                   </div>
+                  <svg
+                    className="w-4 h-4 text-[var(--c-sub-2)] shrink-0 group-hover:text-[var(--c-text)] group-hover:translate-x-0.5 transition-all"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
                 </div>
               </Link>
             );
