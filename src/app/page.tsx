@@ -96,13 +96,6 @@ export default async function Home() {
         }} />
 
         <div className="relative max-w-[900px] mx-auto px-5 text-center">
-          <div className="mb-7 flex justify-center">
-            <span className="p-eyebrow">
-              <span className="keep">2026 업데이트</span>
-              <span className="text-[var(--c-sub)] font-normal ml-1">· 무료 유지보수 포함</span>
-            </span>
-          </div>
-
           <h1 className="p-display mb-7">
             <span className="block">비즈니스의 시작,</span>
             <span className="block">
