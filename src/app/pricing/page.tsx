@@ -173,14 +173,14 @@ export default function PricingPage() {
             <thead>
               <tr>
                 <th>항목</th>
-                <th className="text-center">Basic</th>
-                <th className="text-center">
+                <th className="!text-center">Basic</th>
+                <th className="!text-center">
                   <span className="inline-flex items-center gap-1.5">
                     Professional
                     <span className="b-hot">인기</span>
                   </span>
                 </th>
-                <th className="text-center">Enterprise</th>
+                <th className="!text-center">Enterprise</th>
               </tr>
             </thead>
             <tbody>
