@@ -46,6 +46,11 @@ export default function ServiceDetailClient({ service, prevService, nextService 
       }
       sidebar={<ServiceSidebar currentSlug={service.slug} serviceTitle={service.title} />}
     >
+      {/* Visual mockup hero */}
+      <Section>
+        <ServiceMockup service={service} />
+      </Section>
+
       {/* Overview */}
       <Section overline="OVERVIEW" title="서비스 개요">
         <div className="p-card p-7 md:p-9">
@@ -173,6 +178,168 @@ export default function ServiceDetailClient({ service, prevService, nextService 
         </Section>
       )}
     </PageShell>
+  );
+}
+
+const MOCKUP_THEMES: Record<string, { from: string; to: string; accent: string; label: string }> = {
+  "responsive-web": { from: "#0a2a5e", to: "#2459b0", accent: "#7aa6f0", label: "responsive.tsx" },
+  ecommerce: { from: "#134e4a", to: "#0d9488", accent: "#5eead4", label: "shop/index.tsx" },
+  "landing-page": { from: "#7c2d12", to: "#ea580c", accent: "#fdba74", label: "landing.html" },
+  "web-app": { from: "#4c1d95", to: "#7c3aed", accent: "#c4b5fd", label: "app.tsx" },
+  cms: { from: "#0f766e", to: "#06b6d4", accent: "#67e8f9", label: "admin.tsx" },
+  enterprise: { from: "#1e293b", to: "#475569", accent: "#94a3b8", label: "dashboard.tsx" },
+  marketing: { from: "#9f1239", to: "#e11d48", accent: "#fda4af", label: "analytics.tsx" },
+};
+
+function ServiceMockup({ service }: { service: ServiceItem }) {
+  const theme = MOCKUP_THEMES[service.slug] ?? MOCKUP_THEMES["responsive-web"];
+
+  return (
+    <div className="relative">
+      {/* Ambient blur backdrop */}
+      <div
+        className="absolute -inset-6 md:-inset-10 rounded-[32px] blur-3xl opacity-30 pointer-events-none"
+        style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
+      />
+
+      {/* Mac-style window frame */}
+      <div className="relative rounded-[14px] md:rounded-[16px] border border-[var(--c-line)] bg-[#1a1d26] shadow-2xl overflow-hidden">
+        {/* Title bar */}
+        <div className="flex items-center gap-3 h-9 md:h-10 px-4 border-b border-white/10 bg-[#12141b]">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
+            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
+          </div>
+          <div className="flex-1 flex justify-center">
+            <div className="inline-flex items-center gap-2 h-6 px-3 rounded bg-white/5 border border-white/10 text-[11px] text-white/60 font-mono">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              hsweb.pics/services/{service.slug}
+            </div>
+          </div>
+          <div className="w-12 shrink-0" />
+        </div>
+
+        {/* Content */}
+        <div
+          className="relative aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden"
+          style={{
+            background: `linear-gradient(135deg, ${theme.from} 0%, ${theme.to} 100%)`,
+          }}
+        >
+          {/* Grid overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.15]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
+          />
+
+          {/* Glow orbs */}
+          <div
+            className="absolute -top-20 -right-16 w-[320px] h-[320px] rounded-full blur-3xl opacity-40"
+            style={{ background: theme.accent }}
+          />
+          <div
+            className="absolute -bottom-24 -left-20 w-[360px] h-[360px] rounded-full blur-3xl opacity-30"
+            style={{ background: theme.accent }}
+          />
+
+          {/* Left floating "code" card */}
+          <div className="hidden md:block absolute top-6 left-6 w-[280px] bg-[#0c0e14]/85 backdrop-blur border border-white/10 rounded-[10px] p-4 shadow-xl font-mono text-[11px] leading-[1.7]">
+            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/10">
+              <span className="w-2 h-2 rounded-full" style={{ background: theme.accent }} />
+              <span className="text-white/50">{theme.label}</span>
+            </div>
+            <p className="text-white/40">
+              <span className="text-[#c792ea]">const</span>{" "}
+              <span className="text-[#82aaff]">project</span> = {"{"}
+            </p>
+            <p className="pl-3 text-white/60">
+              <span className="text-[#89ddff]">name</span>:{" "}
+              <span style={{ color: theme.accent }}>{`"${service.title}"`}</span>,
+            </p>
+            <p className="pl-3 text-white/60">
+              <span className="text-[#89ddff]">tags</span>: [
+              <span className="text-[#c3e88d]">
+                {service.tags.slice(0, 2).map((t, idx) => (
+                  <span key={t}>
+                    {idx > 0 && ", "}
+                    {`"${t}"`}
+                  </span>
+                ))}
+              </span>
+              ],
+            </p>
+            <p className="pl-3 text-white/60">
+              <span className="text-[#89ddff]">status</span>:{" "}
+              <span className="text-[#c3e88d]">{'"ready"'}</span>,
+            </p>
+            <p className="text-white/40">{"}"}</p>
+          </div>
+
+          {/* Right floating "UI" card */}
+          <div className="hidden lg:block absolute bottom-6 right-6 w-[240px] bg-white/95 backdrop-blur rounded-[10px] p-4 shadow-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <div
+                className="inline-flex items-center justify-center w-8 h-8 rounded-[8px]"
+                style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
+              >
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={service.iconPath} />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-bold text-[var(--c-text)] truncate">{service.title}</p>
+                <p className="text-[10px] text-[var(--c-sub)]">active project</p>
+              </div>
+              <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
+            </div>
+            <div className="space-y-1.5">
+              <div className="h-1.5 rounded-full bg-[var(--c-line)] overflow-hidden">
+                <div className="h-full rounded-full" style={{ width: "72%", background: theme.to }} />
+              </div>
+              <div className="flex items-center justify-between text-[10px] text-[var(--c-sub)]">
+                <span>progress</span>
+                <span className="font-bold text-[var(--c-text)]">72%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Center — big icon + title */}
+          <div className="relative text-center px-5">
+            <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-[20px] bg-white/10 backdrop-blur border border-white/20 mb-5 shadow-lg">
+              <svg className="w-10 h-10 md:w-12 md:h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={service.iconPath} />
+              </svg>
+            </div>
+            <h3 className="text-[26px] md:text-[36px] font-black tracking-[-0.03em] text-white leading-tight mb-2">
+              {service.title}
+            </h3>
+            <p className="text-[13px] md:text-[15px] text-white/75 max-w-[420px] mx-auto leading-[1.6]">
+              {service.subtitle}
+            </p>
+          </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex items-center justify-between h-8 px-4 border-t border-white/10 bg-[#12141b] text-[10px] text-white/50 font-mono">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#28c840]" />
+              production ready
+            </span>
+            <span className="hidden md:inline">•</span>
+            <span className="hidden md:inline">main</span>
+          </div>
+          <span className="tnum">{service.features.length} features · {service.technologies?.length || 0} stacks</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
