@@ -184,68 +184,50 @@ export default function ServiceDetailClient({ service, prevService, nextService 
 const UNSPLASH = (id: string) =>
   `https://images.unsplash.com/photo-${id}?w=1600&q=80&auto=format&fit=crop`;
 
-const MOCKUP_THEMES: Record<
-  string,
-  { from: string; to: string; accent: string; label: string; photo: string }
-> = {
+// Unified gradient (slate) for all services — consistent, calm tone
+const UNIFIED_GRADIENT = { from: "#1e293b", to: "#475569", accent: "#94a3b8" };
+
+const MOCKUP_THEMES: Record<string, { label: string; photo: string }> = {
   "responsive-web": {
-    from: "#0a2a5e",
-    to: "#2459b0",
-    accent: "#7aa6f0",
     label: "responsive.tsx",
     photo: UNSPLASH("1498050108023-c5249f4df085"),
   },
   ecommerce: {
-    from: "#134e4a",
-    to: "#0d9488",
-    accent: "#5eead4",
     label: "shop/index.tsx",
     photo: UNSPLASH("1563013544-824ae1b704d3"),
   },
   "landing-page": {
-    from: "#7c2d12",
-    to: "#ea580c",
-    accent: "#fdba74",
     label: "landing.html",
     photo: UNSPLASH("1460925895917-afdab827c52f"),
   },
   "web-app": {
-    from: "#4c1d95",
-    to: "#7c3aed",
-    accent: "#c4b5fd",
     label: "app.tsx",
     photo: UNSPLASH("1461749280684-dccba630e2f6"),
   },
   cms: {
-    from: "#0f766e",
-    to: "#06b6d4",
-    accent: "#67e8f9",
     label: "admin.tsx",
     photo: UNSPLASH("1517694712202-14dd9538aa97"),
   },
   enterprise: {
-    from: "#1e293b",
-    to: "#475569",
-    accent: "#94a3b8",
     label: "dashboard.tsx",
     photo: UNSPLASH("1551288049-bebda4e38f71"),
   },
   marketing: {
-    from: "#9f1239",
-    to: "#e11d48",
-    accent: "#fda4af",
     label: "analytics.tsx",
     photo: UNSPLASH("1556742049-0cfed4f6a45d"),
   },
 };
 
 function ServiceMockup({ service }: { service: ServiceItem }) {
-  const theme = MOCKUP_THEMES[service.slug] ?? MOCKUP_THEMES["responsive-web"];
+  const theme = {
+    ...UNIFIED_GRADIENT,
+    ...(MOCKUP_THEMES[service.slug] ?? MOCKUP_THEMES["responsive-web"]),
+  };
 
   return (
     <div className="relative">
       {/* Mac-style window frame */}
-      <div className="relative rounded-[14px] md:rounded-[16px] border border-[var(--c-line)] bg-[#1a1d26] shadow-2xl overflow-hidden">
+      <div className="relative rounded-[14px] md:rounded-[16px] border border-[var(--c-line)] bg-[#1a1d26] overflow-hidden">
         {/* Title bar */}
         <div className="flex items-center gap-3 h-9 md:h-10 px-4 border-b border-white/10 bg-[#12141b]">
           <div className="flex items-center gap-1.5 shrink-0">
@@ -275,12 +257,12 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-          {/* Brand color overlay */}
+          {/* Brand color overlay — soft slate */}
           <div
-            className="absolute inset-0 mix-blend-multiply"
+            className="absolute inset-0"
             style={{
               background: `linear-gradient(135deg, ${theme.from} 0%, ${theme.to} 100%)`,
-              opacity: 0.72,
+              opacity: 0.55,
             }}
           />
 
@@ -289,7 +271,7 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)",
+                "radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,0.35) 100%)",
             }}
           />
 
@@ -314,7 +296,7 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
           />
 
           {/* Left floating "code" card */}
-          <div className="hidden md:block absolute top-6 left-6 w-[280px] bg-[#0c0e14]/85 backdrop-blur border border-white/10 rounded-[10px] p-4 shadow-xl font-mono text-[11px] leading-[1.7]">
+          <div className="hidden md:block absolute top-6 left-6 w-[280px] bg-[#0c0e14]/85 backdrop-blur border border-white/10 rounded-[10px] p-4 font-mono text-[11px] leading-[1.7]">
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/10">
               <span className="w-2 h-2 rounded-full" style={{ background: theme.accent }} />
               <span className="text-white/50">{theme.label}</span>
@@ -347,7 +329,7 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
           </div>
 
           {/* Right floating "UI" card */}
-          <div className="hidden lg:block absolute bottom-6 right-6 w-[240px] bg-white/95 backdrop-blur rounded-[10px] p-4 shadow-xl">
+          <div className="hidden lg:block absolute bottom-6 right-6 w-[240px] bg-white/95 backdrop-blur rounded-[10px] p-4">
             <div className="flex items-center gap-2 mb-3">
               <div
                 className="inline-flex items-center justify-center w-8 h-8 rounded-[8px]"
@@ -376,7 +358,7 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
 
           {/* Center — big icon + title */}
           <div className="relative text-center px-5">
-            <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-[20px] bg-white/10 backdrop-blur border border-white/20 mb-5 shadow-lg">
+            <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-[20px] bg-white/10 backdrop-blur border border-white/20 mb-5">
               <svg className="w-10 h-10 md:w-12 md:h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d={service.iconPath} />
               </svg>

@@ -24,12 +24,6 @@ const WHY_POINTS = [
     large: true,
   },
   {
-    t: "빠른 납기",
-    d: "Basic 1~2주. 자료 전달 완료 시점부터 일정 시작.",
-    stat: "1~2주",
-    icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z",
-  },
-  {
     t: "무료 유지보수",
     d: "플랜별 1~6개월 무상 지원. 텍스트·이미지 수정 포함.",
     stat: "최대 6개월",
@@ -164,8 +158,8 @@ export default async function Home() {
           <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
             {[
               { num: "249,000", unit: "원~", label: "제작 시작가", numSize: "text-[28px] md:text-[34px] lg:text-[40px]" },
-              { num: "1~2", unit: "주", label: "평균 제작 기간", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
-              { num: "1+", unit: "개월", label: "무상 유지보수", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
+              { num: "100", unit: "%", label: "소스코드 제공", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
+              { num: "95", unit: "%", label: "재의뢰율", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
               { num: "100", unit: "%", label: "반응형 적용", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
             ].map((s, i) => (
               <div
@@ -558,7 +552,6 @@ export default async function Home() {
 
             <div className="border-t border-[var(--c-line)]">
               {[
-                { q: "제작 기간은 얼마나 걸리나요?", a: "Basic 플랜 기준 1~2주 내외입니다. 자료 전달 완료 시점부터 일정이 시작되며, 실시간으로 진행 상황을 공유드립니다." },
                 { q: "유지보수는 어떻게 진행되나요?", a: "플랜별 무상 유지보수 기간 동안 텍스트·이미지·간단한 기능 수정을 무료로 지원합니다. 기간 종료 후에도 건별 또는 월 단위 계약이 가능합니다." },
                 { q: "도메인과 호스팅도 제공되나요?", a: "도메인·호스팅은 고객사 명의로 개설하며, HS WEB이 실비 기준으로 대행·관리합니다. 추가 수수료는 없습니다." },
                 { q: "수정은 몇 번까지 가능한가요?", a: "시안 단계에서 2~3회 수정을 기본 제공합니다. 이후 대규모 변경이 필요하면 범위에 따라 추가 상담 후 진행합니다." },

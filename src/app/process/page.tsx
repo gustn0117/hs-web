@@ -13,7 +13,6 @@ const steps = [
   {
     n: "01",
     title: "상담 · 요구사항 분석",
-    duration: "1~2일",
     outcome: "기획안 · 견적서",
     desc: "프로젝트 목표, 타겟 사용자, 필요 기능을 파악하고 범위를 명확히 합니다. 레퍼런스 분석 후 기획안과 견적서를 전달합니다.",
     deliverables: ["요구사항 정의서", "와이어프레임 초안", "견적서 · 제안서"],
@@ -21,15 +20,13 @@ const steps = [
   {
     n: "02",
     title: "계약 · 자료 수집",
-    duration: "1~3일",
     outcome: "계약서 · 자료 체크",
-    desc: "계약 체결 후 로고, 이미지, 텍스트 등 필요한 자료를 전달받습니다. 자료 전달 완료 시점부터 실제 제작 일정이 시작됩니다.",
+    desc: "계약 체결 후 로고, 이미지, 텍스트 등 필요한 자료를 전달받습니다.",
     deliverables: ["전자 계약서", "자료 체크리스트", "프로젝트 일정표"],
   },
   {
     n: "03",
     title: "UI/UX 디자인",
-    duration: "3~7일",
     outcome: "디자인 시안 2~3종",
     desc: "브랜드 아이덴티티에 맞는 UI/UX를 설계합니다. 메인 + 주요 내부 페이지 시안을 제공하고 2~3회 수정이 포함됩니다.",
     deliverables: ["메인 페이지 시안", "내부 페이지 시안", "반응형 모바일 시안"],
@@ -37,7 +34,6 @@ const steps = [
   {
     n: "04",
     title: "개발 · 퍼블리싱",
-    duration: "5~14일",
     outcome: "스테이징 사이트",
     desc: "확정된 디자인을 기반으로 반응형 퍼블리싱과 기능 개발을 진행합니다. 크로스 브라우저 호환성을 보장합니다.",
     deliverables: ["반응형 HTML/CSS", "백엔드 연동", "관리자 페이지 (해당 시)"],
@@ -45,7 +41,6 @@ const steps = [
   {
     n: "05",
     title: "테스트 · 런칭",
-    duration: "1~3일",
     outcome: "실 서비스 배포",
     desc: "전체 페이지 QA, 성능 테스트, SEO 기본 설정 후 도메인 연결과 호스팅 배포를 진행합니다.",
     deliverables: ["QA 리포트", "SEO 기본 설정", "운영 가이드"],
@@ -53,9 +48,8 @@ const steps = [
   {
     n: "06",
     title: "유지보수 · 운영",
-    duration: "1~6개월",
     outcome: "지속적 지원",
-    desc: "런칭 후 플랜별 무상 유지보수 기간 동안 텍스트/이미지 수정, 간단한 기능 개선을 지원합니다.",
+    desc: "런칭 후 플랜별 무상 유지보수 범위에 따라 텍스트/이미지 수정, 간단한 기능 개선을 지원합니다.",
     deliverables: ["유지보수 지원", "보안 업데이트", "성능 모니터링"],
   },
 ];
@@ -69,16 +63,16 @@ export default function ProcessPage() {
       subtitle="모든 프로젝트는 동일한 체계로 진행됩니다. 각 단계마다 고객과 공유하며 투명하게."
       stats={[
         { label: "총 단계", value: "6", suffix: "단계" },
-        { label: "Basic 제작", value: "7~14", suffix: "일" },
-        { label: "Pro 제작", value: "14~28", suffix: "일" },
-        { label: "시안 수정", value: "2~3", suffix: "회" },
+        { label: "시안 수정", value: "2~3", suffix: "회 포함" },
+        { label: "소스코드", value: "100", suffix: "% 제공" },
+        { label: "재의뢰율", value: "95", suffix: "%" },
       ]}
     >
       {/* Visual timeline */}
       <Section overline="TIMELINE" title="6단계 프로세스">
         <div className="space-y-3">
-          {steps.map((s, i) => (
-            <div key={s.n} className="grid grid-cols-[72px_1fr] md:grid-cols-[120px_1fr_140px] gap-4 md:gap-6 items-start p-6 md:p-7 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] transition-colors group">
+          {steps.map((s) => (
+            <div key={s.n} className="grid grid-cols-[72px_1fr] md:grid-cols-[120px_1fr] gap-4 md:gap-6 items-start p-6 md:p-7 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] transition-colors group">
               <div>
                 <div className="text-[44px] md:text-[56px] font-black tracking-tight leading-none text-[var(--c-line-2)] group-hover:text-[var(--c-main)] transition-colors tnum">
                   {s.n}
@@ -101,55 +95,8 @@ export default function ProcessPage() {
                   ))}
                 </ul>
               </div>
-              <div className="hidden md:flex flex-col items-end gap-1 pt-2">
-                <span className="text-[11px] font-bold text-[var(--c-sub)] tracking-widest uppercase">기간</span>
-                <span className="text-[18px] font-bold text-[var(--c-text)] tnum">{s.duration}</span>
-                {i < steps.length - 1 && (
-                  <span className="text-[11px] text-[var(--c-sub-2)] mt-2">└ 다음 단계</span>
-                )}
-              </div>
             </div>
           ))}
-        </div>
-      </Section>
-
-      {/* Plan-wise duration */}
-      <Section overline="DURATION" title="플랜별 전체 소요 기간">
-        <div className="p-card overflow-hidden overflow-x-auto">
-          <table className="p-table min-w-[600px]">
-            <thead>
-              <tr>
-                <th>구분</th>
-                <th className="tnum">최소</th>
-                <th className="tnum">평균</th>
-                <th className="tnum">최대</th>
-                <th>비고</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="font-semibold">Basic (5P)</td>
-                <td className="tnum">7일</td>
-                <td className="tnum font-bold">10일</td>
-                <td className="tnum">14일</td>
-                <td className="text-[12.5px] text-[var(--c-sub)]">자료 전달 완료 후</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Professional (10P)</td>
-                <td className="tnum">14일</td>
-                <td className="tnum font-bold">21일</td>
-                <td className="tnum">28일</td>
-                <td className="text-[12.5px] text-[var(--c-sub)]">관리자 페이지 포함</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Enterprise</td>
-                <td className="tnum">4주</td>
-                <td className="tnum font-bold">8주</td>
-                <td className="tnum">12주+</td>
-                <td className="text-[12.5px] text-[var(--c-sub)]">범위에 따라 상이</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </Section>
 

@@ -19,7 +19,6 @@ const plans = [
     suffix: "원~",
     target: "개인사업자, 스타트업",
     pages: "5페이지",
-    duration: "1~2주",
     maintenance: "1개월",
     features: [
       "반응형 웹 디자인 (5P)",
@@ -37,7 +36,6 @@ const plans = [
     suffix: "원~",
     target: "중소기업, 브랜드 운영",
     pages: "10페이지",
-    duration: "2~3주",
     maintenance: "3개월",
     featured: true,
     features: [
@@ -56,7 +54,6 @@ const plans = [
     suffix: " 맞춤",
     target: "쇼핑몰, 웹앱, 플랫폼",
     pages: "제한 없음",
-    duration: "1~3개월",
     maintenance: "6개월",
     features: [
       "풀 커스텀 디자인 · 개발",
@@ -95,9 +92,9 @@ export default function PricingPage() {
       subtitle="프로젝트 규모에 맞춰 선택하세요. VAT 별도, 실비(도메인·호스팅) 제외."
       stats={[
         { label: "최저가", value: "249,000", suffix: "원~" },
-        { label: "평균 기간", value: "1~3", suffix: "주" },
         { label: "최대 유지보수", value: "6", suffix: "개월" },
         { label: "수정 횟수", value: "2~3", suffix: "회 포함" },
+        { label: "소스코드", value: "100", suffix: "% 제공" },
       ]}
     >
       {/* Plans — bento cards */}
@@ -141,12 +138,12 @@ export default function PricingPage() {
                   <dd className="font-semibold">{p.pages}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>제작 기간</dt>
-                  <dd className="font-semibold">{p.duration}</dd>
-                </div>
-                <div className="flex justify-between">
                   <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>유지보수</dt>
                   <dd className="font-semibold">{p.maintenance}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>타깃</dt>
+                  <dd className="font-semibold">{p.target}</dd>
                 </div>
               </dl>
 
@@ -197,12 +194,12 @@ export default function PricingPage() {
               {[
                 { k: "시작 가격", b: "249,000원~", p: "700,000원~", e: "상담" },
                 { k: "페이지 수", b: "5 페이지", p: "10 페이지", e: "제한 없음" },
-                { k: "제작 기간", b: "1~2주", p: "2~3주", e: "1~3개월" },
                 { k: "디자인 수정", b: "2회", p: "3회", e: "협의" },
                 { k: "관리자 페이지", b: "—", p: "✓", e: "✓ 풀 커스텀" },
                 { k: "쇼핑몰 · 결제 연동", b: "—", p: "—", e: "✓" },
                 { k: "전담 PM", b: "—", p: "—", e: "✓" },
                 { k: "무상 유지보수", b: "1개월", p: "3개월", e: "6개월" },
+                { k: "소스코드 제공", b: "✓", p: "✓", e: "✓ 저작권 이전" },
               ].map((row) => (
                 <tr key={row.k}>
                   <td className="font-semibold">{row.k}</td>
