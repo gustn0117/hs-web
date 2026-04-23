@@ -17,15 +17,14 @@ const plans = [
     desc: "개인사업자·스타트업을 위한 합리적 시작점.",
     price: "249,000",
     suffix: "원~",
-    target: "개인사업자, 스타트업",
+    target: "개인·스타트업",
     pages: "5페이지",
-    maintenance: "1개월",
     features: [
       "반응형 웹 디자인 (5P)",
       "기본 SEO 최적화",
       "도메인·호스팅 가이드",
       "빠른 제작 · 납품",
-      "1개월 무상 유지보수",
+      "간단 수정 평생 무료",
     ],
   },
   {
@@ -34,16 +33,15 @@ const plans = [
     desc: "브랜딩과 기능 모두 잡는 중소기업 전문 패키지.",
     price: "700,000",
     suffix: "원~",
-    target: "중소기업, 브랜드 운영",
+    target: "중소기업 · 브랜드",
     pages: "10페이지",
-    maintenance: "3개월",
     featured: true,
     features: [
       "맞춤 디자인 (10P)",
       "고급 성능 · SEO 최적화",
       "관리자 페이지 포함",
       "우선 상담 · 제작 일정",
-      "3개월 무상 유지보수",
+      "간단 수정 평생 무료",
     ],
   },
   {
@@ -52,15 +50,14 @@ const plans = [
     desc: "쇼핑몰·웹앱·플랫폼 등 풀 커스텀 솔루션.",
     price: "상담",
     suffix: " 맞춤",
-    target: "쇼핑몰, 웹앱, 플랫폼",
+    target: "쇼핑몰 · 웹앱",
     pages: "제한 없음",
-    maintenance: "6개월",
     features: [
       "풀 커스텀 디자인 · 개발",
       "쇼핑몰 / 웹앱 / API 연동",
       "전담 PM 배정",
       "단계별 일정 · 정산",
-      "6개월 무상 유지보수",
+      "간단 수정 평생 무료",
     ],
   },
 ];
@@ -77,9 +74,9 @@ const commonFeatures = [
 ];
 
 const faqs = [
-  { q: "견적에 포함된 범위는 어디까지인가요?", a: "플랜별 명시된 페이지 수 이내의 디자인, 퍼블리싱, 기본 최적화, 1~6개월 유지보수가 포함됩니다. 서버·도메인 실비는 별도입니다." },
+  { q: "견적에 포함된 범위는 어디까지인가요?", a: "플랜별 명시된 페이지 수 이내의 디자인, 퍼블리싱, 기본 최적화가 포함됩니다. 간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 무료로 지원합니다. 서버·도메인 실비는 별도입니다." },
   { q: "결제는 어떻게 이루어지나요?", a: "계약 체결 시 50%, 최종 납품 후 잔금 50% 지급이 기본입니다. Enterprise는 단계별 정산이 가능합니다." },
-  { q: "유지보수 기간이 지나면?", a: "추가 유지보수 계약 또는 건별 작업 청구 중 선택하실 수 있습니다. 사소한 수정은 언제든지 문의해주세요." },
+  { q: "유지보수 범위는 어디까지인가요?", a: "간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 계속 무료로 지원합니다. 신규 기능 추가나 대규모 구조 변경은 범위에 따라 별도 견적으로 진행됩니다." },
   { q: "환불 정책은 어떻게 되나요?", a: "디자인 시안 전 단계에서는 전액 환불, 이후 단계에 따라 부분 환불이 가능합니다. 계약서에 명시되어 있습니다." },
 ];
 
@@ -92,18 +89,18 @@ export default function PricingPage() {
       subtitle="프로젝트 규모에 맞춰 선택하세요. VAT 별도, 실비(도메인·호스팅) 제외."
       stats={[
         { label: "최저가", value: "249,000", suffix: "원~" },
-        { label: "최대 유지보수", value: "6", suffix: "개월" },
         { label: "수정 횟수", value: "2~3", suffix: "회 포함" },
         { label: "소스코드", value: "100", suffix: "% 제공" },
+        { label: "재의뢰율", value: "95", suffix: "%" },
       ]}
     >
       {/* Plans — bento cards */}
       <Section>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {plans.map((p) => (
             <div
               key={p.name}
-              className={`relative p-8 rounded-[18px] border ${
+              className={`relative p-6 md:p-7 rounded-[18px] border min-w-0 ${
                 p.featured
                   ? "bg-[var(--c-text)] text-white border-[var(--c-text)]"
                   : "bg-white border-[var(--c-line)]"
@@ -133,17 +130,13 @@ export default function PricingPage() {
               </div>
 
               <dl className={`space-y-2 mb-6 text-[13px] ${p.featured ? "text-white/80" : "text-[var(--c-text-2)]"}`}>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-2">
                   <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>페이지</dt>
-                  <dd className="font-semibold">{p.pages}</dd>
+                  <dd className="font-semibold text-right">{p.pages}</dd>
                 </div>
-                <div className="flex justify-between">
-                  <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>유지보수</dt>
-                  <dd className="font-semibold">{p.maintenance}</dd>
-                </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-2">
                   <dt className={p.featured ? "text-white/50" : "text-[var(--c-sub)]"}>타깃</dt>
-                  <dd className="font-semibold">{p.target}</dd>
+                  <dd className="font-semibold text-right">{p.target}</dd>
                 </div>
               </dl>
 
@@ -198,7 +191,7 @@ export default function PricingPage() {
                 { k: "관리자 페이지", b: "—", p: "✓", e: "✓ 풀 커스텀" },
                 { k: "쇼핑몰 · 결제 연동", b: "—", p: "—", e: "✓" },
                 { k: "전담 PM", b: "—", p: "—", e: "✓" },
-                { k: "무상 유지보수", b: "1개월", p: "3개월", e: "6개월" },
+                { k: "간단 수정 무료 지원", b: "✓ 평생", p: "✓ 평생", e: "✓ 평생" },
                 { k: "소스코드 제공", b: "✓", p: "✓", e: "✓ 저작권 이전" },
               ].map((row) => (
                 <tr key={row.k}>

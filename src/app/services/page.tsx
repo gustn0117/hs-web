@@ -31,7 +31,7 @@ export default function ServicesPage() {
       subtitle="홈페이지 제작부터 쇼핑몰 구축, 기술 마케팅까지. 브랜드의 시작과 성장에 필요한 모든 웹 솔루션을 제공합니다."
       stats={[
         { label: "서비스", value: String(services.length), suffix: "종" },
-        { label: "무상 유지보수", value: "1~6", suffix: "개월" },
+        { label: "간단 수정", value: "평생", suffix: "무료" },
         { label: "소스코드", value: "100", suffix: "% 제공" },
         { label: "재의뢰율", value: "95", suffix: "%" },
       ]}

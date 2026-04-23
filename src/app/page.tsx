@@ -25,8 +25,8 @@ const WHY_POINTS = [
   },
   {
     t: "무료 유지보수",
-    d: "플랜별 1~6개월 무상 지원. 텍스트·이미지 수정 포함.",
-    stat: "최대 6개월",
+    d: "간단한 텍스트·이미지·콘텐츠 수정은 계속 무료로 지원합니다.",
+    stat: "기간 제한 없음",
     icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
   },
   {
@@ -423,7 +423,7 @@ export default async function Home() {
                 { n: "02", t: "디자인", d: "브랜드에 맞는 UI/UX 시안 2~3종 제공, 2~3회 수정 포함", dur: "3~7일" },
                 { n: "03", t: "개발 · 퍼블리싱", d: "반응형 코드 작성, 관리자 기능 개발", dur: "5~14일" },
                 { n: "04", t: "테스트 · 런칭", d: "QA 후 도메인 연결, 실 서비스 배포", dur: "1~3일" },
-                { n: "05", t: "유지보수", d: "런칭 후 플랜별 무상 유지보수 지원", dur: "1~6개월" },
+                { n: "05", t: "유지보수", d: "간단한 텍스트·이미지·콘텐츠 수정은 평생 무료 지원", dur: "평생" },
               ].map((step) => (
                 <div key={step.n} className="grid grid-cols-[60px_1fr_100px] md:grid-cols-[80px_1fr_120px] gap-4 py-8 border-b border-[var(--c-line)] last:border-b-0">
                   <div className="text-[44px] md:text-[56px] font-black leading-none tracking-tight text-[var(--c-line-3)]">{step.n}</div>
@@ -450,9 +450,9 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[1080px] mx-auto">
             {[
-              { name: "Basic", subtitle: "소규모 사업자", price: "249,000", suffix: "원~", features: ["반응형 5페이지", "기본 SEO 최적화", "1개월 유지보수", "도메인·호스팅 가이드"] },
-              { name: "Professional", subtitle: "성장하는 브랜드", price: "700,000", suffix: "원~", features: ["맞춤 디자인 10P", "고급 성능 최적화", "관리자 페이지 포함", "3개월 유지보수"], featured: true },
-              { name: "Enterprise", subtitle: "대규모 프로젝트", price: "상담", suffix: " 맞춤", features: ["풀 커스텀 개발", "쇼핑몰 / 웹앱 / API", "전담 PM 배정", "6개월 유지보수"] },
+              { name: "Basic", subtitle: "소규모 사업자", price: "249,000", suffix: "원~", features: ["반응형 5페이지", "기본 SEO 최적화", "간단 수정 평생 무료", "도메인·호스팅 가이드"] },
+              { name: "Professional", subtitle: "성장하는 브랜드", price: "700,000", suffix: "원~", features: ["맞춤 디자인 10P", "고급 성능 최적화", "관리자 페이지 포함", "간단 수정 평생 무료"], featured: true },
+              { name: "Enterprise", subtitle: "대규모 프로젝트", price: "상담", suffix: " 맞춤", features: ["풀 커스텀 개발", "쇼핑몰 / 웹앱 / API", "전담 PM 배정", "간단 수정 평생 무료"] },
             ].map((plan) => (
               <div
                 key={plan.name}
@@ -550,7 +550,7 @@ export default async function Home() {
 
             <div className="border-t border-[var(--c-line)]">
               {[
-                { q: "유지보수는 어떻게 진행되나요?", a: "플랜별 무상 유지보수 기간 동안 텍스트·이미지·간단한 기능 수정을 무료로 지원합니다. 기간 종료 후에도 건별 또는 월 단위 계약이 가능합니다." },
+                { q: "유지보수는 어떻게 진행되나요?", a: "간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 계속 무료로 지원합니다. 신규 기능 추가나 대규모 구조 변경은 범위에 따라 별도 견적으로 진행됩니다." },
                 { q: "도메인과 호스팅도 제공되나요?", a: "도메인·호스팅은 고객사 명의로 개설하며, HS WEB이 실비 기준으로 대행·관리합니다. 추가 수수료는 없습니다." },
                 { q: "수정은 몇 번까지 가능한가요?", a: "시안 단계에서 2~3회 수정을 기본 제공합니다. 이후 대규모 변경이 필요하면 범위에 따라 추가 상담 후 진행합니다." },
                 { q: "결제는 어떻게 진행되나요?", a: "계약 시 50%, 최종 납품 시 잔금 50% 지급이 기본입니다. 엔터프라이즈는 단계별 정산도 가능합니다." },
