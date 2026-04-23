@@ -354,7 +354,7 @@ export default async function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4">
               {featured && (
                 <Link href={`/portfolio/${featured.id}`} className="group no-underline block">
-                  <div className="p-showcase p-showcase-wide !rounded-[16px] mb-4 relative">
+                  <div className="p-showcase !aspect-square !rounded-[16px] mb-4 relative">
                     {featured.thumbnail ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={featured.thumbnail} alt={featured.title} />
