@@ -181,14 +181,62 @@ export default function ServiceDetailClient({ service, prevService, nextService 
   );
 }
 
-const MOCKUP_THEMES: Record<string, { from: string; to: string; accent: string; label: string }> = {
-  "responsive-web": { from: "#0a2a5e", to: "#2459b0", accent: "#7aa6f0", label: "responsive.tsx" },
-  ecommerce: { from: "#134e4a", to: "#0d9488", accent: "#5eead4", label: "shop/index.tsx" },
-  "landing-page": { from: "#7c2d12", to: "#ea580c", accent: "#fdba74", label: "landing.html" },
-  "web-app": { from: "#4c1d95", to: "#7c3aed", accent: "#c4b5fd", label: "app.tsx" },
-  cms: { from: "#0f766e", to: "#06b6d4", accent: "#67e8f9", label: "admin.tsx" },
-  enterprise: { from: "#1e293b", to: "#475569", accent: "#94a3b8", label: "dashboard.tsx" },
-  marketing: { from: "#9f1239", to: "#e11d48", accent: "#fda4af", label: "analytics.tsx" },
+const UNSPLASH = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?w=1600&q=80&auto=format&fit=crop`;
+
+const MOCKUP_THEMES: Record<
+  string,
+  { from: string; to: string; accent: string; label: string; photo: string }
+> = {
+  "responsive-web": {
+    from: "#0a2a5e",
+    to: "#2459b0",
+    accent: "#7aa6f0",
+    label: "responsive.tsx",
+    photo: UNSPLASH("1498050108023-c5249f4df085"),
+  },
+  ecommerce: {
+    from: "#134e4a",
+    to: "#0d9488",
+    accent: "#5eead4",
+    label: "shop/index.tsx",
+    photo: UNSPLASH("1563013544-824ae1b704d3"),
+  },
+  "landing-page": {
+    from: "#7c2d12",
+    to: "#ea580c",
+    accent: "#fdba74",
+    label: "landing.html",
+    photo: UNSPLASH("1460925895917-afdab827c52f"),
+  },
+  "web-app": {
+    from: "#4c1d95",
+    to: "#7c3aed",
+    accent: "#c4b5fd",
+    label: "app.tsx",
+    photo: UNSPLASH("1461749280684-dccba630e2f6"),
+  },
+  cms: {
+    from: "#0f766e",
+    to: "#06b6d4",
+    accent: "#67e8f9",
+    label: "admin.tsx",
+    photo: UNSPLASH("1517694712202-14dd9538aa97"),
+  },
+  enterprise: {
+    from: "#1e293b",
+    to: "#475569",
+    accent: "#94a3b8",
+    label: "dashboard.tsx",
+    photo: UNSPLASH("1551288049-bebda4e38f71"),
+  },
+  marketing: {
+    from: "#9f1239",
+    to: "#e11d48",
+    accent: "#fda4af",
+    label: "analytics.tsx",
+    photo: UNSPLASH("1556742049-0cfed4f6a45d"),
+  },
 };
 
 function ServiceMockup({ service }: { service: ServiceItem }) {
@@ -223,29 +271,51 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
         </div>
 
         {/* Content */}
-        <div
-          className="relative aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${theme.from} 0%, ${theme.to} 100%)`,
-          }}
-        >
+        <div className="relative aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden">
+          {/* Background photo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={theme.photo}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          {/* Brand color overlay */}
+          <div
+            className="absolute inset-0 mix-blend-multiply"
+            style={{
+              background: `linear-gradient(135deg, ${theme.from} 0%, ${theme.to} 100%)`,
+              opacity: 0.72,
+            }}
+          />
+
+          {/* Dark vignette for legibility */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%)",
+            }}
+          />
+
           {/* Grid overlay */}
           <div
-            className="absolute inset-0 opacity-[0.15]"
+            className="absolute inset-0 opacity-[0.1]"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)",
+                "linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)",
               backgroundSize: "40px 40px",
             }}
           />
 
           {/* Glow orbs */}
           <div
-            className="absolute -top-20 -right-16 w-[320px] h-[320px] rounded-full blur-3xl opacity-40"
+            className="absolute -top-20 -right-16 w-[320px] h-[320px] rounded-full blur-3xl opacity-30"
             style={{ background: theme.accent }}
           />
           <div
-            className="absolute -bottom-24 -left-20 w-[360px] h-[360px] rounded-full blur-3xl opacity-30"
+            className="absolute -bottom-24 -left-20 w-[360px] h-[360px] rounded-full blur-3xl opacity-25"
             style={{ background: theme.accent }}
           />
 
