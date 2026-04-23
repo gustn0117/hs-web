@@ -112,6 +112,16 @@ export default function RootLayout({
   return (
     <html lang="ko" className="scroll-smooth">
       <head>
+        <link
+          rel="preconnect"
+          href="https://cdn.jsdelivr.net"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          as="style"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -201,7 +211,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${notoSansKR.variable} font-sans antialiased`}>
+      <body className={`${notoSansKR.variable} antialiased`} style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif" }}>
         <LayoutShell>{children}</LayoutShell>
       </body>
     </html>

@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* Pretendard Variable (한국어 최적 가변 폰트) */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-
 /* ═══════════════════════════════════════════════════════
    HS WEB · 트렌디 디자인 시스템 (2026)
    토스 / Linear / 토스 스타일의 모던 + 한국 플랫폼 밀도
@@ -74,20 +71,22 @@
 
 html {
   scroll-behavior: smooth;
-  font-family: var(--font-sans);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss03";
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   color: var(--c-text);
   background: var(--c-bg);
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.65;
   overflow-x: hidden;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  font-weight: 400;
 }
 
 /* 한글 전역 줄바꿈 규칙 — 어절 단위 끊김 방지 */
