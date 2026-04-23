@@ -86,133 +86,77 @@ export default async function Home() {
   return (
     <>
       {/* ═════════ HERO ═════════ */}
-      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28">
+      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28">
         <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-50" />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white via-white/95 to-transparent" />
 
-        <div className="relative max-w-[1280px] mx-auto px-5">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
-            {/* Left: main copy */}
-            <div>
-              <div className="mb-7">
-                <span className="p-eyebrow">
-                  <span className="keep">2026 업데이트</span>
-                  <span className="text-[var(--c-sub)] font-normal ml-1">· 무료 유지보수 포함</span>
-                </span>
-              </div>
+        {/* Ambient radial glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none" style={{
+          background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(10, 42, 94, 0.07) 0%, transparent 60%)"
+        }} />
 
-              <h1 className="p-display mb-7">
-                <span className="block">비즈니스의 시작,</span>
-                <span className="block">
-                  <span className="relative inline-block">
-                    제대로 된 홈페이지
-                    <span
-                      aria-hidden
-                      className="absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15"
-                    />
-                  </span>
-                  <wbr />
-                  부터.
-                </span>
-              </h1>
-
-              <p className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[540px] leading-[1.7] mb-10">
-                기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
-                10분 상담으로 견적·일정을 확인하세요.
-              </p>
-
-              <div className="flex items-center gap-3 flex-wrap mb-8">
-                <Link href="/contact" className="p-btn p-btn-dark p-btn-xl">
-                  무료 상담 신청
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </Link>
-                <Link href="/portfolio" className="p-btn p-btn-xl">
-                  포트폴리오 보기
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-5 flex-wrap text-[12px] text-[var(--c-sub)]">
-                <div className="flex items-center gap-1.5">
-                  <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
-                  <span>지금 상담 접수 가능</span>
-                </div>
-                <span className="p-sep" />
-                <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
-              </div>
-            </div>
-
-            {/* Right: visual stack — layered browser mockups */}
-            <div className="hidden lg:block relative h-[440px]">
-              {/* Back browser card */}
-              <div className="absolute top-8 right-16 w-[320px] rounded-[14px] border border-[var(--c-line)] bg-white overflow-hidden rotate-3" style={{ boxShadow: "0 20px 40px -10px rgba(0,0,0,0.08)" }}>
-                <div className="flex items-center gap-1.5 px-3 h-8 bg-[var(--c-bg-1)] border-b border-[var(--c-line)]">
-                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
-                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
-                  <span className="w-2 h-2 rounded-full bg-[var(--c-line-3)]" />
-                  <span className="ml-2 text-[10px] text-[var(--c-sub-2)] tnum">shop.example.com</span>
-                </div>
-                <div className="aspect-[4/3] bg-gradient-to-br from-[var(--c-bg-1)] to-[var(--c-bg-2)] p-4 space-y-2">
-                  <div className="h-2 w-3/4 rounded-full bg-[var(--c-line)]" />
-                  <div className="h-2 w-1/2 rounded-full bg-[var(--c-line)]" />
-                  <div className="grid grid-cols-3 gap-1.5 mt-3">
-                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
-                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
-                    <div className="aspect-square rounded-md bg-white border border-[var(--c-line)]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Front browser card */}
-              <div className="absolute top-20 left-0 w-[400px] rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden -rotate-2" style={{ boxShadow: "0 30px 60px -15px rgba(0,0,0,0.15)" }}>
-                <div className="flex items-center gap-1.5 px-3 h-9 bg-[var(--c-bg-1)] border-b border-[var(--c-line)]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-                  <span className="ml-2 text-[10px] text-[var(--c-sub)] tnum">hsweb.pics</span>
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      <span className="inline-flex w-5 h-5 rounded-[5px] bg-[var(--c-text)] text-white font-bold text-[10px] items-center justify-center">H</span>
-                      <span className="text-[11px] font-bold">HS WEB</span>
-                    </div>
-                    <div className="flex gap-3 text-[9px] text-[var(--c-sub)]">
-                      <span>서비스</span>
-                      <span>포트폴리오</span>
-                      <span>가격</span>
-                    </div>
-                  </div>
-                  <div className="h-5 w-[70%] rounded bg-[var(--c-text)] mb-2" />
-                  <div className="h-5 w-[50%] rounded bg-[var(--c-main)] mb-4" />
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="aspect-video rounded-lg bg-gradient-to-br from-[var(--c-main-soft)] to-[var(--c-bg-2)]" />
-                    <div className="aspect-video rounded-lg bg-gradient-to-br from-[var(--c-bg-2)] to-[var(--c-bg-3)]" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating stat bubble */}
-              <div className="absolute bottom-8 right-4 w-[180px] rounded-[14px] bg-white border border-[var(--c-line)] p-4" style={{ boxShadow: "0 12px 28px -8px rgba(0,0,0,0.12)" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="inline-flex w-6 h-6 rounded-full bg-[var(--c-new-bg)] items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-[var(--c-new)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                  </span>
-                  <span className="text-[11px] font-bold text-[var(--c-new)]">LIVE</span>
-                </div>
-                <p className="text-[11px] text-[var(--c-sub)] mb-1">현재 진행중 프로젝트</p>
-                <p className="p-stat text-[24px] leading-none nowrap">
-                  <span>{portfolio.length || 12}</span>
-                  <span className="text-[12px] text-[var(--c-sub)] ml-1">건</span>
-                </p>
-              </div>
-            </div>
+        <div className="relative max-w-[900px] mx-auto px-5 text-center">
+          <div className="mb-7 flex justify-center">
+            <span className="p-eyebrow">
+              <span className="keep">2026 업데이트</span>
+              <span className="text-[var(--c-sub)] font-normal ml-1">· 무료 유지보수 포함</span>
+            </span>
           </div>
 
-          {/* Stats bar — compact */}
+          <h1 className="p-display mb-7">
+            <span className="block">비즈니스의 시작,</span>
+            <span className="block">
+              <span className="relative inline-block">
+                제대로 된 홈페이지
+                <span
+                  aria-hidden
+                  className="absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15"
+                />
+              </span>
+              <wbr />
+              부터.
+            </span>
+          </h1>
+
+          <p className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[560px] mx-auto leading-[1.7] mb-10">
+            기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
+            10분 상담으로 견적·일정을 확인하세요.
+          </p>
+
+          <div className="flex items-center gap-3 justify-center flex-wrap mb-8">
+            <Link href="/contact" className="p-btn p-btn-dark p-btn-xl">
+              무료 상담 신청
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+            <Link href="/portfolio" className="p-btn p-btn-xl">
+              포트폴리오 보기
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-5 justify-center flex-wrap text-[12px] text-[var(--c-sub)]">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
+              <span>지금 상담 접수 가능</span>
+            </div>
+            <span className="p-sep" />
+            <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
+            <span className="p-sep" />
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3 h-3 text-[var(--c-event)]" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              평균 만족도 <strong className="text-[var(--c-text)]">4.9/5.0</strong>
+            </span>
+          </div>
+
+          {/* hidden fallback to keep portfolio count reference */}
+          <span className="hidden" aria-hidden>{portfolio.length || 12}</span>
+        </div>
+
+        {/* Stats bar — compact, full width inside hero */}
+        <div className="relative max-w-[1280px] mx-auto px-5">
           <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
             {[
               { num: "249,000", unit: "원~", label: "제작 시작가" },
