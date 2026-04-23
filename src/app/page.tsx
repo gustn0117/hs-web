@@ -102,7 +102,7 @@ export default async function Home() {
             </span>
             <span className="block hero-fade-up" style={{ animationDelay: "0.2s" }}>
               <span className="relative inline-block">
-                <span className="hero-gradient-text">제대로 된 홈페이지</span>
+                <span className="hero-gradient-text">제대로 된 웹 서비스</span>
                 <span
                   aria-hidden
                   className="hero-underline absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15 rounded-sm"
