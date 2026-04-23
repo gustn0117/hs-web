@@ -87,105 +87,20 @@ export default async function Home() {
     <>
       {/* ═════════ HERO ═════════ */}
       <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28">
-        {/* Animated blob layer */}
-        <div
-          className="hero-blob"
-          style={{
-            top: "-120px",
-            left: "8%",
-            width: "520px",
-            height: "520px",
-            background: "radial-gradient(circle, #c4d3f0 0%, transparent 70%)",
-            animation: "hero-blob-a 18s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            top: "40px",
-            right: "6%",
-            width: "460px",
-            height: "460px",
-            background: "radial-gradient(circle, #fde4c6 0%, transparent 70%)",
-            animation: "hero-blob-b 22s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            bottom: "-120px",
-            left: "30%",
-            width: "600px",
-            height: "600px",
-            background: "radial-gradient(circle, #e8dcf7 0%, transparent 70%)",
-            animation: "hero-blob-c 26s ease-in-out infinite",
-          }}
-        />
+        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-50" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white via-white/95 to-transparent" />
 
-        {/* Animated grid */}
-        <div className="absolute inset-0 pointer-events-none hero-grid opacity-70" />
-
-        {/* White veil for readability */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/60 via-white/40 to-white" />
-
-        {/* Floating decorative badges (desktop only) */}
-        <div
-          className="hidden lg:flex hero-badge-card hero-float"
-          style={{ position: "absolute", top: "120px", left: "8%", transform: "rotate(-6deg)", animationDelay: "0s" }}
-        >
-          <span className="dot bg-[var(--c-new)]" />
-          1~2주 납기
-        </div>
-        <div
-          className="hidden lg:flex hero-badge-card hero-float"
-          style={{ position: "absolute", top: "200px", right: "7%", transform: "rotate(5deg)", animationDelay: "0.8s" }}
-        >
-          <svg className="w-3.5 h-3.5 text-[var(--c-main)]" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          소스코드 100% 이전
-        </div>
-        <div
-          className="hidden lg:flex hero-badge-card hero-float"
-          style={{ position: "absolute", bottom: "240px", left: "6%", transform: "rotate(4deg)", animationDelay: "1.6s" }}
-        >
-          <span className="text-[var(--c-event)] text-[15px] leading-none">★</span>
-          평균 만족도 5.0
-        </div>
-        <div
-          className="hidden lg:flex hero-badge-card hero-float"
-          style={{ position: "absolute", bottom: "280px", right: "8%", transform: "rotate(-5deg)", animationDelay: "2.2s" }}
-        >
-          <span className="dot bg-[var(--c-main)]" />
-          전자 계약 · 법적 효력
-        </div>
-
-        {/* Sparkles */}
-        <svg className="hidden md:block absolute top-[140px] left-[22%] w-5 h-5 text-[var(--c-main)] hero-sparkle" fill="currentColor" viewBox="0 0 24 24" style={{ animationDelay: "0.4s" }}>
-          <path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z" />
-        </svg>
-        <svg className="hidden md:block absolute top-[260px] right-[18%] w-4 h-4 text-[var(--c-event)] hero-sparkle" fill="currentColor" viewBox="0 0 24 24" style={{ animationDelay: "1.2s" }}>
-          <path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z" />
-        </svg>
-        <svg className="hidden md:block absolute bottom-[160px] left-[15%] w-3 h-3 text-[var(--c-main-l)] hero-sparkle" fill="currentColor" viewBox="0 0 24 24" style={{ animationDelay: "2s" }}>
-          <path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z" />
-        </svg>
+        {/* Ambient radial glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none" style={{
+          background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(10, 42, 94, 0.07) 0%, transparent 60%)"
+        }} />
 
         <div className="relative max-w-[900px] mx-auto px-5 text-center">
-          {/* Live status pill */}
-          <div className="hero-fade-up inline-flex items-center gap-2 px-3.5 h-8 rounded-full bg-white/80 backdrop-blur border border-[var(--c-line)] text-[12px] font-semibold text-[var(--c-text)] mb-7 shadow-sm" style={{ animationDelay: "0.05s" }}>
-            <span className="relative flex w-2 h-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--c-new)] opacity-75 animate-ping" />
-              <span className="relative inline-flex w-2 h-2 rounded-full bg-[var(--c-new)]" />
-            </span>
-            지금 상담 접수 가능 · 평균 1시간 이내 회신
-          </div>
-
           <h1 className="p-display mb-7">
-            <span className="block hero-fade-up" style={{ animationDelay: "0.15s" }}>
+            <span className="block hero-fade-up" style={{ animationDelay: "0.05s" }}>
               비즈니스의 시작,
             </span>
-            <span className="block hero-fade-up" style={{ animationDelay: "0.3s" }}>
+            <span className="block hero-fade-up" style={{ animationDelay: "0.2s" }}>
               <span className="relative inline-block">
                 <span className="hero-gradient-text">제대로 된 홈페이지</span>
                 <span
@@ -200,7 +115,7 @@ export default async function Home() {
 
           <p
             className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[560px] mx-auto leading-[1.7] mb-10 hero-fade-up"
-            style={{ animationDelay: "0.45s" }}
+            style={{ animationDelay: "0.35s" }}
           >
             기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
             10분 상담으로 견적·일정을 확인하세요.
@@ -208,7 +123,7 @@ export default async function Home() {
 
           <div
             className="flex items-center gap-3 justify-center flex-wrap mb-8 hero-fade-up"
-            style={{ animationDelay: "0.6s" }}
+            style={{ animationDelay: "0.5s" }}
           >
             <Link href="/contact" className="p-btn p-btn-dark p-btn-xl hero-pulse-glow">
               무료 상담 신청
@@ -223,8 +138,13 @@ export default async function Home() {
 
           <div
             className="flex items-center gap-5 justify-center flex-wrap text-[12px] text-[var(--c-sub)] hero-fade-up"
-            style={{ animationDelay: "0.75s" }}
+            style={{ animationDelay: "0.65s" }}
           >
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
+              <span>지금 상담 접수 가능</span>
+            </div>
+            <span className="p-sep" />
             <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
             <span className="p-sep" />
             <span className="flex items-center gap-1.5">
@@ -233,13 +153,6 @@ export default async function Home() {
               </svg>
               평균 만족도 <strong className="text-[var(--c-text)]">5.0/5.0</strong>
             </span>
-            <span className="p-sep" />
-            <span className="keep">재의뢰율 95%</span>
-          </div>
-
-          {/* Scroll cue */}
-          <div className="hidden md:flex justify-center mt-16 hero-fade-up" style={{ animationDelay: "1s" }}>
-            <div className="hero-scroll-cue" aria-hidden />
           </div>
 
           {/* hidden fallback to keep portfolio count reference */}
@@ -248,7 +161,7 @@ export default async function Home() {
 
         {/* Stats bar — compact, full width inside hero */}
         <div className="relative max-w-[1280px] mx-auto px-5">
-          <div className="mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)] bg-white/50 backdrop-blur-sm">
+          <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
             {[
               { num: "249,000", unit: "원~", label: "제작 시작가", numSize: "text-[28px] md:text-[34px] lg:text-[40px]" },
               { num: "1~2", unit: "주", label: "평균 제작 기간", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
@@ -257,8 +170,7 @@ export default async function Home() {
             ].map((s, i) => (
               <div
                 key={s.label}
-                className={`py-7 md:py-9 px-4 md:px-6 hero-stat-reveal ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
-                style={{ animationDelay: `${0.9 + i * 0.1}s` }}
+                className={`py-7 md:py-9 px-4 md:px-6 ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
               >
                 <p className="text-[11px] text-[var(--c-sub)] font-semibold mb-3 keep tracking-wider uppercase">{s.label}</p>
                 <p className="p-stat nowrap flex items-baseline">
