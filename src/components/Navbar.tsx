@@ -61,20 +61,6 @@ export default function Navbar() {
       >
         <div className="max-w-[1280px] mx-auto px-5 flex items-center justify-between h-[68px]">
           <div className="flex items-center gap-10">
-            <Link href="/" className="flex items-center gap-2 no-underline group">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-[9px] bg-[var(--c-text)] text-white font-extrabold text-[14px] leading-none tracking-tight group-hover:bg-[var(--c-main)] transition-colors">
-                H
-              </span>
-              <div className="flex flex-col leading-none">
-                <span className="text-[17px] font-extrabold tracking-[-0.035em] text-[var(--c-text)]">
-                  HS WEB
-                </span>
-                <span className="text-[9.5px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase mt-0.5">
-                  Web Agency
-                </span>
-              </div>
-            </Link>
-
             <nav className="hidden lg:flex items-center gap-0.5">
               {links.map((link) => {
                 const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
@@ -142,10 +128,7 @@ export default function Navbar() {
         } flex flex-col`}
       >
         <div className="flex items-center justify-between h-[64px] px-5 border-b border-[var(--c-line)]">
-          <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 no-underline">
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-[9px] bg-[var(--c-text)] text-white font-extrabold text-[13px]">H</span>
-            <span className="text-[16px] font-extrabold tracking-tight text-[var(--c-text)]">HS WEB</span>
-          </Link>
+          <span className="text-[14px] font-bold text-[var(--c-sub)] tracking-wider uppercase">메뉴</span>
           <button
             onClick={() => setMobileOpen(false)}
             className="w-9 h-9 inline-flex items-center justify-center rounded-[8px] hover:bg-[var(--c-bg-2)] bg-transparent border-0 cursor-pointer"
