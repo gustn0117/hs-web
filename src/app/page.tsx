@@ -27,16 +27,22 @@ export default async function Home() {
         <div className="max-w-[1200px] mx-auto px-5 pt-20 pb-24 md:pt-28 md:pb-32">
           <div className="flex items-center gap-2 mb-6">
             <span className="p-chip p-chip-solid">2026 업데이트</span>
-            <span className="text-[13px] text-[var(--c-sub)]">홈페이지 제작 249,000원부터</span>
+            <span className="text-[13px] text-[var(--c-sub)]">
+              홈페이지 제작 <span className="nowrap">249,000원</span>부터
+            </span>
           </div>
 
           <h1 className="p-h1-2xl max-w-[840px] mb-6">
-            비즈니스의 시작은<br />
-            <span className="gradient-text">제대로 된 홈페이지</span>부터.
+            비즈니스의 시작은
+            <br className="md:hidden" />{" "}
+            <span className="gradient-text">제대로 된 홈페이지</span>
+            <wbr />
+            부터.
           </h1>
 
-          <p className="text-[17px] md:text-[19px] text-[var(--c-text-2)] max-w-[580px] leading-[1.6] mb-10">
-            기획부터 디자인, 개발, 유지보수까지.<br />
+          <p className="text-[16px] md:text-[18px] text-[var(--c-text-2)] max-w-[560px] leading-[1.75] mb-10">
+            기획부터 디자인, 개발, 유지보수까지
+            <br className="hidden md:block" />
             원스톱으로 제공하는 홈페이지 제작 전문 웹에이전시.
           </p>
 
@@ -62,8 +68,8 @@ export default async function Home() {
                 key={s.label}
                 className={`px-6 py-4 ${i !== 0 ? "border-l border-[var(--c-line)]" : ""}`}
               >
-                <p className="text-[11px] text-[var(--c-sub)] font-medium mb-1">{s.label}</p>
-                <p className="p-stat text-[22px] leading-none">
+                <p className="text-[11px] text-[var(--c-sub)] font-medium mb-1 keep">{s.label}</p>
+                <p className="p-stat text-[22px] leading-none nowrap">
                   <span>{s.value}</span>
                   <span className="text-[13px] text-[var(--c-sub)] ml-0.5">{s.suffix}</span>
                 </p>
@@ -225,7 +231,7 @@ export default async function Home() {
                 <h3 className={`text-[18px] font-bold mb-5 ${plan.featured ? "text-white" : "text-[var(--c-text)]"}`}>
                   {plan.subtitle}
                 </h3>
-                <div className="mb-6 flex items-baseline gap-1">
+                <div className="mb-6 flex items-baseline gap-1 nowrap">
                   <span className={`p-stat text-[36px] leading-none ${plan.featured ? "text-white" : ""}`}>{plan.price}</span>
                   <span className={`text-[13px] font-medium ${plan.featured ? "text-white/70" : "text-[var(--c-sub)]"}`}>{plan.suffix}</span>
                 </div>
