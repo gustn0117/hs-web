@@ -434,7 +434,7 @@ export default async function Home() {
               <div className="grid grid-cols-2 gap-3">
                 {rest.map((p) => (
                   <Link key={p.id} href={`/portfolio/${p.id}`} className="group no-underline block">
-                    <div className="p-showcase !rounded-[12px] mb-2 relative bg-[#1a1a1c]">
+                    <div className="p-showcase !aspect-square !rounded-[12px] mb-2 relative bg-[#1a1a1c]">
                       {p.thumbnail && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.thumbnail} alt={p.title} />

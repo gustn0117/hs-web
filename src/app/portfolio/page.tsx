@@ -118,7 +118,7 @@ export default async function PortfolioPage() {
                     href={`/portfolio/${p.id}`}
                     className="group no-underline block"
                   >
-                    <div className="p-showcase !rounded-[12px] mb-3 relative">
+                    <div className="p-showcase !aspect-square !rounded-[12px] mb-3 relative">
                       {p.thumbnail ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.thumbnail} alt={p.title} />
