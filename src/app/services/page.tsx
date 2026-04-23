@@ -36,6 +36,37 @@ export default function ServicesPage() {
         { label: "재의뢰율", value: "95", suffix: "%" },
       ]}
     >
+      {/* Hero visual banner */}
+      <Section>
+        <div className="relative rounded-[16px] overflow-hidden border border-[var(--c-line)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1600&q=80&auto=format&fit=crop"
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(115deg, rgba(10,42,94,0.85) 0%, rgba(36,89,176,0.7) 55%, rgba(36,89,176,0.3) 100%)",
+            }}
+          />
+          <div className="absolute inset-0 p-bg-grid-dots opacity-[0.08] pointer-events-none" />
+
+          <div className="relative p-8 md:p-12 min-h-[220px] md:min-h-[260px] flex flex-col justify-center">
+            <p className="text-[11px] font-bold text-white/70 tracking-[0.15em] uppercase mb-3">
+              ONE-STOP WEB SOLUTION
+            </p>
+            <h3 className="text-[24px] md:text-[34px] font-black tracking-[-0.03em] text-white leading-[1.2] max-w-[640px]">
+              기획부터 개발, 운영까지.<br />
+              브랜드 성장에 필요한 전반을 한 곳에서.
+            </h3>
+          </div>
+        </div>
+      </Section>
+
       {/* Uniform service grid */}
       <Section overline="ALL SERVICES" title="서비스 목록">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
