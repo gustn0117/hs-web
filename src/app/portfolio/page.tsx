@@ -36,10 +36,10 @@ export default async function PortfolioPage() {
       title="숫자로 증명하는 작업물."
       subtitle="실제 클라이언트와 함께한 프로젝트를 확인하세요. 각 프로젝트의 배경과 결과를 투명하게 공개합니다."
       stats={[
-        { label: "총 프로젝트", value: String(items.length), suffix: "건" },
-        { label: "분야", value: String(categories.length || 0), suffix: "개" },
         { label: "평균 만족도", value: "5.0", suffix: "/ 5.0" },
         { label: "재의뢰율", value: "95", suffix: "%" },
+        { label: "소스코드", value: "100", suffix: "% 제공" },
+        { label: "반응형 적용", value: "100", suffix: "%" },
       ]}
     >
       {items.length === 0 ? (
@@ -95,19 +95,15 @@ export default async function PortfolioPage() {
 
           {/* Category filter + list */}
           {rest.length > 0 && (
-            <Section overline="ALL WORKS" title={`전체 프로젝트 ${items.length}`}>
+            <Section overline="ALL WORKS" title="전체 프로젝트">
               {categories.length > 0 && (
                 <div className="flex items-center gap-0 overflow-x-auto border-b border-[var(--c-line)] mb-6">
-                  <button className="p-tab active">전체 <span className="text-[11px] text-[var(--c-sub-2)] ml-1 tnum">{items.length}</span></button>
-                  {categories.map((cat) => {
-                    const count = items.filter((i) => i.category === cat).length;
-                    return (
-                      <button key={cat} className="p-tab">
-                        {cat}
-                        <span className="text-[11px] text-[var(--c-sub-2)] ml-1 tnum">{count}</span>
-                      </button>
-                    );
-                  })}
+                  <button className="p-tab active">전체</button>
+                  {categories.map((cat) => (
+                    <button key={cat} className="p-tab">
+                      {cat}
+                    </button>
+                  ))}
                 </div>
               )}
 

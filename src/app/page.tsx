@@ -333,7 +333,7 @@ export default async function Home() {
               </h2>
               <p className="text-[16px] text-[var(--c-sub)] leading-[1.7] max-w-[560px]">
                 {portfolio.length > 0
-                  ? `총 ${portfolio.length}개의 프로젝트를 성공적으로 런칭했습니다.`
+                  ? "실제 클라이언트와 함께한 최근 작업물입니다."
                   : "곧 새로운 프로젝트들을 공개합니다."}
               </p>
             </div>
