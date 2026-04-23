@@ -22,7 +22,7 @@ export default function Navbar() {
       <div className="hidden md:block border-b border-[var(--color-border)] bg-[var(--color-bg-alt)]">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-8 text-[11px] text-[var(--color-muted)]">
           <div className="flex items-center gap-3">
-            <span className="tnum">대표 심현수 · 임진형</span>
+            <span>대표 심현수</span>
             <span className="text-[var(--color-border-strong)]">|</span>
             <a href="tel:010-3319-2509" className="tnum hover:text-[var(--color-point)] no-underline text-[var(--color-text-2)]">010-3319-2509</a>
           </div>

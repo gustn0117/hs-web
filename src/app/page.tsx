@@ -31,47 +31,87 @@ export default async function Home() {
           <span>전체 안내</span>
         </div>
 
-        {/* Top banner — dense notice strip */}
-        <section className="bg-white border border-[var(--color-border)] mb-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-[var(--color-border)] bg-[var(--color-point-bg)]">
+        {/* Top banner — refined hero */}
+        <section className="bg-white border border-[var(--color-border)] rounded-md overflow-hidden mb-4 p-hero-shadow">
+          {/* Notice strip with dot */}
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 border-b border-[var(--color-border)] bg-[var(--color-point-soft)]">
             <div className="flex items-center gap-2 text-[12px]">
-              <span className="inline-flex items-center h-[18px] px-1.5 text-[10px] font-bold bg-[var(--color-point)] text-white rounded-sm">공지</span>
+              <span className="p-ribbon">NOTICE</span>
               <span className="text-[var(--color-point-dark)] font-semibold">홈페이지 제작 249,000원부터 · 무료 유지보수 포함</span>
-              <span className="text-[var(--color-muted)] hidden sm:inline">· 빠른 제작 · 반응형 기본</span>
+              <span className="text-[var(--color-muted)] hidden sm:inline">빠른 제작 · 반응형 기본</span>
             </div>
-            <Link href="/contact" className="text-[12px] text-[var(--color-point-dark)] font-semibold no-underline hover:underline">
+            <Link href="/contact" className="text-[12px] text-[var(--color-point-dark)] font-bold no-underline hover:underline">
               견적 문의 →
             </Link>
           </div>
 
-          {/* Hero body — left text / right stats */}
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-0">
-            <div className="px-4 py-5 md:py-6 md:px-6">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="p-chip p-chip-point">Web Agency</span>
+          {/* Hero body */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-0">
+            <div className="px-5 py-7 md:py-9 md:px-8 relative">
+              {/* Subtle accent line */}
+              <div className="absolute top-0 left-0 w-12 h-0.5 bg-[var(--color-point)]" />
+
+              <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+                <span className="p-chip p-chip-solid">HS WEB</span>
+                <span className="p-chip">Web Agency</span>
                 <span className="p-chip">반응형</span>
-                <span className="p-chip">SEO 최적화</span>
+                <span className="p-chip">SEO</span>
                 <span className="p-chip">무료 유지보수</span>
               </div>
-              <h1 className="p-h1 mb-2">
-                홈페이지 제작 전문 <span className="text-[var(--color-point)]">HS WEB</span>
+
+              <h1 className="p-h1-xl mb-3">
+                <span className="text-[var(--color-text)]">홈페이지 제작은</span>
+                <br />
+                <span className="text-[var(--color-point)]">정보가 보이는 사이트</span>
+                <span className="text-[var(--color-text)]">로.</span>
               </h1>
-              <p className="text-[13px] text-[var(--color-text-2)] leading-relaxed mb-4 max-w-[560px]">
-                기획부터 디자인, 개발, 유지보수까지. 소자본으로도 가능한 합리적 가격에
-                정보 밀도 높은 홈페이지를 빠르게 제작해드립니다.
+
+              <p className="text-[13.5px] text-[var(--color-text-2)] leading-[1.75] mb-6 max-w-[560px]">
+                한국형 포털 UI 기반으로 설계합니다. 기획부터 디자인, 개발, 유지보수까지
+                <span className="font-semibold text-[var(--color-text)]"> 원스톱</span>으로 제공하며,
+                <span className="font-semibold text-[var(--color-text)]"> 합리적 가격</span>과
+                <span className="font-semibold text-[var(--color-text)]"> 빠른 납기</span>로
+                작은 사업자부터 대형 프로젝트까지 대응합니다.
               </p>
-              <div className="flex items-center gap-2">
-                <Link href="/contact" className="p-btn p-btn-point p-btn-lg no-underline">견적 상담</Link>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link href="/contact" className="p-btn p-btn-point p-btn-lg no-underline">
+                  무료 상담 신청
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                </Link>
                 <Link href="/portfolio" className="p-btn p-btn-lg no-underline">포트폴리오 보기</Link>
-                <a href="tel:010-3319-2509" className="hidden sm:inline-flex p-btn p-btn-lg tnum no-underline">010-3319-2509</a>
+                <a href="tel:010-3319-2509" className="hidden sm:inline-flex p-btn p-btn-lg p-btn-ghost tnum no-underline">
+                  <svg className="w-3.5 h-3.5 text-[var(--color-point)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                  010-3319-2509
+                </a>
+              </div>
+
+              {/* Trust strip */}
+              <div className="mt-7 pt-5 border-t border-[var(--color-border-soft)] flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11.5px] text-[var(--color-muted)]">
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-3 h-3 text-[var(--color-point)]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  소스코드 100% 제공
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-3 h-3 text-[var(--color-point)]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  전자계약 체결
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-3 h-3 text-[var(--color-point)]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  SSL · SEO 기본 적용
+                </span>
               </div>
             </div>
 
-            <div className="border-l-0 md:border-l border-t md:border-t-0 border-[var(--color-border)] bg-[var(--color-bg-alt)]">
+            {/* Stats panel */}
+            <div className="border-l-0 md:border-l border-t md:border-t-0 border-[var(--color-border)] bg-gradient-to-b from-[var(--color-bg-alt)] to-white">
+              <div className="px-4 py-3 border-b border-[var(--color-border)] bg-white">
+                <p className="text-[11px] font-bold text-[var(--color-muted)] tracking-widest uppercase">AT A GLANCE</p>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-1">
                 <StatCell label="기본 제작가" value="249,000" suffix="원~" />
                 <StatCell label="평균 제작기간" value="1~2" suffix="주" />
-                <StatCell label="유지보수" value="무상" suffix="1개월~" />
+                <StatCell label="유지보수" value="무상" suffix=" 1개월~" />
                 <StatCell label="반응형 적용" value="100" suffix="%" />
               </div>
             </div>
@@ -389,11 +429,11 @@ export default async function Home() {
 
 function StatCell({ label, value, suffix }: { label: string; value: string; suffix: string }) {
   return (
-    <div className="px-4 py-3 border-b border-[var(--color-border)] last:border-b-0 md:border-b md:even:border-b md:[&:last-child]:border-b-0">
-      <p className="text-[11px] text-[var(--color-muted)] mb-0.5">{label}</p>
-      <p className="text-[18px] font-bold text-[var(--color-text)] tnum">
-        {value}
-        <span className="text-[12px] font-medium text-[var(--color-muted)] ml-0.5">{suffix}</span>
+    <div className="px-5 py-3.5 border-b border-[var(--color-border-soft)] last:border-b-0 md:border-b md:[&:last-child]:border-b-0 group">
+      <p className="text-[10.5px] font-semibold text-[var(--color-muted)] mb-1 uppercase tracking-wider">{label}</p>
+      <p className="text-[20px] p-stat leading-none">
+        <span className="text-[var(--color-text)]">{value}</span>
+        <span className="text-[12px] font-semibold text-[var(--color-point)] ml-0.5">{suffix}</span>
       </p>
     </div>
   );

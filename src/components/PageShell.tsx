@@ -25,9 +25,15 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
 
 export function PageHeader({ title, caption }: { title: string; caption?: string }) {
   return (
-    <header className="mb-4">
+    <header className="mb-5 pb-4 border-b border-[var(--color-border)]">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="inline-block w-1 h-4 bg-[var(--color-point)] rounded-sm" />
+        <span className="text-[11px] font-bold text-[var(--color-point)] tracking-[0.18em] uppercase">
+          HS WEB
+        </span>
+      </div>
       <h1 className="p-h1 mb-1">{title}</h1>
-      {caption && <p className="text-[12px] text-[var(--color-muted)]">{caption}</p>}
+      {caption && <p className="text-[12.5px] text-[var(--color-muted)] leading-relaxed">{caption}</p>}
     </header>
   );
 }

@@ -16,11 +16,9 @@ export default function Footer() {
             </p>
             <dl className="mt-3 grid grid-cols-[60px_1fr] gap-y-1 text-[12px]">
               <dt className="text-[var(--color-muted)]">대표</dt>
-              <dd className="text-[var(--color-text-2)]">심현수 · 임진형</dd>
+              <dd className="text-[var(--color-text-2)]">심현수</dd>
               <dt className="text-[var(--color-muted)]">연락처</dt>
               <dd className="text-[var(--color-text-2)] tnum">010-3319-2509</dd>
-              <dt className="text-[var(--color-muted)]">소재</dt>
-              <dd className="text-[var(--color-text-2)]">대한민국</dd>
             </dl>
           </div>
 
