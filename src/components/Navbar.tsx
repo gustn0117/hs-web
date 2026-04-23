@@ -61,6 +61,15 @@ export default function Navbar() {
       >
         <div className="max-w-[1280px] mx-auto px-5 flex items-center justify-between h-[68px]">
           <div className="flex items-center gap-10">
+            <Link href="/" className="flex items-baseline gap-1.5 no-underline group">
+              <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                HS WEB
+              </span>
+              <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase hidden sm:inline">
+                Web Agency
+              </span>
+            </Link>
+
             <nav className="hidden lg:flex items-center gap-0.5">
               {links.map((link) => {
                 const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
