@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell, Section } from "@/components/PageShell";
+import {
+  DomainIllustration,
+  HostingIllustration,
+  NetworkFlow,
+  ServerStack3D,
+} from "./Illustrations";
 
 export const metadata: Metadata = {
   title: "도메인 & 호스팅이란?",
@@ -22,86 +28,114 @@ export default function DomainHostingPage() {
         { label: "갱신 알림", value: "자동", suffix: "" },
       ]}
     >
-      {/* Concept comparison — 2 big cards */}
+      {/* Concept comparison — 2 big cards with 3D illustrations */}
       <Section overline="CONCEPT" title="집에 비유하면 이렇습니다" subtitle="두 가지 모두 웹사이트 운영에 필수입니다.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Domain card */}
-          <div className="relative p-8 rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden group hover:border-[var(--c-main)] transition-colors">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="p-chip p-chip-point">비유 · 주소</span>
-              <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">DOMAIN</span>
-            </div>
-            <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">도메인 = 집 주소</h3>
-            <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
-              사람이 기억할 수 있는 웹사이트 이름. <br />
-              <span className="tnum font-semibold text-[var(--c-text)]">hsweb.pics</span>{" "}
-              처럼 브라우저 주소창에 입력하는 문자.
-            </p>
-            <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">예시</span>
-                <span className="font-semibold tnum">.com · .co.kr · .kr</span>
+          <div className="relative p-8 rounded-[16px] border border-[var(--c-line)] bg-gradient-to-br from-white to-[var(--c-main-bg)] overflow-hidden group hover:border-[var(--c-main)] transition-colors">
+            <div className="relative z-[1]">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="p-chip p-chip-point">비유 · 주소</span>
+                <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">DOMAIN</span>
               </div>
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">비용</span>
-                <span className="font-semibold tnum">연 3,000~30,000원</span>
+              <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">도메인 = 집 주소</h3>
+              <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
+                사람이 기억할 수 있는 웹사이트 이름. <br />
+                <span className="tnum font-semibold text-[var(--c-text)]">hsweb.pics</span>{" "}
+                처럼 브라우저 주소창에 입력하는 문자.
+              </p>
+
+              <div className="my-6 -mx-2">
+                <DomainIllustration />
               </div>
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">갱신</span>
-                <span className="font-semibold">매년 1회</span>
+
+              <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">예시</span>
+                  <span className="font-semibold tnum">.com · .co.kr · .kr</span>
+                </div>
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">비용</span>
+                  <span className="font-semibold tnum">연 3,000~30,000원</span>
+                </div>
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">갱신</span>
+                  <span className="font-semibold">매년 1회</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Hosting card */}
-          <div className="relative p-8 rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden group hover:border-[var(--c-main)] transition-colors">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="p-chip p-chip-point">비유 · 건물</span>
-              <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">HOSTING</span>
-            </div>
-            <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">호스팅 = 건물</h3>
-            <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
-              사이트 파일을 24시간 저장·전달하는 서버 공간. <br />
-              내 컴퓨터 대신 전문 업체의 서버를 빌려 쓰는 것.
-            </p>
-            <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">예시</span>
-                <span className="font-semibold">가비아 · 카페24 · AWS</span>
+          <div className="relative p-8 rounded-[16px] border border-[var(--c-line)] bg-gradient-to-br from-white to-[#eef5f3] overflow-hidden group hover:border-[var(--c-main)] transition-colors">
+            <div className="relative z-[1]">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="p-chip p-chip-point">비유 · 건물</span>
+                <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">HOSTING</span>
               </div>
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">비용</span>
-                <span className="font-semibold tnum">월 7,000~50,000원</span>
+              <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">호스팅 = 건물</h3>
+              <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
+                사이트 파일을 24시간 저장·전달하는 서버 공간. <br />
+                내 컴퓨터 대신 전문 업체의 서버를 빌려 쓰는 것.
+              </p>
+
+              <div className="my-6 -mx-2">
+                <HostingIllustration />
               </div>
-              <div className="flex justify-between text-[13px]">
-                <span className="text-[var(--c-sub)]">갱신</span>
-                <span className="font-semibold">매월 또는 연간</span>
+
+              <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">예시</span>
+                  <span className="font-semibold">가비아 · 카페24 · AWS</span>
+                </div>
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">비용</span>
+                  <span className="font-semibold tnum">월 7,000~50,000원</span>
+                </div>
+                <div className="flex justify-between text-[13px]">
+                  <span className="text-[var(--c-sub)]">갱신</span>
+                  <span className="font-semibold">매월 또는 연간</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* Flow diagram */}
+      {/* Flow diagram — animated network SVG */}
       <Section overline="HOW IT WORKS" title="접속 흐름" subtitle="주소창 입력부터 사이트 표시까지 4단계.">
-        <div className="p-card overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-0">
+        <div className="relative p-card p-6 md:p-10 overflow-hidden bg-gradient-to-br from-white to-[var(--c-main-bg)]">
+          <div className="hidden md:block">
+            <NetworkFlow />
+          </div>
+
+          {/* Mobile fallback — stacked cards */}
+          <div className="md:hidden grid grid-cols-1 gap-0">
             {[
               { n: "01", t: "주소 입력", d: "브라우저에 hsweb.pics 입력" },
               { n: "02", t: "DNS 변환", d: "도메인을 IP 주소로 변환" },
               { n: "03", t: "서버 응답", d: "호스팅 서버가 파일 전송" },
               { n: "04", t: "사이트 표시", d: "브라우저가 화면에 렌더" },
             ].map((step, i) => (
-              <div key={step.n} className={`p-6 md:p-7 relative ${i < 3 ? "md:border-r" : ""} ${i !== 0 ? "border-t md:border-t-0" : ""} border-[var(--c-line)]`}>
+              <div key={step.n} className={`p-5 relative ${i !== 0 ? "border-t" : ""} border-[var(--c-line)]`}>
                 <div className="text-[11px] font-bold text-[var(--c-main)] tracking-widest mb-2">{step.n}</div>
                 <h4 className="text-[16px] font-bold tracking-tight mb-1.5">{step.t}</h4>
                 <p className="text-[13px] text-[var(--c-sub)] leading-[1.6]">{step.d}</p>
-                {i < 3 && (
-                  <svg className="hidden md:block absolute top-1/2 -right-2.5 w-5 h-5 text-[var(--c-line-3)] bg-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                )}
               </div>
+            ))}
+          </div>
+
+          {/* Desktop descriptions below the SVG */}
+          <div className="hidden md:grid grid-cols-4 gap-6 mt-4">
+            {[
+              { d: "브라우저에 hsweb.pics 입력" },
+              { d: "도메인을 IP 주소로 변환" },
+              { d: "호스팅 서버가 파일 전송" },
+              { d: "브라우저가 화면에 렌더" },
+            ].map((s, i) => (
+              <p key={i} className="text-center text-[12.5px] text-[var(--c-sub)] leading-[1.6]">
+                {s.d}
+              </p>
             ))}
           </div>
         </div>
@@ -143,11 +177,11 @@ export default function DomainHostingPage() {
         </div>
       </Section>
 
-      {/* HS WEB service highlight — dark card */}
+      {/* HS WEB service highlight — dark card with 3D server stack */}
       <Section overline="HS WEB" title="대행 관리 서비스">
         <div className="p-8 md:p-10 rounded-[16px] bg-[var(--c-text)] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.06]" />
-          <div className="relative grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-center">
+          <div className="relative grid grid-cols-1 md:grid-cols-[1fr_280px] gap-8 items-center">
             <div>
               <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">
                 도메인·호스팅, HS WEB이 전부 대행합니다.
@@ -157,21 +191,26 @@ export default function DomainHostingPage() {
                 <br />
                 실비 외 <strong className="text-white">별도 수수료가 전혀 없습니다.</strong>
               </p>
-              <div className="flex flex-wrap gap-2 mt-5">
+              <div className="flex flex-wrap gap-2 mt-5 mb-6">
                 {["등록 대행", "연간 갱신", "실비 청구", "만료 알림", "DNS 관리"].map((t) => (
                   <span key={t} className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-semibold">
                     {t}
                   </span>
                 ))}
               </div>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/contact" className="inline-flex items-center justify-center h-12 px-6 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[14px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
+                  상담 신청
+                </Link>
+                <a href="tel:010-3319-2509" className="inline-flex items-center justify-center h-12 px-6 rounded-[10px] border border-white/20 text-white font-semibold text-[14px] tnum no-underline hover:bg-white/5 transition-colors">
+                  010-3319-2509
+                </a>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 w-full md:w-auto">
-              <Link href="/contact" className="inline-flex items-center justify-center h-12 px-6 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[14px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
-                상담 신청
-              </Link>
-              <a href="tel:010-3319-2509" className="inline-flex items-center justify-center h-12 px-6 rounded-[10px] border border-white/20 text-white font-semibold text-[14px] tnum no-underline hover:bg-white/5 transition-colors">
-                010-3319-2509
-              </a>
+
+            {/* 3D server stack illustration */}
+            <div className="hidden md:block">
+              <ServerStack3D />
             </div>
           </div>
         </div>
