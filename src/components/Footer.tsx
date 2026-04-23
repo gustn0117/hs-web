@@ -1,111 +1,83 @@
 import Link from "next/link";
 
-const footerSections = [
-  {
-    title: "서비스",
-    links: [
-      { label: "반응형 홈페이지", href: "/services/responsive-web" },
-      { label: "쇼핑몰 구축", href: "/services/ecommerce" },
-      { label: "랜딩페이지", href: "/services/landing-page" },
-      { label: "기술 마케팅", href: "/services/marketing" },
-    ],
-  },
-  {
-    title: "회사",
-    links: [
-      { label: "포트폴리오", href: "/portfolio" },
-      { label: "제작 과정", href: "/process" },
-      { label: "가격 안내", href: "/pricing" },
-      { label: "문의하기", href: "/contact" },
-    ],
-  },
-  {
-    title: "고객지원",
-    links: [
-      { label: "사이트 관리", href: "/client" },
-      { label: "고객 후기", href: "/testimonials" },
-      { label: "FAQ", href: "#" },
-    ],
-  },
-];
-
 export default function Footer() {
   return (
-    <footer className="relative">
-      {/* Top gradient line */}
-      <div className="h-0.5 bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-accent)] to-[var(--color-primary)]" />
-
-      <div className="bg-[var(--color-dark)] pt-14 pb-8 relative overflow-hidden">
-        {/* Animated gradient background overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            background: "linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-primary))",
-            backgroundSize: "400% 400%",
-            animation: "bg-gradient-shift 15s ease infinite",
-          }}
-        />
-
-        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
-            {/* Brand column */}
-            <div className="lg:col-span-2">
-              <Link
-                href="/"
-                className="text-[1.3rem] font-extrabold text-white no-underline inline-block mb-4"
-              >
-                HS <span className="gradient-text">WEB</span>
-              </Link>
-              <p className="text-[var(--color-gray-light)] text-[0.9rem] leading-relaxed max-w-[280px] mb-6">
-                감각적인 디자인과 최신 기술력으로 비즈니스 성장을 돕는 웹 전문
-                에이전시입니다.
-              </p>
-
+    <footer className="border-t border-[var(--color-border)] bg-[var(--color-bg-alt)] mt-8">
+      <div className="max-w-[1200px] mx-auto px-4 py-8">
+        {/* Info grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-6 text-[12px]">
+          <div className="col-span-2">
+            <div className="flex items-baseline gap-1.5 mb-2">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-sm bg-[var(--color-point)] text-white font-bold text-[11px]">H</span>
+              <span className="text-[14px] font-bold text-[var(--color-text)]">HS WEB</span>
             </div>
-
-            {footerSections.map((section) => (
-              <div key={section.title}>
-                <h4 className="text-white font-semibold mb-4 text-[0.95rem]">
-                  {section.title}
-                </h4>
-                <ul className="list-none space-y-2.5">
-                  {section.links.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="link-underline-slide text-[var(--color-gray-light)] no-underline text-[0.9rem] hover:text-[var(--color-primary)] transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-[var(--color-gray-light)] text-[0.85rem]">
-              &copy; 2026 HS WEB. All rights reserved.
+            <p className="text-[var(--color-muted)] leading-relaxed">
+              홈페이지 제작 전문 웹에이전시
             </p>
-            <div className="flex items-center gap-4">
-              <Link href="/terms" className="text-[var(--color-gray-light)] text-[0.8rem] no-underline hover:text-white transition-colors">
-                이용약관
-              </Link>
-              <span className="text-white/20 text-xs">|</span>
-              <Link href="/privacy" className="text-[var(--color-gray-light)] text-[0.8rem] no-underline hover:text-white transition-colors">
-                개인정보처리방침
-              </Link>
-            </div>
+            <dl className="mt-3 grid grid-cols-[60px_1fr] gap-y-1 text-[12px]">
+              <dt className="text-[var(--color-muted)]">대표</dt>
+              <dd className="text-[var(--color-text-2)]">심현수 · 임진형</dd>
+              <dt className="text-[var(--color-muted)]">연락처</dt>
+              <dd className="text-[var(--color-text-2)] tnum">010-3319-2509</dd>
+              <dt className="text-[var(--color-muted)]">소재</dt>
+              <dd className="text-[var(--color-text-2)]">대한민국</dd>
+            </dl>
           </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600 text-[0.75rem]">
-              Made with care by HS WEB Team
-            </p>
-          </div>
+          <FooterCol
+            title="서비스"
+            links={[
+              { label: "반응형 홈페이지", href: "/services/responsive-web" },
+              { label: "쇼핑몰 구축", href: "/services/ecommerce" },
+              { label: "랜딩페이지", href: "/services/landing-page" },
+              { label: "기술 마케팅", href: "/services/marketing" },
+            ]}
+          />
+          <FooterCol
+            title="회사"
+            links={[
+              { label: "포트폴리오", href: "/portfolio" },
+              { label: "제작 과정", href: "/process" },
+              { label: "가격 안내", href: "/pricing" },
+              { label: "도메인·호스팅", href: "/domain-hosting" },
+            ]}
+          />
+          <FooterCol
+            title="고객지원"
+            links={[
+              { label: "문의하기", href: "/contact" },
+              { label: "사이트 관리", href: "/client" },
+              { label: "이용약관", href: "/terms" },
+              { label: "개인정보처리방침", href: "/privacy" },
+            ]}
+          />
+        </div>
+
+        <div className="mt-8 pt-4 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-[var(--color-muted)]">
+          <p>© 2026 HS WEB. All rights reserved.</p>
+          <p className="tnum">Biz: 010-3319-2509 · HSWEB.PICS</p>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div>
+      <h4 className="text-[var(--color-text)] font-semibold mb-2 text-[12px]">{title}</h4>
+      <ul className="list-none space-y-1.5">
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link
+              href={link.href}
+              className="text-[var(--color-text-2)] no-underline hover:text-[var(--color-point)] text-[12px]"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

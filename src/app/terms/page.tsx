@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { PageShell, DefaultSidebar, Section } from "@/components/PageShell";
 
 export const metadata: Metadata = {
   title: "이용약관",
@@ -30,30 +30,27 @@ const sections = [
     ],
   },
   {
-    title: "제4조 (서비스의 내용)",
-    content: "회사는 다음과 같은 서비스를 제공합니다.",
+    title: "제4조 (서비스 이용 계약)",
     items: [
-      "웹사이트 기획 및 컨설팅",
-      "UI/UX 디자인",
-      "프론트엔드 및 백엔드 개발",
-      "웹사이트 유지보수 및 관리",
-      "도메인 및 호스팅 관련 안내",
+      "이용자는 회사가 제공하는 양식에 따라 서비스 이용을 신청할 수 있습니다.",
+      "회사는 이용자의 요구사항을 검토한 후 견적서 및 계약서를 제공합니다.",
+      "계약은 양 당사자의 서명(또는 전자서명)으로 성립합니다.",
     ],
   },
   {
-    title: "제5조 (계약의 성립)",
+    title: "제5조 (서비스 제공 범위)",
     items: [
-      "서비스 이용 계약은 이용자의 상담 신청과 회사의 승낙으로 성립됩니다.",
-      "구체적인 서비스 범위, 비용, 일정 등은 별도의 계약서를 통해 정합니다.",
-      "회사는 정당한 사유가 있는 경우 계약 체결을 거절할 수 있습니다.",
+      "회사는 계약서에 명시된 범위 내에서 서비스를 제공합니다.",
+      "계약 범위 외 추가 작업이 필요한 경우, 별도 협의 및 추가 비용이 발생할 수 있습니다.",
+      "제공되는 서비스의 구체적인 내용과 일정은 계약서에 따릅니다.",
     ],
   },
   {
-    title: "제6조 (비용 및 결제)",
+    title: "제6조 (대금 지급)",
     items: [
-      "서비스 비용은 프로젝트의 범위와 요구사항에 따라 별도 협의됩니다.",
-      "결제 방식과 일정은 계약서에 명시된 내용을 따릅니다.",
-      "계약 후 이용자의 사유로 취소 시, 진행 단계에 따라 환불 규정이 적용됩니다.",
+      "서비스 대금은 계약서에 명시된 방식에 따라 지급합니다.",
+      "계약금 50%, 잔금 50%의 분할 지급을 원칙으로 합니다.",
+      "대금 미지급 시 서비스 제공이 중단될 수 있습니다.",
     ],
   },
   {
@@ -91,79 +88,29 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div className="pt-[72px] min-h-screen bg-[var(--color-light)]">
-      {/* Hero */}
-      <div className="bg-[var(--color-dark)] py-16 relative overflow-hidden">
-        <div className="absolute inset-0 dot-pattern pointer-events-none opacity-[0.04]" />
-        <div className="max-w-[800px] mx-auto px-6 relative z-10 text-center">
-          <p className="text-[var(--color-accent)] font-semibold text-sm uppercase tracking-[3px] mb-3">
-            TERMS OF SERVICE
-          </p>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4">
-            이용약관
-          </h1>
-          <p className="text-gray-400 text-sm">
-            최종 수정일: 2026년 2월 1일
-          </p>
+    <PageShell
+      breadcrumb={[{ label: "이용약관" }]}
+      title="이용약관"
+      caption="최종 수정일: 2026년 2월 1일"
+      sidebar={<DefaultSidebar />}
+    >
+      <Section title="이용약관">
+        <div className="px-4 py-5 space-y-5 text-[13px] text-[var(--color-text-2)] leading-relaxed">
+          {sections.map((s, i) => (
+            <div key={i}>
+              <h3 className="text-[14px] font-bold text-[var(--color-text)] mb-1.5">{s.title}</h3>
+              {s.content && <p>{s.content}</p>}
+              {s.items && (
+                <ol className="list-decimal list-outside pl-5 space-y-0.5 text-[13px]">
+                  {s.items.map((it, j) => (
+                    <li key={j}>{it}</li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          ))}
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-[800px] mx-auto px-6 py-16">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="p-8 md:p-10">
-            {sections.map((section, i) => (
-              <div
-                key={i}
-                className={`${i > 0 ? "mt-8 pt-8 border-t border-gray-100" : ""}`}
-              >
-                <h2 className="text-[var(--color-dark)] font-bold text-base mb-3 flex items-start gap-2.5">
-                  <span className="w-6 h-6 bg-[var(--color-dark)] text-white rounded-md flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                    {i + 1}
-                  </span>
-                  {section.title}
-                </h2>
-                {section.content && (
-                  <p className="text-[var(--color-gray)] text-[0.9rem] leading-relaxed ml-[34px] mb-3">
-                    {section.content}
-                  </p>
-                )}
-                {section.items && (
-                  <ol className="ml-[34px] space-y-2">
-                    {section.items.map((item, j) => (
-                      <li
-                        key={j}
-                        className="text-[var(--color-dark-2)] text-[0.9rem] leading-relaxed flex items-start gap-2.5"
-                      >
-                        <span className="text-[var(--color-accent)] text-xs font-bold mt-1 shrink-0">
-                          {j + 1}.
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom nav */}
-        <div className="mt-8 flex items-center justify-between">
-          <Link
-            href="/privacy"
-            className="text-[var(--color-accent)] text-sm font-medium no-underline hover:underline"
-          >
-            개인정보처리방침 보기 →
-          </Link>
-          <Link
-            href="/"
-            className="text-[var(--color-gray)] text-sm no-underline hover:text-[var(--color-dark)] transition-colors"
-          >
-            홈으로 돌아가기
-          </Link>
-        </div>
-      </div>
-    </div>
+      </Section>
+    </PageShell>
   );
 }
