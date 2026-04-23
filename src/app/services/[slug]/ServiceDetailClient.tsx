@@ -244,12 +244,6 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
 
   return (
     <div className="relative">
-      {/* Ambient blur backdrop */}
-      <div
-        className="absolute -inset-6 md:-inset-10 rounded-[32px] blur-3xl opacity-30 pointer-events-none"
-        style={{ background: `linear-gradient(135deg, ${theme.from}, ${theme.to})` }}
-      />
-
       {/* Mac-style window frame */}
       <div className="relative rounded-[14px] md:rounded-[16px] border border-[var(--c-line)] bg-[#1a1d26] shadow-2xl overflow-hidden">
         {/* Title bar */}
