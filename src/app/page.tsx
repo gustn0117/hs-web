@@ -159,19 +159,19 @@ export default async function Home() {
         <div className="relative max-w-[1280px] mx-auto px-5">
           <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
             {[
-              { num: "249,000", unit: "원~", label: "제작 시작가" },
-              { num: "1~2", unit: "주", label: "평균 제작 기간" },
-              { num: "1+", unit: "개월", label: "무상 유지보수" },
-              { num: "100", unit: "%", label: "반응형 적용" },
+              { num: "249,000", unit: "원~", label: "제작 시작가", numSize: "text-[28px] md:text-[34px] lg:text-[40px]" },
+              { num: "1~2", unit: "주", label: "평균 제작 기간", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
+              { num: "1+", unit: "개월", label: "무상 유지보수", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
+              { num: "100", unit: "%", label: "반응형 적용", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
             ].map((s, i) => (
               <div
                 key={s.label}
                 className={`py-7 md:py-9 px-4 md:px-6 ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
               >
                 <p className="text-[11px] text-[var(--c-sub)] font-semibold mb-3 keep tracking-wider uppercase">{s.label}</p>
-                <p className="p-number nowrap">
-                  <span>{s.num}</span>
-                  <span className="text-[15px] md:text-[18px] text-[var(--c-sub)] font-bold ml-1">{s.unit}</span>
+                <p className="p-stat nowrap flex items-baseline">
+                  <span className={`${s.numSize} leading-none`}>{s.num}</span>
+                  <span className="text-[13px] md:text-[15px] text-[var(--c-sub)] font-bold ml-1">{s.unit}</span>
                 </p>
               </div>
             ))}
