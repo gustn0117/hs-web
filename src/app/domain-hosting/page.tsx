@@ -102,31 +102,16 @@ export default function DomainHostingPage() {
         </div>
       </Section>
 
-      {/* Flow diagram — animated network SVG */}
+      {/* Flow diagram — animated network SVG with step cards */}
       <Section overline="HOW IT WORKS" title="접속 흐름" subtitle="주소창 입력부터 사이트 표시까지 4단계.">
         <div className="relative p-card p-6 md:p-10 overflow-hidden bg-gradient-to-br from-white to-[var(--c-main-bg)]">
-          <div className="hidden md:block">
+          {/* Animated network SVG (desktop only) */}
+          <div className="hidden md:block mb-6">
             <NetworkFlow />
           </div>
 
-          {/* Mobile fallback — stacked cards */}
-          <div className="md:hidden grid grid-cols-1 gap-0">
-            {[
-              { n: "01", t: "주소 입력", d: "브라우저에 hsweb.pics 입력" },
-              { n: "02", t: "DNS 변환", d: "도메인을 IP 주소로 변환" },
-              { n: "03", t: "서버 응답", d: "호스팅 서버가 파일 전송" },
-              { n: "04", t: "사이트 표시", d: "브라우저가 화면에 렌더" },
-            ].map((step, i) => (
-              <div key={step.n} className={`p-5 relative ${i !== 0 ? "border-t" : ""} border-[var(--c-line)]`}>
-                <div className="text-[11px] font-bold text-[var(--c-main)] tracking-widest mb-2">{step.n}</div>
-                <h4 className="text-[16px] font-bold tracking-tight mb-1.5">{step.t}</h4>
-                <p className="text-[13px] text-[var(--c-sub)] leading-[1.6]">{step.d}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Desktop step tiles — aligned under each SVG node */}
-          <div className="hidden md:grid grid-cols-4 gap-3 mt-6">
+          {/* Step cards — always visible, 1 col mobile / 4 cols desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             {[
               { t: "요청", d: "브라우저에 hsweb.pics 입력" },
               { t: "변환", d: "도메인을 IP 주소로 변환" },
@@ -135,15 +120,15 @@ export default function DomainHostingPage() {
             ].map((s, i) => (
               <div
                 key={i}
-                className="relative p-4 rounded-[10px] border border-[var(--c-line)] bg-white"
+                className="relative p-4 md:p-5 rounded-[10px] border border-[var(--c-line)] bg-white"
               >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--c-main)] text-white text-[10px] font-bold tnum">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--c-main)] text-white text-[11px] font-bold tnum">
                     {i + 1}
                   </span>
-                  <span className="text-[12.5px] font-bold text-[var(--c-text)]">{s.t}</span>
+                  <span className="text-[14px] font-bold text-[var(--c-text)]">{s.t}</span>
                 </div>
-                <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.6]">{s.d}</p>
+                <p className="text-[13px] text-[var(--c-sub)] leading-[1.6]">{s.d}</p>
               </div>
             ))}
           </div>
