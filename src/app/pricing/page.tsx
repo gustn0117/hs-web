@@ -130,8 +130,8 @@ export default function PricingPage() {
                 </p>
               </div>
 
-              <div className="mb-6 flex items-baseline gap-1 nowrap pb-6 border-b border-dashed">
-                <span className={`p-stat text-[44px] leading-none ${p.featured ? "text-white" : ""}`}>{p.price}</span>
+              <div className={`mb-6 flex items-baseline gap-1 nowrap pb-6 border-b border-dashed ${p.featured ? "border-white/20" : "border-[var(--c-line-2)]"}`}>
+                <span className={`p-stat text-[44px] leading-none ${p.featured ? "!text-white" : ""}`}>{p.price}</span>
                 <span className={`text-[14px] font-semibold ${p.featured ? "text-white/60" : "text-[var(--c-sub)]"}`}>{p.suffix}</span>
               </div>
 

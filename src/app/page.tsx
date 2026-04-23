@@ -476,7 +476,7 @@ export default async function Home() {
                   <h3 className={`text-[18px] font-bold ${plan.featured ? "text-white" : "text-[var(--c-text)]"}`}>{plan.subtitle}</h3>
                 </div>
                 <div className="mb-8 flex items-baseline gap-1 nowrap">
-                  <span className={`p-stat text-[44px] leading-none ${plan.featured ? "text-white" : ""}`}>{plan.price}</span>
+                  <span className={`p-stat text-[44px] leading-none ${plan.featured ? "!text-white" : ""}`}>{plan.price}</span>
                   <span className={`text-[14px] font-semibold ${plan.featured ? "text-white/60" : "text-[var(--c-sub)]"}`}>{plan.suffix}</span>
                 </div>
                 <ul className="list-none space-y-3 mb-7">
