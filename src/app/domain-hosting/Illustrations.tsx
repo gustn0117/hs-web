@@ -226,7 +226,7 @@ export function HostingIllustration() {
 
 export function NetworkFlow() {
   return (
-    <svg viewBox="0 0 800 240" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <svg viewBox="0 0 800 200" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg" aria-hidden>
       <defs>
         <linearGradient id="flow-pipe" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="rgba(36, 89, 176, 0)" />
@@ -251,25 +251,25 @@ export function NetworkFlow() {
       </defs>
 
       {/* Pipe */}
-      <path d="M 80 120 L 720 120" stroke="url(#flow-pipe)" strokeWidth="3" strokeDasharray="6 6" />
+      <path d="M 60 120 L 740 120" stroke="url(#flow-pipe)" strokeWidth="3" strokeDasharray="6 6" />
 
       {/* Animated packets */}
       <circle r="5" fill="#2459b0">
-        <animateMotion path="M 80 120 L 720 120" dur="4s" repeatCount="indefinite" />
+        <animateMotion path="M 60 120 L 740 120" dur="4s" repeatCount="indefinite" />
       </circle>
       <circle r="4" fill="#0a2a5e" opacity="0.6">
-        <animateMotion path="M 80 120 L 720 120" dur="4s" begin="1s" repeatCount="indefinite" />
+        <animateMotion path="M 60 120 L 740 120" dur="4s" begin="1s" repeatCount="indefinite" />
       </circle>
       <circle r="4" fill="#2459b0" opacity="0.4">
-        <animateMotion path="M 80 120 L 720 120" dur="4s" begin="2s" repeatCount="indefinite" />
+        <animateMotion path="M 60 120 L 740 120" dur="4s" begin="2s" repeatCount="indefinite" />
       </circle>
 
-      {/* 4 nodes */}
+      {/* 4 nodes — icons only (labels live in cards below) */}
       {[
-        { cx: 120, label: "브라우저", icon: "browser" },
-        { cx: 320, label: "DNS", icon: "dns" },
-        { cx: 520, label: "호스팅 서버", icon: "server" },
-        { cx: 720, label: "사이트 표시", icon: "site" },
+        { cx: 100, icon: "browser" },
+        { cx: 300, icon: "dns" },
+        { cx: 500, icon: "server" },
+        { cx: 700, icon: "site" },
       ].map((n, i) => (
         <g key={i} transform={`translate(${n.cx} 120)`} filter="url(#flow-drop)">
           {/* Base platform */}
@@ -313,13 +313,6 @@ export function NetworkFlow() {
               <rect x="3" y="16" width="14" height="2" fill="#fff" opacity="0.6" />
             </g>
           )}
-          {/* Label */}
-          <text x="0" y="60" textAnchor="middle" fontSize="12" fontWeight="700" fill="#0a2a5e">
-            {n.label}
-          </text>
-          <text x="0" y="76" textAnchor="middle" fontSize="10" fontWeight="700" fill="#94a3b8">
-            0{i + 1}
-          </text>
         </g>
       ))}
     </svg>

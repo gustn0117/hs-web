@@ -110,25 +110,25 @@ export default function DomainHostingPage() {
             <NetworkFlow />
           </div>
 
-          {/* Step cards — always visible, 1 col mobile / 4 cols desktop */}
+          {/* Step cards — always visible, 1 col mobile / 4 cols desktop, titles align with SVG icons */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             {[
-              { t: "요청", d: "브라우저에 hsweb.pics 입력" },
-              { t: "변환", d: "도메인을 IP 주소로 변환" },
-              { t: "응답", d: "호스팅 서버가 파일 전송" },
-              { t: "표시", d: "브라우저가 화면에 렌더" },
+              { t: "브라우저", d: "주소창에 hsweb.pics 입력" },
+              { t: "DNS", d: "도메인을 IP 주소로 변환" },
+              { t: "호스팅 서버", d: "사이트 파일 전송" },
+              { t: "사이트 표시", d: "브라우저가 화면에 렌더" },
             ].map((s, i) => (
               <div
                 key={i}
-                className="relative p-4 md:p-5 rounded-[10px] border border-[var(--c-line)] bg-white"
+                className="relative p-4 md:p-5 rounded-[10px] border border-[var(--c-line)] bg-white text-center"
               >
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-1.5">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--c-main)] text-white text-[11px] font-bold tnum">
                     {i + 1}
                   </span>
                   <span className="text-[14px] font-bold text-[var(--c-text)]">{s.t}</span>
                 </div>
-                <p className="text-[13px] text-[var(--c-sub)] leading-[1.6]">{s.d}</p>
+                <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.6]">{s.d}</p>
               </div>
             ))}
           </div>
