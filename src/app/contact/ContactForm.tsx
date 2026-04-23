@@ -16,13 +16,6 @@ const CATEGORIES = [
 const BUDGETS = ["~ 30만원", "30~100만원", "100~300만원", "300~500만원", "500만원 이상", "상담 후 결정"];
 const TIMELINES = ["지금 바로", "1개월 이내", "3개월 이내", "여유 있음", "미정"];
 
-function formatPhone(v: string) {
-  const digits = v.replace(/\D/g, "").slice(0, 11);
-  if (digits.length < 4) return digits;
-  if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
 const MESSAGE_MAX = 1000;
 
 export default function ContactForm() {
@@ -33,7 +26,6 @@ export default function ContactForm() {
   const [category, setCategory] = useState("");
   const [budget, setBudget] = useState("");
   const [timeline, setTimeline] = useState("");
-  const [referenceUrl, setReferenceUrl] = useState("");
   const [message, setMessage] = useState("");
   const [agree, setAgree] = useState(false);
 
@@ -43,13 +35,13 @@ export default function ContactForm() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const emailValid = useMemo(() => !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), [email]);
-  const phoneValid = useMemo(() => phone.replace(/\D/g, "").length >= 9, [phone]);
+  const phoneFilled = phone.trim().length > 0;
   const canSubmit =
-    name.trim().length > 0 && phoneValid && category && message.trim().length >= 10 && agree && emailValid;
+    name.trim().length > 0 && phoneFilled && category && message.trim().length >= 10 && agree && emailValid;
 
   const completedCount = [
     name.trim().length > 0,
-    phoneValid,
+    phoneFilled,
     !!category,
     message.trim().length >= 10,
     agree,
@@ -69,7 +61,6 @@ export default function ContactForm() {
     if (company) meta.push(`• 회사/상호: ${company}`);
     if (budget) meta.push(`• 예산: ${budget}`);
     if (timeline) meta.push(`• 희망 일정: ${timeline}`);
-    if (referenceUrl) meta.push(`• 참고 사이트: ${referenceUrl}`);
 
     const composedMessage =
       meta.length > 0 ? `${message}\n\n─── 추가 정보 ───\n${meta.join("\n")}` : message;
@@ -229,13 +220,12 @@ export default function ContactForm() {
               autoComplete="organization"
             />
           </Field>
-          <Field label="연락처" required error={touched.phone && !phoneValid ? "유효한 전화번호를 입력해주세요." : ""}>
+          <Field label="연락처" required error={touched.phone && !phone.trim() ? "연락처를 입력해주세요." : ""}>
             <input
               value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
+              onChange={(e) => setPhone(e.target.value)}
               onBlur={() => setTouched((t) => ({ ...t, phone: true }))}
               type="tel"
-              inputMode="numeric"
               className="p-input tnum"
               placeholder="010-0000-0000"
               autoComplete="tel"
@@ -263,20 +253,11 @@ export default function ContactForm() {
       <Step
         step="04"
         title="프로젝트를 소개해주세요."
-        desc="요구사항, 현재 상황, 참고 사이트 등 자세할수록 좋습니다."
+        desc="요구사항, 현재 상황 등 자세할수록 좋습니다."
         required
         last
       >
         <div className="space-y-5">
-          <Field label="참고 사이트" hint="선택 · URL">
-            <input
-              value={referenceUrl}
-              onChange={(e) => setReferenceUrl(e.target.value)}
-              type="url"
-              className="p-input"
-              placeholder="https://example.com"
-            />
-          </Field>
           <Field
             label="문의 내용"
             required
