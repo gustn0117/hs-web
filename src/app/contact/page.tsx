@@ -62,14 +62,15 @@ export default function ContactPage() {
         <main className="space-y-10">
           <Section>
             <div className="p-card overflow-hidden">
-              <div className="px-6 py-5 border-b border-[var(--c-line)] bg-[var(--c-bg-1)]">
-                <div className="flex items-center gap-2 mb-1">
+              <div className="px-6 md:px-10 pt-6 md:pt-8 pb-0">
+                <div className="flex items-center gap-2">
                   <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
-                  <p className="text-[13px] font-semibold text-[var(--c-text)]">지금 접수 가능</p>
+                  <p className="text-[12.5px] font-semibold text-[var(--c-text)]">
+                    지금 접수 가능 · 24시간 이내 회신
+                  </p>
                 </div>
-                <p className="text-[12px] text-[var(--c-sub)]">필수 항목(*)만 입력하셔도 상담 가능합니다.</p>
               </div>
-              <div className="p-6">
+              <div className="px-6 md:px-10 pb-10 md:pb-12">
                 <ContactForm />
               </div>
             </div>
