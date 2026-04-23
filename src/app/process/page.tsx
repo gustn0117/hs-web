@@ -87,48 +87,27 @@ export default function ProcessPage() {
           />
           <div className="absolute inset-0 p-bg-grid-dots opacity-[0.08] pointer-events-none" />
 
-          <div className="relative grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-8 items-center p-8 md:p-14 min-h-[280px] md:min-h-[360px]">
-            <div>
-              <p className="text-[11px] font-bold text-white/70 tracking-[0.15em] uppercase mb-4">
-                OUR WAY OF WORKING
-              </p>
-              <h3 className="text-[28px] md:text-[40px] font-black tracking-[-0.03em] text-white leading-[1.15] mb-4">
-                투명한 프로세스,<br />
-                함께 만드는 결과.
-              </h3>
-              <p className="text-[14.5px] md:text-[15.5px] text-white/75 leading-[1.75] max-w-[520px]">
-                모든 단계의 진행 상황과 일정을 실시간으로 공유합니다.
-                예상과 다른 이슈는 즉시 알리고, 함께 방향을 정합니다.
-              </p>
-              <div className="flex flex-wrap gap-2 mt-6">
-                {["단계별 공유", "수정 2~3회 포함", "전자 계약", "소스코드 이전"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-semibold backdrop-blur-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="hidden md:flex justify-end">
-              <div className="grid grid-cols-2 gap-3 w-[280px]">
-                {[
-                  { v: "6", u: "단계" },
-                  { v: "2~3", u: "회 수정" },
-                  { v: "100", u: "% 소스" },
-                  { v: "95", u: "% 재의뢰" },
-                ].map((s) => (
-                  <div
-                    key={s.u}
-                    className="bg-white/10 border border-white/20 backdrop-blur-sm rounded-[12px] p-4"
-                  >
-                    <p className="text-[26px] font-black text-white leading-none tnum mb-1">{s.v}</p>
-                    <p className="text-[11px] text-white/70 font-semibold">{s.u}</p>
-                  </div>
-                ))}
-              </div>
+          <div className="relative p-8 md:p-14 min-h-[240px] md:min-h-[320px] flex flex-col justify-center">
+            <p className="text-[11px] font-bold text-white/70 tracking-[0.15em] uppercase mb-4">
+              OUR WAY OF WORKING
+            </p>
+            <h3 className="text-[28px] md:text-[40px] font-black tracking-[-0.03em] text-white leading-[1.15] mb-4 max-w-[640px]">
+              투명한 프로세스,<br />
+              함께 만드는 결과.
+            </h3>
+            <p className="text-[14.5px] md:text-[15.5px] text-white/75 leading-[1.75] max-w-[560px]">
+              모든 단계의 진행 상황과 일정을 실시간으로 공유합니다.
+              예상과 다른 이슈는 즉시 알리고, 함께 방향을 정합니다.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-6">
+              {["단계별 공유", "수정 2~3회 포함", "전자 계약", "소스코드 이전"].map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-semibold backdrop-blur-sm"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
           </div>
         </div>
