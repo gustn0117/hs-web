@@ -1065,20 +1065,20 @@ kbd.p-kbd {
   animation: hero-stat-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Word rotator (vertical word swap) */
+/* Word rotator (vertical word swap) — 5 spans, last duplicates first */
 @keyframes hero-word-rotate {
-  0%, 22%   { transform: translateY(0); }
-  25%, 47%  { transform: translateY(-25%); }
-  50%, 72%  { transform: translateY(-50%); }
-  75%, 97%  { transform: translateY(-75%); }
-  100%      { transform: translateY(0); }
+  0%, 18%   { transform: translateY(0); }
+  22%, 40%  { transform: translateY(-1.2em); }
+  44%, 62%  { transform: translateY(-2.4em); }
+  66%, 84%  { transform: translateY(-3.6em); }
+  88%, 100% { transform: translateY(-4.8em); }
 }
 .hero-word-rotator {
   display: inline-flex;
   flex-direction: column;
-  vertical-align: top;
-  height: 1em;
-  line-height: 1;
+  vertical-align: baseline;
+  height: 1.2em;
+  line-height: 1.2;
   overflow: hidden;
 }
 .hero-word-rotator-track {
@@ -1088,8 +1088,8 @@ kbd.p-kbd {
 }
 .hero-word-rotator-track > span {
   display: block;
-  height: 1em;
-  line-height: 1;
+  height: 1.2em;
+  line-height: 1.2;
 }
 
 /* Shimmer light pass over text */
