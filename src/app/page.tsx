@@ -280,7 +280,7 @@ export default async function Home() {
               <Link
                 key={s.slug}
                 href={`/services/${s.slug}`}
-                className="grid grid-cols-[60px_1fr_24px] md:grid-cols-[90px_280px_1fr_100px_24px] gap-4 md:gap-8 items-center py-7 md:py-9 border-b border-[var(--c-line)] group no-underline hover:bg-[var(--c-bg-1)] -mx-5 px-5 md:-mx-6 md:px-6 transition-colors"
+                className="grid grid-cols-[60px_1fr_24px] md:grid-cols-[90px_260px_1fr_auto_24px] gap-4 md:gap-6 items-center py-7 md:py-9 border-b border-[var(--c-line)] group no-underline hover:bg-[var(--c-bg-1)] -mx-5 px-5 md:-mx-6 md:px-6 transition-colors"
               >
                 {/* Number */}
                 <div className="text-[28px] md:text-[36px] font-black tracking-tight text-[var(--c-line-3)] group-hover:text-[var(--c-text)] transition-colors tnum">
@@ -303,7 +303,7 @@ export default async function Home() {
 
                 {/* Tag */}
                 <div className="hidden md:flex justify-end">
-                  <span className="p-chip">{s.tags[0]}</span>
+                  <span className="p-chip whitespace-nowrap">{s.tags[0]}</span>
                 </div>
 
                 {/* Arrow */}
