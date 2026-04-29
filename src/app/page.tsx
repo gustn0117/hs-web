@@ -91,15 +91,29 @@ export default async function Home() {
 
         <div className="relative max-w-[900px] mx-auto px-5 text-center">
           <h1 className="p-display mb-7">
-            <span className="block hero-fade-up" style={{ animationDelay: "0.05s" }}>
+            <span className="block hero-blur-in" style={{ animationDelay: "0.05s" }}>
               비즈니스의 시작,
             </span>
-            <span className="block hero-fade-up" style={{ animationDelay: "0.2s" }}>
+            <span className="block hero-blur-in" style={{ animationDelay: "0.25s" }}>
+              <span className="hero-word-rotator align-baseline">
+                <span className="hero-word-rotator-track">
+                  <span>제대로 된</span>
+                  <span>빠르고 정확한</span>
+                  <span>감각적인</span>
+                  <span>실속 있는</span>
+                  <span>제대로 된</span>
+                </span>
+              </span>{" "}
               <span className="relative inline-block">
-                <span className="hero-gradient-text">제대로 된 웹 서비스</span>
+                <span
+                  className="hero-gradient-text hero-text-shimmer"
+                  data-text="웹 서비스"
+                >
+                  웹 서비스
+                </span>
                 <span
                   aria-hidden
-                  className="hero-underline absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15 rounded-sm"
+                  className="hero-scribble absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15 rounded-sm"
                 />
               </span>
               <wbr />
@@ -109,10 +123,11 @@ export default async function Home() {
 
           <p
             className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[560px] mx-auto leading-[1.7] mb-10 hero-fade-up"
-            style={{ animationDelay: "0.35s" }}
+            style={{ animationDelay: "0.45s" }}
           >
             기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
-            10분 상담으로 견적·일정을 확인하세요.
+            10분 상담으로 견적·일정을 확인하세요
+            <span className="hero-cursor" aria-hidden />
           </p>
 
           <div
