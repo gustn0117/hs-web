@@ -10,11 +10,6 @@ function fmtDate(iso: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-const TRUST_BRANDS = [
-  "외식·F&B", "제조업", "쇼핑몰", "병원·의료", "교육·학원", "부동산", "전문직",
-  "IT·SaaS", "엔터테인먼트", "커뮤니티", "브랜드몰", "뷰티·패션",
-];
-
 const WHY_POINTS = [
   {
     t: "합리적인 가격",
@@ -192,26 +187,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ═════════ Trust marquee ═════════ */}
-      <section className="border-t border-b border-[var(--c-line)] bg-[var(--c-bg-1)] py-7">
-        <div className="flex items-center gap-6 max-w-[1280px] mx-auto px-5 mb-5">
-          <span className="text-[12px] font-bold text-[var(--c-sub)] tracking-wider uppercase keep">Trusted by</span>
-          <div className="flex-1 h-px bg-[var(--c-line)]" />
-          <span className="text-[12px] text-[var(--c-sub)] keep">다양한 업종의 브랜드와 함께합니다</span>
-        </div>
-        <div className="p-marquee-wrap">
-          {[0, 1].map((k) => (
-            <div key={k} className="p-marquee-track" aria-hidden={k === 1}>
-              {TRUST_BRANDS.map((b, i) => (
-                <span key={i} className="flex items-center gap-3 text-[20px] md:text-[24px] font-bold text-[var(--c-text-2)] tracking-tight keep">
-                  {b}
-                  <span className="text-[var(--c-line-3)] text-[16px]">●</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ═════════ Why HS WEB — Bento ═════════ */}
       <section className="py-24 md:py-32">
