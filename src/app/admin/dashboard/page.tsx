@@ -527,7 +527,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* ── Donut + Project status ──────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 items-start">
           {/* Donut: revenue by type */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
             <h3 className="text-sm font-semibold text-slate-900 mb-1">수익 유형별</h3>
