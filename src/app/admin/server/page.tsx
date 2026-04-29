@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import AdminHeader from "../components/AdminHeader";
 
 // ─── Types ───
@@ -126,8 +126,6 @@ interface AnalyticsData {
   today: TodayStat[];
 }
 
-// ─── Constants ───
-
 const WELL_KNOWN_PORTS: Record<number, string> = {
   22: "SSH",
   25: "SMTP",
@@ -149,10 +147,9 @@ const WELL_KNOWN_PORTS: Record<number, string> = {
 
 const REFRESH_INTERVAL = 30000;
 
-// Infrastructure container group definitions
-const INFRA_GROUPS: { key: string; label: string; icon: string; match: (name: string) => boolean }[] = [
-  { key: "supabase", label: "Supabase", icon: "db", match: (n) => n.startsWith("supabase") },
-  { key: "system", label: "시스템 서비스", icon: "sys", match: (n) => ["auto-deployer", "webhook-server", "cloudflared", "watchtower", "nginx", "caddy", "traefik"].some((s) => n.startsWith(s)) },
+const INFRA_GROUPS: { key: string; label: string; match: (name: string) => boolean }[] = [
+  { key: "supabase", label: "Supabase", match: (n) => n.startsWith("supabase") },
+  { key: "system", label: "시스템 서비스", match: (n) => ["auto-deployer", "webhook-server", "cloudflared", "watchtower", "nginx", "caddy", "traefik"].some((s) => n.startsWith(s)) },
 ];
 
 function getContainerGroup(name: string): string | null {
@@ -162,40 +159,41 @@ function getContainerGroup(name: string): string | null {
   return null;
 }
 
-// ─── Helpers ───
-
-function progressColor(percent: number): string {
-  if (percent >= 80) return "bg-red-500";
-  if (percent >= 60) return "bg-amber-500";
-  return "bg-emerald-500";
+// Colors: slate base with critical-only emphasis
+function statusColor(percent: number): string {
+  if (percent >= 80) return "#dc2626"; // red-600
+  if (percent >= 60) return "#d97706"; // amber-600
+  return "#0f172a"; // slate-900
 }
 
-function progressTextColor(percent: number): string {
-  if (percent >= 80) return "text-red-600";
-  if (percent >= 60) return "text-amber-600";
-  return "text-emerald-600";
+function statusBg(percent: number): string {
+  if (percent >= 80) return "#fef2f2"; // red-50
+  if (percent >= 60) return "#fffbeb"; // amber-50
+  return "#f8fafc"; // slate-50
 }
 
-function containerStateBadge(state: string): { label: string; dot: string; border: string } {
+function statusLabel(percent: number): string {
+  if (percent >= 80) return "위험";
+  if (percent >= 60) return "주의";
+  return "정상";
+}
+
+function containerStateBadge(state: string): { label: string; cls: string } {
   switch (state) {
     case "running":
-      return { label: "실행 중", dot: "bg-emerald-500", border: "border-emerald-200" };
+      return { label: "실행", cls: "bg-emerald-50 text-emerald-700 border border-emerald-100" };
     case "exited":
-      return { label: "중지됨", dot: "bg-red-500", border: "border-red-200" };
+      return { label: "중지", cls: "bg-red-50 text-red-700 border border-red-100" };
     case "restarting":
-      return { label: "재시작", dot: "bg-amber-500", border: "border-amber-200" };
+      return { label: "재시작", cls: "bg-amber-50 text-amber-700 border border-amber-100" };
     default:
-      return { label: state, dot: "bg-gray-400", border: "border-gray-200" };
+      return { label: state, cls: "bg-slate-100 text-slate-600 border border-slate-200" };
   }
 }
 
 function formatMemoryMB(mb: number): string {
   if (mb >= 1024) return (mb / 1024).toFixed(1) + " GB";
   return Math.round(mb) + " MB";
-}
-
-function getPortServiceName(port: number): string | undefined {
-  return WELL_KNOWN_PORTS[port];
 }
 
 function isPhysicalInterface(name: string): boolean {
@@ -209,7 +207,50 @@ function formatBytes(bytes: number): string {
   return (bytes / Math.pow(1024, i)).toFixed(1) + " " + units[i];
 }
 
-// ─── Component ───
+// ─── Radial gauge ───
+function RadialGauge({ percent, label, sub, color }: { percent: number; label: string; sub?: string; color?: string }) {
+  const strokePct = Math.min(Math.max(percent, 0), 100);
+  const r = 36;
+  const c = 2 * Math.PI * r;
+  const dash = (strokePct / 100) * c;
+  const tone = color ?? statusColor(percent);
+  return (
+    <div className="relative w-[110px] h-[110px] mx-auto">
+      <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+        <circle cx="50" cy="50" r={r} fill="none" stroke="#f1f5f9" strokeWidth="9" />
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke={tone}
+          strokeWidth="9"
+          strokeDasharray={`${dash} ${c}`}
+          strokeLinecap="round"
+          className="transition-all duration-700"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <p className="text-[20px] font-bold text-slate-900 tabular-nums leading-none">{label}</p>
+        {sub && <p className="text-[10px] text-slate-500 mt-1">{sub}</p>}
+      </div>
+    </div>
+  );
+}
+
+function buildSmoothPath(points: { x: number; y: number }[]): string {
+  if (points.length === 0) return "";
+  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const cp1x = p0.x + (p1.x - p0.x) * 0.5;
+    const cp2x = p0.x + (p1.x - p0.x) * 0.5;
+    d += ` C ${cp1x} ${p0.y}, ${cp2x} ${p1.y}, ${p1.x} ${p1.y}`;
+  }
+  return d;
+}
 
 export default function ServerMonitoring() {
   const [data, setData] = useState<ServerMetrics | null>(null);
@@ -266,22 +307,34 @@ export default function ServerMonitoring() {
     intervalRef.current = setInterval(() => fetchData(true), REFRESH_INTERVAL);
   };
 
-  // ─── Loading ───
+  // Build visitor trend (sum across sites by month)
+  const visitorTrend = useMemo(() => {
+    if (!analytics) return [];
+    const map = new Map<string, number>();
+    analytics.monthly.forEach((m) => {
+      map.set(m.month, (map.get(m.month) ?? 0) + m.uniqueVisitors);
+    });
+    return [...map.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-6)
+      .map(([month, count]) => ({ month, count }));
+  }, [analytics]);
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--color-light)]">
+      <div className="min-h-screen bg-slate-50">
         <AdminHeader />
-        <div className="max-w-[1100px] mx-auto px-6 py-8">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-48" />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="max-w-[1200px] mx-auto px-6 py-8">
+          <div className="animate-pulse space-y-5">
+            <div className="h-7 bg-slate-200 rounded w-48" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded-2xl" />
+                <div key={i} className="h-44 bg-white rounded-xl border border-slate-200" />
               ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-64 bg-gray-200 rounded-2xl" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="h-72 bg-white rounded-xl border border-slate-200" />
               ))}
             </div>
           </div>
@@ -290,14 +343,11 @@ export default function ServerMonitoring() {
     );
   }
 
-  // ─── Error ───
   if (!data) {
     return (
-      <div className="min-h-screen bg-[var(--color-light)]">
+      <div className="min-h-screen bg-slate-50">
         <AdminHeader />
-        <div className="text-center py-20 text-[var(--color-gray)]">
-          서버 정보를 불러올 수 없습니다.
-        </div>
+        <div className="text-center py-20 text-slate-500">서버 정보를 불러올 수 없습니다.</div>
       </div>
     );
   }
@@ -306,21 +356,15 @@ export default function ServerMonitoring() {
   const runningCount = docker.containers?.filter((c) => c.state === "running").length ?? 0;
   const totalCount = docker.containers?.length ?? 0;
 
-  // Build set of container public ports for host-port filtering
   const containerPublicPorts = new Set<number>();
   docker.containers?.forEach((c) => c.ports.forEach((p) => containerPublicPorts.add(p.public)));
-
-  // Host-only ports (not belonging to any container)
   const hostPorts = system.ports.data?.filter((p) => !containerPublicPorts.has(p.port)) ?? [];
 
-  // Network interfaces split
   const physicalInterfaces = system.network.data?.filter((i) => isPhysicalInterface(i.name)) ?? [];
   const virtualInterfaces = system.network.data?.filter((i) => !isPhysicalInterface(i.name)) ?? [];
 
-  // Group containers: projects vs infrastructure
   const projectContainers: DockerContainer[] = [];
   const infraGroups: Map<string, DockerContainer[]> = new Map();
-
   docker.containers?.forEach((c) => {
     const groupKey = getContainerGroup(c.name);
     if (groupKey) {
@@ -331,381 +375,359 @@ export default function ServerMonitoring() {
     }
   });
 
+  // Visitor sparkline
+  const sparkW = 200;
+  const sparkH = 60;
+  const sparkMax = Math.max(...visitorTrend.map((m) => m.count), 1);
+  const sparkPoints = visitorTrend.map((m, i, arr) => ({
+    x: 4 + (i / Math.max(arr.length - 1, 1)) * (sparkW - 8),
+    y: sparkH - 4 - (m.count / sparkMax) * (sparkH - 12),
+  }));
+  const sparkPath = buildSmoothPath(sparkPoints);
+  const sparkAreaPath =
+    sparkPoints.length > 0
+      ? `${sparkPath} L ${sparkPoints[sparkPoints.length - 1].x} ${sparkH - 4} L ${sparkPoints[0].x} ${sparkH - 4} Z`
+      : "";
+
+  const todayTotalVisitors = analytics?.today.reduce((s, t) => s + t.uniqueVisitors, 0) ?? 0;
+  const todayTotalViews = analytics?.today.reduce((s, t) => s + t.totalViews, 0) ?? 0;
+
   return (
-    <div className="min-h-screen bg-[var(--color-light)]">
+    <div className="min-h-screen bg-slate-50">
       <AdminHeader />
 
-      <div className="max-w-[1100px] mx-auto px-6 py-8">
-        {/* ===== Header ===== */}
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-[1200px] mx-auto px-6 py-8 space-y-5">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-[var(--color-dark)]">서버 모니터링</h2>
-            <p className="text-[var(--color-gray)] text-sm mt-1">서버 상태를 실시간으로 확인하세요.</p>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">서버 모니터링</h2>
+            <p className="text-slate-500 text-sm mt-1">
+              {lastUpdated ? (
+                <>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    {lastUpdated.toLocaleTimeString("ko-KR")} 갱신
+                  </span>
+                  <span className="mx-2 text-slate-300">·</span>
+                  30초마다 자동 갱신
+                </>
+              ) : (
+                "데이터 수집 중..."
+              )}
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            {lastUpdated && (
-              <span className="text-[var(--color-gray)] text-xs">
-                {lastUpdated.toLocaleTimeString("ko-KR")} 갱신
-              </span>
-            )}
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white border border-gray-200 text-[var(--color-gray)] text-sm rounded-xl cursor-pointer hover:bg-gray-50 transition-all disabled:opacity-50"
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="text-xs px-3 h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors disabled:opacity-50"
+          >
+            <svg
+              className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              <svg
-                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182"
-                />
-              </svg>
-              새로고침
-            </button>
-          </div>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992V4.356M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+            </svg>
+            새로고침
+          </button>
         </div>
 
-        {/* ===== System Overview Cards ===== */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* System gauges (4) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {/* CPU */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[var(--color-gray)] text-xs">CPU 부하</p>
-                {system.cpu.available && system.cpu.data ? (
-                  <p className="text-[var(--color-dark)] text-2xl font-bold">{system.cpu.data.load1}</p>
-                ) : (
-                  <p className="text-[var(--color-gray)] text-sm">측정 불가</p>
-                )}
-              </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">CPU</h3>
+              {system.cpu.available && system.cpu.data && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                  style={{ background: statusBg(system.cpu.data.usagePercent), color: statusColor(system.cpu.data.usagePercent) }}
+                >
+                  {statusLabel(system.cpu.data.usagePercent)}
+                </span>
+              )}
             </div>
-            {system.cpu.available && system.cpu.data && (
+            {system.cpu.available && system.cpu.data ? (
               <>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${progressColor(system.cpu.data.usagePercent)}`}
-                    style={{ width: `${Math.min(system.cpu.data.usagePercent, 100)}%` }}
-                  />
-                </div>
-                <p className="text-[var(--color-gray)] text-xs mt-2">{system.cpu.data.cores}코어 · {system.cpu.data.usagePercent}%</p>
+                <RadialGauge
+                  percent={system.cpu.data.usagePercent}
+                  label={`${system.cpu.data.usagePercent}%`}
+                  sub={`Load ${system.cpu.data.load1}`}
+                />
+                <p className="text-[11px] text-slate-500 text-center mt-3 tabular-nums">{system.cpu.data.cores}코어</p>
               </>
+            ) : (
+              <p className="text-slate-400 text-sm py-10 text-center">측정 불가</p>
             )}
           </div>
 
           {/* Memory */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[var(--color-gray)] text-xs">메모리</p>
-                {system.memory.available && system.memory.data ? (
-                  <p className="text-[var(--color-dark)] text-2xl font-bold">
-                    {system.memory.data.usedGB}<span className="text-sm font-normal">/{system.memory.data.totalGB} GB</span>
-                  </p>
-                ) : (
-                  <p className="text-[var(--color-gray)] text-sm">측정 불가</p>
-                )}
-              </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">메모리</h3>
+              {system.memory.available && system.memory.data && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                  style={{ background: statusBg(system.memory.data.usagePercent), color: statusColor(system.memory.data.usagePercent) }}
+                >
+                  {statusLabel(system.memory.data.usagePercent)}
+                </span>
+              )}
             </div>
-            {system.memory.available && system.memory.data && (
+            {system.memory.available && system.memory.data ? (
               <>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${progressColor(system.memory.data.usagePercent)}`}
-                    style={{ width: `${Math.min(system.memory.data.usagePercent, 100)}%` }}
-                  />
-                </div>
-                <p className="text-[var(--color-gray)] text-xs mt-2">{system.memory.data.usagePercent}% 사용</p>
+                <RadialGauge
+                  percent={system.memory.data.usagePercent}
+                  label={`${system.memory.data.usagePercent}%`}
+                  sub={`${system.memory.data.usedGB} GB`}
+                />
+                <p className="text-[11px] text-slate-500 text-center mt-3 tabular-nums">전체 {system.memory.data.totalGB} GB</p>
               </>
+            ) : (
+              <p className="text-slate-400 text-sm py-10 text-center">측정 불가</p>
             )}
           </div>
 
           {/* Disk */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[var(--color-gray)] text-xs">디스크</p>
-                {system.disk.available && system.disk.data ? (
-                  <p className="text-[var(--color-dark)] text-2xl font-bold">
-                    {system.disk.data.usedGB}<span className="text-sm font-normal">/{system.disk.data.totalGB} GB</span>
-                  </p>
-                ) : (
-                  <p className="text-[var(--color-gray)] text-sm">측정 불가</p>
-                )}
-              </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">디스크</h3>
+              {system.disk.available && system.disk.data && (
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                  style={{ background: statusBg(system.disk.data.usagePercent), color: statusColor(system.disk.data.usagePercent) }}
+                >
+                  {statusLabel(system.disk.data.usagePercent)}
+                </span>
+              )}
             </div>
-            {system.disk.available && system.disk.data && (
+            {system.disk.available && system.disk.data ? (
               <>
-                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${progressColor(system.disk.data.usagePercent)}`}
-                    style={{ width: `${Math.min(system.disk.data.usagePercent, 100)}%` }}
-                  />
-                </div>
-                <p className="text-[var(--color-gray)] text-xs mt-2">{system.disk.data.usagePercent}% 사용 · {system.disk.data.availableGB}GB 남음</p>
+                <RadialGauge
+                  percent={system.disk.data.usagePercent}
+                  label={`${system.disk.data.usagePercent}%`}
+                  sub={`${system.disk.data.usedGB} GB`}
+                />
+                <p className="text-[11px] text-slate-500 text-center mt-3 tabular-nums">남은 {system.disk.data.availableGB} GB</p>
               </>
+            ) : (
+              <p className="text-slate-400 text-sm py-10 text-center">측정 불가</p>
             )}
           </div>
 
           {/* Uptime */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-[var(--color-gray)] text-xs">업타임</p>
-                {system.uptime.available && system.uptime.data ? (
-                  <p className="text-[var(--color-dark)] text-2xl font-bold">
-                    {system.uptime.data.days}<span className="text-sm font-normal">일</span>{" "}
-                    {system.uptime.data.hours}<span className="text-sm font-normal">시간</span>
-                  </p>
-                ) : (
-                  <p className="text-[var(--color-gray)] text-sm">측정 불가</p>
-                )}
-              </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">업타임</h3>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">정상</span>
             </div>
-            {system.uptime.available && system.uptime.data && (
-              <p className="text-[var(--color-gray)] text-xs mt-5">
-                {system.uptime.data.days}일 {system.uptime.data.hours}시간 {system.uptime.data.minutes}분
-              </p>
+            {system.uptime.available && system.uptime.data ? (
+              <div className="flex flex-col items-center justify-center h-[110px]">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[28px] font-bold text-slate-900 tabular-nums leading-none">{system.uptime.data.days}</span>
+                  <span className="text-sm text-slate-500 font-medium">일</span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-2 tabular-nums">
+                  {system.uptime.data.hours}시간 {system.uptime.data.minutes}분
+                </p>
+              </div>
+            ) : (
+              <p className="text-slate-400 text-sm py-10 text-center">측정 불가</p>
             )}
+            <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-slate-500">
+              <span>컨테이너</span>
+              <span className="text-slate-900 font-bold tabular-nums">{runningCount}/{totalCount}</span>
+            </div>
           </div>
         </div>
 
-        {/* ===== Disk Breakdown ===== */}
-        {data.diskBreakdown && (
-          <div className="mb-8">
-            <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
-              </svg>
-              디스크 사용량 상세
-            </h3>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Project Directories */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-                <h4 className="text-[var(--color-dark)] font-semibold text-sm mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  프로젝트별 디스크 사용량
-                </h4>
-                {data.diskBreakdown.projects.available && data.diskBreakdown.projects.data ? (() => {
-                  const items = data.diskBreakdown.projects.data!;
-                  const maxSize = items.length > 0 ? items[0].sizeBytes : 1;
-                  const totalSize = items.reduce((sum, i) => sum + i.sizeBytes, 0);
-                  return (
-                    <>
-                      <p className="text-xs text-[var(--color-gray)] mb-3">총 {formatBytes(totalSize)} · {items.length}개 프로젝트</p>
-                      <div className="space-y-2 max-h-[320px] overflow-y-auto">
-                        {items.map((item) => {
-                          const percent = maxSize > 0 ? (item.sizeBytes / maxSize) * 100 : 0;
-                          return (
-                            <div key={item.name}>
-                              <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="text-[var(--color-dark)] font-medium truncate mr-2">{item.name}</span>
-                                <span className="text-[var(--color-gray)] shrink-0 tabular-nums">{item.sizeHuman}</span>
-                              </div>
-                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full rounded-full bg-blue-400 transition-all" style={{ width: `${percent}%` }} />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  );
-                })() : (
-                  <p className="text-[var(--color-gray)] text-sm py-4 text-center">
-                    {data.diskBreakdown.projects.error || "프로젝트 디렉토리를 읽을 수 없습니다"}
-                  </p>
-                )}
+        {/* Disk breakdown + Visitor analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          {/* Disk breakdown */}
+          {data.diskBreakdown && (
+            <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
+              <div className="flex items-baseline justify-between mb-5">
+                <h3 className="text-sm font-semibold text-slate-900">디스크 사용량 상세</h3>
+                <p className="text-xs text-slate-500">프로젝트·DB 단위</p>
               </div>
 
-              {/* Database Sizes */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-                <h4 className="text-[var(--color-dark)] font-semibold text-sm mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  데이터베이스 스키마별 사용량
-                </h4>
-                {data.diskBreakdown.databases.available && data.diskBreakdown.databases.data ? (() => {
-                  const items = data.diskBreakdown.databases.data!;
-                  const maxSize = items.length > 0 ? items[0].sizeBytes : 1;
-                  const totalSize = items.reduce((sum, i) => sum + i.sizeBytes, 0);
-                  return (
-                    <>
-                      <p className="text-xs text-[var(--color-gray)] mb-3">총 {formatBytes(totalSize)} · {items.length}개 스키마</p>
-                      <div className="space-y-2 max-h-[320px] overflow-y-auto">
-                        {items.map((item) => {
-                          const percent = maxSize > 0 ? (item.sizeBytes / maxSize) * 100 : 0;
-                          return (
-                            <div key={item.name}>
-                              <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="text-[var(--color-dark)] font-medium font-mono truncate mr-2">{item.name}</span>
-                                <span className="text-[var(--color-gray)] shrink-0 tabular-nums">{item.sizeHuman}</span>
-                              </div>
-                              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${percent}%` }} />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  );
-                })() : (
-                  <p className="text-[var(--color-gray)] text-sm py-4 text-center">
-                    {data.diskBreakdown.databases.error || "DB 크기를 조회할 수 없습니다"}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Docker Storage Summary */}
-            {data.diskBreakdown.dockerDisk.available && data.diskBreakdown.dockerDisk.data && (
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                  <p className="text-xs text-[var(--color-gray)] mb-1">Docker 이미지</p>
-                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.images.sizeHuman}</p>
-                  <p className="text-xs text-[var(--color-gray)]">{data.diskBreakdown.dockerDisk.data.images.count}개</p>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                  <p className="text-xs text-[var(--color-gray)] mb-1">Docker 볼륨</p>
-                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.volumes.sizeHuman}</p>
-                  <p className="text-xs text-[var(--color-gray)]">{data.diskBreakdown.dockerDisk.data.volumes.count}개</p>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                  <p className="text-xs text-[var(--color-gray)] mb-1">빌드 캐시</p>
-                  <p className="text-lg font-bold text-[var(--color-dark)]">{data.diskBreakdown.dockerDisk.data.buildCache.sizeHuman}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ===== Visitor Analytics ===== */}
-        {analytics && (
-          <div className="mb-8">
-            <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128H5.228A2.25 2.25 0 013 16.878V3.75A2.25 2.25 0 015.25 1.5h13.5A2.25 2.25 0 0121 3.75v13.128M15 19.128l3.374-3.374M12 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              방문자 현황
-            </h3>
-
-            {/* Today stats */}
-            {analytics.today.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-4">
-                {analytics.today.map((s) => (
-                  <div key={s.site} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                    <p className="text-xs text-[var(--color-gray)] mb-1 truncate">{s.site}</p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-[var(--color-dark)]">{s.uniqueVisitors}</span>
-                      <span className="text-xs text-[var(--color-gray)]">명 오늘</span>
-                    </div>
-                    <p className="text-xs text-[var(--color-gray)] mt-1">{s.totalViews} 페이지뷰</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Projects */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold text-slate-700">프로젝트</h4>
+                    {data.diskBreakdown.projects.available && data.diskBreakdown.projects.data && (
+                      <span className="text-[11px] text-slate-500 tabular-nums">
+                        {formatBytes(data.diskBreakdown.projects.data.reduce((s, i) => s + i.sizeBytes, 0))} · {data.diskBreakdown.projects.data.length}개
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
-            )}
+                  {data.diskBreakdown.projects.available && data.diskBreakdown.projects.data ? (
+                    <div className="space-y-1.5 max-h-[280px] overflow-y-auto">
+                      {data.diskBreakdown.projects.data.map((item, i) => {
+                        const max = data.diskBreakdown!.projects.data![0].sizeBytes;
+                        const pct = max > 0 ? (item.sizeBytes / max) * 100 : 0;
+                        return (
+                          <div key={item.name}>
+                            <div className="flex items-center justify-between text-[11px] mb-0.5">
+                              <span className="text-slate-700 font-medium truncate mr-2">
+                                <span className="text-slate-400 mr-1.5 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                                {item.name}
+                              </span>
+                              <span className="text-slate-500 shrink-0 tabular-nums">{item.sizeHuman}</span>
+                            </div>
+                            <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full rounded-full bg-slate-900" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400 text-xs py-4 text-center">{data.diskBreakdown.projects.error || "조회 불가"}</p>
+                  )}
+                </div>
 
-            {/* Monthly table */}
-            {analytics.monthly.length > 0 ? (
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200">
-                        <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium text-xs">월</th>
-                        <th className="text-left py-3 px-4 text-[var(--color-gray)] font-medium text-xs">사이트</th>
-                        <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium text-xs">고유 방문자</th>
-                        <th className="text-right py-3 px-4 text-[var(--color-gray)] font-medium text-xs">페이지뷰</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(() => {
-                        // 월별로 그룹핑하여 월 구분선 표시
-                        let lastMonth = "";
-                        return analytics.monthly.map((row, i) => {
-                          const isNewMonth = row.month !== lastMonth;
-                          lastMonth = row.month;
-                          const monthLabel = row.month.replace(/-/, "년 ") + "월";
-                          return (
-                            <tr key={i} className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 ${isNewMonth && i > 0 ? "border-t-2 border-t-gray-200" : ""}`}>
-                              <td className="py-2.5 px-4 text-[var(--color-dark)] font-medium tabular-nums text-xs">
-                                {isNewMonth ? monthLabel : ""}
-                              </td>
-                              <td className="py-2.5 px-4 text-[var(--color-dark-2)] text-xs">{row.site}</td>
-                              <td className="py-2.5 px-4 text-right text-[var(--color-dark)] font-semibold tabular-nums text-xs">
-                                {row.uniqueVisitors.toLocaleString()}명
-                              </td>
-                              <td className="py-2.5 px-4 text-right text-[var(--color-gray)] tabular-nums text-xs">
-                                {row.totalViews.toLocaleString()}
-                              </td>
-                            </tr>
-                          );
-                        });
-                      })()}
-                    </tbody>
-                  </table>
+                {/* Databases */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold text-slate-700">데이터베이스</h4>
+                    {data.diskBreakdown.databases.available && data.diskBreakdown.databases.data && (
+                      <span className="text-[11px] text-slate-500 tabular-nums">
+                        {formatBytes(data.diskBreakdown.databases.data.reduce((s, i) => s + i.sizeBytes, 0))} · {data.diskBreakdown.databases.data.length}개
+                      </span>
+                    )}
+                  </div>
+                  {data.diskBreakdown.databases.available && data.diskBreakdown.databases.data ? (
+                    <div className="space-y-1.5 max-h-[280px] overflow-y-auto">
+                      {data.diskBreakdown.databases.data.map((item, i) => {
+                        const max = data.diskBreakdown!.databases.data![0].sizeBytes;
+                        const pct = max > 0 ? (item.sizeBytes / max) * 100 : 0;
+                        return (
+                          <div key={item.name}>
+                            <div className="flex items-center justify-between text-[11px] mb-0.5">
+                              <span className="text-slate-700 font-mono truncate mr-2">
+                                <span className="text-slate-400 mr-1.5 tabular-nums font-sans">{String(i + 1).padStart(2, "0")}</span>
+                                {item.name}
+                              </span>
+                              <span className="text-slate-500 shrink-0 tabular-nums">{item.sizeHuman}</span>
+                            </div>
+                            <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full rounded-full bg-slate-600" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400 text-xs py-4 text-center">{data.diskBreakdown.databases.error || "조회 불가"}</p>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center">
-                <p className="text-[var(--color-gray)] text-sm">아직 방문자 데이터가 없습니다.</p>
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* ===== Services (Docker Containers) ===== */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[var(--color-dark)] font-semibold text-lg flex items-center gap-2">
-              <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
-              </svg>
-              서비스 현황
-            </h3>
+              {/* Docker disk */}
+              {data.diskBreakdown.dockerDisk.available && data.diskBreakdown.dockerDisk.data && (
+                <div className="grid grid-cols-3 gap-2 mt-5 pt-5 border-t border-slate-100">
+                  <div className="text-center">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">이미지</p>
+                    <p className="text-base font-bold text-slate-900 tabular-nums">{data.diskBreakdown.dockerDisk.data.images.sizeHuman}</p>
+                    <p className="text-[10px] text-slate-500 tabular-nums">{data.diskBreakdown.dockerDisk.data.images.count}개</p>
+                  </div>
+                  <div className="text-center border-l border-r border-slate-100">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">볼륨</p>
+                    <p className="text-base font-bold text-slate-900 tabular-nums">{data.diskBreakdown.dockerDisk.data.volumes.sizeHuman}</p>
+                    <p className="text-[10px] text-slate-500 tabular-nums">{data.diskBreakdown.dockerDisk.data.volumes.count}개</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">캐시</p>
+                    <p className="text-base font-bold text-slate-900 tabular-nums">{data.diskBreakdown.dockerDisk.data.buildCache.sizeHuman}</p>
+                    <p className="text-[10px] text-slate-400">build</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Visitor analytics */}
+          {analytics && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <div className="flex items-baseline justify-between mb-3">
+                <h3 className="text-sm font-semibold text-slate-900">방문자 추이</h3>
+                <p className="text-xs text-slate-500">최근 6개월</p>
+              </div>
+
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-[26px] font-bold text-slate-900 tabular-nums leading-none">{todayTotalVisitors}</span>
+                <span className="text-sm text-slate-500">명</span>
+                <span className="text-xs text-slate-500 ml-2">오늘 · 전체 사이트</span>
+              </div>
+              <p className="text-[11px] text-slate-500 mb-4 tabular-nums">{todayTotalViews.toLocaleString()} 페이지뷰</p>
+
+              {/* Sparkline */}
+              {visitorTrend.length > 0 ? (
+                <svg viewBox={`0 0 ${sparkW} ${sparkH}`} className="w-full h-auto" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="visitor-area" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0f172a" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  {sparkAreaPath && <path d={sparkAreaPath} fill="url(#visitor-area)" />}
+                  <path d={sparkPath} fill="none" stroke="#0f172a" strokeWidth="1.6" strokeLinecap="round" />
+                  {sparkPoints.length > 0 && (
+                    <circle cx={sparkPoints[sparkPoints.length - 1].x} cy={sparkPoints[sparkPoints.length - 1].y} r="2.5" fill="#0f172a" />
+                  )}
+                </svg>
+              ) : (
+                <p className="text-slate-400 text-xs py-6 text-center">데이터 없음</p>
+              )}
+
+              {/* Today's site list */}
+              {analytics.today.length > 0 && (
+                <ul className="mt-4 pt-4 border-t border-slate-100 space-y-1.5 list-none m-0 max-h-[160px] overflow-y-auto">
+                  {analytics.today
+                    .sort((a, b) => b.uniqueVisitors - a.uniqueVisitors)
+                    .map((s) => (
+                      <li key={s.site} className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-700 truncate flex-1">{s.site}</span>
+                        <span className="text-slate-900 font-bold tabular-nums ml-2">{s.uniqueVisitors}</span>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Docker services */}
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">서비스 현황</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Docker 컨테이너</p>
+            </div>
             {docker.available && (
-              <span className="text-sm text-[var(--color-gray)]">
-                <span className="text-emerald-600 font-semibold">{runningCount}</span>/{totalCount} 실행 중
+              <span className="text-xs text-slate-500 tabular-nums">
+                <span className="text-emerald-700 font-bold">{runningCount}</span>
+                <span className="text-slate-400"> / </span>
+                <span className="text-slate-700 font-bold">{totalCount}</span>
+                <span className="ml-1">실행 중</span>
               </span>
             )}
           </div>
 
           {!docker.available ? (
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center">
-              <p className="text-[var(--color-gray)] text-sm">Docker 소켓에 연결할 수 없습니다.</p>
-              <p className="text-[var(--color-gray)] text-xs mt-1">docker-compose.yml에 볼륨 마운트를 확인하세요.</p>
+            <div className="px-5 py-8 text-center">
+              <p className="text-slate-500 text-sm">Docker 소켓에 연결할 수 없습니다.</p>
+              <p className="text-slate-400 text-xs mt-1">docker-compose.yml 볼륨 마운트 확인</p>
             </div>
           ) : (
-            <div className="space-y-6">
-              {/* ── Project Containers (individual cards) ── */}
+            <div className="p-4 space-y-3">
+              {/* Project containers */}
               {projectContainers.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {projectContainers.map((c) => {
                     const badge = containerStateBadge(c.state);
                     const isRunning = c.state === "running";
@@ -716,66 +738,68 @@ export default function ServerMonitoring() {
                     return (
                       <div
                         key={c.id}
-                        className={`bg-white border-2 rounded-2xl p-5 shadow-sm transition-all ${
-                          isRunning ? badge.border : "border-gray-200 opacity-60"
+                        className={`rounded-lg border p-4 transition-all ${
+                          isRunning ? "border-slate-200 bg-white" : "border-slate-200 bg-slate-50/50 opacity-70"
                         }`}
                       >
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${badge.dot}`} />
-                            <h4 className="text-[var(--color-dark)] font-semibold text-sm truncate">{c.name}</h4>
-                          </div>
-                          <span className="text-xs text-[var(--color-gray)] shrink-0 ml-2">{badge.label}</span>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h4 className="text-sm font-bold text-slate-900 truncate">{c.name}</h4>
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${badge.cls}`}>
+                            {badge.label}
+                          </span>
                         </div>
 
-                        {/* Image */}
-                        <p className="text-xs text-[var(--color-gray)] truncate mb-3 font-mono">
+                        <p className="text-[11px] text-slate-500 truncate mb-3 font-mono">
                           {c.image.split("@")[0].split("/").pop()}
                         </p>
 
                         {/* Ports */}
                         {c.ports.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-4">
+                          <div className="flex flex-wrap gap-1 mb-3">
                             {c.ports.map((p) => {
-                              const serviceName = getPortServiceName(p.public) || getPortServiceName(p.private);
+                              const serviceName = WELL_KNOWN_PORTS[p.public] || WELL_KNOWN_PORTS[p.private];
                               return (
-                                <span key={`${p.public}:${p.private}`} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs">
-                                  <span className="text-blue-700 font-mono font-medium">{p.public}</span>
-                                  <span className="text-blue-400">→</span>
-                                  <span className="text-blue-600 font-mono">{p.private}</span>
-                                  {serviceName && <span className="text-blue-500 font-sans ml-0.5">{serviceName}</span>}
+                                <span
+                                  key={`${p.public}:${p.private}`}
+                                  className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] font-mono"
+                                >
+                                  <span className="text-slate-700 font-semibold">{p.public}</span>
+                                  <span className="text-slate-300">→</span>
+                                  <span className="text-slate-500">{p.private}</span>
+                                  {serviceName && <span className="text-slate-400 ml-0.5 font-sans">{serviceName}</span>}
                                 </span>
                               );
                             })}
                           </div>
                         )}
 
-                        {/* Resource Bars */}
+                        {/* Resource bars */}
                         {isRunning && (c.cpuPercent !== undefined || c.memoryUsageMB !== undefined) && (
-                          <div className="space-y-3 mb-3">
+                          <div className="space-y-2">
                             {c.cpuPercent !== undefined && (
                               <div>
-                                <div className="flex items-center justify-between text-xs mb-1">
-                                  <span className="text-[var(--color-gray)]">CPU</span>
-                                  <span className={`font-semibold ${progressTextColor(c.cpuPercent)}`}>{c.cpuPercent}%</span>
+                                <div className="flex items-center justify-between text-[10px] mb-0.5">
+                                  <span className="text-slate-500">CPU</span>
+                                  <span className="font-bold tabular-nums" style={{ color: statusColor(c.cpuPercent) }}>{c.cpuPercent}%</span>
                                 </div>
-                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                  <div className={`h-full rounded-full transition-all ${progressColor(c.cpuPercent)}`} style={{ width: `${Math.min(c.cpuPercent, 100)}%` }} />
+                                <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                                  <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(c.cpuPercent, 100)}%`, background: statusColor(c.cpuPercent) }} />
                                 </div>
                               </div>
                             )}
                             {c.memoryUsageMB !== undefined && (
                               <div>
-                                <div className="flex items-center justify-between text-xs mb-1">
-                                  <span className="text-[var(--color-gray)]">메모리</span>
-                                  <span className={`font-semibold ${progressTextColor(memPercent)}`}>
-                                    {formatMemoryMB(c.memoryUsageMB)}{c.memoryLimitMB ? ` / ${formatMemoryMB(c.memoryLimitMB)}` : ""}
+                                <div className="flex items-center justify-between text-[10px] mb-0.5">
+                                  <span className="text-slate-500">메모리</span>
+                                  <span className="font-bold tabular-nums" style={{ color: c.memoryLimitMB ? statusColor(memPercent) : "#0f172a" }}>
+                                    {formatMemoryMB(c.memoryUsageMB)}
+                                    {c.memoryLimitMB ? ` / ${formatMemoryMB(c.memoryLimitMB)}` : ""}
                                   </span>
                                 </div>
                                 {c.memoryLimitMB && memPercent > 0 && (
-                                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <div className={`h-full rounded-full transition-all ${progressColor(memPercent)}`} style={{ width: `${memPercent}%` }} />
+                                  <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-full rounded-full transition-all" style={{ width: `${memPercent}%`, background: statusColor(memPercent) }} />
                                   </div>
                                 )}
                               </div>
@@ -783,46 +807,25 @@ export default function ServerMonitoring() {
                           </div>
                         )}
 
-                        {/* Network Traffic */}
-                        {isRunning && c.networkRxHuman && c.networkTxHuman && (
-                          <div className="flex items-center justify-between py-2 mb-1">
-                            <span className="text-xs text-[var(--color-gray)]">트래픽</span>
-                            <div className="flex items-center gap-3">
-                              <span className="flex items-center gap-1 text-xs">
-                                <svg className="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
-                                </svg>
-                                <span className="text-[var(--color-dark-2)] font-mono text-xs">{c.networkRxHuman}</span>
+                        {/* Network + Disk */}
+                        {isRunning && (c.networkRxHuman || c.sizeHuman) && (
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500">
+                            {c.networkRxHuman && c.networkTxHuman && (
+                              <span className="flex items-center gap-2 font-mono">
+                                <span>↓ {c.networkRxHuman}</span>
+                                <span>↑ {c.networkTxHuman}</span>
                               </span>
-                              <span className="flex items-center gap-1 text-xs">
-                                <svg className="w-3 h-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
-                                </svg>
-                                <span className="text-[var(--color-dark-2)] font-mono text-xs">{c.networkTxHuman}</span>
-                              </span>
-                            </div>
+                            )}
+                            {c.sizeHuman && <span className="tabular-nums">{c.sizeHuman}</span>}
                           </div>
                         )}
-
-                        {/* Footer */}
-                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                          {c.sizeHuman ? (
-                            <span className="text-xs text-[var(--color-gray)] flex items-center gap-1">
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
-                              </svg>
-                              {c.sizeHuman}
-                            </span>
-                          ) : <span />}
-                          <span className="text-xs text-[var(--color-gray)]">{c.status}</span>
-                        </div>
                       </div>
                     );
                   })}
                 </div>
               )}
 
-              {/* ── Infrastructure Groups (collapsible summaries) ── */}
+              {/* Infra groups */}
               {INFRA_GROUPS.map((group) => {
                 const containers = infraGroups.get(group.key);
                 if (!containers || containers.length === 0) return null;
@@ -833,103 +836,83 @@ export default function ServerMonitoring() {
                 const isExpanded = expandedGroups.has(group.key);
 
                 return (
-                  <div key={group.key} className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                    {/* Group Header (clickable) */}
+                  <div key={group.key} className="rounded-lg border border-slate-200 overflow-hidden">
                     <button
                       onClick={() => toggleGroup(group.key)}
-                      className="w-full flex items-center justify-between px-5 py-4 bg-transparent border-none cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50/50 border-none cursor-pointer hover:bg-slate-100/50 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${group.key === "supabase" ? "bg-emerald-50" : "bg-gray-100"}`}>
-                          {group.key === "supabase" ? (
-                            <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.657-5.657A8.014 8.014 0 015 6.5a8 8 0 1116 0c0 1.12-.23 2.186-.643 3.157M11.42 15.17l2.496 4.715c.179.338.588.5.95.378l3.347-1.116a.75.75 0 00.462-.937l-1.525-4.065M11.42 15.17L15.15 11.4" />
-                            </svg>
-                          )}
+                        <div className="w-8 h-8 rounded-md bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500">
+                          {group.label.slice(0, 2).toUpperCase()}
                         </div>
                         <div className="text-left">
-                          <h4 className="text-[var(--color-dark)] font-semibold text-sm">{group.label}</h4>
-                          <p className="text-xs text-[var(--color-gray)] mt-0.5">
-                            <span className="text-emerald-600 font-medium">{groupRunning}</span>/{containers.length} 실행 중
+                          <h4 className="text-sm font-bold text-slate-900">{group.label}</h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            <span className="text-emerald-700 font-bold">{groupRunning}</span>
+                            <span className="text-slate-400"> / {containers.length} 실행 중</span>
                           </p>
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-4">
-                        {/* Summary stats */}
-                        <div className="hidden sm:flex items-center gap-3 text-xs text-[var(--color-gray)]">
+                      <div className="flex items-center gap-3">
+                        <div className="hidden sm:flex items-center gap-3 text-[11px] text-slate-500">
                           {totalCpu > 0 && (
-                            <span>CPU <span className="font-semibold text-[var(--color-dark)]">{Math.round(totalCpu * 10) / 10}%</span></span>
+                            <span>
+                              CPU <span className="font-bold text-slate-900 tabular-nums">{Math.round(totalCpu * 10) / 10}%</span>
+                            </span>
                           )}
                           {totalMem > 0 && (
-                            <span>메모리 <span className="font-semibold text-[var(--color-dark)]">{formatMemoryMB(totalMem)}</span></span>
+                            <span>
+                              MEM <span className="font-bold text-slate-900 tabular-nums">{formatMemoryMB(totalMem)}</span>
+                            </span>
                           )}
                         </div>
-                        <svg
-                          className={`w-4 h-4 text-[var(--color-gray)] transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
+                        <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExpanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                         </svg>
                       </div>
                     </button>
 
-                    {/* Expanded container list */}
                     {isExpanded && (
-                      <div className="border-t border-gray-200">
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-xs">
-                            <thead>
-                              <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="text-left py-2.5 px-4 text-[var(--color-gray)] font-medium">이름</th>
-                                <th className="text-center py-2.5 px-3 text-[var(--color-gray)] font-medium">상태</th>
-                                <th className="text-left py-2.5 px-3 text-[var(--color-gray)] font-medium">포트</th>
-                                <th className="text-right py-2.5 px-3 text-[var(--color-gray)] font-medium">CPU</th>
-                                <th className="text-right py-2.5 px-3 text-[var(--color-gray)] font-medium">메모리</th>
-                                <th className="text-right py-2.5 px-4 text-[var(--color-gray)] font-medium">디스크</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {containers.map((c) => {
-                                const badge = containerStateBadge(c.state);
-                                return (
-                                  <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                                    <td className="py-2.5 px-4">
-                                      <div className="flex items-center gap-2">
-                                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dot}`} />
-                                        <span className="text-[var(--color-dark)] font-medium truncate max-w-[180px]">{c.name}</span>
-                                      </div>
-                                    </td>
-                                    <td className="py-2.5 px-3 text-center">
-                                      <span className="text-[var(--color-gray)]">{badge.label}</span>
-                                    </td>
-                                    <td className="py-2.5 px-3 text-[var(--color-dark-2)]">
-                                      {c.ports.length > 0
-                                        ? c.ports.map((p) => `${p.public}:${p.private}`).join(", ")
-                                        : "-"}
-                                    </td>
-                                    <td className="py-2.5 px-3 text-right text-[var(--color-dark)] tabular-nums">
-                                      {c.cpuPercent !== undefined ? `${c.cpuPercent}%` : "-"}
-                                    </td>
-                                    <td className="py-2.5 px-3 text-right text-[var(--color-dark)] tabular-nums">
-                                      {c.memoryUsageMB !== undefined ? formatMemoryMB(c.memoryUsageMB) : "-"}
-                                    </td>
-                                    <td className="py-2.5 px-4 text-right text-[var(--color-gray)] tabular-nums">
-                                      {c.sizeHuman ?? "-"}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
+                      <div className="border-t border-slate-200 overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                              <th className="text-left py-2 px-4 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">이름</th>
+                              <th className="text-center py-2 px-3 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">상태</th>
+                              <th className="text-left py-2 px-3 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">포트</th>
+                              <th className="text-right py-2 px-3 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">CPU</th>
+                              <th className="text-right py-2 px-3 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">메모리</th>
+                              <th className="text-right py-2 px-4 text-slate-500 font-semibold text-[10px] uppercase tracking-wider">디스크</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {containers.map((c) => {
+                              const badge = containerStateBadge(c.state);
+                              return (
+                                <tr key={c.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                                  <td className="py-2 px-4">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-slate-900 font-medium font-mono truncate max-w-[180px]">{c.name}</span>
+                                    </div>
+                                  </td>
+                                  <td className="py-2 px-3 text-center">
+                                    <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${badge.cls}`}>{badge.label}</span>
+                                  </td>
+                                  <td className="py-2 px-3 text-slate-700 font-mono text-[11px]">
+                                    {c.ports.length > 0 ? c.ports.map((p) => `${p.public}:${p.private}`).join(", ") : "-"}
+                                  </td>
+                                  <td className="py-2 px-3 text-right text-slate-900 tabular-nums">
+                                    {c.cpuPercent !== undefined ? `${c.cpuPercent}%` : "-"}
+                                  </td>
+                                  <td className="py-2 px-3 text-right text-slate-900 tabular-nums">
+                                    {c.memoryUsageMB !== undefined ? formatMemoryMB(c.memoryUsageMB) : "-"}
+                                  </td>
+                                  <td className="py-2 px-4 text-right text-slate-500 tabular-nums">{c.sizeHuman ?? "-"}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
                     )}
                   </div>
@@ -939,32 +922,27 @@ export default function ServerMonitoring() {
           )}
         </div>
 
-        {/* ===== Bottom Grid: Host Ports + Network ===== */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Host Services (ports not from containers) */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[var(--color-dark)] font-semibold mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-              </svg>
-              호스트 포트
-            </h3>
-
+        {/* Bottom: ports + network */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {/* Host ports */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <div className="flex items-baseline justify-between mb-4">
+              <h3 className="text-sm font-semibold text-slate-900">호스트 포트</h3>
+              <p className="text-xs text-slate-500">컨테이너 외</p>
+            </div>
             {hostPorts.length === 0 ? (
-              <p className="text-[var(--color-gray)] text-sm py-2 text-center">컨테이너 외 호스트 포트 없음</p>
+              <p className="text-slate-400 text-sm py-6 text-center">없음</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {hostPorts.map((p) => {
                   const label = WELL_KNOWN_PORTS[p.port];
                   return (
                     <span
                       key={p.port}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
+                      className="inline-flex items-center gap-1.5 px-2.5 h-7 bg-slate-50 border border-slate-200 rounded text-xs"
                     >
-                      <span className="font-mono font-semibold text-[var(--color-dark)]">{p.port}</span>
-                      {label && (
-                        <span className="text-[var(--color-gray)] font-sans">{label}</span>
-                      )}
+                      <span className="font-mono font-bold text-slate-900 tabular-nums">{p.port}</span>
+                      {label && <span className="text-slate-500">{label}</span>}
                     </span>
                   );
                 })}
@@ -972,87 +950,59 @@ export default function ServerMonitoring() {
             )}
           </div>
 
-          {/* Network Traffic */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[var(--color-dark)] font-semibold mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-              </svg>
-              네트워크 트래픽
-            </h3>
+          {/* Network traffic */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <div className="flex items-baseline justify-between mb-4">
+              <h3 className="text-sm font-semibold text-slate-900">네트워크 트래픽</h3>
+              <p className="text-xs text-slate-500">물리 인터페이스</p>
+            </div>
 
             {!system.network.available ? (
-              <p className="text-[var(--color-gray)] text-sm py-4 text-center">측정 불가</p>
+              <p className="text-slate-400 text-sm py-6 text-center">측정 불가</p>
             ) : (
-              <div className="space-y-0">
-                {/* Physical interfaces */}
-                {physicalInterfaces.map((iface) => (
-                  <div
-                    key={iface.name}
-                    className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0"
-                  >
-                    <span className="text-[var(--color-dark)] font-medium font-mono text-sm">{iface.name}</span>
-                    <div className="flex items-center gap-4">
-                      <span className="flex items-center gap-1.5 text-xs">
-                        <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
-                        </svg>
-                        <span className="text-[var(--color-dark-2)] font-mono">{iface.rxHuman}</span>
-                      </span>
-                      <span className="flex items-center gap-1.5 text-xs">
-                        <svg className="w-3.5 h-3.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
-                        </svg>
-                        <span className="text-[var(--color-dark-2)] font-mono">{iface.txHuman}</span>
-                      </span>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Virtual interfaces toggle */}
-                {virtualInterfaces.length > 0 && (
+              <div>
+                {physicalInterfaces.length === 0 && virtualInterfaces.length === 0 ? (
+                  <p className="text-slate-400 text-sm py-6 text-center">데이터 없음</p>
+                ) : (
                   <>
-                    <button
-                      onClick={() => setShowVirtualInterfaces(!showVirtualInterfaces)}
-                      className="w-full flex items-center justify-center gap-1 py-2 text-xs text-[var(--color-accent)] font-medium hover:bg-gray-50 rounded-lg cursor-pointer border-none bg-transparent transition-colors mt-1"
-                    >
-                      {showVirtualInterfaces ? "가상 인터페이스 접기" : `가상 인터페이스 ${virtualInterfaces.length}개 보기`}
-                      <svg
-                        className={`w-3.5 h-3.5 transition-transform ${showVirtualInterfaces ? "rotate-180" : ""}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                    </button>
-
-                    {showVirtualInterfaces && (
-                      <div className="mt-1 space-y-0">
-                        {virtualInterfaces.map((iface) => (
-                          <div
-                            key={iface.name}
-                            className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0"
-                          >
-                            <span className="text-[var(--color-gray)] font-mono text-xs">{iface.name}</span>
-                            <div className="flex items-center gap-4">
-                              <span className="flex items-center gap-1 text-xs">
-                                <svg className="w-3 h-3 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
-                                </svg>
-                                <span className="text-[var(--color-gray)] font-mono">{iface.rxHuman}</span>
-                              </span>
-                              <span className="flex items-center gap-1 text-xs">
-                                <svg className="w-3 h-3 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
-                                </svg>
-                                <span className="text-[var(--color-gray)] font-mono">{iface.txHuman}</span>
-                              </span>
-                            </div>
+                    <ul className="space-y-2 list-none m-0">
+                      {physicalInterfaces.map((iface) => (
+                        <li key={iface.name} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                          <span className="text-slate-900 font-bold font-mono text-sm">{iface.name}</span>
+                          <div className="flex items-center gap-3 text-xs font-mono text-slate-700">
+                            <span>↓ {iface.rxHuman}</span>
+                            <span className="w-px h-3 bg-slate-200" />
+                            <span>↑ {iface.txHuman}</span>
                           </div>
-                        ))}
-                      </div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {virtualInterfaces.length > 0 && (
+                      <>
+                        <button
+                          onClick={() => setShowVirtualInterfaces(!showVirtualInterfaces)}
+                          className="w-full flex items-center justify-center gap-1 mt-3 py-2 text-xs text-slate-500 hover:text-slate-900 cursor-pointer border-none bg-transparent transition-colors"
+                        >
+                          {showVirtualInterfaces ? "가상 인터페이스 접기" : `가상 인터페이스 ${virtualInterfaces.length}개 보기`}
+                          <svg className={`w-3 h-3 transition-transform ${showVirtualInterfaces ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                          </svg>
+                        </button>
+                        {showVirtualInterfaces && (
+                          <ul className="mt-1 space-y-1.5 list-none m-0">
+                            {virtualInterfaces.map((iface) => (
+                              <li key={iface.name} className="flex items-center justify-between py-1.5">
+                                <span className="text-slate-500 font-mono text-[11px]">{iface.name}</span>
+                                <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500">
+                                  <span>↓ {iface.rxHuman}</span>
+                                  <span>↑ {iface.txHuman}</span>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
                     )}
                   </>
                 )}
