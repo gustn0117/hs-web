@@ -70,6 +70,21 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAllAlerts, setShowAllAlerts] = useState(false);
+  const [excludeTarget, setExcludeTarget] = useState<{
+    id: string;
+    client_id: string;
+    client_name: string;
+    project_name: string;
+  } | null>(null);
+  const [excludeReason, setExcludeReason] = useState("");
+  const [excludeSaving, setExcludeSaving] = useState(false);
+
+  const refresh = () => {
+    fetch("/api/admin/stats")
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(console.error);
+  };
 
   useEffect(() => {
     fetch("/api/admin/stats")
@@ -78,6 +93,34 @@ export default function AdminDashboard() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const submitExclude = async () => {
+    if (!excludeTarget) return;
+    if (!excludeReason.trim()) {
+      alert("제외 사유를 입력해주세요.");
+      return;
+    }
+    setExcludeSaving(true);
+    try {
+      const res = await fetch(`/api/clients/${excludeTarget.client_id}/projects/${excludeTarget.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hosting_excluded: true,
+          hosting_excluded_reason: excludeReason.trim(),
+          hosting_excluded_at: new Date().toISOString(),
+        }),
+      });
+      if (!res.ok) throw new Error("실패");
+      setExcludeTarget(null);
+      setExcludeReason("");
+      refresh();
+    } catch {
+      alert("처리 중 오류가 발생했습니다.");
+    } finally {
+      setExcludeSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -320,21 +363,33 @@ export default function AdminDashboard() {
         {/* Hosting Unconfirmed */}
         {hostingUnconfirmed && hostingUnconfirmed.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-orange-400 rounded-full" />
                 <h3 className="text-[var(--color-dark)] font-semibold text-sm">호스팅 결제 미확인</h3>
               </div>
-              <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">{hostingUnconfirmed.length}건</span>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin/hosting-excluded"
+                  className="text-xs text-[var(--color-gray)] hover:text-[var(--color-dark)] no-underline"
+                >
+                  제외 목록 보기 →
+                </Link>
+                <span className="text-xs text-orange-600 font-semibold bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">
+                  {hostingUnconfirmed.length}건
+                </span>
+              </div>
             </div>
             <div className="divide-y divide-gray-50">
               {hostingUnconfirmed.map((h) => (
-                <a
+                <div
                   key={h.id}
-                  href={`/admin/clients/${h.client_id}`}
-                  className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50/50 transition-colors no-underline"
+                  className="flex items-center justify-between px-6 py-3.5 hover:bg-gray-50/50 transition-colors gap-3"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <a
+                    href={`/admin/clients/${h.client_id}`}
+                    className="flex items-center gap-3 min-w-0 flex-1 no-underline"
+                  >
                     <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center shrink-0">
                       <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3" />
@@ -344,13 +399,84 @@ export default function AdminDashboard() {
                       <p className="text-sm font-semibold text-[var(--color-dark)] truncate">{h.client_name}</p>
                       <p className="text-xs text-[var(--color-gray)] truncate">{h.project_name}{h.provider ? ` · ${h.provider}` : ""}{h.plan ? ` · ${h.plan}` : ""}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0 ml-3">
+                  </a>
+                  <div className="flex items-center gap-3 shrink-0">
                     {h.amount > 0 && <span className="text-sm font-semibold text-[var(--color-dark)] tabular-nums">{fmtShort(h.amount)}</span>}
                     {h.end_date && <span className="text-xs text-[var(--color-gray)]">~{h.end_date}</span>}
+                    <button
+                      onClick={() => {
+                        setExcludeTarget({
+                          id: h.id,
+                          client_id: h.client_id,
+                          client_name: h.client_name,
+                          project_name: h.project_name,
+                        });
+                        setExcludeReason("");
+                      }}
+                      className="text-xs text-[var(--color-gray)] hover:text-orange-600 hover:bg-orange-50 px-2.5 py-1 rounded-md border border-gray-200 hover:border-orange-200 transition-colors cursor-pointer bg-transparent"
+                    >
+                      제외
+                    </button>
                   </div>
-                </a>
+                </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Exclude reason modal */}
+        {excludeTarget && (
+          <div
+            className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+            onClick={() => !excludeSaving && setExcludeTarget(null)}
+          >
+            <div
+              className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-[var(--color-dark)] font-bold text-lg mb-1">호스팅 결제 미확인에서 제외</h3>
+              <p className="text-xs text-[var(--color-gray)] mb-4">
+                <span className="font-semibold text-[var(--color-dark-2)]">{excludeTarget.client_name}</span>
+                {" · "}
+                {excludeTarget.project_name}
+              </p>
+              <label className="block text-xs font-semibold text-[var(--color-dark-2)] mb-2">
+                제외 사유 <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={excludeReason}
+                onChange={(e) => setExcludeReason(e.target.value)}
+                rows={3}
+                placeholder="예) 외부 서버 사용, 호스팅 불필요 프로젝트, 단발성 작업 등"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm resize-y focus:outline-none focus:border-blue-400"
+              />
+              <div className="grid grid-cols-2 gap-2 mt-2 mb-5">
+                {["외부 서버 사용", "호스팅 불필요", "단발성 작업", "고객 직접 운영"].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={() => setExcludeReason(preset)}
+                    className="text-xs text-[var(--color-gray)] hover:text-[var(--color-dark)] py-1.5 rounded border border-gray-200 hover:border-gray-300 bg-transparent cursor-pointer transition-colors"
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setExcludeTarget(null)}
+                  disabled={excludeSaving}
+                  className="px-4 py-2 text-sm text-[var(--color-gray)] bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer disabled:opacity-50"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={submitExclude}
+                  disabled={excludeSaving}
+                  className="px-4 py-2 text-sm text-white bg-orange-500 border-0 rounded-lg hover:bg-orange-600 cursor-pointer disabled:opacity-60"
+                >
+                  {excludeSaving ? "처리 중..." : "제외 처리"}
+                </button>
+              </div>
             </div>
           </div>
         )}

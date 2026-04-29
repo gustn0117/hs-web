@@ -12,7 +12,7 @@ export async function GET() {
   const [clientsRes, projectsRes, hostingRes, domainsRes, paymentsRes] =
     await Promise.all([
       supabase.from("clients").select("id, name, is_active, created_at"),
-      supabase.from("projects").select("id, client_id, name, status, started_at, completed_at"),
+      supabase.from("projects").select("id, client_id, name, status, started_at, completed_at, hosting_excluded"),
       supabase.from("hosting").select("id, client_id, provider, plan, amount, billing_cycle, start_date, end_date, auto_renew"),
       supabase.from("domains").select("id, client_id, domain_name, registrar, expires_date, auto_renew"),
       supabase.from("payments").select("id, client_id, amount, type, description, payment_date, status"),
@@ -141,7 +141,7 @@ export async function GET() {
       .map((p) => p.client_id)
   );
   const hostingUnconfirmed = projects
-    .filter((p) => p.status !== "완료" && !clientsWithHostingPending.has(p.client_id))
+    .filter((p) => p.status !== "완료" && !p.hosting_excluded && !clientsWithHostingPending.has(p.client_id))
     .map((p) => {
       const client = clients.find((c) => c.id === p.client_id);
       const h = hosting.find((h) => h.client_id === p.client_id);
