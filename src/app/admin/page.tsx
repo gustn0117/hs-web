@@ -59,37 +59,95 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50">
       {/* Left visual panel */}
-      <aside className="relative lg:w-[44%] xl:w-[40%] bg-slate-900 text-white overflow-hidden flex flex-col">
+      <aside
+        className="relative lg:w-[44%] xl:w-[40%] text-white overflow-hidden flex flex-col"
+        style={{
+          background:
+            "radial-gradient(ellipse at top left, #1e293b 0%, transparent 50%), radial-gradient(ellipse at bottom right, #0a2a5e 0%, transparent 50%), #0f172a",
+        }}
+      >
         {/* Background grid */}
         <div
-          className="absolute inset-0 opacity-[0.07] pointer-events-none"
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
+            backgroundSize: "48px 48px",
           }}
         />
-        {/* Glow blobs */}
+
+        {/* Animated glow blobs */}
         <div
-          className="absolute -top-20 -left-20 w-[420px] h-[420px] rounded-full opacity-30 blur-3xl pointer-events-none"
-          style={{ background: "radial-gradient(circle, #2459b0 0%, transparent 70%)" }}
+          className="absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full opacity-25 blur-3xl pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, #2459b0 0%, transparent 70%)",
+            animation: "login-blob-a 18s ease-in-out infinite",
+          }}
         />
         <div
-          className="absolute -bottom-32 -right-20 w-[460px] h-[460px] rounded-full opacity-25 blur-3xl pointer-events-none"
-          style={{ background: "radial-gradient(circle, #5b87dc 0%, transparent 70%)" }}
+          className="absolute -bottom-40 -right-24 w-[520px] h-[520px] rounded-full opacity-25 blur-3xl pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, #5b87dc 0%, transparent 70%)",
+            animation: "login-blob-b 22s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute top-1/3 left-1/3 w-[260px] h-[260px] rounded-full opacity-15 blur-3xl pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, #c4b5fd 0%, transparent 70%)",
+            animation: "login-blob-c 26s ease-in-out infinite",
+          }}
         />
 
+        {/* Decorative network SVG (top right) */}
+        <svg
+          className="hidden lg:block absolute top-16 right-10 w-[180px] h-[180px] opacity-30 pointer-events-none"
+          viewBox="0 0 200 200"
+          aria-hidden
+        >
+          <defs>
+            <radialGradient id="login-pulse" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stopColor="#5b87dc" stopOpacity="1" />
+              <stop offset="100%" stopColor="#5b87dc" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          {[
+            [40, 60], [120, 30], [160, 90], [80, 110], [140, 150], [50, 160],
+          ].map(([cx, cy], i) => (
+            <g key={i}>
+              <circle cx={cx} cy={cy} r="2.5" fill="#fff" />
+              <circle cx={cx} cy={cy} r="14" fill="url(#login-pulse)">
+                <animate attributeName="r" values="2;14;2" dur={`${2.4 + i * 0.3}s`} begin={`${i * 0.4}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.6;0;0.6" dur={`${2.4 + i * 0.3}s`} begin={`${i * 0.4}s`} repeatCount="indefinite" />
+              </circle>
+            </g>
+          ))}
+          <g stroke="rgba(255,255,255,0.2)" strokeWidth="0.8" fill="none">
+            <line x1="40" y1="60" x2="120" y2="30" />
+            <line x1="120" y1="30" x2="160" y2="90" />
+            <line x1="80" y1="110" x2="40" y2="60" />
+            <line x1="80" y1="110" x2="160" y2="90" />
+            <line x1="80" y1="110" x2="140" y2="150" />
+            <line x1="50" y1="160" x2="80" y2="110" />
+            <line x1="50" y1="160" x2="140" y2="150" />
+          </g>
+        </svg>
+
         {/* Top */}
-        <div className="relative px-8 lg:px-12 pt-8 lg:pt-10">
+        <div className="relative px-8 lg:px-12 pt-8 lg:pt-10 flex items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-baseline gap-2 no-underline">
             <span className="text-[20px] font-extrabold tracking-[-0.035em] text-white">HS WEB</span>
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/50">Admin</span>
           </Link>
+          <span className="hidden lg:inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-white/45 uppercase font-mono">
+            <span className="w-1 h-1 rounded-full bg-emerald-400" />
+            v2026.01
+          </span>
         </div>
 
         {/* Center content */}
         <div className="relative flex-1 flex flex-col justify-center px-8 lg:px-12 py-10">
-          <div className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-white/10 border border-white/15 text-[11px] font-bold tracking-wider self-start mb-6">
+          <div className="inline-flex items-center gap-2 h-7 px-3 rounded-full bg-white/10 border border-white/15 text-[11px] font-bold tracking-wider self-start mb-7 backdrop-blur-sm">
             <span className="relative flex w-1.5 h-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
               <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -97,36 +155,87 @@ export default function AdminLoginPage() {
             INTERNAL · AUTHORIZED ONLY
           </div>
 
-          <h1 className="text-[34px] lg:text-[44px] font-black tracking-[-0.035em] leading-[1.1] mb-4">
-            관리자 콘솔
-            <br />
-            <span className="text-white/60">권한 인증</span>
+          <h1 className="text-[40px] lg:text-[56px] font-black tracking-[-0.04em] leading-[0.98] mb-5">
+            <span className="block">관리자</span>
+            <span
+              className="block bg-clip-text text-transparent"
+              style={{
+                backgroundImage: "linear-gradient(90deg, #ffffff 0%, #94a3b8 100%)",
+              }}
+            >
+              콘솔에 오신 걸
+            </span>
+            <span className="block text-white/40 italic font-bold">환영합니다.</span>
           </h1>
-          <p className="text-[14px] lg:text-[15px] text-white/65 leading-[1.7] max-w-[420px]">
-            클라이언트, 프로젝트, 결제, 호스팅, 서버까지 한 곳에서 관리합니다.
-            인증되지 않은 접근은 자동으로 차단됩니다.
+          <p className="text-[14px] lg:text-[15px] text-white/55 leading-[1.7] max-w-[440px]">
+            클라이언트, 프로젝트, 결제, 호스팅, 서버까지
+            <br />
+            <span className="text-white/75">한 곳에서 관리합니다.</span>
           </p>
 
-          {/* Mini stats / features */}
-          <ul className="list-none m-0 mt-10 grid grid-cols-2 gap-3 max-w-[420px]">
-            {[
-              { label: "데이터 암호화", value: "TLS 1.3" },
-              { label: "세션 만료", value: "자동" },
-              { label: "감사 로그", value: "전 요청" },
-              { label: "DB 백업", value: "일 단위" },
-            ].map((s) => (
-              <li key={s.label} className="bg-white/5 border border-white/10 rounded-lg px-3.5 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/45 mb-1">
-                  {s.label}
-                </p>
-                <p className="text-[13px] font-bold text-white">{s.value}</p>
-              </li>
-            ))}
-          </ul>
+          {/* System status card */}
+          <div className="mt-8 max-w-[440px] rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/55">
+                System Status
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-300">
+                <span className="w-1 h-1 rounded-full bg-emerald-400" />
+                All operational
+              </span>
+            </div>
+            <ul className="list-none m-0 divide-y divide-white/5">
+              {[
+                { name: "Web Server", note: "Cloudflare · CDN", up: "99.98%" },
+                { name: "Database", note: "Supabase · self-hosted", up: "99.95%" },
+                { name: "Object Storage", note: "Supabase Storage", up: "99.99%" },
+                { name: "Auth Gateway", note: "JWT · session cookies", up: "99.97%" },
+              ].map((s) => (
+                <li key={s.name} className="px-4 py-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="relative flex w-1.5 h-1.5 shrink-0">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
+                      <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[12.5px] font-bold text-white/90 truncate">{s.name}</p>
+                      <p className="text-[10.5px] text-white/40 truncate font-mono">{s.note}</p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-300 tabular-nums shrink-0 ml-3">
+                    {s.up}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Console-like recent activity */}
+          <div className="mt-4 max-w-[440px] rounded-xl bg-[#0a0f1c]/80 border border-white/10 backdrop-blur-md overflow-hidden">
+            <div className="px-4 py-2 border-b border-white/10 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#ff5f57]" />
+              <span className="w-2 h-2 rounded-full bg-[#febc2e]" />
+              <span className="w-2 h-2 rounded-full bg-[#28c840]" />
+              <span className="ml-2 text-[10px] font-mono text-white/45">~ admin@hsweb</span>
+            </div>
+            <ul className="list-none m-0 px-4 py-2.5 font-mono text-[10.5px] leading-[1.65] space-y-0.5">
+              {[
+                { t: "[OK]", c: "text-emerald-400", m: "DB backup completed · hs_web" },
+                { t: "[INFO]", c: "text-sky-300", m: "1 inquiry received · 24h" },
+                { t: "[OK]", c: "text-emerald-400", m: "Cron · auto-renewals checked" },
+                { t: "[•]", c: "text-white/40", m: "awaiting authentication..." },
+              ].map((line, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className={`shrink-0 ${line.c}`}>{line.t}</span>
+                  <span className="text-white/55 truncate">{line.m}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Bottom */}
-        <div className="relative px-8 lg:px-12 pb-8 lg:pb-10 flex items-center justify-between text-[11px] text-white/40">
+        <div className="relative px-8 lg:px-12 pb-8 lg:pb-10 flex items-center justify-between gap-4 text-[10.5px] text-white/40 font-mono">
           <p className="tnum">
             {now
               ? now.toLocaleString("ko-KR", {
@@ -138,7 +247,11 @@ export default function AdminLoginPage() {
                 })
               : "---"}
           </p>
-          <p>© HS WEB</p>
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline">Uptime <span className="text-emerald-300 font-bold tabular-nums">99.97%</span></span>
+            <span className="text-white/20">·</span>
+            <span>© HS WEB</span>
+          </div>
         </div>
       </aside>
 
