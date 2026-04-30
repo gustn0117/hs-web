@@ -44,40 +44,40 @@ export default function AdminHeader() {
         scrolled ? "border-b border-slate-200 shadow-sm" : "border-b border-slate-200"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-6 h-14 flex items-center justify-between gap-4">
-        {/* Brand */}
-        <div className="flex items-center gap-8 min-w-0">
+      <div className="max-w-[1280px] mx-auto px-6 h-14 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+        {/* Left: Brand */}
+        <div className="flex items-center justify-start min-w-0">
           <Link href="/admin/dashboard" className="flex items-baseline gap-2 no-underline shrink-0">
             <span className="text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
           </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-0.5">
-            {NAV_ITEMS.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(item.href + "/");
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`relative inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-[13px] no-underline transition-colors ${
-                    active
-                      ? "text-slate-900 font-semibold bg-slate-100"
-                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                  }`}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                  </svg>
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
         </div>
 
+        {/* Center: Desktop nav */}
+        <nav className="hidden lg:flex items-center justify-center gap-0.5">
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative inline-flex items-center gap-1.5 h-9 px-3 rounded-md text-[13px] no-underline transition-colors ${
+                  active
+                    ? "text-slate-900 font-semibold bg-slate-100"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                </svg>
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
         {/* Right actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center justify-end gap-1.5 shrink-0">
           <Link
             href="/"
             target="_blank"

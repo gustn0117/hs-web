@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import AdminHeader from "../components/AdminHeader";
+import DashboardTodos from "./Todos";
 
 interface Stats {
   overview: {
@@ -646,6 +647,9 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+
+        {/* ── Checklist (체크리스트 + 메모) ───────── */}
+        <DashboardTodos />
 
         {/* ── Action items grid: hosting + alerts ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
