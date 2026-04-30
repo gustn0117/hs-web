@@ -123,8 +123,9 @@ export default function Navbar() {
             : "bg-white border-b border-transparent"
         }`}
       >
-        <div className="max-w-[1280px] mx-auto px-5 flex items-center justify-between h-[68px]">
-          <div className="flex items-center gap-10">
+        <div className="max-w-[1280px] mx-auto px-5 grid grid-cols-[1fr_auto_1fr] items-center h-[68px] gap-4">
+          {/* Left: brand */}
+          <div className="flex items-center justify-start">
             <Link href="/" className="flex items-baseline gap-1.5 no-underline group">
               <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
                 HS WEB
@@ -133,11 +134,13 @@ export default function Navbar() {
                 Web Agency
               </span>
             </Link>
+          </div>
 
-            <nav
-              className="hidden lg:flex items-center gap-0.5"
-              onMouseLeave={scheduleClose}
-            >
+          {/* Center: nav */}
+          <nav
+            className="hidden lg:flex items-center justify-center gap-0.5"
+            onMouseLeave={scheduleClose}
+          >
               {MENU.map((m) => {
                 const active = isMenuActive(m);
                 const hasChildren = !!m.children?.length;
@@ -252,36 +255,30 @@ export default function Navbar() {
                 );
               })}
             </nav>
-          </div>
 
-          <div className="hidden lg:flex items-center gap-2">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center h-10 px-3 text-[13px] font-medium text-[var(--c-text-2)] hover:text-[var(--c-text)] no-underline"
-            >
-              포트폴리오 보기
-            </Link>
-            <Link href="/contact" className="p-btn p-btn-dark">
+          {/* Right: CTA + mobile toggle */}
+          <div className="flex items-center justify-end gap-2">
+            <Link href="/contact" className="hidden lg:inline-flex p-btn p-btn-dark">
               견적 문의
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>
-          </div>
 
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden w-10 h-10 inline-flex items-center justify-center rounded-[8px] hover:bg-[var(--c-bg-2)] bg-transparent border-0 cursor-pointer"
-            aria-label="메뉴"
-          >
-            <svg className="w-5 h-5 text-[var(--c-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              )}
-            </svg>
-          </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden w-10 h-10 inline-flex items-center justify-center rounded-[8px] hover:bg-[var(--c-bg-2)] bg-transparent border-0 cursor-pointer"
+              aria-label="메뉴"
+            >
+              <svg className="w-5 h-5 text-[var(--c-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
