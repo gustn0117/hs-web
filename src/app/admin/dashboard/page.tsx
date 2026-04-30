@@ -20,6 +20,7 @@ interface Stats {
   revenueByType: Record<string, number>;
   recentPayments: {
     id: string;
+    client_id: string;
     client_name: string;
     amount: number;
     type: string;
@@ -779,7 +780,17 @@ export default function AdminDashboard() {
                     const si = PAYMENT_STATUS[p.status] ?? { label: p.status, cls: "bg-slate-100 text-slate-600 border border-slate-200" };
                     return (
                       <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                        <td className="py-3 px-5 text-slate-900 font-semibold">{p.client_name}</td>
+                        <td className="py-3 px-5">
+                          <Link
+                            href={`/admin/clients/${p.client_id}`}
+                            className="inline-flex items-center gap-1 text-slate-900 font-semibold no-underline hover:text-slate-600 group"
+                          >
+                            {p.client_name}
+                            <svg className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                          </Link>
+                        </td>
                         <td className="py-3 px-3 text-slate-700">{p.type}</td>
                         <td className="py-3 px-3 text-slate-500 max-w-[200px] truncate">{p.description || "-"}</td>
                         <td className="py-3 px-3 text-slate-900 font-bold text-right tabular-nums">{fmt(p.amount)}</td>
