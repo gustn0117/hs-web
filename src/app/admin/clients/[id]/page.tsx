@@ -89,21 +89,21 @@ type TabKey = "projects" | "payments";
 // ---------------------------------------------------------------------------
 
 const inputClass =
-  "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
+  "w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-slate-900 text-sm focus:outline-none focus:border-slate-400 transition-colors placeholder:text-slate-400";
 const labelClass =
-  "block text-[var(--color-dark-2)] text-xs font-medium mb-1.5";
+  "block text-slate-700 text-xs font-semibold mb-1.5";
 const cardClass =
-  "bg-white border border-gray-200 rounded-2xl p-6 shadow-sm";
+  "bg-white border border-slate-200 rounded-xl p-5";
 const btnPrimary =
-  "px-5 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center px-4 h-9 bg-slate-900 text-white rounded-md text-sm font-semibold border-0 cursor-pointer transition-colors hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed";
 const btnSecondary =
-  "px-5 py-2.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl text-sm font-semibold cursor-pointer transition-all hover:bg-gray-200";
+  "inline-flex items-center justify-center px-4 h-9 bg-white border border-slate-200 text-slate-700 rounded-md text-sm font-semibold cursor-pointer transition-colors hover:bg-slate-50";
 const btnDanger =
-  "px-3 py-1.5 bg-red-50 border border-red-200 text-red-500 text-xs rounded-lg cursor-pointer hover:bg-red-100 transition-all";
+  "inline-flex items-center justify-center px-3 h-8 bg-white border border-slate-200 text-slate-500 text-xs rounded-md cursor-pointer hover:border-red-200 hover:text-red-600 hover:bg-red-50 transition-colors";
 const btnSmall =
-  "px-3 py-1.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-xs rounded-lg cursor-pointer hover:bg-gray-200 hover:text-[var(--color-dark)] transition-all";
+  "inline-flex items-center justify-center px-3 h-8 bg-white border border-slate-200 text-slate-600 text-xs rounded-md cursor-pointer hover:bg-slate-50 hover:text-slate-900 transition-colors";
 const btnMini =
-  "px-2.5 py-1 bg-gray-50 border border-gray-200 text-[var(--color-gray)] text-xs rounded-lg cursor-pointer hover:bg-gray-100 transition-all";
+  "inline-flex items-center justify-center px-2.5 h-7 bg-slate-50 border border-slate-200 text-slate-600 text-xs rounded cursor-pointer hover:bg-slate-100 transition-colors";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -186,7 +186,7 @@ const PAYMENT_STATUS_MAP: Record<string, { label: string; cls: string }> = {
 };
 
 const MARKETING_STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  planned: { label: "예정", cls: "bg-gray-100 text-gray-600 border border-gray-200" },
+  planned: { label: "예정", cls: "bg-slate-100 text-slate-600 border border-slate-200" },
   in_progress: { label: "진행중", cls: "bg-blue-50 text-blue-700 border border-blue-200" },
   completed: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
 };
@@ -291,21 +291,21 @@ function CustomSelect({
         onClick={() => setOpen(!open)}
         className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}
       >
-        <span className={`flex items-center gap-2 ${!selected ? "text-gray-400" : ""}`}>
+        <span className={`flex items-center gap-2 ${!selected ? "text-slate-400" : ""}`}>
           {selected?.color && (
             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${selected.color}`} />
           )}
           {selected?.label || placeholder}
         </span>
         <svg
-          className={`w-4 h-4 text-[var(--color-gray)] shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-[#64748b] shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
         </svg>
       </button>
       {open && (
-        <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden animate-[fadeSlideDown_0.15s_ease]">
+        <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-[fadeSlideDown_0.15s_ease]">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -313,14 +313,14 @@ function CustomSelect({
               onClick={() => { onChange(opt.value); setOpen(false); }}
               className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2.5 cursor-pointer transition-colors border-none ${
                 opt.value === value
-                  ? "bg-[var(--color-primary)]/5 text-[var(--color-primary)] font-medium"
-                  : "bg-white text-[var(--color-dark)] hover:bg-gray-50"
+                  ? "bg-[#0f172a]/5 text-[#0f172a] font-medium"
+                  : "bg-white text-[#0f172a] hover:bg-slate-50"
               }`}
             >
               {opt.color && <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${opt.color}`} />}
               {opt.label}
               {opt.value === value && (
-                <svg className="w-4 h-4 ml-auto text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="w-4 h-4 ml-auto text-[#0f172a]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               )}
@@ -384,45 +384,45 @@ function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value:
   return (
     <div ref={ref} className="relative">
       <button type="button" onClick={() => { setOpen(!open); setShowYearPicker(false); }} className={`${inputClass} text-left flex items-center justify-between gap-2 cursor-pointer`}>
-        <span className={`flex items-center gap-2 ${!value ? "text-gray-400" : ""}`}>
-          <svg className="w-4 h-4 text-[var(--color-gray)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+        <span className={`flex items-center gap-2 ${!value ? "text-slate-400" : ""}`}>
+          <svg className="w-4 h-4 text-[#64748b] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
           {parsed ? formatDate(value) : placeholder}
         </span>
-        {value && <span onClick={clearDate} className="p-0.5 hover:bg-gray-200 rounded-full transition-colors"><svg className="w-3.5 h-3.5 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>}
+        {value && <span onClick={clearDate} className="p-0.5 hover:bg-slate-200 rounded-full transition-colors"><svg className="w-3.5 h-3.5 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>}
       </button>
       {open && (
-        <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
+        <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
           {showYearPicker ? (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <button type="button" onClick={() => setShowYearPicker(false)} className="text-[var(--color-gray)] hover:text-[var(--color-dark)] bg-transparent border-none cursor-pointer p-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <span className="text-sm font-semibold text-[var(--color-dark)]">연도 선택</span>
+                <button type="button" onClick={() => setShowYearPicker(false)} className="text-[#64748b] hover:text-[#0f172a] bg-transparent border-none cursor-pointer p-1"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                <span className="text-sm font-semibold text-[#0f172a]">연도 선택</span>
                 <div className="w-6" />
               </div>
               <div className="grid grid-cols-3 gap-1.5 max-h-[220px] overflow-y-auto">
                 {years.map((y) => (
-                  <button key={y} type="button" onClick={() => { setViewYear(y); setShowYearPicker(false); }} className={`py-2 rounded-lg text-sm cursor-pointer border-none transition-colors ${y === viewYear ? "bg-[var(--color-primary)] text-white font-semibold" : y === today.getFullYear() ? "bg-blue-50 text-blue-600 font-medium hover:bg-blue-100" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{y}</button>
+                  <button key={y} type="button" onClick={() => { setViewYear(y); setShowYearPicker(false); }} className={`py-2 rounded-lg text-sm cursor-pointer border-none transition-colors ${y === viewYear ? "bg-[#0f172a] text-white font-semibold" : y === today.getFullYear() ? "bg-blue-50 text-blue-600 font-medium hover:bg-blue-100" : "bg-transparent text-[#0f172a] hover:bg-slate-100"}`}>{y}</button>
                 ))}
               </div>
             </div>
           ) : (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <button type="button" onClick={prevMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                <button type="button" onClick={() => setShowYearPicker(true)} className="text-sm font-bold text-[var(--color-dark)] bg-transparent border-none cursor-pointer hover:text-[var(--color-accent)] transition-colors px-2 py-1 rounded-lg hover:bg-gray-50">{viewYear}년 {MONTHS_KR[viewMonth]}</button>
-                <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[var(--color-gray)] hover:text-[var(--color-dark)]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                <button type="button" onClick={prevMonth} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[#64748b] hover:text-[#0f172a]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                <button type="button" onClick={() => setShowYearPicker(true)} className="text-sm font-bold text-[#0f172a] bg-transparent border-none cursor-pointer hover:text-[#0f172a] transition-colors px-2 py-1 rounded-lg hover:bg-slate-50">{viewYear}년 {MONTHS_KR[viewMonth]}</button>
+                <button type="button" onClick={nextMonth} className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors bg-transparent border-none cursor-pointer text-[#64748b] hover:text-[#0f172a]"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
               </div>
-              <div className="grid grid-cols-7 mb-1">{WEEKDAYS.map((d, i) => (<div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[var(--color-gray)]"}`}>{d}</div>))}</div>
+              <div className="grid grid-cols-7 mb-1">{WEEKDAYS.map((d, i) => (<div key={d} className={`text-center text-xs font-medium py-1 ${i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[#64748b]"}`}>{d}</div>))}</div>
               <div className="grid grid-cols-7">
                 {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
                 {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
                   const dow = (firstDow + day - 1) % 7;
-                  return (<button key={day} type="button" onClick={() => selectDate(day)} className={`py-1.5 text-sm rounded-lg cursor-pointer border-none transition-all ${isSelected(day) ? "bg-[var(--color-primary)] text-white font-bold" : isToday(day) ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100" : dow === 0 ? "bg-transparent text-red-400 hover:bg-red-50" : dow === 6 ? "bg-transparent text-blue-400 hover:bg-blue-50" : "bg-transparent text-[var(--color-dark)] hover:bg-gray-100"}`}>{day}</button>);
+                  return (<button key={day} type="button" onClick={() => selectDate(day)} className={`py-1.5 text-sm rounded-lg cursor-pointer border-none transition-all ${isSelected(day) ? "bg-[#0f172a] text-white font-bold" : isToday(day) ? "bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100" : dow === 0 ? "bg-transparent text-red-400 hover:bg-red-50" : dow === 6 ? "bg-transparent text-blue-400 hover:bg-blue-50" : "bg-transparent text-[#0f172a] hover:bg-slate-100"}`}>{day}</button>);
                 })}
               </div>
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-xs text-[var(--color-accent)] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
-                {value && <button type="button" onClick={clearDate} className="text-xs text-[var(--color-gray)] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-xs text-[#0f172a] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
+                {value && <button type="button" onClick={clearDate} className="text-xs text-[#64748b] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
               </div>
             </div>
           )}
@@ -458,8 +458,8 @@ function AmountInput({ value, onChange, placeholder }: { value: number; onChange
 
 function FormCard({ title, onSave, onCancel, saving, children }: { title: string; onSave: () => void; onCancel: () => void; saving?: boolean; children: React.ReactNode }) {
   return (
-    <div className={`${cardClass} mb-6 border-[var(--color-primary)]/20`}>
-      <h4 className="text-[var(--color-dark)] font-semibold mb-4">{title}</h4>
+    <div className={`${cardClass} mb-6 border-[#0f172a]/20`}>
+      <h4 className="text-[#0f172a] font-semibold mb-4">{title}</h4>
       {children}
       <div className="flex gap-3 mt-5">
         <button onClick={onSave} disabled={saving} className={btnPrimary}>{saving ? "저장 중..." : "저장"}</button>
@@ -508,7 +508,7 @@ const marketingTypeOptions: SelectOption[] = [
 ];
 
 const marketingStatusOptions: SelectOption[] = [
-  { value: "planned", label: "예정", color: "bg-gray-400" },
+  { value: "planned", label: "예정", color: "bg-slate-400" },
   { value: "in_progress", label: "진행중", color: "bg-blue-400" },
   { value: "completed", label: "완료", color: "bg-emerald-400" },
 ];
@@ -932,7 +932,7 @@ export default function ClientDetailPage() {
   // =========================================================================
   const renderHostingForm = () => (
     <div className="bg-blue-50/50 rounded-xl p-4 mb-3 border border-blue-100">
-      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingHostingId ? "호스팅 수정" : "호스팅 추가"}</h5>
+      <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingHostingId ? "호스팅 수정" : "호스팅 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>금액 (원) *</label><AmountInput value={hostingForm.amount} onChange={(v) => setHostingForm((p) => ({ ...p, amount: v }))} /></div>
         <div><label className={labelClass}>결제 주기</label><CustomSelect options={billingCycleOptions} value={hostingForm.billing_cycle} onChange={(v) => setHostingForm((p) => ({ ...p, billing_cycle: v }))} /></div>
@@ -940,7 +940,7 @@ export default function ClientDetailPage() {
         <div><label className={labelClass}>만료일</label><DatePicker value={hostingForm.end_date} onChange={(v) => setHostingForm((p) => ({ ...p, end_date: v }))} placeholder="만료일 선택" /></div>
       </div>
       <div className="mt-3"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="호스팅 관련 메모" value={hostingForm.memo} onChange={(e) => setHostingForm((p) => ({ ...p, memo: e.target.value }))} /></div>
-      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={hostingForm.auto_renew} onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
+      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={hostingForm.auto_renew} onChange={(e) => setHostingForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[#0f172a]" /><span className="text-[#334155] text-sm">자동 갱신</span></label>
       <div className="flex gap-2 mt-4">
         <button onClick={saveHosting} disabled={hostingSaving} className={btnPrimary}>{hostingSaving ? "저장 중..." : "저장"}</button>
         <button onClick={() => setHostingFormProjectId(null)} className={btnSecondary}>취소</button>
@@ -953,7 +953,7 @@ export default function ClientDetailPage() {
   // =========================================================================
   const renderDomainForm = () => (
     <div className="bg-emerald-50/50 rounded-xl p-4 mb-3 border border-emerald-100">
-      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingDomainId ? "도메인 수정" : "도메인 추가"}</h5>
+      <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingDomainId ? "도메인 수정" : "도메인 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>도메인명 *</label><input className={inputClass} placeholder="example.com" value={domainForm.domain_name} onChange={(e) => setDomainForm((p) => ({ ...p, domain_name: e.target.value }))} /></div>
         <div><label className={labelClass}>등록기관</label><input className={inputClass} placeholder="가비아, 후이즈, ..." value={domainForm.registrar} onChange={(e) => setDomainForm((p) => ({ ...p, registrar: e.target.value }))} /></div>
@@ -962,7 +962,7 @@ export default function ClientDetailPage() {
         <div className="sm:col-span-2"><label className={labelClass}>네임서버</label><input className={inputClass} placeholder="ns1.example.com, ns2.example.com" value={domainForm.nameservers} onChange={(e) => setDomainForm((p) => ({ ...p, nameservers: e.target.value }))} /></div>
       </div>
       <div className="mt-3"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={2} placeholder="도메인 관련 메모" value={domainForm.memo} onChange={(e) => setDomainForm((p) => ({ ...p, memo: e.target.value }))} /></div>
-      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={domainForm.auto_renew} onChange={(e) => setDomainForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">자동 갱신</span></label>
+      <label className="flex items-center gap-2 cursor-pointer mt-3"><input type="checkbox" checked={domainForm.auto_renew} onChange={(e) => setDomainForm((p) => ({ ...p, auto_renew: e.target.checked }))} className="w-4 h-4 rounded accent-[#0f172a]" /><span className="text-[#334155] text-sm">자동 갱신</span></label>
       <div className="flex gap-2 mt-4">
         <button onClick={saveDomain} disabled={domainSaving} className={btnPrimary}>{domainSaving ? "저장 중..." : "저장"}</button>
         <button onClick={() => setDomainFormProjectId(null)} className={btnSecondary}>취소</button>
@@ -975,7 +975,7 @@ export default function ClientDetailPage() {
   // =========================================================================
   const renderMarketingForm = () => (
     <div className="bg-purple-50/50 rounded-xl p-4 mb-3 border border-purple-100">
-      <h5 className="text-[var(--color-dark)] text-sm font-semibold mb-3">{editingMarketingId ? "마케팅 수정" : "마케팅 추가"}</h5>
+      <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingMarketingId ? "마케팅 수정" : "마케팅 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>유형 *</label><CustomSelect options={marketingTypeOptions} value={marketingForm.type} onChange={(v) => setMarketingForm((p) => ({ ...p, type: v }))} /></div>
         <div><label className={labelClass}>상태</label><CustomSelect options={marketingStatusOptions} value={marketingForm.status} onChange={(v) => setMarketingForm((p) => ({ ...p, status: v }))} /></div>
@@ -1007,12 +1007,12 @@ export default function ClientDetailPage() {
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-              <h4 className="text-[var(--color-dark)] font-bold text-base">{p.name}</h4>
-              <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-gray-100 text-gray-600 border border-gray-200"}`}>{p.status}</span>
+              <h4 className="text-[#0f172a] font-bold text-base">{p.name}</h4>
+              <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full whitespace-nowrap ${PROJECT_STATUS_COLORS[p.status] ?? "bg-slate-100 text-slate-600 border border-slate-200"}`}>{p.status}</span>
               {p.platform && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 whitespace-nowrap">{p.platform}</span>}
             </div>
             {p.website_url && (
-              <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] text-sm no-underline hover:underline break-all inline-flex items-center gap-1">
+              <a href={p.website_url} target="_blank" rel="noopener noreferrer" className="text-[#0f172a] text-sm no-underline hover:underline break-all inline-flex items-center gap-1">
                 {p.website_url}
                 <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
               </a>
@@ -1027,57 +1027,57 @@ export default function ClientDetailPage() {
         {/* Project info grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {p.tech_stack && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">기술 스택</span>
-              <span className="text-[var(--color-dark-2)] text-sm">{p.tech_stack}</span>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">기술 스택</span>
+              <span className="text-[#334155] text-sm">{p.tech_stack}</span>
             </div>
           )}
           {p.unit_price > 0 && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">작업 단가</span>
-              <span className="text-[var(--color-dark)] text-sm font-semibold">{formatAmount(p.unit_price)}</span>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">작업 단가</span>
+              <span className="text-[#0f172a] text-sm font-semibold">{formatAmount(p.unit_price)}</span>
             </div>
           )}
           {p.admin_url && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">관리자 URL</span>
-              <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline text-sm truncate block">{p.admin_url}</a>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">관리자 URL</span>
+              <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[#0f172a] hover:underline text-sm truncate block">{p.admin_url}</a>
             </div>
           )}
           {p.admin_id && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">관리자 ID / PW</span>
-              <span className="text-[var(--color-dark-2)] text-sm">{p.admin_id}{p.admin_pw ? ` / ${p.admin_pw}` : ""}</span>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">관리자 ID / PW</span>
+              <span className="text-[#334155] text-sm">{p.admin_id}{p.admin_pw ? ` / ${p.admin_pw}` : ""}</span>
             </div>
           )}
           {p.started_at && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">시작일</span>
-              <span className="text-[var(--color-dark-2)] text-sm">{formatDate(p.started_at)}</span>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">시작일</span>
+              <span className="text-[#334155] text-sm">{formatDate(p.started_at)}</span>
             </div>
           )}
           {p.completed_at && (
-            <div className="bg-gray-50 rounded-lg px-3 py-2">
-              <span className="text-[var(--color-gray)] text-xs block mb-0.5">완료일</span>
-              <span className="text-[var(--color-dark-2)] text-sm">{formatDate(p.completed_at)}</span>
+            <div className="bg-slate-50 rounded-lg px-3 py-2">
+              <span className="text-[#64748b] text-xs block mb-0.5">완료일</span>
+              <span className="text-[#334155] text-sm">{formatDate(p.completed_at)}</span>
             </div>
           )}
         </div>
-        {p.description && <p className="mt-4 pt-4 border-t border-gray-100 text-[var(--color-gray)] text-sm leading-relaxed">{p.description}</p>}
+        {p.description && <p className="mt-4 pt-4 border-t border-slate-100 text-[#64748b] text-sm leading-relaxed">{p.description}</p>}
 
         {/* ── Hosting section ── */}
-        <div className="mt-5 pt-5 border-t border-gray-100">
+        <div className="mt-5 pt-5 border-t border-slate-100">
           <div className="flex items-center justify-between mb-3">
-            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
+            <h5 className="text-[#0f172a] text-sm font-bold flex items-center gap-2">
               <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7" /></svg>
               호스팅
-              <span className="text-[var(--color-gray)] font-normal text-xs">{pHostings.length}건</span>
+              <span className="text-[#64748b] font-normal text-xs">{pHostings.length}건</span>
             </h5>
             <button onClick={() => openHostingAdd(p.id)} className={btnMini}>+ 추가</button>
           </div>
           {hostingFormProjectId === p.id && renderHostingForm()}
           {pHostings.length === 0 && hostingFormProjectId !== p.id && (
-            <p className="text-[var(--color-gray)] text-xs py-2">등록된 호스팅이 없습니다.</p>
+            <p className="text-[#64748b] text-xs py-2">등록된 호스팅이 없습니다.</p>
           )}
           {pHostings.map((h) => {
             const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
@@ -1085,7 +1085,7 @@ export default function ClientDetailPage() {
             const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
 
             return (
-              <div key={h.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+              <div key={h.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     {/* Amount + Badges */}
@@ -1093,8 +1093,8 @@ export default function ClientDetailPage() {
                       {h.auto_renew && <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
                     </div>
                     {/* Amount + Dates */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)] mb-1.5">
-                      <span className="font-medium text-[var(--color-dark-2)]">{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#64748b] mb-1.5">
+                      <span className="font-medium text-[#334155]">{formatAmount(h.amount)} / {h.billing_cycle === "monthly" ? "월" : "년"}</span>
                       {h.start_date && <span>시작: {formatDateShort(h.start_date)}</span>}
                       {h.end_date && <span>만료: {formatDateShort(h.end_date)}</span>}
                     </div>
@@ -1102,7 +1102,7 @@ export default function ClientDetailPage() {
                     {renewalDate && badge && (
                       <div className="flex items-center gap-2 mt-1">
                         <svg className="w-3.5 h-3.5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
-                        <span className="text-xs font-medium text-[var(--color-dark-2)]">
+                        <span className="text-xs font-medium text-[#334155]">
                           다음 갱신: {formatDate(renewalDate)}
                         </span>
                         <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>
@@ -1112,26 +1112,26 @@ export default function ClientDetailPage() {
                     )}
                     {/* Related hosting payments */}
                     {pHostingPayments.length > 0 && (
-                      <div className="mt-2 pt-2 border-t border-gray-200/60">
-                        <span className="text-xs text-[var(--color-gray)] font-medium">최근 결제:</span>
+                      <div className="mt-2 pt-2 border-t border-slate-200/60">
+                        <span className="text-xs text-[#64748b] font-medium">최근 결제:</span>
                         <div className="flex flex-wrap gap-1.5 mt-1">
                           {pHostingPayments.slice(0, 3).map((hp) => {
                             const si = PAYMENT_STATUS_MAP[hp.status];
                             return (
-                              <span key={hp.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-lg text-xs">
-                                <span className="text-[var(--color-dark-2)]">{hp.payment_date ? formatDateShort(hp.payment_date) : "-"}</span>
-                                <span className="text-[var(--color-dark)] font-medium">{formatAmount(hp.amount)}</span>
+                              <span key={hp.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-slate-200 rounded-lg text-xs">
+                                <span className="text-[#334155]">{hp.payment_date ? formatDateShort(hp.payment_date) : "-"}</span>
+                                <span className="text-[#0f172a] font-medium">{formatAmount(hp.amount)}</span>
                                 {si && <span className={`px-1 py-0 text-xs rounded ${si.cls}`}>{si.label}</span>}
                               </span>
                             );
                           })}
                           {pHostingPayments.length > 3 && (
-                            <span className="text-xs text-[var(--color-gray)]">+{pHostingPayments.length - 3}건</span>
+                            <span className="text-xs text-[#64748b]">+{pHostingPayments.length - 3}건</span>
                           )}
                         </div>
                       </div>
                     )}
-                    {h.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{h.memo}</p>}
+                    {h.memo && <p className="text-xs text-[#64748b] mt-1.5 italic">{h.memo}</p>}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button onClick={() => openHostingEdit(p.id, h)} className={btnMini}>수정</button>
@@ -1144,30 +1144,30 @@ export default function ClientDetailPage() {
         </div>
 
         {/* ── Domain section ── */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-slate-100">
           <div className="flex items-center justify-between mb-3">
-            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
+            <h5 className="text-[#0f172a] text-sm font-bold flex items-center gap-2">
               <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253" /></svg>
               도메인
-              <span className="text-[var(--color-gray)] font-normal text-xs">{pDomains.length}건</span>
+              <span className="text-[#64748b] font-normal text-xs">{pDomains.length}건</span>
             </h5>
             <button onClick={() => openDomainAdd(p.id)} className={btnMini}>+ 추가</button>
           </div>
           {domainFormProjectId === p.id && renderDomainForm()}
           {pDomains.length === 0 && domainFormProjectId !== p.id && (
-            <p className="text-[var(--color-gray)] text-xs py-2">등록된 도메인이 없습니다.</p>
+            <p className="text-[#64748b] text-xs py-2">등록된 도메인이 없습니다.</p>
           )}
           {pDomains.map((d) => {
             const daysUntil = d.expires_date ? getDaysUntil(d.expires_date) : null;
             const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
 
             return (
-              <div key={d.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+              <div key={d.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className="font-semibold text-sm text-[var(--color-dark)]">{d.domain_name}</span>
-                      {d.registrar && <span className="text-[var(--color-gray)] text-sm">· {d.registrar}</span>}
+                      <span className="font-semibold text-sm text-[#0f172a]">{d.domain_name}</span>
+                      {d.registrar && <span className="text-[#64748b] text-sm">· {d.registrar}</span>}
                       {d.auto_renew && <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">자동갱신</span>}
                       {badge && (
                         <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>
@@ -1175,7 +1175,7 @@ export default function ClientDetailPage() {
                         </span>
                       )}
                     </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#64748b]">
                       {d.registered_date && <span>등록: {formatDateShort(d.registered_date)}</span>}
                       {d.expires_date && (
                         <span className={isExpired(d.expires_date) ? "text-red-500 font-medium" : ""}>
@@ -1185,7 +1185,7 @@ export default function ClientDetailPage() {
                       )}
                       {d.nameservers && <span>NS: {d.nameservers}</span>}
                     </div>
-                    {d.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{d.memo}</p>}
+                    {d.memo && <p className="text-xs text-[#64748b] mt-1.5 italic">{d.memo}</p>}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button onClick={() => openDomainEdit(p.id, d)} className={btnMini}>수정</button>
@@ -1198,42 +1198,42 @@ export default function ClientDetailPage() {
         </div>
 
         {/* ── Marketing section ── */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 pt-4 border-t border-slate-100">
           <div className="flex items-center justify-between mb-3">
-            <h5 className="text-[var(--color-dark)] text-sm font-bold flex items-center gap-2">
+            <h5 className="text-[#0f172a] text-sm font-bold flex items-center gap-2">
               <svg className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
               마케팅
-              <span className="text-[var(--color-gray)] font-normal text-xs">{pMarketings.length}건</span>
+              <span className="text-[#64748b] font-normal text-xs">{pMarketings.length}건</span>
             </h5>
             <button onClick={() => openMarketingAdd(p.id)} className={btnMini}>+ 추가</button>
           </div>
           {marketingFormProjectId === p.id && renderMarketingForm()}
           {pMarketings.length === 0 && marketingFormProjectId !== p.id && (
-            <p className="text-[var(--color-gray)] text-xs py-2">등록된 마케팅이 없습니다.</p>
+            <p className="text-[#64748b] text-xs py-2">등록된 마케팅이 없습니다.</p>
           )}
           {pMarketings.map((m) => {
-            const si = MARKETING_STATUS_MAP[m.status] ?? { label: m.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
+            const si = MARKETING_STATUS_MAP[m.status] ?? { label: m.status, cls: "bg-slate-100 text-slate-600 border border-slate-200" };
             const typeCls: Record<string, string> = {
               "SEO": "bg-purple-50 text-purple-700 border-purple-200",
               "트래픽": "bg-blue-50 text-blue-700 border-blue-200",
               "백링크": "bg-emerald-50 text-emerald-700 border-emerald-200",
-              "기타": "bg-gray-100 text-gray-600 border-gray-200",
+              "기타": "bg-slate-100 text-slate-600 border-slate-200",
             };
             return (
-              <div key={m.id} className="bg-gray-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-gray-100/80 transition-colors">
+              <div key={m.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full border ${typeCls[m.type] ?? typeCls["기타"]}`}>{m.type}</span>
-                      <span className="font-semibold text-sm text-[var(--color-dark)]">{m.title}</span>
+                      <span className="font-semibold text-sm text-[#0f172a]">{m.title}</span>
                       <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${si.cls}`}>{si.label}</span>
                     </div>
-                    {m.description && <p className="text-xs text-[var(--color-dark-2)] mb-1.5 line-clamp-2">{m.description}</p>}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
+                    {m.description && <p className="text-xs text-[#334155] mb-1.5 line-clamp-2">{m.description}</p>}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#64748b]">
                       {m.started_at && <span>시작: {formatDateShort(m.started_at)}</span>}
                       {m.completed_at && <span>완료: {formatDateShort(m.completed_at)}</span>}
                     </div>
-                    {m.memo && <p className="text-xs text-[var(--color-gray)] mt-1.5 italic">{m.memo}</p>}
+                    {m.memo && <p className="text-xs text-[#64748b] mt-1.5 italic">{m.memo}</p>}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button onClick={() => openMarketingEdit(p.id, m)} className={btnMini}>수정</button>
@@ -1255,7 +1255,7 @@ export default function ClientDetailPage() {
   const renderProjectsTab = () => (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-[var(--color-dark)] font-bold text-lg">프로젝트 <span className="text-[var(--color-gray)] font-normal text-sm ml-1">{projects.length}건</span></h3>
+        <h3 className="text-[#0f172a] font-bold text-lg">프로젝트 <span className="text-[#64748b] font-normal text-sm ml-1">{projects.length}건</span></h3>
         <button onClick={openProjectAdd} className={btnPrimary}>+ 추가</button>
       </div>
       {showProjectForm && (
@@ -1280,15 +1280,15 @@ export default function ClientDetailPage() {
         <div className="space-y-4">
           {[1, 2].map((i) => (
             <div key={i} className={`${cardClass} animate-pulse`}>
-              <div className="flex items-center gap-3 mb-4"><div className="h-5 bg-gray-200 rounded w-40" /><div className="h-5 bg-gray-100 rounded-full w-16" /></div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4"><div className="h-12 bg-gray-50 rounded-lg" /><div className="h-12 bg-gray-50 rounded-lg" /><div className="h-12 bg-gray-50 rounded-lg" /></div>
+              <div className="flex items-center gap-3 mb-4"><div className="h-5 bg-slate-200 rounded w-40" /><div className="h-5 bg-slate-100 rounded-full w-16" /></div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4"><div className="h-12 bg-slate-50 rounded-lg" /><div className="h-12 bg-slate-50 rounded-lg" /><div className="h-12 bg-slate-50 rounded-lg" /></div>
             </div>
           ))}
         </div>
       ) : projects.length === 0 ? (
         <div className="text-center py-16">
-          <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>
-          <p className="text-[var(--color-gray)] text-sm">등록된 프로젝트가 없습니다.</p>
+          <svg className="w-12 h-12 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" /></svg>
+          <p className="text-[#64748b] text-sm">등록된 프로젝트가 없습니다.</p>
         </div>
       ) : (
         <div className="space-y-5">{projects.map(renderProjectCard)}</div>
@@ -1304,7 +1304,7 @@ export default function ClientDetailPage() {
     return (
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[var(--color-dark)] font-bold text-lg">결제 내역 <span className="text-[var(--color-gray)] font-normal text-sm ml-1">{payments.length}건</span></h3>
+          <h3 className="text-[#0f172a] font-bold text-lg">결제 내역 <span className="text-[#64748b] font-normal text-sm ml-1">{payments.length}건</span></h3>
           <button onClick={openPaymentAdd} className={btnPrimary}>+ 추가</button>
         </div>
 
@@ -1339,9 +1339,9 @@ export default function ClientDetailPage() {
                 />
               </div>
               <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={handlePaymentTypeChange} /></div>
-              <div><label className={labelClass}>금액 (원) *{paymentForm.type === "호스팅" && paymentForm.amount > 0 && <span className="text-[var(--color-accent)] ml-1">(자동추천)</span>}</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
+              <div><label className={labelClass}>금액 (원) *{paymentForm.type === "호스팅" && paymentForm.amount > 0 && <span className="text-[#0f172a] ml-1">(자동추천)</span>}</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
               <div>
-                <label className={labelClass}>결제일{paymentForm.type === "호스팅" && paymentForm.payment_date && <span className="text-[var(--color-accent)] ml-1">(자동추천)</span>}</label>
+                <label className={labelClass}>결제일{paymentForm.type === "호스팅" && paymentForm.payment_date && <span className="text-[#0f172a] ml-1">(자동추천)</span>}</label>
                 <DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" />
               </div>
               <div><label className={labelClass}>상태</label><CustomSelect options={paymentStatusOptions} value={paymentForm.status} onChange={(v) => setPaymentForm((p) => ({ ...p, status: v }))} /></div>
@@ -1353,47 +1353,47 @@ export default function ClientDetailPage() {
 
         {paymentsLoading ? (
           <div className={`${cardClass} animate-pulse`}>
-            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-10 bg-gray-100 rounded-lg" />)}</div>
+            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-10 bg-slate-100 rounded-lg" />)}</div>
           </div>
         ) : payments.length === 0 ? (
           <div className="text-center py-16">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
-            <p className="text-[var(--color-gray)] text-sm">등록된 결제 내역이 없습니다.</p>
+            <svg className="w-12 h-12 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
+            <p className="text-[#64748b] text-sm">등록된 결제 내역이 없습니다.</p>
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">결제일</th>
-                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">프로젝트</th>
-                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">유형</th>
-                    <th className="text-left py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">설명</th>
-                    <th className="text-right py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">금액</th>
-                    <th className="text-center py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">상태</th>
-                    <th className="text-right py-3.5 px-4 text-[var(--color-gray)] font-medium text-xs uppercase tracking-wide">작업</th>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="text-left py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">결제일</th>
+                    <th className="text-left py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">프로젝트</th>
+                    <th className="text-left py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">유형</th>
+                    <th className="text-left py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">설명</th>
+                    <th className="text-right py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">금액</th>
+                    <th className="text-center py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">상태</th>
+                    <th className="text-right py-3.5 px-4 text-[#64748b] font-medium text-xs uppercase tracking-wide">작업</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payments.map((p) => {
-                    const si = PAYMENT_STATUS_MAP[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600 border border-gray-200" };
+                    const si = PAYMENT_STATUS_MAP[p.status] ?? { label: p.status, cls: "bg-slate-100 text-slate-600 border border-slate-200" };
                     const linkedProject = p.project_id ? projects.find((pr) => pr.id === p.project_id) : null;
                     return (
-                      <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                        <td className="py-3.5 px-4 text-[var(--color-dark-2)]">{p.payment_date ? formatDateShort(p.payment_date) : "-"}</td>
+                      <tr key={p.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                        <td className="py-3.5 px-4 text-[#334155]">{p.payment_date ? formatDateShort(p.payment_date) : "-"}</td>
                         <td className="py-3.5 px-4">
                           {linkedProject ? (
-                            <span className="text-[var(--color-dark-2)] text-sm">{linkedProject.name}</span>
+                            <span className="text-[#334155] text-sm">{linkedProject.name}</span>
                           ) : (
-                            <span className="text-[var(--color-gray)] text-xs">-</span>
+                            <span className="text-[#64748b] text-xs">-</span>
                           )}
                         </td>
                         <td className="py-3.5 px-4">
-                          <span className="text-[var(--color-dark-2)]">{p.type}</span>
+                          <span className="text-[#334155]">{p.type}</span>
                         </td>
-                        <td className="py-3.5 px-4 text-[var(--color-gray)]">{p.description || "-"}</td>
-                        <td className="py-3.5 px-4 text-[var(--color-dark)] font-semibold text-right">{formatAmount(p.amount)}</td>
+                        <td className="py-3.5 px-4 text-[#64748b]">{p.description || "-"}</td>
+                        <td className="py-3.5 px-4 text-[#0f172a] font-semibold text-right">{formatAmount(p.amount)}</td>
                         <td className="py-3.5 px-4 text-center"><span className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full ${si.cls}`}>{si.label}</span></td>
                         <td className="py-3.5 px-4 text-right"><div className="flex gap-1.5 justify-end">
                           {p.status === "confirming" && (
@@ -1436,18 +1436,18 @@ export default function ClientDetailPage() {
   // =========================================================================
 
   if (clientLoading) return (
-    <div className="min-h-screen bg-[var(--color-light)]">
+    <div className="min-h-screen bg-slate-50">
       <AdminHeader />
-      <div className="max-w-[1100px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-6 py-8">
         <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-32 mb-6" />
+          <div className="h-4 bg-slate-200 rounded w-32 mb-6" />
           <div className={cardClass}>
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 bg-gray-200 rounded-full" />
-              <div><div className="h-5 bg-gray-200 rounded w-40 mb-2" /><div className="h-3 bg-gray-100 rounded w-24" /></div>
+              <div className="w-14 h-14 bg-slate-200 rounded-full" />
+              <div><div className="h-5 bg-slate-200 rounded w-40 mb-2" /><div className="h-3 bg-slate-100 rounded w-24" /></div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5 pt-5 border-t border-gray-100">
-              {[1, 2, 3, 4].map((i) => <div key={i} className="h-14 bg-gray-50 rounded-lg" />)}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5 pt-5 border-t border-slate-100">
+              {[1, 2, 3, 4].map((i) => <div key={i} className="h-14 bg-slate-50 rounded-lg" />)}
             </div>
           </div>
         </div>
@@ -1456,22 +1456,22 @@ export default function ClientDetailPage() {
   );
 
   if (!client) return (
-    <div className="min-h-screen bg-[var(--color-light)]">
+    <div className="min-h-screen bg-slate-50">
       <AdminHeader />
       <div className="text-center py-20">
-        <p className="text-[var(--color-gray)] mb-4">클라이언트를 찾을 수 없습니다.</p>
-        <Link href="/admin/clients" className="text-[var(--color-accent)] no-underline font-semibold hover:underline">목록으로 돌아가기</Link>
+        <p className="text-[#64748b] mb-4">클라이언트를 찾을 수 없습니다.</p>
+        <Link href="/admin/clients" className="text-[#0f172a] no-underline font-semibold hover:underline">목록으로 돌아가기</Link>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[var(--color-light)]">
+    <div className="min-h-screen bg-slate-50">
       <AdminHeader />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <div className="max-w-[1100px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-6 py-8">
         {/* Back link */}
-        <Link href="/admin/clients" className="text-[var(--color-gray)] no-underline hover:text-[var(--color-dark)] transition-colors flex items-center gap-1.5 text-sm mb-6 w-fit">
+        <Link href="/admin/clients" className="text-[#64748b] no-underline hover:text-[#0f172a] transition-colors flex items-center gap-1.5 text-sm mb-6 w-fit">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
           클라이언트 목록
         </Link>
@@ -1480,7 +1480,7 @@ export default function ClientDetailPage() {
         <div className={`${cardClass} mb-8`}>
           {editingClient ? (
             <div>
-              <h3 className="text-[var(--color-dark)] font-bold text-lg mb-5">클라이언트 정보 수정</h3>
+              <h3 className="text-[#0f172a] font-bold text-lg mb-5">클라이언트 정보 수정</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div><label className={labelClass}>이름 *</label><input className={inputClass} value={clientForm.name} onChange={(e) => setClientForm((p) => ({ ...p, name: e.target.value }))} /></div>
                 <div><label className={labelClass}>이메일</label><input type="text" className={inputClass} value={clientForm.email} onChange={(e) => setClientForm((p) => ({ ...p, email: e.target.value }))} /></div>
@@ -1488,19 +1488,19 @@ export default function ClientDetailPage() {
                 <div><label className={labelClass}>비밀번호 (변경 시에만)</label><input type="password" className={inputClass} placeholder="변경할 비밀번호 입력" value={clientForm.password} onChange={(e) => setClientForm((p) => ({ ...p, password: e.target.value }))} /></div>
               </div>
               <div className="mb-4"><label className={labelClass}>메모</label><textarea className={`${inputClass} resize-y`} rows={3} value={clientForm.memo} onChange={(e) => setClientForm((p) => ({ ...p, memo: e.target.value }))} /></div>
-              <div className="flex items-center gap-4 mb-5"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={clientForm.is_active} onChange={(e) => setClientForm((p) => ({ ...p, is_active: e.target.checked }))} className="w-4 h-4 rounded accent-[var(--color-primary)]" /><span className="text-[var(--color-dark-2)] text-sm">활성 계정</span></label></div>
+              <div className="flex items-center gap-4 mb-5"><label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={clientForm.is_active} onChange={(e) => setClientForm((p) => ({ ...p, is_active: e.target.checked }))} className="w-4 h-4 rounded accent-[#0f172a]" /><span className="text-[#334155] text-sm">활성 계정</span></label></div>
               <div className="flex gap-3"><button onClick={saveClient} disabled={clientSaving} className={btnPrimary}>{clientSaving ? "저장 중..." : "저장"}</button><button onClick={() => setEditingClient(false)} className={btnSecondary}>취소</button></div>
             </div>
           ) : (
             <div>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shrink-0 ${client.is_active ? "bg-gradient-to-br from-[var(--color-primary)] to-blue-600" : "bg-gray-400"}`}>
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shrink-0 ${client.is_active ? "bg-slate-900" : "bg-slate-400"}`}>
                     {client.name.charAt(0)}
                   </div>
                   <div>
                     <div className="flex items-center gap-2.5 mb-1">
-                      <h2 className="text-xl font-bold text-[var(--color-dark)]">{client.name}</h2>
+                      <h2 className="text-xl font-bold text-[#0f172a]">{client.name}</h2>
                       <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${client.is_active ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"}`}>
                         {client.is_active ? "활성" : "비활성"}
                       </span>
@@ -1511,59 +1511,59 @@ export default function ClientDetailPage() {
                       )}
                     </div>
                     {client.username ? (
-                      <p className="text-[var(--color-gray)] text-sm">@{client.username}</p>
+                      <p className="text-[#64748b] text-sm">@{client.username}</p>
                     ) : (
-                      <p className="text-[var(--color-gray)] text-sm">초대 링크를 보내 계정 등록을 안내하세요</p>
+                      <p className="text-[#64748b] text-sm">초대 링크를 보내 계정 등록을 안내하세요</p>
                     )}
                   </div>
                 </div>
                 <button onClick={startEditClient} className={btnSmall}>수정</button>
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-100">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-100">
                 {client.email && (
-                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
-                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">이메일</span>
-                    <span className="text-[var(--color-dark)] text-sm">{client.email}</span>
+                  <div className="bg-slate-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[#64748b] text-xs block mb-0.5">이메일</span>
+                    <span className="text-[#0f172a] text-sm">{client.email}</span>
                   </div>
                 )}
                 {client.phone && (
-                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
-                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">전화번호</span>
-                    <span className="text-[var(--color-dark)] text-sm">{client.phone}</span>
+                  <div className="bg-slate-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[#64748b] text-xs block mb-0.5">전화번호</span>
+                    <span className="text-[#0f172a] text-sm">{client.phone}</span>
                   </div>
                 )}
-                <div className="bg-gray-50 rounded-lg px-3 py-2.5">
-                  <span className="text-[var(--color-gray)] text-xs block mb-0.5">등록일</span>
-                  <span className="text-[var(--color-dark)] text-sm">{formatDate(client.created_at)}</span>
+                <div className="bg-slate-50 rounded-lg px-3 py-2.5">
+                  <span className="text-[#64748b] text-xs block mb-0.5">등록일</span>
+                  <span className="text-[#0f172a] text-sm">{formatDate(client.created_at)}</span>
                 </div>
                 {client.username && (
-                  <div className="bg-gray-50 rounded-lg px-3 py-2.5">
-                    <span className="text-[var(--color-gray)] text-xs block mb-0.5">아이디</span>
-                    <span className="text-[var(--color-dark)] text-sm">{client.username}</span>
+                  <div className="bg-slate-50 rounded-lg px-3 py-2.5">
+                    <span className="text-[#64748b] text-xs block mb-0.5">아이디</span>
+                    <span className="text-[#0f172a] text-sm">{client.username}</span>
                   </div>
                 )}
               </div>
               {client.memo && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <span className="text-[var(--color-gray)] text-xs block mb-1.5">메모</span>
-                  <p className="text-[var(--color-dark-2)] text-sm whitespace-pre-wrap bg-gray-50 rounded-lg px-4 py-3 leading-relaxed">{client.memo}</p>
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <span className="text-[#64748b] text-xs block mb-1.5">메모</span>
+                  <p className="text-[#334155] text-sm whitespace-pre-wrap bg-slate-50 rounded-lg px-4 py-3 leading-relaxed">{client.memo}</p>
                 </div>
               )}
               {/* Invitation link section - only for unregistered clients */}
               {!client.username && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-4 pt-4 border-t border-slate-100">
                   {inviteUrl ? (
-                    <div className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
+                    <div className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3">
                       <div className="min-w-0">
-                        <span className="text-[var(--color-dark)] text-sm font-medium block truncate">{inviteUrl.replace("https://", "")}</span>
-                        {inviteExpires && <span className="text-[var(--color-gray)] text-xs">만료: {formatDate(inviteExpires)}</span>}
+                        <span className="text-[#0f172a] text-sm font-medium block truncate">{inviteUrl.replace("https://", "")}</span>
+                        {inviteExpires && <span className="text-[#64748b] text-xs">만료: {formatDate(inviteExpires)}</span>}
                       </div>
                       <button
                         onClick={copyInviteUrl}
                         className={`ml-3 px-3.5 py-1.5 rounded-lg text-xs font-semibold border-none cursor-pointer transition-all shrink-0 ${
                           inviteCopied
                             ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                            : "bg-gray-200 text-[var(--color-dark-2)] hover:bg-gray-300"
+                            : "bg-slate-200 text-[#334155] hover:bg-slate-300"
                         }`}
                       >
                         {inviteCopied ? "복사됨" : "복사"}
@@ -1581,22 +1581,22 @@ export default function ClientDetailPage() {
         </div>
 
         {/* Tab bar */}
-        <div className="flex gap-1 border-b border-gray-200 mb-8 overflow-x-auto">
+        <div className="flex gap-1 border-b border-slate-200 mb-8 overflow-x-auto">
           {tabConfig.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium border-b-2 transition-colors cursor-pointer bg-transparent whitespace-nowrap ${
                 activeTab === tab.key
-                  ? "border-[var(--color-primary)] text-[var(--color-dark)]"
-                  : "border-transparent text-[var(--color-gray)] hover:text-[var(--color-dark)] hover:border-gray-300"
+                  ? "border-[#0f172a] text-[#0f172a]"
+                  : "border-transparent text-[#64748b] hover:text-[#0f172a] hover:border-slate-300"
               }`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} /></svg>
               {tab.label}
               {tab.count > 0 && (
                 <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
-                  activeTab === tab.key ? "bg-[var(--color-primary)] text-white" : "bg-gray-200 text-[var(--color-gray)]"
+                  activeTab === tab.key ? "bg-[#0f172a] text-white" : "bg-slate-200 text-[#64748b]"
                 }`}>{tab.count}</span>
               )}
             </button>
