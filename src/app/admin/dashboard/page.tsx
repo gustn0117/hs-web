@@ -379,6 +379,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* ── Checklist (체크리스트 + 메모) ───────── */}
+        <DashboardTodos />
+
         {/* ── Critical alert: overdue payments ────── */}
         {overduePayments.length > 0 && (
           <div className="bg-white rounded-xl border border-red-200 overflow-hidden">
@@ -648,9 +651,6 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
-
-        {/* ── Checklist (체크리스트 + 메모) ───────── */}
-        <DashboardTodos />
 
         {/* ── Action items grid: hosting + alerts ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
