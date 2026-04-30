@@ -155,7 +155,7 @@ export default function AdminLoginPage() {
             INTERNAL · AUTHORIZED ONLY
           </div>
 
-          <h1 className="text-[40px] lg:text-[56px] font-black tracking-[-0.04em] leading-[0.98] mb-5">
+          <h1 className="text-[40px] lg:text-[56px] font-black tracking-[-0.04em] leading-[1.12] mb-5">
             <span className="block">관리자</span>
             <span
               className="block bg-clip-text text-transparent"
