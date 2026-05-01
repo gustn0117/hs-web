@@ -284,6 +284,14 @@ export default function ContractsPage() {
                               >
                                 상세
                               </button>
+                              {c.status === "signed" && (
+                                <button
+                                  onClick={() => viewContract(c)}
+                                  className="text-xs text-emerald-700 font-semibold hover:underline cursor-pointer bg-transparent border-none"
+                                >
+                                  계약서 보기
+                                </button>
+                              )}
                               <button
                                 onClick={copySignLink}
                                 className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none"
@@ -546,14 +554,22 @@ export default function ContractsPage() {
                 )}
               </div>
 
-              {/* PDF 출력 */}
+              {/* 계약서 보기 / PDF 출력 */}
               {detail.status === "signed" && (
-                <button
-                  onClick={() => printContractPdf(detail)}
-                  className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none"
-                >
-                  PDF 출력
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => viewContract(detail)}
+                    className="w-full py-2.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl font-semibold text-sm hover:bg-emerald-50 transition-colors cursor-pointer"
+                  >
+                    계약서 보기
+                  </button>
+                  <button
+                    onClick={() => printContractPdf(detail)}
+                    className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none"
+                  >
+                    PDF 출력
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -563,7 +579,15 @@ export default function ContractsPage() {
   );
 }
 
+function viewContract(c: Contract) {
+  openContractWindow(c, false);
+}
+
 function printContractPdf(c: Contract) {
+  openContractWindow(c, true);
+}
+
+function openContractWindow(c: Contract, autoPrint: boolean) {
   const fmtN = (n: number) => n.toLocaleString();
   const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
   const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
@@ -674,7 +698,7 @@ ${specRows ? `
 
 <div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
 
-<script>window.onload=function(){window.print();}<\/script>
+${autoPrint ? `<script>window.onload=function(){window.print();}<\/script>` : ""}
 </body></html>`);
   win.document.close();
 }
