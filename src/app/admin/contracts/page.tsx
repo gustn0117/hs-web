@@ -724,7 +724,27 @@ ${specRows ? `
 
 <div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
 
-${autoPrint ? `<script>window.onload=function(){window.print();}<\/script>` : ""}
+
 </body></html>`);
   win.document.close();
+
+  if (autoPrint) {
+    // 새 창 콘텐츠 + 이미지(서명 등) 렌더링이 완료된 뒤 인쇄 발사.
+    // document.write 직후 window.onload 인라인 스크립트는 이미 fire 된 후라 무시되는 경우가 있어
+    // 부모 창에서 명시적으로 호출.
+    const triggerPrint = () => {
+      try {
+        win.focus();
+        win.print();
+      } catch {
+        /* popup blocked or closed */
+      }
+    };
+    // 이미지 로딩 + 페인트 안정화를 위한 여유 시간
+    setTimeout(triggerPrint, 700);
+    // 보강: 페이지 onload 후 한 번 더 시도(이중 안전망)
+    win.addEventListener?.("load", () => setTimeout(triggerPrint, 200), { once: true });
+  } else {
+    win.focus();
+  }
 }
