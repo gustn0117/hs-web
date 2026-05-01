@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import AdminHeader from "../components/AdminHeader";
 
 interface LineItem { name: string; method: string; unitPrice: number; }
@@ -80,6 +80,48 @@ export default function ContractsPage() {
   const [selectedQuotation, setSelectedQuotation] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [detail, setDetail] = useState<Contract | null>(null);
+  const [printHtml, setPrintHtml] = useState<string | null>(null);
+  const printIframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleViewContract = (c: Contract) => {
+    const html = buildContractHtml(c);
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, "_blank");
+    if (!w) {
+      URL.revokeObjectURL(url);
+      alert("팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.");
+      return;
+    }
+    // 새 창에서 사용 후 GC를 위해 일정 시간 후 URL 해제
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  };
+
+  const handlePrintContract = (c: Contract) => {
+    // 부모 페이지의 숨긴 iframe에 srcDoc으로 콘텐츠 주입 후 인쇄
+    setPrintHtml(buildContractHtml(c));
+  };
+
+  const triggerIframePrint = () => {
+    const frame = printIframeRef.current;
+    if (!frame) return;
+    const cw = frame.contentWindow;
+    if (!cw) return;
+    // 이미지(서명 base64) 페인트 안정화
+    setTimeout(() => {
+      try {
+        cw.focus();
+        cw.print();
+      } catch {
+        /* ignore */
+      }
+      // 인쇄 대화상자가 닫힌 뒤(약간의 여유) 정리
+      const cleanup = () => setPrintHtml(null);
+      cw.addEventListener?.("afterprint", cleanup, { once: true });
+      // 백업 클린업
+      setTimeout(cleanup, 60_000);
+    }, 300);
+  };
 
   // Form
   const [clientName, setClientName] = useState("");
@@ -286,7 +328,7 @@ export default function ContractsPage() {
                               </button>
                               {c.status === "signed" && (
                                 <button
-                                  onClick={() => viewContract(c)}
+                                  onClick={() => handleViewContract(c)}
                                   className="text-xs text-emerald-700 font-semibold hover:underline cursor-pointer bg-transparent border-none"
                                 >
                                   계약서 보기
@@ -558,13 +600,13 @@ export default function ContractsPage() {
               {detail.status === "signed" && (
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => viewContract(detail)}
+                    onClick={() => handleViewContract(detail)}
                     className="w-full py-2.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl font-semibold text-sm hover:bg-emerald-50 transition-colors cursor-pointer"
                   >
                     계약서 보기
                   </button>
                   <button
-                    onClick={() => printContractPdf(detail)}
+                    onClick={() => handlePrintContract(detail)}
                     className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none inline-flex items-center justify-center gap-1.5"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -578,16 +620,29 @@ export default function ContractsPage() {
           </div>
         </div>
       )}
+
+      {/* Hidden print iframe — 안정적 PDF 인쇄용 */}
+      {printHtml && (
+        <iframe
+          ref={printIframeRef}
+          srcDoc={printHtml}
+          title="contract-print"
+          aria-hidden
+          onLoad={triggerIframePrint}
+          style={{
+            position: "fixed",
+            right: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            border: 0,
+            opacity: 0,
+            pointerEvents: "none",
+          }}
+        />
+      )}
     </div>
   );
-}
-
-function viewContract(c: Contract) {
-  openContractWindow(c, false);
-}
-
-function printContractPdf(c: Contract) {
-  openContractWindow(c, true);
 }
 
 function buildContractFilename(c: Contract) {
@@ -598,7 +653,7 @@ function buildContractFilename(c: Contract) {
   return `계약서_${c.contract_number}_${safeName}_${dateStr}`;
 }
 
-function openContractWindow(c: Contract, autoPrint: boolean) {
+function buildContractHtml(c: Contract): string {
   const fmtN = (n: number) => n.toLocaleString();
   const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
   const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
@@ -612,10 +667,7 @@ function openContractWindow(c: Contract, autoPrint: boolean) {
     `<tr><td class="lbl">${s.label}</td><td class="l">${s.value}</td></tr>`
   ).join("");
 
-  const win = window.open("", "_blank");
-  if (!win) return;
-
-  win.document.write(`<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="ko"><head><meta charset="UTF-8" /><title>${filename}</title>
 <style>
 @page { size: A4; margin: 15mm 18mm; }
@@ -725,26 +777,5 @@ ${specRows ? `
 <div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
 
 
-</body></html>`);
-  win.document.close();
-
-  if (autoPrint) {
-    // 새 창 콘텐츠 + 이미지(서명 등) 렌더링이 완료된 뒤 인쇄 발사.
-    // document.write 직후 window.onload 인라인 스크립트는 이미 fire 된 후라 무시되는 경우가 있어
-    // 부모 창에서 명시적으로 호출.
-    const triggerPrint = () => {
-      try {
-        win.focus();
-        win.print();
-      } catch {
-        /* popup blocked or closed */
-      }
-    };
-    // 이미지 로딩 + 페인트 안정화를 위한 여유 시간
-    setTimeout(triggerPrint, 700);
-    // 보강: 페이지 onload 후 한 번 더 시도(이중 안전망)
-    win.addEventListener?.("load", () => setTimeout(triggerPrint, 200), { once: true });
-  } else {
-    win.focus();
-  }
+</body></html>`;
 }
