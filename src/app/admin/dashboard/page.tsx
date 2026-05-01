@@ -620,35 +620,39 @@ export default function AdminDashboard() {
               </ul>
             )}
 
-            {activeProjects.length > 0 && (
-              <div className="mt-6 pt-5 border-t border-slate-100">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">진행 중인 프로젝트</h4>
-                  <Link href="/admin/clients" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
-                    전체 ({activeProjects.length}) →
-                  </Link>
+            {(() => {
+              const inProgress = activeProjects.filter((p) => p.status === "진행중");
+              if (inProgress.length === 0) return null;
+              return (
+                <div className="mt-6 pt-5 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">진행 중인 프로젝트</h4>
+                    <Link href="/admin/clients" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
+                      전체 ({inProgress.length}) →
+                    </Link>
+                  </div>
+                  <ul className="space-y-1.5 list-none m-0">
+                    {inProgress.slice(0, 4).map((p) => {
+                      const color = statusColors[p.status] ?? "#64748b";
+                      return (
+                        <li key={p.id}>
+                          <Link
+                            href={`/admin/clients/${p.client_id}`}
+                            className="flex items-center justify-between px-2 py-1.5 -mx-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
+                              <span className="text-sm text-slate-900 truncate">{p.name}</span>
+                            </div>
+                            <span className="text-xs text-slate-500 truncate ml-3 max-w-[120px]">{p.client_name}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-                <ul className="space-y-1.5 list-none m-0">
-                  {activeProjects.slice(0, 4).map((p) => {
-                    const color = statusColors[p.status] ?? "#64748b";
-                    return (
-                      <li key={p.id}>
-                        <Link
-                          href={`/admin/clients/${p.client_id}`}
-                          className="flex items-center justify-between px-2 py-1.5 -mx-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
-                            <span className="text-sm text-slate-900 truncate">{p.name}</span>
-                          </div>
-                          <span className="text-xs text-slate-500 truncate ml-3 max-w-[120px]">{p.client_name}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
+              );
+            })()}
           </div>
         </div>
 
