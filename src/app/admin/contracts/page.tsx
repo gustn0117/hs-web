@@ -554,7 +554,7 @@ export default function ContractsPage() {
                 )}
               </div>
 
-              {/* 계약서 보기 / PDF 출력 */}
+              {/* 계약서 보기 / PDF 다운로드 */}
               {detail.status === "signed" && (
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -565,9 +565,12 @@ export default function ContractsPage() {
                   </button>
                   <button
                     onClick={() => printContractPdf(detail)}
-                    className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none"
+                    className="w-full py-2.5 bg-[var(--color-dark)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none inline-flex items-center justify-center gap-1.5"
                   >
-                    PDF 출력
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    PDF 다운로드
                   </button>
                 </div>
               )}
@@ -587,10 +590,19 @@ function printContractPdf(c: Contract) {
   openContractWindow(c, true);
 }
 
+function buildContractFilename(c: Contract) {
+  const safeName = (c.client_name || "").replace(/[^\w가-힣ㄱ-ㅎㅏ-ㅣ]+/g, "_") || "client";
+  const dateStr = c.signed_at
+    ? new Date(c.signed_at).toISOString().slice(0, 10)
+    : new Date().toISOString().slice(0, 10);
+  return `계약서_${c.contract_number}_${safeName}_${dateStr}`;
+}
+
 function openContractWindow(c: Contract, autoPrint: boolean) {
   const fmtN = (n: number) => n.toLocaleString();
   const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
   const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
+  const filename = buildContractFilename(c);
 
   const paymentRows = (c.payment_terms || []).map((pt: PaymentTerm) =>
     `<tr><td class="l b">${pt.label}</td><td class="r b">${fmtN(pt.amount)}원</td><td class="l">${pt.due}</td></tr>`
@@ -604,7 +616,7 @@ function openContractWindow(c: Contract, autoPrint: boolean) {
   if (!win) return;
 
   win.document.write(`<!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8" /><title>계약서 - ${c.contract_number}</title>
+<html lang="ko"><head><meta charset="UTF-8" /><title>${filename}</title>
 <style>
 @page { size: A4; margin: 15mm 18mm; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -625,7 +637,21 @@ h2 { font-size: 11pt; margin: 16px 0 6px; }
 .sig-box p { font-size: 9pt; }
 .sig-box img { height: 40px; }
 .footer { text-align: center; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 24px; font-size: 7.5pt; color: #999; }
+.pdf-toolbar { position: sticky; top: 0; z-index: 100; background: #0f172a; color: #fff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -15mm -18mm 18mm; font-size: 12px; }
+.pdf-toolbar .hint { color: rgba(255,255,255,0.7); font-size: 11.5px; }
+.pdf-toolbar .actions { display: flex; gap: 6px; }
+.pdf-toolbar button { background: #fff; color: #0f172a; border: 0; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; font-family: inherit; }
+.pdf-toolbar button.ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+.pdf-toolbar button:hover { opacity: 0.9; }
+@media print { .pdf-toolbar { display: none !important; } }
 </style></head><body>
+<div class="pdf-toolbar">
+  <span class="hint">📄 PDF로 저장하려면 우측 <b>PDF 다운로드</b> 버튼 → 대상에서 <b>'PDF로 저장'</b> 선택</span>
+  <span class="actions">
+    <button class="ghost" onclick="window.close()">닫기</button>
+    <button onclick="window.print()">PDF 다운로드</button>
+  </span>
+</div>
 <div class="top-line" style="padding-top:6px;display:flex;justify-content:space-between;margin-bottom:4px">
   <span style="font-size:8pt;color:#888">HS WEB · Web Agency</span>
   <span style="font-size:8pt;color:#888">${c.contract_number}</span>
