@@ -687,14 +687,9 @@ export default function AdminDashboard() {
                         href={`/admin/clients/${p.client_id}`}
                         className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors no-underline group"
                       >
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-slate-900 text-white text-[11px] font-black shrink-0">
-                            P
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
-                            <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
-                          </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
+                          <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">진행중</span>
