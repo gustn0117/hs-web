@@ -620,41 +620,102 @@ export default function AdminDashboard() {
               </ul>
             )}
 
-            {(() => {
-              const inProgress = activeProjects.filter((p) => p.status === "진행중");
-              if (inProgress.length === 0) return null;
-              return (
-                <div className="mt-6 pt-5 border-t border-slate-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">진행 중인 프로젝트</h4>
-                    <Link href="/admin/clients" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
-                      전체 ({inProgress.length}) →
-                    </Link>
-                  </div>
-                  <ul className="space-y-1.5 list-none m-0">
-                    {inProgress.slice(0, 4).map((p) => {
-                      const color = statusColors[p.status] ?? "#64748b";
-                      return (
-                        <li key={p.id}>
-                          <Link
-                            href={`/admin/clients/${p.client_id}`}
-                            className="flex items-center justify-between px-2 py-1.5 -mx-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
-                          >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
-                              <span className="text-sm text-slate-900 truncate">{p.name}</span>
-                            </div>
-                            <span className="text-xs text-slate-500 truncate ml-3 max-w-[120px]">{p.client_name}</span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+            {activeProjects.length > 0 && (
+              <div className="mt-6 pt-5 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">활성 프로젝트</h4>
+                  <Link href="/admin/clients" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
+                    전체 ({activeProjects.length}) →
+                  </Link>
                 </div>
-              );
-            })()}
+                <ul className="space-y-1.5 list-none m-0">
+                  {activeProjects.slice(0, 4).map((p) => {
+                    const color = statusColors[p.status] ?? "#64748b";
+                    return (
+                      <li key={p.id}>
+                        <Link
+                          href={`/admin/clients/${p.client_id}`}
+                          className="flex items-center justify-between px-2 py-1.5 -mx-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
+                            <span className="text-sm text-slate-900 truncate">{p.name}</span>
+                          </div>
+                          <span className="text-xs text-slate-500 truncate ml-3 max-w-[120px]">{p.client_name}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* ── 진행 중인 프로젝트 전용 섹션 ──────────── */}
+        {(() => {
+          const inProgress = activeProjects.filter((p) => p.status === "진행중");
+          return (
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                    <h3 className="text-sm font-semibold text-slate-900">진행 중인 프로젝트</h3>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">현재 status가 진행중인 프로젝트만 표시</p>
+                </div>
+                <span className="text-xs text-slate-500 tabular-nums">
+                  <span className="font-bold text-slate-900">{inProgress.length}</span> / {activeProjects.length}건
+                </span>
+              </div>
+              {inProgress.length === 0 ? (
+                <div className="px-5 py-10 text-center">
+                  <div className="w-10 h-10 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                    <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-slate-700 font-medium">진행 중인 프로젝트가 없습니다</p>
+                  <p className="text-xs text-slate-500 mt-0.5">새 프로젝트를 시작하면 여기에 표시됩니다.</p>
+                </div>
+              ) : (
+                <ul className="list-none m-0 divide-y divide-slate-100">
+                  {inProgress.map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/admin/clients/${p.client_id}`}
+                        className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors no-underline group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-slate-900 text-white text-[11px] font-black shrink-0">
+                            P
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
+                            <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">진행중</span>
+                          <svg
+                            className="w-4 h-4 text-slate-300 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ── Action items grid: hosting + alerts ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
