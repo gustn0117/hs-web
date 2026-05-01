@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminHeader from "../components/AdminHeader";
 
 interface LineItem { name: string; method: string; unitPrice: number; }
@@ -80,9 +80,6 @@ export default function ContractsPage() {
   const [selectedQuotation, setSelectedQuotation] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
   const [detail, setDetail] = useState<Contract | null>(null);
-  const [printHtml, setPrintHtml] = useState<string | null>(null);
-  const printIframeRef = useRef<HTMLIFrameElement>(null);
-
   const handleViewContract = (c: Contract) => {
     const html = buildContractHtml(c);
     const blob = new Blob([html], { type: "text/html;charset=utf-8" });
@@ -93,34 +90,69 @@ export default function ContractsPage() {
       alert("팝업이 차단되었습니다. 팝업 허용 후 다시 시도하세요.");
       return;
     }
-    // 새 창에서 사용 후 GC를 위해 일정 시간 후 URL 해제
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
+  /**
+   * Imperative iframe 방식 PDF 인쇄.
+   *  - React 렌더 외부에서 document.createElement로 iframe 생성
+   *  - iframe contentDocument에 직접 write (srcDoc보다 onload 타이밍 안정)
+   *  - 이미지 onload + setTimeout으로 페인트 안정화 후 print
+   */
   const handlePrintContract = (c: Contract) => {
-    // 부모 페이지의 숨긴 iframe에 srcDoc으로 콘텐츠 주입 후 인쇄
-    setPrintHtml(buildContractHtml(c));
-  };
+    const html = buildContractHtml(c);
 
-  const triggerIframePrint = () => {
-    const frame = printIframeRef.current;
-    if (!frame) return;
-    const cw = frame.contentWindow;
-    if (!cw) return;
-    // 이미지(서명 base64) 페인트 안정화
-    setTimeout(() => {
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    // A4 size (printable area) — 0 size로 두면 일부 브라우저에서 인쇄 시 빈 페이지 출력
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "210mm";
+    iframe.style.height = "297mm";
+    iframe.style.border = "0";
+    iframe.style.opacity = "0";
+    iframe.style.pointerEvents = "none";
+    iframe.style.zIndex = "-1";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) {
+      document.body.removeChild(iframe);
+      alert("인쇄 창을 만들 수 없습니다.");
+      return;
+    }
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    let printed = false;
+    const triggerPrint = () => {
+      if (printed) return;
+      printed = true;
       try {
-        cw.focus();
-        cw.print();
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
       } catch {
         /* ignore */
       }
-      // 인쇄 대화상자가 닫힌 뒤(약간의 여유) 정리
-      const cleanup = () => setPrintHtml(null);
-      cw.addEventListener?.("afterprint", cleanup, { once: true });
-      // 백업 클린업
+      // 인쇄 대화상자가 닫힌 뒤 iframe 제거
+      const cleanup = () => {
+        if (iframe.parentNode) document.body.removeChild(iframe);
+      };
+      iframe.contentWindow?.addEventListener?.("afterprint", cleanup, { once: true });
+      // 백업 클린업: 60초 뒤 강제 제거
       setTimeout(cleanup, 60_000);
-    }, 300);
+    };
+
+    // 이미지 등 모든 자원이 로드된 뒤 print 발사
+    if (iframe.contentWindow?.document?.readyState === "complete") {
+      setTimeout(triggerPrint, 400);
+    } else {
+      iframe.contentWindow?.addEventListener?.("load", () => setTimeout(triggerPrint, 400), { once: true });
+      // 안전망: load 이벤트가 누락되어도 1.2초 뒤엔 무조건 시도
+      setTimeout(triggerPrint, 1200);
+    }
   };
 
   // Form
@@ -621,26 +653,6 @@ export default function ContractsPage() {
         </div>
       )}
 
-      {/* Hidden print iframe — 안정적 PDF 인쇄용 */}
-      {printHtml && (
-        <iframe
-          ref={printIframeRef}
-          srcDoc={printHtml}
-          title="contract-print"
-          aria-hidden
-          onLoad={triggerIframePrint}
-          style={{
-            position: "fixed",
-            right: 0,
-            bottom: 0,
-            width: 0,
-            height: 0,
-            border: 0,
-            opacity: 0,
-            pointerEvents: "none",
-          }}
-        />
-      )}
     </div>
   );
 }
