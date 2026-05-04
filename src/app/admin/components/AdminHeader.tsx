@@ -44,14 +44,12 @@ export default function AdminHeader() {
         scrolled ? "border-b border-slate-200 shadow-sm" : "border-b border-slate-200"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-6 h-14 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 h-14 flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between lg:gap-4">
         {/* Left: Brand */}
-        <div className="flex items-center justify-start min-w-0">
-          <Link href="/admin/dashboard" className="flex items-baseline gap-2 no-underline shrink-0">
-            <span className="text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
-            <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
-          </Link>
-        </div>
+        <Link href="/admin/dashboard" className="flex items-baseline gap-2 no-underline shrink-0">
+          <span className="text-[15px] md:text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
+          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
+        </Link>
 
         {/* Center: Desktop nav */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5">
