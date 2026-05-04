@@ -8,7 +8,7 @@ export default function NewPortfolioPage() {
     <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
         <h2 className="text-xl font-bold text-[var(--color-dark)] mb-6">새 포트폴리오 추가</h2>
         <PortfolioForm />
       </div>

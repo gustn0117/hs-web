@@ -321,7 +321,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
     <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
-      <div className="max-w-[1100px] mx-auto px-6 py-8">
+      <div className="max-w-[1100px] mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-bold text-[var(--color-dark)]">견적서</h2>

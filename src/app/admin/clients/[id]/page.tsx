@@ -1438,7 +1438,7 @@ export default function ClientDetailPage() {
   if (clientLoading) return (
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="animate-pulse">
           <div className="h-4 bg-slate-200 rounded w-32 mb-6" />
           <div className={cardClass}>
@@ -1469,7 +1469,7 @@ export default function ClientDetailPage() {
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Back link */}
         <Link href="/admin/clients" className="text-[#64748b] no-underline hover:text-[#0f172a] transition-colors flex items-center gap-1.5 text-sm mb-6 w-fit">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>

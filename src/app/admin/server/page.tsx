@@ -324,7 +324,7 @@ export default function ServerMonitoring() {
     return (
       <div className="min-h-screen bg-slate-50">
         <AdminHeader />
-        <div className="max-w-[1200px] mx-auto px-6 py-8">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
           <div className="animate-pulse space-y-5">
             <div className="h-7 bg-slate-200 rounded w-48" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -396,7 +396,7 @@ export default function ServerMonitoring() {
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
 
-      <div className="max-w-[1200px] mx-auto px-6 py-8 space-y-5">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8 space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>

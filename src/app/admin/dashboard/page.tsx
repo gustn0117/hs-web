@@ -157,7 +157,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-slate-50">
         <AdminHeader />
-        <div className="max-w-[1200px] mx-auto px-6 py-8">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
           <div className="animate-pulse space-y-5">
             <div className="h-7 bg-slate-200 rounded w-48" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
 
-      <div className="max-w-[1200px] mx-auto px-6 py-8 space-y-5">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8 space-y-5">
         {/* ── Header strip ───────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
@@ -265,22 +265,22 @@ export default function AdminDashboard() {
               )}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Link
               href="/admin/payments"
-              className="text-xs px-3 h-8 inline-flex items-center rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 no-underline transition-colors"
+              className="text-xs px-3 h-8 inline-flex items-center rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 no-underline transition-colors whitespace-nowrap"
             >
               결제 관리
             </Link>
             <Link
               href="/admin/clients"
-              className="text-xs px-3 h-8 inline-flex items-center rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 no-underline transition-colors"
+              className="text-xs px-3 h-8 inline-flex items-center rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 no-underline transition-colors whitespace-nowrap"
             >
               클라이언트
             </Link>
             <button
               onClick={refresh}
-              className="text-xs px-3 h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors"
+              className="text-xs px-3 h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors whitespace-nowrap"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992V4.356M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />

@@ -44,7 +44,7 @@ export default function AdminPortfolioPage() {
     <div className="min-h-screen bg-[var(--color-light)]">
       <AdminHeader />
 
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-xl font-bold text-[var(--color-dark)] mb-1">포트폴리오 관리</h2>
