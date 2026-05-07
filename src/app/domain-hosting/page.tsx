@@ -74,28 +74,10 @@ export default function DomainHostingPage() {
                 <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">HOSTING</span>
               </div>
               <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">호스팅 = 건물</h3>
-              <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-4">
+              <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
                 사이트 파일을 24시간 저장·전달하는 서버 공간. <br />
                 내 컴퓨터 대신 전문 업체의 서버를 빌려 쓰는 것.
               </p>
-
-              {/* Cost highlight */}
-              <div className="rounded-[12px] bg-white border border-[var(--c-main)]/15 p-4 mb-2">
-                <p className="text-[10.5px] font-bold text-[var(--c-main)] tracking-widest uppercase mb-1.5">
-                  TYPICAL COST
-                </p>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-[28px] md:text-[32px] font-black text-[var(--c-text)] tnum leading-none">
-                    7,000
-                  </span>
-                  <span className="text-[14px] font-bold text-[var(--c-text-2)]">원</span>
-                  <span className="text-[12px] text-[var(--c-sub)] ml-1">/ 월</span>
-                </div>
-                <p className="text-[11.5px] text-[var(--c-sub)] mt-1.5 leading-[1.6]">
-                  소규모 홈페이지는 <strong className="text-[var(--c-text)]">보통 월 7,000원 정도</strong>로 생각하시면 됩니다.
-                  쇼핑몰·트래픽 많은 사이트는 사양에 따라 더 올라갑니다.
-                </p>
-              </div>
 
               <div className="my-6 -mx-2">
                 <HostingIllustration />
@@ -115,6 +97,27 @@ export default function DomainHostingPage() {
                   <span className="font-semibold">매월 또는 연간</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Hosting cost highlight — below the two cards */}
+        <div className="mt-4 rounded-[14px] border border-[var(--c-main)]/20 bg-gradient-to-br from-[var(--c-main-bg)] to-white p-6 md:p-7">
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-center gap-5 md:gap-8">
+            <div className="flex items-baseline gap-2 shrink-0">
+              <span className="p-overline">TYPICAL COST</span>
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-[36px] md:text-[44px] font-black text-[var(--c-text)] tnum leading-none">7,000</span>
+                <span className="text-[16px] font-bold text-[var(--c-text-2)]">원</span>
+                <span className="text-[14px] text-[var(--c-sub)] ml-1">/ 월</span>
+                <span className="text-[12.5px] text-[var(--c-sub)] ml-2">정도로 생각하시면 됩니다</span>
+              </div>
+              <p className="text-[12.5px] md:text-[13px] text-[var(--c-text-2)] leading-[1.7] md:max-w-[420px]">
+                소규모 홈페이지는 <strong className="text-[var(--c-text)]">월 7,000원</strong> 안팎이 일반적이에요.
+                쇼핑몰·트래픽 많은 사이트는 사양에 따라 월 1~5만원대까지 올라갑니다.
+              </p>
             </div>
           </div>
         </div>
