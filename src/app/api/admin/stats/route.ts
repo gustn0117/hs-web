@@ -35,13 +35,16 @@ export async function GET() {
     .filter((p) => p.status === "overdue")
     .reduce((s, p) => s + Number(p.amount), 0);
 
-  // Monthly revenue (last 12 months)
+  // Monthly revenue (ERP 개설 시점 2026-03 부터 현재까지)
   const now = new Date();
+  const ERP_START_YEAR = 2026;
+  const ERP_START_MONTH = 2; // 0-indexed: March
   const monthlyRevenue: { month: string; amount: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const year = d.getFullYear();
-    const month = d.getMonth();
+  const start = new Date(ERP_START_YEAR, ERP_START_MONTH, 1);
+  const cursor = new Date(start);
+  while (cursor <= now) {
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
     const label = `${year}-${String(month + 1).padStart(2, "0")}`;
     const amount = payments
       .filter((p) => {
@@ -51,6 +54,7 @@ export async function GET() {
       })
       .reduce((s, p) => s + Number(p.amount), 0);
     monthlyRevenue.push({ month: label, amount });
+    cursor.setMonth(cursor.getMonth() + 1);
   }
 
   // Revenue by type

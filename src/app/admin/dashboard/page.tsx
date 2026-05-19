@@ -427,7 +427,7 @@ export default function AdminDashboard() {
           <div className="flex items-end justify-between mb-5 gap-4 flex-wrap">
             <div>
               <h3 className="text-sm font-semibold text-slate-900">월별 수익 추이</h3>
-              <p className="text-xs text-slate-500 mt-0.5">최근 12개월</p>
+              <p className="text-xs text-slate-500 mt-0.5">ERP 개설 시점(2026-03) 부터</p>
             </div>
             <div className="flex items-end gap-5 text-right">
               <div>
@@ -435,7 +435,7 @@ export default function AdminDashboard() {
                 <p className="text-base font-bold text-slate-900 tabular-nums">{fmt(derived.last)}</p>
               </div>
               <div>
-                <p className="text-[11px] text-slate-500 font-medium">12개월 합계</p>
+                <p className="text-[11px] text-slate-500 font-medium">누적 합계</p>
                 <p className="text-base font-bold text-slate-900 tabular-nums">{fmt(derived.total)}</p>
               </div>
             </div>
