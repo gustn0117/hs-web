@@ -201,17 +201,26 @@ export default function AdminDashboard() {
   const chartPadY = 16;
   const innerW = chartW - chartPadX * 2;
   const innerH = chartH - chartPadY * 2;
-  const points = monthlyRevenue.map((m, i) => ({
-    x: chartPadX + (i / Math.max(monthlyRevenue.length - 1, 1)) * innerW,
-    y: chartPadY + innerH - (m.amount / derived.max) * innerH,
-    amount: m.amount,
-    label: m.month,
-  }));
-  const linePath = buildSmoothPath(points);
-  const areaPath =
-    points.length > 0
-      ? `${linePath} L ${points[points.length - 1].x} ${chartPadY + innerH} L ${points[0].x} ${chartPadY + innerH} Z`
-      : "";
+  const barCount = Math.max(monthlyRevenue.length, 1);
+  const barSlot = innerW / barCount;
+  const barW = Math.min(Math.max(barSlot * 0.55, 18), 64);
+  const points = monthlyRevenue.map((m, i) => {
+    const cx = chartPadX + barSlot * (i + 0.5);
+    const y = chartPadY + innerH - (m.amount / derived.max) * innerH;
+    return {
+      x: cx,
+      y,
+      barX: cx - barW / 2,
+      barH: chartPadY + innerH - y,
+      amount: m.amount,
+      label: m.month,
+    };
+  });
+  const buildBarPath = (x: number, y: number, w: number, h: number, r: number) => {
+    const rr = Math.min(r, w / 2, Math.max(h, 0));
+    if (h <= 0) return "";
+    return `M${x},${y + rr} A${rr},${rr} 0 0 1 ${x + rr},${y} L${x + w - rr},${y} A${rr},${rr} 0 0 1 ${x + w},${y + rr} L${x + w},${y + h} L${x},${y + h} Z`;
+  };
   const yGrid = 4;
   const yGridLines = Array.from({ length: yGrid + 1 }, (_, i) => chartPadY + (i * innerH) / yGrid);
   const yGridLabels = Array.from({ length: yGrid + 1 }, (_, i) => Math.round((derived.max / yGrid) * (yGrid - i)));
@@ -444,9 +453,17 @@ export default function AdminDashboard() {
           <div className="relative">
             <svg viewBox={`0 0 ${chartW} ${chartH + 28}`} className="w-full h-auto" preserveAspectRatio="none">
               <defs>
-                <linearGradient id="rev-area" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0f172a" stopOpacity="0.18" />
-                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+                <linearGradient id="rev-bar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0f172a" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#475569" stopOpacity="0.55" />
+                </linearGradient>
+                <linearGradient id="rev-bar-hover" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0f172a" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#1e293b" stopOpacity="0.9" />
+                </linearGradient>
+                <linearGradient id="rev-bar-empty" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#e2e8f0" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#f1f5f9" stopOpacity="1" />
                 </linearGradient>
               </defs>
 
@@ -462,33 +479,39 @@ export default function AdminDashboard() {
                 </text>
               ))}
 
-              {/* Area fill */}
-              {areaPath && <path d={areaPath} fill="url(#rev-area)" />}
-              {/* Line */}
-              {linePath && <path d={linePath} fill="none" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
-
-              {/* Hover targets + dots */}
+              {/* Bars */}
               {points.map((p, i) => {
                 const isHover = hoverMonth === i;
                 const isLast = i === points.length - 1;
+                const hasValue = p.amount > 0;
+                const minH = 4;
+                const renderH = hasValue ? Math.max(p.barH, minH) : minH;
+                const renderY = chartPadY + innerH - renderH;
+                const fill = !hasValue
+                  ? "url(#rev-bar-empty)"
+                  : isHover || isLast
+                  ? "url(#rev-bar-hover)"
+                  : "url(#rev-bar)";
                 return (
                   <g key={i} onMouseEnter={() => setHoverMonth(i)} onMouseLeave={() => setHoverMonth(null)}>
-                    <rect x={p.x - 28} y={chartPadY} width="56" height={innerH} fill="transparent" />
-                    {(isHover || isLast) && p.amount > 0 && (
-                      <line x1={p.x} x2={p.x} y1={chartPadY} y2={chartPadY + innerH} stroke="#0f172a" strokeOpacity={isHover ? "0.3" : "0.15"} strokeWidth="1" strokeDasharray="2 3" />
-                    )}
-                    {p.amount > 0 && (
-                      <circle
-                        cx={p.x}
-                        cy={p.y}
-                        r={isLast ? 4 : isHover ? 3.5 : 2.5}
-                        fill={isLast ? "#0f172a" : "#fff"}
-                        stroke="#0f172a"
-                        strokeWidth="1.8"
-                      />
-                    )}
+                    {/* Hover hit area */}
+                    <rect x={p.x - barSlot / 2} y={chartPadY} width={barSlot} height={innerH} fill="transparent" />
+                    {/* Bar */}
+                    <path
+                      d={buildBarPath(p.barX, renderY, barW, renderH, 6)}
+                      fill={fill}
+                      style={{ transition: "opacity 0.15s ease" }}
+                      opacity={hoverMonth !== null && !isHover && hasValue ? 0.55 : 1}
+                    />
                     {/* X label */}
-                    <text x={p.x} y={chartH + 16} textAnchor="middle" fontSize="10" fill="#94a3b8">
+                    <text
+                      x={p.x}
+                      y={chartH + 16}
+                      textAnchor="middle"
+                      fontSize="10"
+                      fontWeight={isLast ? 700 : 400}
+                      fill={isLast ? "#0f172a" : "#94a3b8"}
+                    >
                       {fmtMonthShort(p.label)}
                     </text>
                   </g>
@@ -500,7 +523,7 @@ export default function AdminDashboard() {
                 <g>
                   <rect
                     x={Math.min(Math.max(points[hoverMonth].x - 50, chartPadX), chartW - 100 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 38, 4)}
+                    y={Math.max(points[hoverMonth].y - 40, 4)}
                     width="100"
                     height="32"
                     rx="6"
@@ -508,7 +531,7 @@ export default function AdminDashboard() {
                   />
                   <text
                     x={Math.min(Math.max(points[hoverMonth].x, chartPadX + 50), chartW - 50 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 22, 18)}
+                    y={Math.max(points[hoverMonth].y - 24, 18)}
                     textAnchor="middle"
                     fontSize="10"
                     fill="#94a3b8"
@@ -517,7 +540,7 @@ export default function AdminDashboard() {
                   </text>
                   <text
                     x={Math.min(Math.max(points[hoverMonth].x, chartPadX + 50), chartW - 50 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 8, 32)}
+                    y={Math.max(points[hoverMonth].y - 10, 32)}
                     textAnchor="middle"
                     fontSize="11"
                     fontWeight="700"
