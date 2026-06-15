@@ -228,7 +228,7 @@ export default function SeoInfoPage() {
             { n: "01", t: "기본 코드 SEO", d: "프로젝트 개발 중 자동으로 적용됩니다. 별도 비용·요청 불필요." },
             { n: "02", t: "플랫폼 선택", d: "본격 SEO를 진행할 플랫폼을 선택합니다. (Google, Naver, Bing 등)" },
             { n: "03", t: "등록·인증·제출", d: "선택한 플랫폼별로 사이트 등록과 인증, 사이트맵 제출을 진행합니다." },
-            { n: "04", t: "점검 보고", d: "메타·구조화 데이터·속도 진단 결과와 초기 색인 결과를 회신합니다." },
+            { n: "04", t: "점검 보고", d: "메타·구조화 데이터·속도 진단 결과를 회신합니다. 실제 검색 노출은 색인 이후 점진적으로 반영됩니다." },
           ].map((s) => (
             <div key={s.n} className="p-6 rounded-[14px] border border-[var(--c-line)] bg-white">
               <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] tnum mb-3">STEP {s.n}</p>
@@ -239,6 +239,65 @@ export default function SeoInfoPage() {
         </div>
       </Section>
 
+      {/* TIMELINE — indexing reality */}
+      <Section
+        overline="TIMELINE · 소요 기간"
+        title="검색엔진에 등록한다고 바로 뜨지는 않습니다"
+        subtitle="등록·제출은 즉시 가능하지만, 검색 결과에 실제로 노출되기까지는 보통 1~2주가 걸립니다."
+      >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden">
+          {[
+            {
+              when: "Day 0",
+              t: "등록 · 사이트맵 제출",
+              d: "Search Console / Webmaster Tools 인증 후 사이트맵·인덱싱 요청 전송. 작업 자체는 당일 완료.",
+            },
+            {
+              when: "1~3일",
+              t: "크롤러 방문",
+              d: "검색엔진 크롤러가 사이트를 발견하고 페이지를 순차적으로 읽기 시작합니다.",
+            },
+            {
+              when: "1~2주",
+              t: "색인 반영",
+              d: "주요 페이지가 검색엔진 데이터베이스에 등록되어 검색 결과에 노출되기 시작합니다.",
+            },
+            {
+              when: "1개월+",
+              t: "안정화 · 자연 유입",
+              d: "전체 페이지가 색인되고 검색 알고리즘이 사이트를 평가합니다. 자연 유입은 이후부터 발생.",
+            },
+          ].map((p, i) => (
+            <div
+              key={p.when}
+              className={`relative p-6 md:p-7 ${i < 3 ? "md:border-r border-[var(--c-line)] border-b md:border-b-0" : ""}`}
+            >
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] tnum mb-2.5">
+                {p.when}
+              </p>
+              <h4 className="text-[15px] font-bold text-[var(--c-text)] mb-2 tracking-tight">{p.t}</h4>
+              <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.7]">{p.d}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 p-5 md:p-6 rounded-[14px] border border-[var(--c-line)] bg-[var(--c-bg-1)] flex items-start gap-3.5">
+          <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white border border-[var(--c-line)]">
+            <svg className="w-4 h-4 text-[var(--c-text-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
+          <div className="flex-1">
+            <p className="text-[13.5px] text-[var(--c-text-2)] leading-[1.75]">
+              <strong className="text-[var(--c-text)]">색인 속도는 검색엔진이 결정합니다.</strong>{" "}
+              사이트맵 제출은 "이 사이트를 봐주세요"라는 신청일 뿐, 검색엔진이 언제 크롤링하고
+              색인할지는 알고리즘이 정합니다. 보통 1~2주가 평균이지만, 사이트 규모·도메인 신뢰도에
+              따라 빠르면 며칠, 늦으면 한 달 이상 걸리기도 합니다. 일정 보장은 어렵습니다.
+            </p>
+          </div>
+        </div>
+      </Section>
+
       {/* FAQ */}
       <Section overline="FAQ" title="자주 묻는 질문">
         <div className="border-t border-[var(--c-line)]">
@@ -246,6 +305,10 @@ export default function SeoInfoPage() {
             {
               q: "기본 포함되는 SEO만 해도 검색에 잡히나요?",
               a: "네, 코드 단의 SEO가 잘 되어 있으면 시간이 지나면서 검색엔진이 자연스럽게 색인합니다. 다만 색인 속도와 정확도를 빠르게 높이려면 플랫폼별 본격 SEO 작업(등록·인증·사이트맵 제출)을 진행하시는 것을 권장합니다.",
+            },
+            {
+              q: "등록하면 바로 검색 결과에 뜨나요?",
+              a: "아니요, 즉시 뜨지 않습니다. 사이트맵 제출과 인덱싱 요청은 \"이 사이트를 봐주세요\"라는 신청일 뿐, 검색엔진이 언제 크롤링하고 색인할지는 알고리즘이 결정합니다. 보통 1~2주가 평균이며, 사이트 규모·도메인 신뢰도에 따라 빠르면 며칠, 늦으면 한 달 이상 걸리기도 합니다. 일정 보장은 어렵다는 점 미리 안내드립니다.",
             },
             {
               q: "한 플랫폼만 진행해도 되나요?",
