@@ -288,25 +288,25 @@ export default function PricingPage() {
                 </ul>
               </div>
 
-              <div className="p-5 md:p-6 rounded-[14px] border border-amber-200 bg-amber-50/60">
+              <div className="p-5 md:p-6 rounded-[14px] border border-[var(--c-line)] bg-white">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100">
-                    <svg className="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--c-bg-2)]">
+                    <svg className="w-3 h-3 text-[var(--c-sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </span>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-amber-700">미포함 · 마케팅 영역</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--c-sub)]">미포함 · 마케팅 영역</p>
                 </div>
                 <ul className="list-none space-y-2">
                   {a.excluded.map((it) => (
-                    <li key={it} className="flex items-start gap-2 text-[13px] text-amber-900/85 leading-[1.6]">
-                      <span className="w-1 h-1 rounded-full bg-amber-600 shrink-0 mt-2" />
+                    <li key={it} className="flex items-start gap-2 text-[13px] text-[var(--c-sub)] leading-[1.6] line-through decoration-[var(--c-sub-2)] decoration-1">
+                      <span className="w-1 h-1 rounded-full bg-[var(--c-sub-2)] shrink-0 mt-2" />
                       {it}
                     </li>
                   ))}
                 </ul>
-                <p className="text-[12px] text-amber-800/80 leading-[1.65] mt-3 pt-3 border-t border-amber-200/70">
-                  검색 상위 노출이나 특정 키워드 노출은 SEO가 아닌 <strong>마케팅 영역</strong>입니다. 별도 마케팅 업체를 통해 진행하셔야 합니다.
+                <p className="text-[12px] text-[var(--c-sub)] leading-[1.65] mt-3 pt-3 border-t border-[var(--c-line)]">
+                  검색 상위 노출이나 특정 키워드 노출은 SEO가 아닌 <strong className="text-[var(--c-text-2)]">마케팅 영역</strong>입니다. 별도 마케팅 업체를 통해 진행하셔야 합니다.
                 </p>
               </div>
             </div>

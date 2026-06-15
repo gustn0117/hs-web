@@ -68,27 +68,27 @@ export default function SeoInfoPage() {
           </div>
 
           {/* Marketing card */}
-          <div className="relative p-8 rounded-[16px] border border-amber-200 bg-gradient-to-br from-white to-amber-50/60 overflow-hidden">
+          <div className="relative p-8 rounded-[16px] border border-[var(--c-line)] bg-white overflow-hidden">
             <div className="flex items-center gap-2 mb-5">
-              <span className="inline-flex items-center h-[22px] px-2.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold tracking-wider">마케팅 · 운영</span>
-              <span className="text-[11px] text-amber-700/80 tracking-widest uppercase">MARKETING</span>
+              <span className="inline-flex items-center h-[22px] px-2.5 rounded-full bg-[var(--c-bg-2)] text-[var(--c-text-2)] text-[11px] font-bold tracking-wider">마케팅 · 운영</span>
+              <span className="text-[11px] text-[var(--c-sub)] tracking-widest uppercase">MARKETING</span>
             </div>
             <h3 className="text-[22px] md:text-[26px] font-bold tracking-tight mb-3">마케팅 = 검색 결과 상단에 노출되도록</h3>
             <p className="text-[14px] text-[var(--c-text-2)] leading-[1.75] mb-6">
               특정 키워드에서 <strong>경쟁사보다 위에 노출되도록 하는 운영</strong> 영역입니다.
               백링크 구축, 콘텐츠 마케팅, 광고 운영, 키워드 추적 등 지속적인 작업과 비용이 듭니다.
             </p>
-            <div className="pt-5 border-t border-amber-200 space-y-2">
+            <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
               <div className="flex justify-between gap-3 text-[13px]">
-                <span className="text-amber-800/80">목적</span>
+                <span className="text-[var(--c-sub)]">목적</span>
                 <span className="font-semibold text-right">특정 키워드 상위 노출</span>
               </div>
               <div className="flex justify-between gap-3 text-[13px]">
-                <span className="text-amber-800/80">성격</span>
+                <span className="text-[var(--c-sub)]">성격</span>
                 <span className="font-semibold">지속 운영 · 월 단위 비용</span>
               </div>
               <div className="flex justify-between gap-3 text-[13px]">
-                <span className="text-amber-800/80">담당</span>
+                <span className="text-[var(--c-sub)]">담당</span>
                 <span className="font-semibold">별도 마케팅 업체 영역</span>
               </div>
             </div>
@@ -193,25 +193,25 @@ export default function SeoInfoPage() {
         </div>
 
         {/* Excluded — Marketing */}
-        <div className="mt-4 p-6 md:p-7 rounded-[16px] border border-amber-200 bg-amber-50/60">
+        <div className="mt-4 p-6 md:p-7 rounded-[16px] border border-[var(--c-line)] bg-[var(--c-bg-1)]">
           <div className="flex items-start gap-4">
-            <span className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-100">
-              <svg className="w-5 h-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            <span className="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--c-bg-2)] border border-[var(--c-line)]">
+              <svg className="w-4 h-4 text-[var(--c-sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </span>
             <div className="flex-1">
-              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-amber-700 mb-2">NOT INCLUDED · 마케팅 영역</p>
-              <h3 className="text-[18px] font-bold text-amber-900 mb-2">상위 노출 · 키워드 노출은 SEO가 아닙니다</h3>
-              <p className="text-[13.5px] text-amber-900/85 leading-[1.75] mb-3">
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-sub)] mb-2">NOT INCLUDED · 마케팅 영역</p>
+              <h3 className="text-[18px] font-bold text-[var(--c-text)] mb-2">상위 노출 · 키워드 노출은 SEO가 아닙니다</h3>
+              <p className="text-[13.5px] text-[var(--c-text-2)] leading-[1.75] mb-3">
                 "○○○으로 검색하면 우리 사이트가 1위에 뜨도록" 같은 작업은 SEO가 아닌{" "}
-                <strong>마케팅 영역</strong>입니다.
+                <strong className="text-[var(--c-text)]">마케팅 영역</strong>입니다.
                 지속적인 콘텐츠·백링크·광고 운영이 필요해 별도 마케팅 업체를 통해 진행하셔야 합니다.
               </p>
               <ul className="list-none grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1.5 mt-3">
                 {["특정 키워드 상위 노출", "광고 운영 · 백링크 구축", "콘텐츠 마케팅 · SNS"].map((it) => (
-                  <li key={it} className="flex items-start gap-2 text-[13px] text-amber-900/80">
-                    <span className="w-1 h-1 rounded-full bg-amber-600 shrink-0 mt-2" />
+                  <li key={it} className="flex items-start gap-2 text-[13px] text-[var(--c-sub)] line-through decoration-[var(--c-sub-2)] decoration-1">
+                    <span className="w-1 h-1 rounded-full bg-[var(--c-sub-2)] shrink-0 mt-2" />
                     {it}
                   </li>
                 ))}
