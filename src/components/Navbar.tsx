@@ -38,6 +38,7 @@ const MENU: MenuItem[] = [
       { href: "/process", label: "제작 과정", desc: "6단계 체계적 진행" },
       { href: "/custom-development", label: "자체 개발 vs 플랫폼", desc: "코딩과 기성 솔루션의 차이" },
       { href: "/domain-hosting", label: "도메인·호스팅", desc: "기본 개념과 비용" },
+      { href: "/seo", label: "검색엔진 최적화", desc: "SEO 작업 범위와 비용" },
       { href: "/testimonials", label: "고객 후기", desc: "실제 클라이언트 평가" },
     ],
   },
