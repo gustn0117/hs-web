@@ -21,7 +21,7 @@ const plans = [
     pages: "5페이지",
     features: [
       "반응형 웹 디자인 (5P)",
-      "기본 SEO 최적화",
+      "메타 태그 · sitemap 기본",
       "도메인·호스팅 가이드",
       "빠른 제작 · 납품",
       "간단 수정 평생 무료",
@@ -38,7 +38,7 @@ const plans = [
     featured: true,
     features: [
       "맞춤 디자인 (10P)",
-      "고급 성능 · SEO 최적화",
+      "고급 성능 최적화",
       "관리자 페이지 포함",
       "우선 상담 · 제작 일정",
       "간단 수정 평생 무료",
@@ -70,11 +70,34 @@ const commonFeatures = [
   "소스코드 100% 제공",
   "CDN 성능 최적화",
   "웹 표준 & 접근성 준수",
-  "무료 기본 SEO 설정",
+  "메타 태그 · sitemap 기본",
+];
+
+const addOns = [
+  {
+    tag: "OPTION · 선택",
+    title: "검색엔진 최적화 작업",
+    price: "50,000",
+    unit: "원",
+    sub: "플랫폼당 · 1회",
+    desc: "Google · Naver 등 검색 플랫폼별로 진행하는 SEO 작업입니다. 플랫폼이 추가될 때마다 별도 비용이 발생합니다.",
+    included: [
+      "내부 코드 SEO 최적화",
+      "검색엔진 사이트 등록 · 인증",
+      "사이트맵 제출 · 인덱싱 요청",
+      "메타 태그 · 구조화 데이터 점검",
+    ],
+    excluded: [
+      "검색 결과 상위 노출",
+      "특정 키워드 상위 노출",
+      "별도 마케팅 업체 영역",
+    ],
+  },
 ];
 
 const faqs = [
   { q: "견적에 포함된 범위는 어디까지인가요?", a: "플랜별 명시된 페이지 수 이내의 디자인, 퍼블리싱, 기본 최적화가 포함됩니다. 간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 무료로 지원합니다. 서버·도메인 실비는 별도입니다." },
+  { q: "SEO(검색엔진 최적화)도 포함되나요?", a: "내부 코드 단의 SEO 최적화(메타 태그·sitemap·구조화 데이터 등)는 모든 플랜에 기본 포함됩니다. 다만 Google·Naver 등 플랫폼별 사이트 등록·인증·인덱싱 요청 같은 본격적인 SEO 작업은 플랫폼당 50,000원의 별도 비용이 발생합니다. 또한 상위 노출이나 특정 키워드 노출 같은 부분은 SEO 영역이 아닌 마케팅 영역이라 별도 마케팅 업체를 통해 진행하셔야 합니다." },
   { q: "결제는 어떻게 이루어지나요?", a: "계약 체결 시 50%, 최종 납품 후 잔금 50% 지급이 기본입니다. Enterprise는 단계별 정산이 가능합니다." },
   { q: "유지보수 범위는 어디까지인가요?", a: "간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 계속 무료로 지원합니다. 신규 기능 추가나 대규모 구조 변경은 범위에 따라 별도 견적으로 진행됩니다." },
   { q: "환불 정책은 어떻게 되나요?", a: "디자인 시안 전 단계에서는 전액 환불, 이후 단계에 따라 부분 환불이 가능합니다. 계약서에 명시되어 있습니다." },
@@ -218,6 +241,77 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+      </Section>
+
+      {/* Add-ons */}
+      <Section
+        overline="ADD-ON · 선택 옵션"
+        title="검색엔진 최적화 작업"
+        subtitle="내부 코드 SEO는 기본 포함. 검색 플랫폼별 본격 SEO 작업은 옵션으로 진행합니다."
+      >
+        {addOns.map((a) => (
+          <div key={a.title} className="grid grid-cols-1 lg:grid-cols-[1.05fr_1.95fr] gap-3">
+            {/* Price card */}
+            <div className="p-6 md:p-7 rounded-[14px] border border-[var(--c-line)] bg-white flex flex-col justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--c-main)] mb-2">{a.tag}</p>
+                <h3 className="text-[19px] font-bold text-[var(--c-text)] tracking-tight mb-3">{a.title}</h3>
+                <p className="text-[13px] text-[var(--c-sub)] leading-[1.7]">{a.desc}</p>
+              </div>
+              <div className="mt-5 pt-5 border-t border-dashed border-[var(--c-line-2)]">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[32px] font-bold text-[var(--c-text)] tnum leading-none">{a.price}</span>
+                  <span className="text-[14px] font-semibold text-[var(--c-text-2)]">{a.unit}</span>
+                </div>
+                <p className="text-[12px] font-semibold text-[var(--c-sub)] mt-1.5">{a.sub}</p>
+              </div>
+            </div>
+
+            {/* Included vs Excluded */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-5 md:p-6 rounded-[14px] border border-[var(--c-line)] bg-[var(--c-bg-1)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--c-main)]/12">
+                    <svg className="w-3 h-3 text-[var(--c-main)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </span>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--c-main)]">작업에 포함</p>
+                </div>
+                <ul className="list-none space-y-2">
+                  {a.included.map((it) => (
+                    <li key={it} className="flex items-start gap-2 text-[13px] text-[var(--c-text-2)] leading-[1.6]">
+                      <span className="w-1 h-1 rounded-full bg-[var(--c-main)] shrink-0 mt-2" />
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-5 md:p-6 rounded-[14px] border border-amber-200 bg-amber-50/60">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100">
+                    <svg className="w-3 h-3 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                  </span>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-amber-700">미포함 · 마케팅 영역</p>
+                </div>
+                <ul className="list-none space-y-2">
+                  {a.excluded.map((it) => (
+                    <li key={it} className="flex items-start gap-2 text-[13px] text-amber-900/85 leading-[1.6]">
+                      <span className="w-1 h-1 rounded-full bg-amber-600 shrink-0 mt-2" />
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[12px] text-amber-800/80 leading-[1.65] mt-3 pt-3 border-t border-amber-200/70">
+                  검색 상위 노출이나 특정 키워드 노출은 SEO가 아닌 <strong>마케팅 영역</strong>입니다. 별도 마케팅 업체를 통해 진행하셔야 합니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
       </Section>
 
       {/* FAQ */}

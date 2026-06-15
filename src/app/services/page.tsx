@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const COMMON_FEATURES = [
   { label: "반응형 웹디자인", desc: "PC·태블릿·모바일 전 기기 최적화" },
-  { label: "SEO 기본 최적화", desc: "검색엔진 친화적 구조" },
+  { label: "메타 태그 · sitemap", desc: "검색엔진 친화적 코드 구조" },
   { label: "SSL 보안 인증서", desc: "https 암호화 통신 기본" },
   { label: "Google Analytics", desc: "방문자 분석 툴 연동" },
   { label: "CDN 성능 최적화", desc: "전세계 빠른 로딩 속도" },

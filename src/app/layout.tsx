@@ -12,7 +12,7 @@ const notoSansKR = Noto_Sans_KR({
 const SITE_URL = "https://hsweb.pics";
 const SITE_NAME = "HS WEB";
 const DEFAULT_DESCRIPTION =
-  "홈페이지 제작 전문 웹에이전시 HS WEB. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지. 합리적인 가격, 무료 유지보수, SEO 최적화 기본 적용.";
+  "홈페이지 제작 전문 웹에이전시 HS WEB. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지. 합리적인 가격과 무료 유지보수로 비즈니스 성장에 필요한 모든 웹 솔루션을 제공합니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

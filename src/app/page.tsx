@@ -440,7 +440,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[1080px] mx-auto">
             {[
-              { name: "Basic", subtitle: "소규모 사업자", price: "249,000", suffix: "원~", features: ["반응형 5페이지", "기본 SEO 최적화", "간단 수정 평생 무료", "도메인·호스팅 가이드"] },
+              { name: "Basic", subtitle: "소규모 사업자", price: "249,000", suffix: "원~", features: ["반응형 5페이지", "메타 태그 · sitemap 기본", "간단 수정 평생 무료", "도메인·호스팅 가이드"] },
               { name: "Professional", subtitle: "성장하는 브랜드", price: "700,000", suffix: "원~", features: ["맞춤 디자인 10P", "고급 성능 최적화", "관리자 페이지 포함", "간단 수정 평생 무료"], featured: true },
               { name: "Enterprise", subtitle: "대규모 프로젝트", price: "상담", suffix: " 맞춤", features: ["풀 커스텀 개발", "쇼핑몰 / 웹앱 / API", "전담 PM 배정", "간단 수정 평생 무료"] },
             ].map((plan) => (

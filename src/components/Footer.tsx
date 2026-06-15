@@ -60,9 +60,9 @@ export default function Footer() {
             {/* Quick badges */}
             <div className="mt-6 flex flex-wrap gap-1.5">
               <span className="p-chip">SSL 보안</span>
-              <span className="p-chip">SEO 기본</span>
               <span className="p-chip">반응형</span>
               <span className="p-chip">전자 계약</span>
+              <span className="p-chip">평생 수정 무료</span>
             </div>
           </div>
 
