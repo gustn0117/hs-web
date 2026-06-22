@@ -15,8 +15,12 @@ interface Stats {
     totalHosting: number;
     totalDomains: number;
   };
-  monthlyRevenue: { month: string; amount: number }[];
+  monthlyRevenue: { month: string; amount: number; forecast?: boolean; breakdown?: { paid?: number; pending?: number; hostingRenewal?: number } }[];
   revenueByType: Record<string, number>;
+  revenueByClient: { client_id: string; client_name: string; total: number; pct: number }[];
+  hostingMRR: number;
+  hostingARR: number;
+  hostingMRRByPlan: Record<string, number>;
   recentPayments: {
     id: string;
     client_id: string;
@@ -197,9 +201,10 @@ export default function AdminDashboard() {
 
   const derived = useMemo(() => {
     if (!stats) return null;
-    const months = stats.monthlyRevenue;
-    const last = months[months.length - 1]?.amount ?? 0;
-    const prev = months[months.length - 2]?.amount ?? 0;
+    const actualMonths = stats.monthlyRevenue.filter((m) => !m.forecast);
+    const months = stats.monthlyRevenue; // forecast 포함 — y축 max 계산용
+    const last = actualMonths[actualMonths.length - 1]?.amount ?? 0;
+    const prev = actualMonths[actualMonths.length - 2]?.amount ?? 0;
     const growthPct = prev > 0 ? ((last - prev) / prev) * 100 : last > 0 ? 100 : 0;
     const rawMax = Math.max(...months.map((m) => m.amount), 1);
     // y축 깔끔하게: 가장 가까운 1/2/5×10ⁿ로 올림
@@ -212,7 +217,7 @@ export default function AdminDashboard() {
       return nice * base;
     };
     const max = niceMax(rawMax);
-    const total = months.reduce((s, m) => s + m.amount, 0);
+    const total = actualMonths.reduce((s, m) => s + m.amount, 0);
     return { last, prev, growthPct, max, total };
   }, [stats]);
 
@@ -247,7 +252,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, projectsByStatus, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
+  const { overview, monthlyRevenue, revenueByType, revenueByClient, hostingMRR, hostingARR, hostingMRRByPlan, recentPayments, overduePayments, projectStatusCounts, projectsByStatus, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
   // 시급순 정렬: expired는 오래된 게, upcoming은 임박한 게 위로
@@ -292,8 +297,16 @@ export default function AdminDashboard() {
       barH: chartPadY + innerH - y,
       amount: m.amount,
       label: m.month,
+      forecast: !!m.forecast,
+      breakdown: m.breakdown,
     };
   });
+  const lastActualIdx = (() => {
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (!points[i].forecast) return i;
+    }
+    return -1;
+  })();
   const buildBarPath = (x: number, y: number, w: number, h: number, r: number) => {
     const rr = Math.min(r, w / 2, Math.max(h, 0));
     if (h <= 0) return "";
@@ -417,7 +430,10 @@ export default function AdminDashboard() {
         {/* ── KPI cards (4) ─────────────────────── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Total revenue */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5 relative overflow-hidden">
+          <Link
+            href="/admin/payments?status=paid"
+            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative overflow-hidden no-underline transition-all"
+          >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">총 수익</p>
             <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{fmtShort(overview.totalRevenue)}원</p>
             <div className="flex items-center gap-1.5 mt-1.5">
@@ -430,11 +446,14 @@ export default function AdminDashboard() {
               </span>
               <span className="text-[11px] text-slate-500">전월 대비</span>
             </div>
+            <svg className="absolute top-3 right-3 w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
             {/* Mini sparkline */}
             <svg viewBox="0 0 100 30" className="absolute right-3 bottom-3 w-20 h-7 opacity-60" aria-hidden>
               <path
                 d={buildSmoothPath(
-                  monthlyRevenue.slice(-6).map((m, i, arr) => ({
+                  monthlyRevenue.filter((m) => !m.forecast).slice(-6).map((m, i, arr) => ({
                     x: (i / Math.max(arr.length - 1, 1)) * 100,
                     y: 30 - (m.amount / Math.max(...arr.map((x) => x.amount), 1)) * 25 - 2,
                   }))
@@ -445,13 +464,19 @@ export default function AdminDashboard() {
                 strokeLinecap="round"
               />
             </svg>
-          </div>
+          </Link>
 
           {/* Pending */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <Link
+            href="/admin/payments?status=pending"
+            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative no-underline transition-all"
+          >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">미수금</p>
             <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{fmtShort(overview.pendingAmount)}원</p>
             <p className="text-[11px] text-slate-500 mt-1.5">결제 대기 중</p>
+            <svg className="absolute top-3 right-3 w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
             {/* Bar mini visual */}
             <div className="mt-3 h-1 bg-slate-100 rounded-full overflow-hidden">
               <div
@@ -465,14 +490,15 @@ export default function AdminDashboard() {
                 }}
               />
             </div>
-          </div>
+          </Link>
 
           {/* Overdue */}
-          <div
-            className={`rounded-xl border p-5 ${
+          <Link
+            href="/admin/payments?status=overdue"
+            className={`group rounded-xl border p-5 relative no-underline transition-all ${
               overview.overdueAmount > 0
-                ? "bg-red-50/40 border-red-200 border-l-4 border-l-red-500"
-                : "bg-white border-slate-200"
+                ? "bg-red-50/40 border-red-200 border-l-4 border-l-red-500 hover:border-red-300 hover:shadow-sm"
+                : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
             }`}
           >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">미납금</p>
@@ -486,10 +512,16 @@ export default function AdminDashboard() {
             <p className={`text-[11px] mt-1.5 font-medium ${overview.overdueAmount > 0 ? "text-red-600" : "text-slate-500"}`}>
               {overview.overdueAmount > 0 ? `${overduePayments.length}건 처리 필요` : "미납 없음"}
             </p>
-          </div>
+            <svg className="absolute top-3 right-3 w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
 
           {/* Clients / projects */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <Link
+            href="/admin/clients?filter=active"
+            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative no-underline transition-all"
+          >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">활성 자원</p>
             <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">
               {overview.activeClients}
@@ -502,7 +534,10 @@ export default function AdminDashboard() {
               <span className="w-px h-3 bg-slate-200" />
               <span>도메인 {overview.totalDomains}</span>
             </div>
-          </div>
+            <svg className="absolute top-3 right-3 w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
         </div>
 
         {/* ── Critical alert: overdue payments ────── */}
@@ -618,12 +653,15 @@ export default function AdminDashboard() {
               {/* Bars */}
               {points.map((p, i) => {
                 const isHover = hoverMonth === i;
-                const isLast = i === points.length - 1;
+                const isLast = i === lastActualIdx;
+                const isForecast = p.forecast;
                 const hasValue = p.amount > 0;
                 const minH = 4;
                 const renderH = hasValue ? Math.max(p.barH, minH) : minH;
                 const renderY = chartPadY + innerH - renderH;
-                const fill = !hasValue
+                const fill = isForecast
+                  ? "transparent"
+                  : !hasValue
                   ? "url(#rev-bar-empty)"
                   : isHover || isLast
                   ? "url(#rev-bar-hover)"
@@ -636,7 +674,7 @@ export default function AdminDashboard() {
                     onClick={() => setHoverMonth((prev) => (prev === i ? null : i))}
                     role="button"
                     tabIndex={0}
-                    aria-label={`${p.label}: ${fmt(p.amount)}`}
+                    aria-label={`${p.label}: ${fmt(p.amount)}${isForecast ? " (예상)" : ""}`}
                     style={{ cursor: "pointer" }}
                   >
                     {/* Hover hit area */}
@@ -645,6 +683,9 @@ export default function AdminDashboard() {
                     <path
                       d={buildBarPath(p.barX, renderY, barW, renderH, 6)}
                       fill={fill}
+                      stroke={isForecast ? "#94a3b8" : "none"}
+                      strokeWidth={isForecast ? 1.2 : 0}
+                      strokeDasharray={isForecast ? "3 3" : undefined}
                       style={{ transition: "opacity 0.15s ease" }}
                       opacity={hoverMonth !== null && !isHover && hasValue ? 0.55 : 1}
                     />
@@ -655,7 +696,7 @@ export default function AdminDashboard() {
                       textAnchor="middle"
                       fontSize="10"
                       fontWeight={isLast ? 700 : 400}
-                      fill={isLast ? "#0f172a" : "#94a3b8"}
+                      fill={isLast ? "#0f172a" : isForecast ? "#cbd5e1" : "#94a3b8"}
                     >
                       {fmtMonthShort(p.label)}
                     </text>
@@ -664,35 +705,35 @@ export default function AdminDashboard() {
               })}
 
               {/* Hover tooltip */}
-              {hoverMonth !== null && points[hoverMonth] && points[hoverMonth].amount > 0 && (
+              {hoverMonth !== null && points[hoverMonth] && points[hoverMonth].amount > 0 && (() => {
+                const p = points[hoverMonth];
+                const ttW = 120;
+                const ttH = p.forecast ? 50 : 32;
+                const cx = Math.min(Math.max(p.x, chartPadX + ttW / 2), chartW - ttW / 2 - chartPadX);
+                const ty = Math.max(p.y - ttH - 8, 4);
+                return (
+                  <g>
+                    <rect x={cx - ttW / 2} y={ty} width={ttW} height={ttH} rx="6" fill="#0f172a" />
+                    <text x={cx} y={ty + 14} textAnchor="middle" fontSize="10" fill="#94a3b8">
+                      {p.label}{p.forecast ? " · 예상" : ""}
+                    </text>
+                    <text x={cx} y={ty + 28} textAnchor="middle" fontSize="11" fontWeight="700" fill="#fff">
+                      {fmt(p.amount)}
+                    </text>
+                    {p.forecast && p.breakdown && (
+                      <text x={cx} y={ty + 42} textAnchor="middle" fontSize="9" fill="#cbd5e1">
+                        대기 {fmtShort(p.breakdown.pending ?? 0)} · 갱신 {fmtShort(p.breakdown.hostingRenewal ?? 0)}
+                      </text>
+                    )}
+                  </g>
+                );
+              })()}
+
+              {/* Forecast legend */}
+              {points.some((p) => p.forecast) && (
                 <g>
-                  <rect
-                    x={Math.min(Math.max(points[hoverMonth].x - 50, chartPadX), chartW - 100 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 40, 4)}
-                    width="100"
-                    height="32"
-                    rx="6"
-                    fill="#0f172a"
-                  />
-                  <text
-                    x={Math.min(Math.max(points[hoverMonth].x, chartPadX + 50), chartW - 50 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 24, 18)}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#94a3b8"
-                  >
-                    {points[hoverMonth].label}
-                  </text>
-                  <text
-                    x={Math.min(Math.max(points[hoverMonth].x, chartPadX + 50), chartW - 50 - chartPadX)}
-                    y={Math.max(points[hoverMonth].y - 10, 32)}
-                    textAnchor="middle"
-                    fontSize="11"
-                    fontWeight="700"
-                    fill="#fff"
-                  >
-                    {fmt(points[hoverMonth].amount)}
-                  </text>
+                  <rect x={chartPadX} y={chartH + 6} width="10" height="10" rx="2" fill="none" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
+                  <text x={chartPadX + 14} y={chartH + 14} fontSize="9" fill="#94a3b8">예상 (대기 결제 + 호스팅 갱신)</text>
                 </g>
               )}
             </svg>
@@ -840,6 +881,99 @@ export default function AdminDashboard() {
               </ul>
             )}
 
+          </div>
+        </div>
+
+        {/* ── MRR + 고객별 매출 집중도 ──────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 items-stretch">
+          {/* MRR card */}
+          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-base font-semibold text-slate-900 tracking-tight">정기 매출 (MRR)</h3>
+              <p className="text-xs text-slate-500 mt-0.5">호스팅 기준 · 월정액 환산</p>
+            </div>
+            {hostingMRR === 0 ? (
+              <p className="text-slate-400 text-sm py-8 text-center">호스팅 등록 시 표시됩니다</p>
+            ) : (
+              <>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-[28px] font-bold text-slate-900 tabular-nums">{fmtShort(hostingMRR)}</span>
+                  <span className="text-base font-semibold text-slate-500">원/월</span>
+                </div>
+                <p className="text-[11px] text-slate-500 mb-5 tabular-nums">
+                  연환산 ARR <strong className="text-slate-700">{fmtShort(hostingARR)}원</strong>
+                </p>
+                {Object.keys(hostingMRRByPlan).length > 0 && (
+                  <ul className="space-y-2 list-none m-0 mt-auto pt-3 border-t border-slate-100">
+                    {Object.entries(hostingMRRByPlan)
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 4)
+                      .map(([plan, amt]) => {
+                        const pct = hostingMRR > 0 ? (amt / hostingMRR) * 100 : 0;
+                        return (
+                          <li key={plan}>
+                            <div className="flex items-center justify-between text-[12px] mb-1">
+                              <span className="text-slate-700 truncate">{plan}</span>
+                              <span className="text-slate-900 font-semibold tabular-nums shrink-0 ml-2">{fmtShort(amt)}원</span>
+                            </div>
+                            <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-slate-700 rounded-full" style={{ width: `${pct}%` }} />
+                            </div>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* 고객별 매출 집중도 TOP */}
+          <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6 flex flex-col">
+            <div className="flex items-baseline justify-between mb-5 gap-3 flex-wrap">
+              <div>
+                <h3 className="text-base font-semibold text-slate-900 tracking-tight">고객별 매출 집중도</h3>
+                <p className="text-xs text-slate-500 mt-0.5">결제 완료 기준 · 상위 10</p>
+              </div>
+              {revenueByClient.length > 0 && (
+                <span className="text-xs text-slate-500 tabular-nums">
+                  TOP1 집중도 <strong className="text-slate-900">{revenueByClient[0].pct.toFixed(0)}%</strong>
+                </span>
+              )}
+            </div>
+            {revenueByClient.length === 0 ? (
+              <p className="text-slate-400 text-sm py-8 text-center">결제 완료 시 표시됩니다</p>
+            ) : (
+              <ul className="space-y-2.5 list-none m-0">
+                {revenueByClient.map((c, i) => {
+                  const color = donutPalette[Math.min(i, donutPalette.length - 1)];
+                  const maxPct = revenueByClient[0].pct || 1;
+                  const barPct = (c.pct / maxPct) * 100;
+                  return (
+                    <li key={c.client_id}>
+                      <Link
+                        href={`/admin/clients/${c.client_id}`}
+                        className="block group px-2 -mx-2 py-1.5 rounded-md hover:bg-slate-50 no-underline transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-1 gap-3">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-[11px] font-bold text-slate-400 tabular-nums shrink-0 w-4">{i + 1}</span>
+                            <span className="text-sm text-slate-900 truncate group-hover:text-slate-900 font-medium">{c.client_name}</span>
+                          </div>
+                          <div className="flex items-baseline gap-2 shrink-0">
+                            <span className="text-xs text-slate-500 tabular-nums">{c.pct.toFixed(1)}%</span>
+                            <span className="text-sm font-bold text-slate-900 tabular-nums">{fmtShort(c.total)}원</span>
+                          </div>
+                        </div>
+                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden ml-6">
+                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${barPct}%`, background: color }} />
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useMemo, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import AdminHeader from "../components/AdminHeader";
 
@@ -45,10 +45,24 @@ function buildSmoothPath(points: { x: number; y: number }[]): string {
 }
 
 export default function AdminClientsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50"><AdminHeader /></div>}>
+      <ClientsInner />
+    </Suspense>
+  );
+}
+
+function ClientsInner() {
+  const searchParams = useSearchParams();
+  const initialFilter = (() => {
+    const f = searchParams.get("filter");
+    return f === "active" || f === "inactive" ? f : "all";
+  })();
+
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
+  const [filter, setFilter] = useState<"all" | "active" | "inactive">(initialFilter);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState<"recent" | "name" | "projects">("recent");
   const router = useRouter();

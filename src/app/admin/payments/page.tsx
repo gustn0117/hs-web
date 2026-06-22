@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import AdminHeader from "../components/AdminHeader";
 
 interface Payment {
@@ -31,11 +32,23 @@ type SortKey = "payment_date" | "amount" | "client_name";
 type SortDir = "asc" | "desc";
 
 export default function AdminPaymentsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50"><AdminHeader /></div>}>
+      <PaymentsInner />
+    </Suspense>
+  );
+}
+
+function PaymentsInner() {
+  const searchParams = useSearchParams();
+  const initialStatus = searchParams.get("status") ?? "all";
+  const initialType = searchParams.get("type") ?? "all";
+
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
+  const [typeFilter, setTypeFilter] = useState<string>(initialType);
   const [sortKey, setSortKey] = useState<SortKey>("payment_date");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
