@@ -854,46 +854,71 @@ export default function ClientDetailPage() {
   // =========================================================================
   const hostingPayments = payments.filter((p) => p.type === "호스팅");
 
-  // Helper: suggest next hosting payment date for a specific project
-  // Uses same day-of-month from last hosting payment (e.g. 2/25 → 3/25)
-  const suggestHostingDate = (projectId: string | null): string => {
-    // Find last hosting payment for this project
+  // Helper: 결제 금액으로 결제 주기 판단 (월간/연간)
+  // billing_cycle 우선, 없으면 amount 임계값(50,000원)으로 자동 판단
+  const ANNUAL_AMOUNT_THRESHOLD = 50000;
+  const hostingPeriodDays = (projectId: string | null, amount: number): number => {
+    // 1순위: 호스팅 정보의 billing_cycle
+    const projectHostings = hostings.filter((h) => projectId ? h.project_id === projectId : true);
+    if (projectHostings.length > 0) {
+      const bc = projectHostings[0].billing_cycle;
+      if (bc === "yearly" || bc === "year" || bc === "annual") return 365;
+      if (bc === "monthly" || bc === "month") return 30;
+    }
+    // 2순위: 금액 임계값으로 판단
+    return amount >= ANNUAL_AMOUNT_THRESHOLD ? 365 : 30;
+  };
+
+  const formatDateLocal = (d: Date): string => {
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${mm}-${dd}`;
+  };
+
+  // Helper: 다음 호스팅 결제일 자동 계산
+  // amount가 주어지면 그 금액 기준으로 기간 판단 (7000원→+30일, 77000원→+365일)
+  const suggestHostingDate = (projectId: string | null, amount: number): string => {
+    const periodDays = hostingPeriodDays(projectId, amount);
+
+    // 마지막 호스팅 결제일에 + 기간
     const projectHostingPayments = hostingPayments
       .filter((p) => projectId ? p.project_id === projectId : true)
       .sort((a, b) => (b.payment_date || "").localeCompare(a.payment_date || ""));
 
     if (projectHostingPayments.length > 0 && projectHostingPayments[0].payment_date) {
       const last = new Date(projectHostingPayments[0].payment_date + "T00:00:00");
-      last.setDate(last.getDate() + 30);
-      const mm = String(last.getMonth() + 1).padStart(2, "0");
-      const dd = String(last.getDate()).padStart(2, "0");
-      return `${last.getFullYear()}-${mm}-${dd}`;
+      last.setDate(last.getDate() + periodDays);
+      return formatDateLocal(last);
     }
 
-    // Fallback: check hosting start_date for this project
+    // Fallback: 호스팅 시작일 기준
     const projectHostings = hostings.filter((h) => projectId ? h.project_id === projectId : true);
     if (projectHostings.length > 0 && projectHostings[0].start_date) {
       const start = new Date(projectHostings[0].start_date + "T00:00:00");
-      // Suggest next month from start date with same day
       const now = new Date();
       const next = new Date(start);
       while (next <= now) {
-        next.setDate(next.getDate() + 30);
+        next.setDate(next.getDate() + periodDays);
       }
-      const mm = String(next.getMonth() + 1).padStart(2, "0");
-      const dd = String(next.getDate()).padStart(2, "0");
-      return `${next.getFullYear()}-${mm}-${dd}`;
+      return formatDateLocal(next);
     }
 
-    // Final fallback: today
+    // Final fallback: 오늘 + 기간
     const today = new Date();
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
-    return `${today.getFullYear()}-${mm}-${dd}`;
+    today.setDate(today.getDate() + periodDays);
+    return formatDateLocal(today);
   };
 
-  // Helper: suggest hosting amount for a specific project
+  // Helper: 마지막 호스팅 결제 금액 (없으면 호스팅 정보의 amount, 그것도 없으면 0)
   const suggestHostingAmount = (projectId: string | null): number => {
+    // 1순위: 마지막 호스팅 결제
+    const projectHostingPayments = hostingPayments
+      .filter((p) => projectId ? p.project_id === projectId : true)
+      .sort((a, b) => (b.payment_date || "").localeCompare(a.payment_date || ""));
+    if (projectHostingPayments.length > 0 && projectHostingPayments[0].amount) {
+      return Number(projectHostingPayments[0].amount);
+    }
+    // 2순위: 호스팅 정보
     const projectHostings = hostings.filter((h) => projectId ? h.project_id === projectId : true);
     if (projectHostings.length > 0 && projectHostings[0].amount) {
       return projectHostings[0].amount;
@@ -901,27 +926,38 @@ export default function ClientDetailPage() {
     return 0;
   };
 
-  // When payment type changes, auto-suggest date & amount for hosting
+  // 결제 타입 변경: 호스팅이면 금액 자동 입력 → 그 금액 기준으로 결제일 자동 계산
   const handlePaymentTypeChange = (type: string) => {
     setPaymentForm((prev) => {
       const updates: Partial<Omit<Payment, "id">> = { type };
       if (type === "호스팅") {
-        updates.payment_date = suggestHostingDate(prev.project_id);
         const amt = suggestHostingAmount(prev.project_id);
         if (amt) updates.amount = amt;
+        updates.payment_date = suggestHostingDate(prev.project_id, amt || prev.amount);
       }
       return { ...prev, ...updates };
     });
   };
 
-  // When project changes, re-suggest date & amount if type is already hosting
+  // 프로젝트 변경: 타입이 호스팅이면 동일하게 재계산
   const handlePaymentProjectChange = (projectId: string | null) => {
     setPaymentForm((prev) => {
       const updates: Partial<Omit<Payment, "id">> = { project_id: projectId };
       if (prev.type === "호스팅") {
-        updates.payment_date = suggestHostingDate(projectId);
         const amt = suggestHostingAmount(projectId);
         if (amt) updates.amount = amt;
+        updates.payment_date = suggestHostingDate(projectId, amt || prev.amount);
+      }
+      return { ...prev, ...updates };
+    });
+  };
+
+  // 결제 금액 변경: 호스팅 타입일 때 금액에 따라 결제일 재계산 (7천→+30일, 7.7만→+365일)
+  const handlePaymentAmountChange = (amount: number) => {
+    setPaymentForm((prev) => {
+      const updates: Partial<Omit<Payment, "id">> = { amount };
+      if (prev.type === "호스팅" && amount > 0) {
+        updates.payment_date = suggestHostingDate(prev.project_id, amount);
       }
       return { ...prev, ...updates };
     });
@@ -1339,7 +1375,20 @@ export default function ClientDetailPage() {
                 />
               </div>
               <div><label className={labelClass}>유형</label><CustomSelect options={paymentTypeOptions} value={paymentForm.type} onChange={handlePaymentTypeChange} /></div>
-              <div><label className={labelClass}>금액 (원) *{paymentForm.type === "호스팅" && paymentForm.amount > 0 && <span className="text-[#0f172a] ml-1">(자동추천)</span>}</label><AmountInput value={paymentForm.amount} onChange={(v) => setPaymentForm((p) => ({ ...p, amount: v }))} /></div>
+              <div>
+                <label className={labelClass}>
+                  금액 (원) *
+                  {paymentForm.type === "호스팅" && paymentForm.amount > 0 && (
+                    <span className="text-[#0f172a] ml-1">
+                      ({hostingPeriodDays(paymentForm.project_id, paymentForm.amount) === 365 ? "연간 · +1년 자동" : "월간 · +30일 자동"})
+                    </span>
+                  )}
+                </label>
+                <AmountInput
+                  value={paymentForm.amount}
+                  onChange={(v) => (paymentForm.type === "호스팅" ? handlePaymentAmountChange(v) : setPaymentForm((p) => ({ ...p, amount: v })))}
+                />
+              </div>
               <div>
                 <label className={labelClass}>결제일{paymentForm.type === "호스팅" && paymentForm.payment_date && <span className="text-[#0f172a] ml-1">(자동추천)</span>}</label>
                 <DatePicker value={paymentForm.payment_date} onChange={(v) => setPaymentForm((p) => ({ ...p, payment_date: v }))} placeholder="결제일 선택" />
