@@ -91,11 +91,12 @@ export default function AdminHeader() {
 
         {/* Right actions */}
         <div className="flex items-center justify-end gap-1.5 shrink-0">
+          {/* lg+ 에서만 노출 — 사이트·로그아웃 텍스트 버튼 */}
           <Link
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] text-slate-500 hover:text-slate-900 hover:bg-slate-50 no-underline transition-colors"
+            className="hidden lg:inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] text-slate-500 hover:text-slate-900 hover:bg-slate-50 no-underline transition-colors"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -104,7 +105,7 @@ export default function AdminHeader() {
           </Link>
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] text-slate-500 hover:text-slate-900 hover:bg-slate-50 cursor-pointer bg-transparent border-0 transition-colors"
+            className="hidden lg:inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] text-slate-500 hover:text-slate-900 hover:bg-slate-50 cursor-pointer bg-transparent border-0 transition-colors"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -112,10 +113,10 @@ export default function AdminHeader() {
             로그아웃
           </button>
 
-          {/* Mobile toggle */}
+          {/* Mobile toggle — 모바일에서는 햄버거만 노출해 우측 시각 무게 최소화 */}
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="lg:hidden w-8 h-8 inline-flex items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 cursor-pointer bg-transparent border-0 transition-colors"
+            className="lg:hidden w-9 h-9 inline-flex items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 cursor-pointer bg-transparent border-0 transition-colors"
             aria-label="메뉴"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -152,6 +153,29 @@ export default function AdminHeader() {
                 </Link>
               );
             })}
+          </div>
+          {/* Mobile drawer 하단 액션 */}
+          <div className="max-w-[1280px] mx-auto px-3 pb-3 pt-1 border-t border-slate-100 grid grid-cols-2 gap-1 mt-1">
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 h-10 px-3 rounded-md text-[13px] text-slate-600 hover:bg-slate-50 no-underline transition-colors"
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+              사이트 보기
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 h-10 px-3 rounded-md text-[13px] text-slate-600 hover:bg-slate-50 cursor-pointer bg-transparent border-0 transition-colors"
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+              로그아웃
+            </button>
           </div>
         </div>
       )}
