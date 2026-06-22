@@ -406,18 +406,22 @@ export function SignpostPieceIcon() {
         </linearGradient>
       </defs>
       <rect x="0" y="0" width="120" height="120" fill="url(#sp-grad)" rx="14" />
-      {/* signpost */}
-      <g transform="translate(20 22)">
-        {/* sign 1 */}
-        <rect x="14" y="6" width="56" height="18" rx="3" fill={C.text} />
-        <polygon points="70,6 80,15 70,24" fill={C.text} />
-        {/* sign 2 */}
-        <rect x="0" y="30" width="56" height="18" rx="3" fill={C.main} />
-        <polygon points="0,30 -10,39 0,48" fill={C.main} />
-        {/* pole */}
-        <rect x="36" y="48" width="6" height="32" fill={C.text2} rx="2" />
-        <rect x="30" y="78" width="18" height="4" fill={C.text} rx="1" />
-      </g>
+
+      {/* Pole (drawn behind signs) */}
+      <rect x="41" y="26" width="4" height="56" fill={C.text2} rx="1.5" />
+
+      {/* Top sign — dark, pointing right */}
+      <path d="M 39 28 L 75 28 L 83 36 L 75 44 L 39 44 Z" fill={C.text} />
+
+      {/* Bottom sign — main color, pointing right */}
+      <path d="M 39 50 L 75 50 L 83 58 L 75 66 L 39 66 Z" fill={C.main} />
+
+      {/* Pole base */}
+      <rect x="33" y="78" width="20" height="4" rx="1" fill={C.text} />
+
+      {/* Ground line */}
+      <line x1="22" y1="84" x2="64" y2="84" stroke={C.line2} strokeWidth="1" strokeDasharray="2 3" />
+
       <text x="60" y="104" textAnchor="middle" fontSize="9" fontWeight="700" fill={C.sub} letterSpacing="1">표지판 · NAMESERVER</text>
     </svg>
   );
