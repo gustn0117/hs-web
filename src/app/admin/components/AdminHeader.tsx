@@ -39,18 +39,32 @@ export default function AdminHeader() {
     router.push("/admin");
   };
 
+  const currentItem = NAV_ITEMS.find((item) => pathname === item.href || pathname.startsWith(item.href + "/"));
+
   return (
     <header
       className={`sticky top-0 z-40 bg-white/90 backdrop-blur-md transition-shadow ${
         scrolled ? "border-b border-slate-200 shadow-sm" : "border-b border-slate-200"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-4 md:px-6 h-14 flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between lg:gap-4">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 h-14 flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center gap-3 lg:gap-4">
         {/* Left: Brand */}
         <Link href="/admin/dashboard" className="flex items-baseline gap-2 no-underline shrink-0">
           <span className="text-[15px] md:text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
           <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
         </Link>
+
+        {/* Mobile center: 현재 페이지 인디케이터 (lg 미만에서만 노출, 그리드 가운데 칼럼 대체) */}
+        <div className="lg:hidden flex-1 flex justify-center min-w-0">
+          {currentItem && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-slate-100 text-slate-700 text-[12px] font-semibold max-w-full">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={currentItem.icon} />
+              </svg>
+              <span className="truncate">{currentItem.label}</span>
+            </span>
+          )}
+        </div>
 
         {/* Center: Desktop nav */}
         <nav className="hidden lg:flex items-center justify-center gap-0.5">
