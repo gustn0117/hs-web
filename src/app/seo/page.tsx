@@ -337,7 +337,7 @@ export default function SeoInfoPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
               </summary>
-              <div className="pb-5 pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.75]">{item.a}</div>
+              <div className="pb-5 pl-7 sm:pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.75]">{item.a}</div>
             </details>
           ))}
         </div>

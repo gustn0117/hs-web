@@ -61,7 +61,7 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         <main className="space-y-10">
           <Section>
-            <div className="p-card overflow-hidden">
+            <div className="p-card">
               <div className="px-6 md:px-10 pt-6 md:pt-8 pb-0">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />

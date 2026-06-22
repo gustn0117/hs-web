@@ -124,14 +124,12 @@ export default function CustomDevelopmentPage() {
 
       {/* Detailed comparison table */}
       <Section overline="COMPARE" title="항목별 비교" subtitle="비즈니스에 직접 영향을 주는 8가지 기준으로 정리했습니다.">
-        <div className="bg-gradient-to-br from-white to-[var(--c-main-bg)] rounded-[16px] border border-[var(--c-line)] p-4 md:p-6 mb-4">
-          <div className="hidden md:block">
-            <ScalesIllustration />
-          </div>
+        <div className="hidden md:block bg-gradient-to-br from-white to-[var(--c-main-bg)] rounded-[16px] border border-[var(--c-line)] p-4 md:p-6 mb-4">
+          <ScalesIllustration />
         </div>
 
         <div className="p-card overflow-hidden overflow-x-auto">
-          <table className="p-table min-w-[680px]">
+          <table className="p-table md:min-w-[680px]">
             <thead>
               <tr>
                 <th>항목</th>
@@ -393,7 +391,7 @@ export default function CustomDevelopmentPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
               </summary>
-              <div className="pb-5 pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.8]">{faq.a}</div>
+              <div className="pb-5 pl-7 sm:pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.8]">{faq.a}</div>
             </details>
           ))}
         </div>

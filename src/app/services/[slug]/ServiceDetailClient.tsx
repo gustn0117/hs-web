@@ -235,19 +235,19 @@ function ServiceMockup({ service }: { service: ServiceItem }) {
             <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
             <span className="w-3 h-3 rounded-full bg-[#28c840]" />
           </div>
-          <div className="flex-1 flex justify-center">
-            <div className="inline-flex items-center gap-2 h-6 px-3 rounded bg-white/5 border border-white/10 text-[11px] text-white/60 font-mono">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="flex-1 flex justify-center min-w-0">
+            <div className="inline-flex items-center gap-2 h-6 px-3 rounded bg-white/5 border border-white/10 text-[11px] text-white/60 font-mono max-w-full min-w-0 overflow-hidden">
+              <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
               </svg>
-              hsweb.pics/services/{service.slug}
+              <span className="truncate min-w-0">hsweb.pics/services/{service.slug}</span>
             </div>
           </div>
           <div className="w-12 shrink-0" />
         </div>
 
         {/* Content */}
-        <div className="relative aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden">
+        <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] flex items-center justify-center overflow-hidden">
           {/* Background photo */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

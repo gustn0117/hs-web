@@ -153,14 +153,14 @@ export function PageShell({
             프로젝트 상담 받아보세요.
           </h2>
           <p className="text-[16px] text-white/60 mb-8">첫 상담은 무료입니다. 24시간 이내 회신해드립니다.</p>
-          <div className="flex items-center gap-3 justify-center flex-wrap">
-            <Link href="/contact" className="inline-flex items-center gap-2 h-[52px] px-7 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[15px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-center">
+            <Link href="/contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-7 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[15px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
               상담 신청
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>
-            <a href="tel:010-3319-2509" className="inline-flex items-center gap-2 h-[52px] px-6 rounded-[10px] text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/5 transition-colors tnum">
+            <a href="tel:010-3319-2509" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-6 rounded-[10px] text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/5 transition-colors tnum">
               010-3319-2509
             </a>
           </div>

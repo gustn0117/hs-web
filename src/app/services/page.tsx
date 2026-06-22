@@ -55,7 +55,7 @@ export default function ServicesPage() {
           />
           <div className="absolute inset-0 p-bg-grid-dots opacity-[0.08] pointer-events-none" />
 
-          <div className="relative p-8 md:p-12 min-h-[220px] md:min-h-[260px] flex flex-col justify-center">
+          <div className="relative p-6 md:p-12 min-h-[200px] md:min-h-[260px] flex flex-col justify-center">
             <p className="text-[11px] font-bold text-white/70 tracking-[0.15em] uppercase mb-3">
               ONE-STOP WEB SOLUTION
             </p>
@@ -77,7 +77,7 @@ export default function ServicesPage() {
               <Link
                 key={s.slug}
                 href={`/services/${s.slug}`}
-                className={`group relative flex flex-col justify-between p-7 md:p-8 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] hover:shadow-sm transition-all no-underline min-h-[260px] ${
+                className={`group relative flex flex-col justify-between p-5 md:p-7 lg:p-8 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] hover:shadow-sm transition-all no-underline min-h-[260px] ${
                   lastFeature ? "lg:col-span-3 lg:flex-row lg:items-center lg:gap-10 lg:min-h-0" : ""
                 }`}
               >
@@ -120,7 +120,7 @@ export default function ServicesPage() {
 
       {/* Common features */}
       <Section overline="INCLUDED" title="모든 플랜 공통 포함" subtitle="어떤 서비스를 선택해도 기본으로 포함되는 항목입니다.">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {COMMON_FEATURES.map((f) => (
             <div key={f.label} className="p-5 rounded-[12px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] transition-colors">
               <div className="w-9 h-9 rounded-[8px] bg-[var(--c-main-bg)] flex items-center justify-center mb-3">
@@ -138,7 +138,7 @@ export default function ServicesPage() {
       {/* Tech stack band */}
       <Section overline="TECH STACK" title="검증된 최신 기술로 제작합니다">
         <div className="p-card overflow-hidden bg-[var(--c-bg-1)]">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--c-line)]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-px bg-[var(--c-line)]">
             {[
               { cat: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind"] },
               { cat: "Backend", items: ["Node.js", "Supabase", "PostgreSQL", "REST API"] },

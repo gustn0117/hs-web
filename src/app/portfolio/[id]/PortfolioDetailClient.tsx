@@ -127,16 +127,16 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
             {/* URL */}
             {item.url && (
               <section className="border border-[var(--color-border)] bg-white">
-                <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3">
                   <div className="min-w-0">
                     <p className="text-[11px] text-[var(--color-muted)]">라이브 URL</p>
-                    <p className="text-[13px] text-[var(--color-text)] tnum truncate">{item.url}</p>
+                    <p className="text-[13px] text-[var(--color-text)] break-all">{item.url}</p>
                   </div>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-btn p-btn-point shrink-0 no-underline"
+                    className="p-btn p-btn-point w-full sm:w-auto shrink-0 no-underline justify-center"
                   >
                     방문하기 →
                   </a>
@@ -145,11 +145,11 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
             )}
 
             {/* Prev/Next nav */}
-            <div className="grid grid-cols-2 gap-0 border border-[var(--color-border)] bg-white">
-              {prevItem ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-[var(--color-border)] bg-white divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-border)]">
+              {prevItem && (
                 <Link
                   href={`/portfolio/${prevItem.id}`}
-                  className="flex items-center gap-2 px-4 py-3 no-underline hover:bg-[var(--color-bg-alt)] border-r border-[var(--color-border)]"
+                  className="flex items-center gap-2 px-4 py-3 no-underline hover:bg-[var(--color-bg-alt)]"
                 >
                   <span className="text-[var(--color-muted-2)]">‹</span>
                   <div className="min-w-0">
@@ -157,9 +157,9 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
                     <p className="text-[13px] font-semibold text-[var(--color-text)] truncate">{prevItem.title}</p>
                   </div>
                 </Link>
-              ) : <span className="border-r border-[var(--color-border)]" />}
+              )}
 
-              {nextItem ? (
+              {nextItem && (
                 <Link
                   href={`/portfolio/${nextItem.id}`}
                   className="flex items-center justify-end gap-2 px-4 py-3 no-underline hover:bg-[var(--color-bg-alt)]"
@@ -170,7 +170,7 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
                   </div>
                   <span className="text-[var(--color-muted-2)]">›</span>
                 </Link>
-              ) : <span />}
+              )}
             </div>
           </main>
 

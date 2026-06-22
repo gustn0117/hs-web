@@ -120,7 +120,7 @@ export default function PricingPage() {
     >
       {/* Plans — bento cards */}
       <Section>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-7 sm:gap-4">
           {plans.map((p) => (
             <div
               key={p.name}
@@ -329,7 +329,7 @@ export default function PricingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
               </summary>
-              <div className="pb-5 pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.75]">{item.a}</div>
+              <div className="pb-5 pl-7 sm:pl-[40px] text-[14px] text-[var(--c-sub)] leading-[1.75]">{item.a}</div>
             </details>
           ))}
         </div>
