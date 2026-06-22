@@ -261,12 +261,14 @@ export default function Navbar() {
 
           {/* Right: CTA + mobile toggle */}
           <div className="flex items-center justify-end gap-2">
-            <Link href="/contact" className="hidden lg:inline-flex p-btn p-btn-dark">
-              견적 문의
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
+            <div className="hidden lg:flex">
+              <Link href="/contact" className="p-btn p-btn-dark">
+                견적 문의
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+            </div>
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
