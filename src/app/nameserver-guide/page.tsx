@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell, Section } from "@/components/PageShell";
+import {
+  SignpostFlowDiagram,
+  BeforeAfterDiagram,
+  ChecklistIllustration,
+  PropagationMap,
+  DomainPieceIcon,
+  SignpostPieceIcon,
+  ServerPieceIcon,
+} from "./Illustrations";
 
 export const metadata: Metadata = {
   title: "네임서버 변경 가이드 — 가비아·후이즈·호스팅케이알·카페24",
@@ -207,24 +216,149 @@ export default function NameserverGuidePage() {
         { label: "비용", value: "무료", suffix: "" },
       ]}
     >
-      {/* CONCEPT */}
+      {/* HERO DIAGRAM — main signpost analogy */}
+      <Section>
+        <div className="p-6 md:p-10 rounded-[18px] border border-[var(--c-line)] bg-white overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-6 items-center">
+            <div>
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] mb-3">ANALOGY · 한 줄로</p>
+              <h3 className="text-[22px] md:text-[26px] font-bold tracking-tight text-[var(--c-text)] mb-3 leading-[1.35]">
+                도메인은 <span className="text-[var(--c-main)]">주소</span>,<br />
+                네임서버는 그 주소가 <strong>"이쪽으로 가세요"</strong>라고 알려주는 <span className="text-[var(--c-main)]">표지판</span>입니다.
+              </h3>
+              <p className="text-[14px] text-[var(--c-sub)] leading-[1.75]">
+                호스팅을 옮긴다는 건 이 표지판을 새 서버 쪽으로 돌리는 일이에요. 도메인 자체는 그대로,
+                <strong className="text-[var(--c-text-2)]"> "어느 서버로 안내할지"만 바꾸는 작업</strong>입니다.
+              </p>
+            </div>
+            <div>
+              <SignpostFlowDiagram />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* CONCEPT — 3 pieces */}
       <Section
         overline="CONCEPT"
-        title="네임서버를 왜 바꿔야 하나요?"
-        subtitle="도메인은 '주소', 네임서버는 그 주소를 '어느 서버로 안내할지' 결정하는 표지판입니다. 호스팅을 옮긴다는 건 이 표지판을 새 서버 쪽으로 돌리는 일입니다."
+        title="3가지만 기억하세요"
+        subtitle="복잡해 보여도 실제로는 이 세 가지가 어떻게 연결되는지만 이해하면 됩니다."
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { n: "01", t: "도메인 등록업체에서 작업", d: "네임서버 변경은 도메인을 산 곳(가비아·후이즈 등)의 관리 페이지에서 진행합니다. 호스팅 업체에서는 바꿀 수 없습니다." },
-            { n: "02", t: "새 호스팅 정보를 먼저 확보", d: "이전할 호스팅 대시보드에서 부여한 1·2차 네임서버 주소를 미리 메모해두세요. (예: Cloudflare는 보통 2개를 제공)" },
-            { n: "03", t: "변경 전 DNS 레코드 백업", d: "네임서버를 바꾸면 기존 DNS 레코드가 무효화됩니다. A·MX·TXT 등을 새 호스팅에 미리 동일하게 등록해 두어야 무중단 전환이 가능합니다." },
+            {
+              Icon: DomainPieceIcon,
+              tag: "STEP 1 · 사이트 이름",
+              t: "도메인",
+              d: "사람이 외울 수 있는 이름(예: yourdomain.com). '가비아·후이즈'에서 사는 그것입니다.",
+              bullet: "한 번 사면 그대로 유지",
+            },
+            {
+              Icon: SignpostPieceIcon,
+              tag: "STEP 2 · 표지판",
+              t: "네임서버",
+              d: "도메인 이름을 어느 서버로 보낼지 안내하는 표지판. 이번에 바꿀 부분이 바로 이거예요.",
+              bullet: "도메인 산 곳에서 변경",
+            },
+            {
+              Icon: ServerPieceIcon,
+              tag: "STEP 3 · 실제 서버",
+              t: "호스팅",
+              d: "사이트 파일이 실제로 들어가 있는 건물(서버). HS WEB, Cloudflare 등이 여기 해당합니다.",
+              bullet: "호스팅이 발급한 주소가 필요",
+            },
           ].map((c) => (
-            <div key={c.n} className="p-6 rounded-[14px] border border-[var(--c-line)] bg-white">
-              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] tnum mb-3">STEP {c.n}</p>
-              <h4 className="text-[15px] font-bold text-[var(--c-text)] mb-2">{c.t}</h4>
-              <p className="text-[13px] text-[var(--c-sub)] leading-[1.7]">{c.d}</p>
+            <div key={c.t} className="p-6 rounded-[16px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] transition-colors">
+              <div className="-mx-2 mb-4">
+                <c.Icon />
+              </div>
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] mb-2">{c.tag}</p>
+              <h4 className="text-[18px] font-bold text-[var(--c-text)] tracking-tight mb-2">{c.t}</h4>
+              <p className="text-[13px] text-[var(--c-sub)] leading-[1.75] mb-4">{c.d}</p>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--c-bg-1)] border border-[var(--c-line)] text-[11px] font-semibold text-[var(--c-text-2)]">
+                <svg className="w-3 h-3 text-[var(--c-main)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+                {c.bullet}
+              </div>
             </div>
           ))}
+        </div>
+      </Section>
+
+      {/* BEFORE / AFTER */}
+      <Section
+        overline="BEFORE / AFTER"
+        title="이렇게 바뀝니다"
+        subtitle="도메인 이름은 그대로, '어디로 보낼지'만 바뀐다는 점에 주목하세요."
+      >
+        <div className="p-6 md:p-7 rounded-[16px] border border-[var(--c-line)] bg-white">
+          <BeforeAfterDiagram />
+        </div>
+      </Section>
+
+      {/* PREP CHECKLIST */}
+      <Section
+        overline="PREPARE · 시작 전 준비물"
+        title="이 세 가지만 준비하세요"
+        subtitle="시작 전에 이것만 챙기면 변경 작업은 5분이면 끝납니다."
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4 items-center">
+          <div className="max-w-[400px] mx-auto w-full">
+            <ChecklistIllustration />
+          </div>
+          <div className="space-y-3">
+            {[
+              {
+                n: "01",
+                t: "도메인 등록업체 로그인 정보",
+                d: "도메인을 산 곳(가비아·후이즈·호스팅케이알·카페24 등)의 아이디·비밀번호. 어디서 샀는지 모르겠다면 결제 영수증·신용카드 내역을 확인해보세요.",
+              },
+              {
+                n: "02",
+                t: "이전할 호스팅의 네임서버 주소 2개",
+                d: "Cloudflare 같은 새 호스팅 대시보드에 표시되는 두 개의 ns 주소(예: xxx.ns.cloudflare.com). 이 두 줄을 메모장에 복사해두세요.",
+              },
+              {
+                n: "03",
+                t: "기존 DNS 레코드 백업 (선택)",
+                d: "메일·서브도메인·인증 TXT 등을 쓰고 있었다면 등록업체 DNS 화면을 캡처해두세요. 변경 후 새 호스팅에 동일하게 다시 등록해야 끊김이 없습니다.",
+              },
+            ].map((c) => (
+              <div key={c.n} className="flex gap-4 p-5 rounded-[14px] border border-[var(--c-line)] bg-white">
+                <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-[8px] bg-[var(--c-text)] text-white text-[12px] font-bold tnum">
+                  {c.n}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[14px] font-bold text-[var(--c-text)] mb-1 tracking-tight">{c.t}</h4>
+                  <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.7]">{c.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* KEY RULE — where to change */}
+      <Section>
+        <div className="p-6 md:p-8 rounded-[18px] bg-[var(--c-bg-1)] border border-[var(--c-line)]">
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5 items-start">
+            <span className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-[12px] bg-white border border-[var(--c-line)]">
+              <svg className="w-6 h-6 text-[var(--c-main)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] mb-2">KEY · 가장 자주 헷갈리는 점</p>
+              <h3 className="text-[18px] md:text-[20px] font-bold tracking-tight text-[var(--c-text)] mb-2 leading-[1.4]">
+                네임서버는 <strong>"도메인 산 곳"</strong>에서만 바꿀 수 있어요. 호스팅 업체가 아닙니다.
+              </h3>
+              <p className="text-[13.5px] text-[var(--c-text-2)] leading-[1.75]">
+                새로 옮길 호스팅 업체는 "이런 네임서버로 바꿔주세요"라는 정보를 안내해줄 뿐, 직접 변경하지 못합니다.
+                예를 들어 도메인은 가비아에서 사고 호스팅은 Cloudflare로 옮긴다면 → <strong>가비아 관리 페이지</strong>에서 네임서버를 Cloudflare의 ns 주소로 바꿉니다.
+              </p>
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -354,46 +488,70 @@ export default function NameserverGuidePage() {
 
       {/* AFTER CHANGE */}
       <Section
-        overline="AFTER CHANGE"
-        title="변경 후 확인하는 법"
-        subtitle="네임서버를 바꾼 뒤에는 실제로 반영됐는지 확인하는 단계가 중요합니다."
+        overline="AFTER CHANGE · 변경 후"
+        title="변경 직후 사이트가 안 떠도 정상이에요"
+        subtitle="네임서버는 즉시 바뀌지만, 전 세계 사용자에게 그 정보가 퍼지는 데는 시간이 걸립니다."
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {[
-            {
-              t: "dnschecker.org",
-              d: "전 세계 주요 지역의 DNS 캐시 상태를 한 번에 확인할 수 있는 무료 도구. 도메인을 입력하고 NS 타입으로 조회합니다.",
-              url: "https://dnschecker.org",
-            },
-            {
-              t: "whois 조회",
-              d: "한국인터넷진흥원(KISA) whois에서 도메인을 조회하면 현재 등록된 네임서버를 확인할 수 있습니다.",
-              url: "https://whois.kisa.or.kr",
-            },
-            {
-              t: "터미널 명령",
-              d: "PC 터미널에서 dig ns yourdomain.com 또는 nslookup -type=ns yourdomain.com 으로 확인 가능합니다.",
-              url: "",
-            },
-          ].map((c) => (
-            <div key={c.t} className="p-6 rounded-[14px] border border-[var(--c-line)] bg-white">
-              <h4 className="text-[15px] font-bold text-[var(--c-text)] mb-2 tracking-tight">{c.t}</h4>
-              <p className="text-[13px] text-[var(--c-sub)] leading-[1.7]">{c.d}</p>
-              {c.url && (
-                <a
-                  href={c.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 mt-3 text-[12px] font-semibold text-[var(--c-main)] no-underline hover:underline tnum"
-                >
-                  {c.url.replace(/^https?:\/\//, "")}
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </a>
-              )}
-            </div>
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 items-start">
+          {/* Propagation map */}
+          <div className="p-5 md:p-6 rounded-[16px] border border-[var(--c-line)] bg-white">
+            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] mb-1.5">DNS PROPAGATION · 전 세계 전파</p>
+            <h4 className="text-[16px] font-bold text-[var(--c-text)] mb-3 tracking-tight">변경한 정보가 점점 퍼져 나갑니다</h4>
+            <PropagationMap />
+            <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.7] mt-3">
+              ISP·통신사마다 DNS 캐시 보유 시간이 다르기 때문에, 일부 사용자에게는 옛 서버, 일부에게는 새 서버로 연결되는 혼재 상태가 잠시 발생할 수 있습니다.
+            </p>
+          </div>
+
+          {/* Checker tools */}
+          <div className="space-y-3">
+            <p className="text-[12px] font-bold tracking-[0.14em] uppercase text-[var(--c-text-2)] px-1">제대로 바뀌었는지 확인하는 법</p>
+            {[
+              {
+                t: "dnschecker.org",
+                d: "전 세계 주요 지역의 DNS 캐시 상태를 한 번에 확인. 도메인 입력 후 NS 타입으로 조회합니다.",
+                url: "https://dnschecker.org",
+                emoji: "🌍",
+              },
+              {
+                t: "whois.kisa.or.kr",
+                d: "한국인터넷진흥원(KISA) 검색에서 현재 등록된 네임서버를 확인할 수 있습니다.",
+                url: "https://whois.kisa.or.kr",
+                emoji: "🔎",
+              },
+              {
+                t: "터미널 명령어",
+                d: "PC 터미널에서 dig ns yourdomain.com 또는 nslookup -type=ns yourdomain.com으로 확인.",
+                url: "",
+                emoji: "⌨️",
+              },
+            ].map((c) => (
+              <div key={c.t} className="p-5 rounded-[14px] border border-[var(--c-line)] bg-white">
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-[10px] bg-[var(--c-bg-1)] border border-[var(--c-line)] text-[16px]">
+                    {c.emoji}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[14px] font-bold text-[var(--c-text)] mb-1 tracking-tight">{c.t}</h4>
+                    <p className="text-[12.5px] text-[var(--c-sub)] leading-[1.7]">{c.d}</p>
+                    {c.url && (
+                      <a
+                        href={c.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 mt-2 text-[12px] font-semibold text-[var(--c-main)] no-underline hover:underline tnum"
+                      >
+                        {c.url.replace(/^https?:\/\//, "")}
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </Section>
 
