@@ -179,8 +179,8 @@ export default function DomainHostingPage() {
               desc: "도메인 입력 → 호스팅 서버의 사이트가 정상 표시. 우리가 매일 쓰는 웹사이트의 작동 방식입니다.",
             },
           ].map((s) => (
-            <div key={s.title} className="flex items-start gap-4 p-5 md:p-6 rounded-[12px] border border-[var(--c-line)] bg-white">
-              <span className={`shrink-0 inline-flex items-center h-7 px-3 rounded-full text-[11px] font-bold tracking-wide ${s.bad ? "bg-[var(--c-hot-bg)] text-[var(--c-hot)] border border-[var(--c-hot)]/20" : "bg-[var(--c-new-bg)] text-[var(--c-new)] border border-[var(--c-new)]/20"}`}>
+            <div key={s.title} className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 p-5 md:p-6 rounded-[12px] border border-[var(--c-line)] bg-white">
+              <span className={`self-start shrink-0 inline-flex items-center h-7 px-3 rounded-full text-[11px] font-bold tracking-wide ${s.bad ? "bg-[var(--c-hot-bg)] text-[var(--c-hot)] border border-[var(--c-hot)]/20" : "bg-[var(--c-new-bg)] text-[var(--c-new)] border border-[var(--c-new)]/20"}`}>
                 {s.status}
               </span>
               <div className="flex-1 min-w-0">

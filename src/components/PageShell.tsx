@@ -82,14 +82,14 @@ export function PageHero({
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className={`py-5 md:py-6 px-4 md:px-5 ${
+                className={`py-5 md:py-6 px-3 md:px-5 ${
                   i !== 0 ? "md:border-l" : ""
                 } ${i < 2 ? "border-b md:border-b-0" : ""} ${
                   i % 2 === 1 ? "border-l" : ""
                 } border-[var(--c-line)]`}
               >
                 <p className="text-[11px] font-semibold text-[var(--c-sub)] mb-2 keep tracking-wider uppercase">{s.label}</p>
-                <p className="p-stat text-[24px] md:text-[32px] leading-none nowrap">
+                <p className="p-stat text-[20px] md:text-[32px] leading-none nowrap">
                   {s.value}
                   {s.suffix && <span className="text-[14px] md:text-[16px] text-[var(--c-sub)] ml-1">{s.suffix}</span>}
                 </p>

@@ -305,8 +305,8 @@ export default function CustomDevelopmentPage() {
               good: false,
             },
           ].map((s) => (
-            <div key={s.title} className="flex items-start gap-4 p-5 md:p-6 rounded-[12px] border border-[var(--c-line)] bg-white">
-              <span className={`shrink-0 inline-flex items-center h-7 px-3 rounded-full text-[11px] font-bold tracking-wide ${s.good ? "bg-[var(--c-new-bg)] text-[var(--c-new)] border border-[var(--c-new)]/20" : "bg-slate-50 text-slate-600 border border-slate-200"}`}>
+            <div key={s.title} className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 p-5 md:p-6 rounded-[12px] border border-[var(--c-line)] bg-white">
+              <span className={`self-start shrink-0 inline-flex items-center h-7 px-3 rounded-full text-[11px] font-bold tracking-wide ${s.good ? "bg-[var(--c-new-bg)] text-[var(--c-new)] border border-[var(--c-new)]/20" : "bg-slate-50 text-slate-600 border border-slate-200"}`}>
                 {s.good ? "자체 개발 권장" : "플랫폼 가능"}
               </span>
               <div className="flex-1 min-w-0">

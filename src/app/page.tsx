@@ -141,16 +141,16 @@ export default async function Home() {
           </div>
 
           <div
-            className="flex items-center gap-5 justify-center flex-wrap text-[12px] text-[var(--c-sub)] hero-fade-up"
+            className="flex flex-col items-center gap-1.5 sm:flex-row sm:gap-5 sm:justify-center sm:flex-wrap text-[12px] text-[var(--c-sub)] hero-fade-up"
             style={{ animationDelay: "0.65s" }}
           >
             <div className="flex items-center gap-1.5">
               <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
               <span>지금 상담 접수 가능</span>
             </div>
-            <span className="p-sep" />
+            <span className="p-sep hidden sm:inline-block" />
             <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
-            <span className="p-sep" />
+            <span className="p-sep hidden sm:inline-block" />
             <span className="flex items-center gap-1.5">
               <svg className="w-3 h-3 text-[var(--c-event)]" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -344,7 +344,7 @@ export default async function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4">
               {featured && (
                 <Link href={`/portfolio/${featured.id}`} className="group no-underline block">
-                  <div className="p-showcase !aspect-square !rounded-[16px] mb-4 relative">
+                  <div className="p-showcase !aspect-[4/3] sm:!aspect-square !rounded-[16px] mb-4 relative">
                     {featured.thumbnail ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={featured.thumbnail} alt={featured.title} />
@@ -372,7 +372,7 @@ export default async function Home() {
               <div className="grid grid-cols-2 gap-3">
                 {rest.map((p) => (
                   <Link key={p.id} href={`/portfolio/${p.id}`} className="group no-underline block">
-                    <div className="p-showcase !aspect-square !rounded-[12px] mb-2 relative bg-[var(--c-bg-2)]">
+                    <div className="p-showcase sm:!aspect-square !rounded-[12px] mb-2 relative bg-[var(--c-bg-2)]">
                       {p.thumbnail && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.thumbnail} alt={p.title} />

@@ -113,13 +113,13 @@ export default function SeoInfoPage() {
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Included — Free */}
-          <div className="p-7 md:p-8 rounded-[16px] border border-[var(--c-line)] bg-white">
-            <div className="flex items-baseline justify-between gap-3 mb-5">
+          <div className="p-6 md:p-8 rounded-[16px] border border-[var(--c-line)] bg-white">
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 sm:gap-3 mb-5">
               <div>
                 <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--c-main)] mb-2">INCLUDED · 기본 포함</p>
                 <h3 className="text-[20px] font-bold tracking-tight text-[var(--c-text)]">내부 코드 단의 SEO</h3>
               </div>
-              <div className="text-right shrink-0">
+              <div className="text-left sm:text-right shrink-0">
                 <p className="text-[24px] font-bold text-[var(--c-text)] leading-none">무료</p>
                 <p className="text-[11px] text-[var(--c-sub)] mt-1">모든 플랜 공통</p>
               </div>
@@ -150,13 +150,13 @@ export default function SeoInfoPage() {
           </div>
 
           {/* Add-on — Paid */}
-          <div className="p-7 md:p-8 rounded-[16px] border-2 border-[var(--c-text)] bg-[var(--c-text)] text-white">
-            <div className="flex items-baseline justify-between gap-3 mb-5">
+          <div className="p-6 md:p-8 rounded-[16px] border-2 border-[var(--c-text)] bg-[var(--c-text)] text-white">
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-3 mb-5">
               <div>
                 <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/70 mb-2">ADD-ON · 옵션</p>
                 <h3 className="text-[20px] font-bold tracking-tight">플랫폼별 본격 SEO 작업</h3>
               </div>
-              <div className="text-right shrink-0">
+              <div className="text-left sm:text-right shrink-0">
                 <p className="text-[24px] font-bold leading-none tnum">50,000<span className="text-[14px] font-semibold text-white/60 ml-0.5">원</span></p>
                 <p className="text-[11px] text-white/60 mt-1">플랫폼당 · 1회</p>
               </div>

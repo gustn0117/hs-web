@@ -192,7 +192,13 @@ export default function PricingPage() {
 
       {/* Comparison table */}
       <Section overline="COMPARE" title="플랜 비교" subtitle="기능별 차이를 한눈에 확인하세요.">
-        <div className="p-card overflow-hidden overflow-x-auto">
+        <p className="sm:hidden text-[11px] text-[var(--c-sub)] mb-2 flex items-center gap-1">
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+          </svg>
+          좌우로 스크롤하여 모든 플랜 확인
+        </p>
+        <div className="p-card overflow-hidden overflow-x-auto relative">
           <table className="p-table min-w-[680px]">
             <thead>
               <tr>
