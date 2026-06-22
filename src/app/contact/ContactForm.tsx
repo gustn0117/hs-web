@@ -103,14 +103,14 @@ export default function ContactForm() {
           <br />
           평일 업무 시간 기준으로는 보통 <strong className="text-[var(--c-text)]">1시간 이내</strong>입니다.
         </p>
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          <a href="tel:010-3319-2509" className="p-btn p-btn-lg tnum">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5">
+          <a href="tel:010-3319-2509" className="p-btn p-btn-lg tnum w-full sm:w-auto justify-center">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
             </svg>
             010-3319-2509
           </a>
-          <Link href="/portfolio" className="p-btn p-btn-dark p-btn-lg">
+          <Link href="/portfolio" className="p-btn p-btn-dark p-btn-lg w-full sm:w-auto justify-center">
             포트폴리오 보기
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -391,13 +391,13 @@ function ChipRow({
   return (
     <div>
       <p className="text-[12.5px] font-bold text-[var(--c-text-2)] mb-2.5">{label}</p>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
         {options.map((o) => (
           <button
             key={o}
             type="button"
             onClick={() => onChange(value === o ? "" : o)}
-            className={`inline-flex items-center h-10 px-4 rounded-full border text-[13px] font-semibold transition-all ${
+            className={`inline-flex items-center justify-center h-10 px-4 rounded-full border text-[13px] font-semibold transition-all ${
               value === o
                 ? "border-[var(--c-text)] bg-[var(--c-text)] text-white"
                 : "border-[var(--c-line-2)] bg-white text-[var(--c-text-2)] hover:border-[var(--c-line-3)]"
