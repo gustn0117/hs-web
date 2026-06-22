@@ -95,7 +95,7 @@ export default function Navbar() {
     <>
       {/* Top announcement bar */}
       <div className="hidden md:block bg-[var(--c-text)] text-white">
-        <div className="max-w-[1280px] mx-auto px-5 h-[34px] flex items-center justify-between text-[12px]">
+        <div className="max-w-[1200px] mx-auto px-6 h-[34px] flex items-center justify-between text-[12px]">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center h-[18px] px-1.5 bg-white/10 rounded text-[10px] font-bold tracking-wider">NEW</span>
             <span className="text-white/85">홈페이지 제작 249,000원부터 · 간단 수정 평생 무료 지원</span>
@@ -126,14 +126,14 @@ export default function Navbar() {
             : "bg-white border-b border-transparent"
         }`}
       >
-        <div className="max-w-[1280px] mx-auto px-5 grid grid-cols-[1fr_auto_1fr] items-center h-[68px] gap-4">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-[1fr_auto_1fr] items-center h-[68px] gap-4">
           {/* Left: brand */}
           <div className="flex items-center justify-start">
             <Link href="/" className="flex items-baseline gap-1.5 no-underline group">
-              <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+              <span className="text-[19px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
                 HS WEB
               </span>
-              <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase hidden sm:inline">
+              <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase">
                 Web Agency
               </span>
             </Link>
