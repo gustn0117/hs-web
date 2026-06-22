@@ -255,7 +255,27 @@ export default function AdminDashboard() {
     "진행중": "#0f172a",
     "완료": "#047857",
     "유지보수": "#6d28d9",
+    "완료 · 유지보수": "#047857",
   };
+
+  // ── Merge 완료 + 유지보수 into one category for dashboard display ──
+  const MERGED_KEY = "완료 · 유지보수";
+  const mergeStatus = (s: string) => (s === "완료" || s === "유지보수" ? MERGED_KEY : s);
+
+  const mergedStatusCounts: Record<string, number> = {};
+  Object.entries(projectStatusCounts).forEach(([s, c]) => {
+    const key = mergeStatus(s);
+    mergedStatusCounts[key] = (mergedStatusCounts[key] ?? 0) + c;
+  });
+
+  const mergedProjectsByStatus: typeof projectsByStatus = {};
+  Object.entries(projectsByStatus).forEach(([s, list]) => {
+    const key = mergeStatus(s);
+    mergedProjectsByStatus[key] = [...(mergedProjectsByStatus[key] ?? []), ...list];
+  });
+  Object.values(mergedProjectsByStatus).forEach((list) => {
+    list.sort((a, b) => (b.started_at ?? "").localeCompare(a.started_at ?? ""));
+  });
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -614,18 +634,18 @@ export default function AdminDashboard() {
               </div>
               <span className="text-xs text-slate-500 tabular-nums">총 {overview.totalProjects}건</span>
             </div>
-            {Object.keys(projectStatusCounts).length === 0 ? (
+            {Object.keys(mergedStatusCounts).length === 0 ? (
               <p className="text-slate-400 text-sm py-8 text-center">데이터 없음</p>
             ) : (
               <ul className="space-y-3 list-none m-0">
-                {Object.entries(projectStatusCounts)
+                {Object.entries(mergedStatusCounts)
                   .sort((a, b) => b[1] - a[1])
                   .map(([status, count]) => {
                     const total = overview.totalProjects || 1;
                     const pct = (count / total) * 100;
                     const color = statusColors[status] ?? "#64748b";
                     const isOpen = expandedStatus === status;
-                    const projects = projectsByStatus[status] ?? [];
+                    const projects = mergedProjectsByStatus[status] ?? [];
                     return (
                       <li key={status}>
                         <button
@@ -663,17 +683,31 @@ export default function AdminDashboard() {
                             {projects.length === 0 ? (
                               <li className="text-xs text-slate-400 py-1.5">해당 상태의 프로젝트가 없습니다.</li>
                             ) : (
-                              projects.map((p) => (
-                                <li key={p.id}>
-                                  <Link
-                                    href={`/admin/clients/${p.client_id}`}
-                                    className="flex items-center justify-between gap-3 px-2 py-1.5 -ml-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
-                                  >
-                                    <span className="text-[13px] text-slate-800 truncate min-w-0">{p.name}</span>
-                                    <span className="text-[11px] text-slate-500 truncate shrink-0 max-w-[140px]">{p.client_name}</span>
-                                  </Link>
-                                </li>
-                              ))
+                              projects.map((p) => {
+                                const pColor = statusColors[p.status] ?? "#64748b";
+                                const showBadge = status === MERGED_KEY;
+                                return (
+                                  <li key={p.id}>
+                                    <Link
+                                      href={`/admin/clients/${p.client_id}`}
+                                      className="flex items-center justify-between gap-3 px-2 py-1.5 -ml-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
+                                    >
+                                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                                        <span className="text-[13px] text-slate-800 truncate">{p.name}</span>
+                                        {showBadge && (
+                                          <span
+                                            className="inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold tabular-nums shrink-0"
+                                            style={{ background: `${pColor}14`, color: pColor }}
+                                          >
+                                            {p.status}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <span className="text-[11px] text-slate-500 truncate shrink-0 max-w-[140px]">{p.client_name}</span>
+                                    </Link>
+                                  </li>
+                                );
+                              })
                             )}
                           </ul>
                         )}
