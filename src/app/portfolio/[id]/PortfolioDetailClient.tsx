@@ -29,7 +29,7 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
 
   return (
     <div className="bg-[var(--color-bg-alt)] min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-4 py-5">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-5">
         <Breadcrumb items={[{ label: "포트폴리오", href: "/portfolio" }, { label: item.title }]} />
         <PageHeader title={item.title} caption={item.client} />
 

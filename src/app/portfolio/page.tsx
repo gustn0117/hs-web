@@ -54,7 +54,7 @@ export default async function PortfolioPage() {
             <Section>
               <Link href={`/portfolio/${featured.id}`} className="no-underline block group">
                 <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 items-stretch">
-                  <div className="p-showcase !rounded-[16px] relative min-h-[320px]">
+                  <div className="p-showcase !rounded-[16px] relative md:min-h-[320px]">
                     {featured.thumbnail ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={featured.thumbnail} alt={featured.title} />

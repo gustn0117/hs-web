@@ -126,9 +126,22 @@ export default function Navbar() {
             : "bg-white border-b border-transparent"
         }`}
       >
-        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-[1fr_auto_1fr] items-center h-[68px] gap-4">
-          {/* Left: brand */}
-          <div className="flex items-center justify-start">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-[1fr_auto_1fr] items-center h-[68px] gap-4 relative">
+          {/* Mobile center brand (absolute centered) */}
+          <Link
+            href="/"
+            className="lg:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-baseline gap-1.5 no-underline group"
+          >
+            <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+              HS WEB
+            </span>
+            <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase">
+              Web Agency
+            </span>
+          </Link>
+
+          {/* Left: brand (desktop only) */}
+          <div className="hidden lg:flex items-center justify-start">
             <Link href="/" className="flex items-baseline gap-1.5 no-underline group">
               <span className="text-[19px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
                 HS WEB
@@ -138,6 +151,9 @@ export default function Navbar() {
               </span>
             </Link>
           </div>
+
+          {/* Mobile left spacer (햄버거와 같은 너비로 좌우 대칭) */}
+          <div className="lg:hidden w-10 h-10" aria-hidden />
 
           {/* Center: nav */}
           <nav
