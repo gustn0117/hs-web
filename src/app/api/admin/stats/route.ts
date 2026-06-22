@@ -126,6 +126,28 @@ export async function GET() {
     projectStatusCounts[p.status] = (projectStatusCounts[p.status] || 0) + 1;
   });
 
+  // All projects grouped by status (for click-to-expand UI)
+  const projectsByStatus: Record<
+    string,
+    { id: string; name: string; status: string; client_id: string; client_name: string; started_at: string | null; completed_at: string | null }[]
+  > = {};
+  projects.forEach((p) => {
+    const client = clients.find((c) => c.id === p.client_id);
+    const item = {
+      id: p.id,
+      name: p.name,
+      status: p.status,
+      client_id: p.client_id,
+      client_name: client?.name ?? "알 수 없음",
+      started_at: p.started_at ?? null,
+      completed_at: p.completed_at ?? null,
+    };
+    (projectsByStatus[p.status] = projectsByStatus[p.status] || []).push(item);
+  });
+  Object.values(projectsByStatus).forEach((list) => {
+    list.sort((a, b) => (b.started_at ?? "").localeCompare(a.started_at ?? ""));
+  });
+
   // Active projects with client names
   const activeProjects = projects
     .filter((p) => p.status !== "완료")
@@ -178,6 +200,7 @@ export async function GET() {
     recentPayments,
     overduePayments,
     projectStatusCounts,
+    projectsByStatus,
     activeProjects,
     hostingUnconfirmed,
     hostingRenewals,

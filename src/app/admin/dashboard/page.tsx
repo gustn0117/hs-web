@@ -39,6 +39,7 @@ interface Stats {
     status: string;
   }[];
   projectStatusCounts: Record<string, number>;
+  projectsByStatus: Record<string, { id: string; name: string; status: string; client_id: string; client_name: string; started_at: string | null; completed_at: string | null }[]>;
   activeProjects: { id: string; name: string; status: string; client_id: string; client_name: string }[];
   hostingUnconfirmed: { id: string; project_name: string; project_status: string; provider: string; plan: string; amount: number; end_date: string; client_id: string; client_name: string }[];
   hostingRenewals: { id: string; provider: string; plan: string; end_date: string; client_id: string }[];
@@ -98,6 +99,7 @@ export default function AdminDashboard() {
   const [excludeReason, setExcludeReason] = useState("");
   const [excludeSaving, setExcludeSaving] = useState(false);
   const [hoverMonth, setHoverMonth] = useState<number | null>(null);
+  const [expandedStatus, setExpandedStatus] = useState<string | null>(null);
 
   const refresh = () => {
     fetch("/api/admin/stats")
@@ -184,7 +186,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
+  const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, projectsByStatus, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
   const allAlerts = [
@@ -622,21 +624,59 @@ export default function AdminDashboard() {
                     const total = overview.totalProjects || 1;
                     const pct = (count / total) * 100;
                     const color = statusColors[status] ?? "#64748b";
+                    const isOpen = expandedStatus === status;
+                    const projects = projectsByStatus[status] ?? [];
                     return (
                       <li key={status}>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-                            <span className="text-sm font-medium text-slate-700">{status}</span>
+                        <button
+                          type="button"
+                          onClick={() => setExpandedStatus(isOpen ? null : status)}
+                          aria-expanded={isOpen}
+                          className="w-full text-left bg-transparent border-0 cursor-pointer p-0 group"
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+                              <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">{status}</span>
+                              <svg
+                                className={`w-3 h-3 text-slate-400 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth={2.5}
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                              </svg>
+                            </div>
+                            <div className="flex items-baseline gap-2">
+                              <span className="text-xs text-slate-500 tabular-nums">{pct.toFixed(0)}%</span>
+                              <span className="text-sm font-bold text-slate-900 tabular-nums">{count}</span>
+                            </div>
                           </div>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xs text-slate-500 tabular-nums">{pct.toFixed(0)}%</span>
-                            <span className="text-sm font-bold text-slate-900 tabular-nums">{count}</span>
+                          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: color }} />
                           </div>
-                        </div>
-                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: color }} />
-                        </div>
+                        </button>
+
+                        {isOpen && (
+                          <ul className="mt-2 mb-1 ml-3.5 pl-3 border-l border-slate-200 space-y-0.5 list-none">
+                            {projects.length === 0 ? (
+                              <li className="text-xs text-slate-400 py-1.5">해당 상태의 프로젝트가 없습니다.</li>
+                            ) : (
+                              projects.map((p) => (
+                                <li key={p.id}>
+                                  <Link
+                                    href={`/admin/clients/${p.client_id}`}
+                                    className="flex items-center justify-between gap-3 px-2 py-1.5 -ml-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
+                                  >
+                                    <span className="text-[13px] text-slate-800 truncate min-w-0">{p.name}</span>
+                                    <span className="text-[11px] text-slate-500 truncate shrink-0 max-w-[140px]">{p.client_name}</span>
+                                  </Link>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                        )}
                       </li>
                     );
                   })}
