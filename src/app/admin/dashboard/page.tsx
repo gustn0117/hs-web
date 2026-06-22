@@ -3,7 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import AdminHeader from "../components/AdminHeader";
-import DashboardTodos from "./Todos";
 
 interface Stats {
   overview: {
@@ -100,21 +99,73 @@ export default function AdminDashboard() {
   const [excludeSaving, setExcludeSaving] = useState(false);
   const [hoverMonth, setHoverMonth] = useState<number | null>(null);
   const [expandedStatus, setExpandedStatus] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
+  const [, setTick] = useState(0);
+  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
 
-  const refresh = () => {
-    fetch("/api/admin/stats")
-      .then((r) => r.json())
-      .then(setStats)
-      .catch(console.error);
+  const refresh = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    try {
+      const res = await fetch("/api/admin/stats");
+      const data = await res.json();
+      setStats(data);
+      setLastRefreshedAt(new Date());
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   useEffect(() => {
     fetch("/api/admin/stats")
       .then((r) => r.json())
-      .then(setStats)
+      .then((data) => {
+        setStats(data);
+        setLastRefreshedAt(new Date());
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  // "X분 전" 표시 강제 리렌더 — 60초마다
+  useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 60_000);
+    return () => clearInterval(t);
+  }, []);
+
+  // 미납 결제 → 완료 처리
+  const markPaymentPaid = async (clientId: string, paymentId: string) => {
+    if (markingPaidId) return;
+    if (!confirm("이 결제를 '완료'로 처리하시겠습니까?")) return;
+    setMarkingPaidId(paymentId);
+    try {
+      const res = await fetch(`/api/clients/${clientId}/payments/${paymentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "paid" }),
+      });
+      if (!res.ok) throw new Error("실패");
+      await refresh();
+    } catch {
+      alert("처리 중 오류가 발생했습니다.");
+    } finally {
+      setMarkingPaidId(null);
+    }
+  };
+
+  // "X분 전" 포맷터
+  const formatRelativeTime = (date: Date | null): string => {
+    if (!date) return "";
+    const diffMin = Math.floor((Date.now() - date.getTime()) / 60_000);
+    if (diffMin < 1) return "방금 전";
+    if (diffMin < 60) return `${diffMin}분 전`;
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return `${diffHour}시간 전`;
+    return `${Math.floor(diffHour / 24)}일 전`;
+  };
 
   const submitExclude = async () => {
     if (!excludeTarget) return;
@@ -150,7 +201,17 @@ export default function AdminDashboard() {
     const last = months[months.length - 1]?.amount ?? 0;
     const prev = months[months.length - 2]?.amount ?? 0;
     const growthPct = prev > 0 ? ((last - prev) / prev) * 100 : last > 0 ? 100 : 0;
-    const max = Math.max(...months.map((m) => m.amount), 1);
+    const rawMax = Math.max(...months.map((m) => m.amount), 1);
+    // y축 깔끔하게: 가장 가까운 1/2/5×10ⁿ로 올림
+    const niceMax = (v: number): number => {
+      if (v <= 1) return 1;
+      const exp = Math.floor(Math.log10(v));
+      const base = Math.pow(10, exp);
+      const norm = v / base;
+      const nice = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+      return nice * base;
+    };
+    const max = niceMax(rawMax);
     const total = months.reduce((s, m) => s + m.amount, 0);
     return { last, prev, growthPct, max, total };
   }, [stats]);
@@ -189,12 +250,27 @@ export default function AdminDashboard() {
   const { overview, monthlyRevenue, revenueByType, recentPayments, overduePayments, projectStatusCounts, projectsByStatus, activeProjects, hostingUnconfirmed, hostingRenewals, domainRenewals, expiredHosting, expiredDomains } = stats;
   const alertCount = expiredHosting.length + expiredDomains.length + hostingRenewals.length + domainRenewals.length;
 
+  // 시급순 정렬: expired는 오래된 게, upcoming은 임박한 게 위로
   const allAlerts = [
     ...expiredHosting.map((h) => ({ id: h.id, type: "expired" as const, category: "호스팅", label: h.provider, date: h.end_date, client_id: h.client_id })),
     ...expiredDomains.map((d) => ({ id: d.id, type: "expired" as const, category: "도메인", label: d.domain_name, date: d.expires_date, client_id: d.client_id })),
     ...hostingRenewals.map((h) => ({ id: h.id, type: "upcoming" as const, category: "호스팅", label: h.provider, date: h.end_date, client_id: h.client_id })),
     ...domainRenewals.map((d) => ({ id: d.id, type: "upcoming" as const, category: "도메인", label: d.domain_name, date: d.expires_date, client_id: d.client_id })),
-  ];
+  ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // D-day 계산: 음수 = 만료된 일수, 0/양수 = 임박일
+  const daysUntil = (dateStr: string): number => {
+    const target = new Date(dateStr + "T00:00:00");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+  };
+
+  // 진행중 외 상태 카운트(상담중·유지보수) — 진행중 섹션 헤더 메타 표시용
+  const otherActiveCounts = {
+    상담중: projectStatusCounts["상담중"] ?? 0,
+    유지보수: projectStatusCounts["유지보수"] ?? 0,
+  };
 
   // ── Line/Area chart points ───────────────────────
   const chartW = 720;
@@ -232,7 +308,7 @@ export default function AdminDashboard() {
   const donutR = 36;
   const donutCirc = 2 * Math.PI * donutR;
   const donutEntries = Object.entries(revenueByType).sort((a, b) => b[1] - a[1]);
-  const donutPalette = ["#0f172a", "#475569", "#94a3b8", "#cbd5e1", "#e2e8f0"];
+  const donutPalette = ["#0f172a", "#334155", "#64748b", "#94a3b8", "#cbd5e1"];
   let donutOffset = 0;
   const donutSegments = donutEntries.map(([type, amount], i) => {
     const pct = totalRevType > 0 ? amount / totalRevType : 0;
@@ -290,13 +366,23 @@ export default function AdminDashboard() {
               {new Date().toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
               {" · "}
               {alertCount > 0 ? (
-                <span className="text-amber-700 font-medium">알림 {alertCount}건</span>
+                <a
+                  href="#renewal-alerts"
+                  className="text-amber-700 font-medium hover:text-amber-800 hover:underline underline-offset-2 no-underline"
+                >
+                  알림 {alertCount}건
+                </a>
               ) : (
                 <span className="text-emerald-700 font-medium">모두 정상</span>
               )}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            {lastRefreshedAt && (
+              <span className="text-[10px] text-slate-400 tabular-nums mr-1 hidden sm:inline">
+                {formatRelativeTime(lastRefreshedAt)} 갱신
+              </span>
+            )}
             <Link
               href="/admin/payments"
               className="text-xs px-3 h-8 inline-flex items-center rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 no-underline transition-colors whitespace-nowrap"
@@ -311,12 +397,19 @@ export default function AdminDashboard() {
             </Link>
             <button
               onClick={refresh}
-              className="text-xs px-3 h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors whitespace-nowrap"
+              disabled={isRefreshing}
+              className="text-xs px-3 h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer transition-colors whitespace-nowrap"
             >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992V4.356M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
               </svg>
-              새로고침
+              {isRefreshing ? "갱신 중…" : "새로고침"}
             </button>
           </div>
         </div>
@@ -377,7 +470,9 @@ export default function AdminDashboard() {
           {/* Overdue */}
           <div
             className={`rounded-xl border p-5 ${
-              overview.overdueAmount > 0 ? "bg-red-50/40 border-red-200" : "bg-white border-slate-200"
+              overview.overdueAmount > 0
+                ? "bg-red-50/40 border-red-200 border-l-4 border-l-red-500"
+                : "bg-white border-slate-200"
             }`}
           >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">미납금</p>
@@ -400,18 +495,15 @@ export default function AdminDashboard() {
               {overview.activeClients}
               <span className="text-slate-400 font-medium text-base"> / {overview.totalClients}</span>
             </p>
-            <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-500">
-              <span>P {overview.totalProjects}</span>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5 text-[11px] text-slate-500">
+              <span>프로젝트 {overview.totalProjects}</span>
               <span className="w-px h-3 bg-slate-200" />
-              <span>H {overview.totalHosting}</span>
+              <span>호스팅 {overview.totalHosting}</span>
               <span className="w-px h-3 bg-slate-200" />
-              <span>D {overview.totalDomains}</span>
+              <span>도메인 {overview.totalDomains}</span>
             </div>
           </div>
         </div>
-
-        {/* ── Checklist (체크리스트 + 메모) ───────── */}
-        <DashboardTodos />
 
         {/* ── Critical alert: overdue payments ────── */}
         {overduePayments.length > 0 && (
@@ -428,11 +520,12 @@ export default function AdminDashboard() {
             <ul className="divide-y divide-slate-100 list-none">
               {overduePayments.map((p) => {
                 const daysLate = p.payment_date ? Math.floor((Date.now() - new Date(p.payment_date).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+                const isMarking = markingPaidId === p.id;
                 return (
-                  <li key={p.id}>
+                  <li key={p.id} className="flex items-center hover:bg-slate-50 transition-colors">
                     <Link
                       href={`/admin/clients/${p.client_id}`}
-                      className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 no-underline transition-colors"
+                      className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3 px-5 py-3 no-underline"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="w-1.5 h-1.5 bg-red-500 rounded-full shrink-0" />
@@ -441,11 +534,32 @@ export default function AdminDashboard() {
                           {p.type}{p.description ? ` · ${p.description}` : ""}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 shrink-0 ml-3">
-                        {daysLate > 0 && <span className="text-[11px] text-red-600 font-bold">{daysLate}일 경과</span>}
+                      <div className="flex items-center gap-3 shrink-0 sm:ml-3 pl-[18px] sm:pl-0">
+                        <span className="text-xs text-slate-500 truncate sm:hidden">
+                          {p.type}{p.description ? ` · ${p.description}` : ""}
+                        </span>
+                        {daysLate > 0 && <span className="text-[11px] text-red-600 font-bold tabular-nums">{daysLate}일 경과</span>}
                         <span className="text-sm font-bold text-slate-900 tabular-nums">{fmt(p.amount)}</span>
                       </div>
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => markPaymentPaid(p.client_id, p.id)}
+                      disabled={isMarking}
+                      title="완료 처리"
+                      className="shrink-0 mr-3 inline-flex items-center gap-1 h-7 px-2.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-bold border border-emerald-200 disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                    >
+                      {isMarking ? (
+                        <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992V4.356M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                      ) : (
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      )}
+                      완료
+                    </button>
                   </li>
                 );
               })}
@@ -457,7 +571,7 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-end justify-between mb-5 gap-4 flex-wrap">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">월별 수익 추이</h3>
+              <h3 className="text-base font-semibold text-slate-900 tracking-tight">월별 수익 추이</h3>
               <p className="text-xs text-slate-500 mt-0.5">ERP 개설 시점(2026-03) 부터</p>
             </div>
             <div className="flex items-end gap-5 text-right">
@@ -473,7 +587,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="relative">
-            <svg viewBox={`0 0 ${chartW} ${chartH + 28}`} className="w-full h-auto" preserveAspectRatio="none">
+            <svg viewBox={`0 0 ${chartW} ${chartH + 28}`} className="w-full h-auto">
               <defs>
                 <linearGradient id="rev-bar" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#0f172a" stopOpacity="1" />
@@ -515,7 +629,16 @@ export default function AdminDashboard() {
                   ? "url(#rev-bar-hover)"
                   : "url(#rev-bar)";
                 return (
-                  <g key={i} onMouseEnter={() => setHoverMonth(i)} onMouseLeave={() => setHoverMonth(null)}>
+                  <g
+                    key={i}
+                    onMouseEnter={() => setHoverMonth(i)}
+                    onMouseLeave={() => setHoverMonth(null)}
+                    onClick={() => setHoverMonth((prev) => (prev === i ? null : i))}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${p.label}: ${fmt(p.amount)}`}
+                    style={{ cursor: "pointer" }}
+                  >
                     {/* Hover hit area */}
                     <rect x={p.x - barSlot / 2} y={chartPadY} width={barSlot} height={innerH} fill="transparent" />
                     {/* Bar */}
@@ -580,7 +703,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 items-start">
           {/* Donut: revenue by type */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
-            <h3 className="text-sm font-semibold text-slate-900 mb-1">수익 유형별</h3>
+            <h3 className="text-base font-semibold text-slate-900 tracking-tight mb-1">수익 유형별</h3>
             <p className="text-xs text-slate-500 mb-5">결제 완료 기준</p>
 
             {totalRevType === 0 ? (
@@ -629,7 +752,7 @@ export default function AdminDashboard() {
           <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6">
             <div className="flex items-baseline justify-between mb-5">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">프로젝트 현황</h3>
+                <h3 className="text-base font-semibold text-slate-900 tracking-tight">프로젝트 현황</h3>
                 <p className="text-xs text-slate-500 mt-0.5">상태별 분포</p>
               </div>
               <span className="text-xs text-slate-500 tabular-nums">총 {overview.totalProjects}건</span>
@@ -717,35 +840,6 @@ export default function AdminDashboard() {
               </ul>
             )}
 
-            {activeProjects.length > 0 && (
-              <div className="mt-6 pt-5 border-t border-slate-100">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">활성 프로젝트</h4>
-                  <Link href="/admin/clients" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
-                    전체 ({activeProjects.length}) →
-                  </Link>
-                </div>
-                <ul className="space-y-1.5 list-none m-0">
-                  {activeProjects.slice(0, 4).map((p) => {
-                    const color = statusColors[p.status] ?? "#64748b";
-                    return (
-                      <li key={p.id}>
-                        <Link
-                          href={`/admin/clients/${p.client_id}`}
-                          className="flex items-center justify-between px-2 py-1.5 -mx-2 rounded-md hover:bg-slate-50 no-underline transition-colors"
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }} />
-                            <span className="text-sm text-slate-900 truncate">{p.name}</span>
-                          </div>
-                          <span className="text-xs text-slate-500 truncate ml-3 max-w-[120px]">{p.client_name}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
 
@@ -754,17 +848,31 @@ export default function AdminDashboard() {
           const inProgress = activeProjects.filter((p) => p.status === "진행중");
           return (
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2">
+              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-                    <h3 className="text-sm font-semibold text-slate-900">진행 중인 프로젝트</h3>
+                    <h3 className="text-base font-semibold text-slate-900 tracking-tight">진행 중인 프로젝트</h3>
                   </div>
                   <p className="text-xs text-slate-500 mt-0.5">현재 status가 진행중인 프로젝트만 표시</p>
                 </div>
-                <span className="text-xs text-slate-500 tabular-nums">
-                  <span className="font-bold text-slate-900">{inProgress.length}</span> / {activeProjects.length}건
-                </span>
+                <div className="flex items-center gap-2 flex-wrap text-[11px] tabular-nums">
+                  <span className="text-slate-500">
+                    <span className="font-bold text-slate-900">{inProgress.length}</span> / {activeProjects.length}건
+                  </span>
+                  {otherActiveCounts.상담중 > 0 && (
+                    <span className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold">
+                      <span className="w-1 h-1 rounded-full bg-amber-500" />
+                      상담중 {otherActiveCounts.상담중}
+                    </span>
+                  )}
+                  {otherActiveCounts.유지보수 > 0 && (
+                    <span className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-violet-50 border border-violet-200 text-violet-700 font-semibold">
+                      <span className="w-1 h-1 rounded-full bg-violet-500" />
+                      유지보수 {otherActiveCounts.유지보수}
+                    </span>
+                  )}
+                </div>
               </div>
               {inProgress.length === 0 ? (
                 <div className="px-5 py-10 text-center">
@@ -815,7 +923,7 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">호스팅 결제 미확인</h3>
+                <h3 className="text-base font-semibold text-slate-900 tracking-tight">호스팅 결제 미확인</h3>
                 <p className="text-xs text-slate-500 mt-0.5">호스팅 결제가 등록되지 않은 진행/완료 프로젝트</p>
               </div>
               <Link href="/admin/hosting-excluded" className="text-xs text-slate-500 hover:text-slate-900 no-underline whitespace-nowrap">
@@ -833,7 +941,7 @@ export default function AdminDashboard() {
                 <p className="text-xs text-slate-500 mt-0.5">미확인 항목이 없습니다.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-slate-100 list-none m-0 max-h-[320px] overflow-y-auto">
+              <ul className="divide-y divide-slate-100 list-none m-0 md:max-h-[320px] md:overflow-y-auto">
                 {hostingUnconfirmed.map((h) => (
                   <li key={h.id} className="px-5 py-3 hover:bg-slate-50 transition-colors flex items-center justify-between gap-3">
                     <Link href={`/admin/clients/${h.client_id}`} className="flex-1 min-w-0 no-underline">
@@ -860,11 +968,11 @@ export default function AdminDashboard() {
           </div>
 
           {/* Renewal alerts */}
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div id="renewal-alerts" className="scroll-mt-20 bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">갱신 · 만료 알림</h3>
-                <p className="text-xs text-slate-500 mt-0.5">호스팅 · 도메인 만료 일정</p>
+                <h3 className="text-base font-semibold text-slate-900 tracking-tight">갱신 · 만료 알림</h3>
+                <p className="text-xs text-slate-500 mt-0.5">호스팅 · 도메인 만료 일정 — 시급한 순</p>
               </div>
               {alertCount > 0 && (
                 <span className="text-xs text-amber-700 font-bold bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md">
@@ -883,23 +991,39 @@ export default function AdminDashboard() {
                 <p className="text-xs text-slate-500 mt-0.5">만료 임박 항목이 없습니다.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-slate-100 list-none m-0 max-h-[320px] overflow-y-auto">
+              <ul className="divide-y divide-slate-100 list-none m-0 md:max-h-[320px] md:overflow-y-auto">
                 {allAlerts.map((alert) => {
+                  const days = alert.date ? daysUntil(alert.date) : null;
                   const isExpired = alert.type === "expired";
+                  // D-day 색상 단계
+                  let ddayCls = "bg-slate-50 text-slate-600 border-slate-200";
+                  let ddayLabel = "-";
+                  if (days !== null) {
+                    if (days < 0) { ddayCls = "bg-red-50 text-red-700 border-red-200"; ddayLabel = `D+${Math.abs(days)}`; }
+                    else if (days === 0) { ddayCls = "bg-red-50 text-red-700 border-red-200"; ddayLabel = "D-day"; }
+                    else if (days <= 7) { ddayCls = "bg-red-50 text-red-700 border-red-200"; ddayLabel = `D-${days}`; }
+                    else if (days <= 30) { ddayCls = "bg-amber-50 text-amber-700 border-amber-200"; ddayLabel = `D-${days}`; }
+                    else { ddayCls = "bg-slate-50 text-slate-600 border-slate-200"; ddayLabel = `D-${days}`; }
+                  }
                   return (
                     <li key={`${alert.category}-${alert.id}`}>
                       <Link
                         href={`/admin/clients/${alert.client_id}`}
-                        className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors no-underline"
+                        className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors no-underline gap-3"
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
                           <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${isExpired ? "bg-red-50 text-red-700 border border-red-100" : "bg-amber-50 text-amber-700 border border-amber-100"}`}>
                             {isExpired ? "만료" : "임박"}
                           </span>
                           <span className="text-xs text-slate-500 shrink-0">{alert.category}</span>
                           <span className="text-sm text-slate-900 truncate font-medium">{alert.label}</span>
                         </div>
-                        <span className="text-xs text-slate-500 tabular-nums shrink-0 ml-3">{alert.date || "-"}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`inline-flex items-center h-[18px] px-1.5 text-[10px] font-bold rounded border tabular-nums ${ddayCls}`}>
+                            {ddayLabel}
+                          </span>
+                          <span className="text-xs text-slate-500 tabular-nums hidden sm:inline">{alert.date || "-"}</span>
+                        </div>
                       </Link>
                     </li>
                   );
@@ -912,7 +1036,7 @@ export default function AdminDashboard() {
         {/* ── Recent payments ─────────────────────── */}
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">최근 결제 내역</h3>
+            <h3 className="text-base font-semibold text-slate-900 tracking-tight">최근 결제 내역</h3>
             <Link href="/admin/payments" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
               전체 보기 →
             </Link>
