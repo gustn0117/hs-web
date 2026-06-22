@@ -15,7 +15,7 @@ interface Stats {
     totalHosting: number;
     totalDomains: number;
   };
-  monthlyRevenue: { month: string; amount: number; forecast?: boolean; breakdown?: { paid?: number; pending?: number; hostingRenewal?: number } }[];
+  monthlyRevenue: { month: string; amount: number }[];
   revenueByType: Record<string, number>;
   revenueByClient: { client_id: string; client_name: string; total: number; pct: number }[];
   hostingMRR: number;
@@ -201,10 +201,9 @@ export default function AdminDashboard() {
 
   const derived = useMemo(() => {
     if (!stats) return null;
-    const actualMonths = stats.monthlyRevenue.filter((m) => !m.forecast);
-    const months = stats.monthlyRevenue; // forecast 포함 — y축 max 계산용
-    const last = actualMonths[actualMonths.length - 1]?.amount ?? 0;
-    const prev = actualMonths[actualMonths.length - 2]?.amount ?? 0;
+    const months = stats.monthlyRevenue;
+    const last = months[months.length - 1]?.amount ?? 0;
+    const prev = months[months.length - 2]?.amount ?? 0;
     const growthPct = prev > 0 ? ((last - prev) / prev) * 100 : last > 0 ? 100 : 0;
     const rawMax = Math.max(...months.map((m) => m.amount), 1);
     // y축 깔끔하게: 가장 가까운 1/2/5×10ⁿ로 올림
@@ -217,7 +216,7 @@ export default function AdminDashboard() {
       return nice * base;
     };
     const max = niceMax(rawMax);
-    const total = actualMonths.reduce((s, m) => s + m.amount, 0);
+    const total = months.reduce((s, m) => s + m.amount, 0);
     return { last, prev, growthPct, max, total };
   }, [stats]);
 
@@ -297,16 +296,8 @@ export default function AdminDashboard() {
       barH: chartPadY + innerH - y,
       amount: m.amount,
       label: m.month,
-      forecast: !!m.forecast,
-      breakdown: m.breakdown,
     };
   });
-  const lastActualIdx = (() => {
-    for (let i = points.length - 1; i >= 0; i--) {
-      if (!points[i].forecast) return i;
-    }
-    return -1;
-  })();
   const buildBarPath = (x: number, y: number, w: number, h: number, r: number) => {
     const rr = Math.min(r, w / 2, Math.max(h, 0));
     if (h <= 0) return "";
@@ -453,7 +444,7 @@ export default function AdminDashboard() {
             <svg viewBox="0 0 100 30" className="absolute right-3 bottom-3 w-20 h-7 opacity-60" aria-hidden>
               <path
                 d={buildSmoothPath(
-                  monthlyRevenue.filter((m) => !m.forecast).slice(-6).map((m, i, arr) => ({
+                  monthlyRevenue.slice(-6).map((m, i, arr) => ({
                     x: (i / Math.max(arr.length - 1, 1)) * 100,
                     y: 30 - (m.amount / Math.max(...arr.map((x) => x.amount), 1)) * 25 - 2,
                   }))
@@ -653,15 +644,12 @@ export default function AdminDashboard() {
               {/* Bars */}
               {points.map((p, i) => {
                 const isHover = hoverMonth === i;
-                const isLast = i === lastActualIdx;
-                const isForecast = p.forecast;
+                const isLast = i === points.length - 1;
                 const hasValue = p.amount > 0;
                 const minH = 4;
                 const renderH = hasValue ? Math.max(p.barH, minH) : minH;
                 const renderY = chartPadY + innerH - renderH;
-                const fill = isForecast
-                  ? "transparent"
-                  : !hasValue
+                const fill = !hasValue
                   ? "url(#rev-bar-empty)"
                   : isHover || isLast
                   ? "url(#rev-bar-hover)"
@@ -674,7 +662,7 @@ export default function AdminDashboard() {
                     onClick={() => setHoverMonth((prev) => (prev === i ? null : i))}
                     role="button"
                     tabIndex={0}
-                    aria-label={`${p.label}: ${fmt(p.amount)}${isForecast ? " (예상)" : ""}`}
+                    aria-label={`${p.label}: ${fmt(p.amount)}`}
                     style={{ cursor: "pointer" }}
                   >
                     {/* Hover hit area */}
@@ -683,9 +671,6 @@ export default function AdminDashboard() {
                     <path
                       d={buildBarPath(p.barX, renderY, barW, renderH, 6)}
                       fill={fill}
-                      stroke={isForecast ? "#94a3b8" : "none"}
-                      strokeWidth={isForecast ? 1.2 : 0}
-                      strokeDasharray={isForecast ? "3 3" : undefined}
                       style={{ transition: "opacity 0.15s ease" }}
                       opacity={hoverMonth !== null && !isHover && hasValue ? 0.55 : 1}
                     />
@@ -696,7 +681,7 @@ export default function AdminDashboard() {
                       textAnchor="middle"
                       fontSize="10"
                       fontWeight={isLast ? 700 : 400}
-                      fill={isLast ? "#0f172a" : isForecast ? "#cbd5e1" : "#94a3b8"}
+                      fill={isLast ? "#0f172a" : "#94a3b8"}
                     >
                       {fmtMonthShort(p.label)}
                     </text>
@@ -707,35 +692,22 @@ export default function AdminDashboard() {
               {/* Hover tooltip */}
               {hoverMonth !== null && points[hoverMonth] && points[hoverMonth].amount > 0 && (() => {
                 const p = points[hoverMonth];
-                const ttW = 120;
-                const ttH = p.forecast ? 50 : 32;
+                const ttW = 100;
+                const ttH = 32;
                 const cx = Math.min(Math.max(p.x, chartPadX + ttW / 2), chartW - ttW / 2 - chartPadX);
                 const ty = Math.max(p.y - ttH - 8, 4);
                 return (
                   <g>
                     <rect x={cx - ttW / 2} y={ty} width={ttW} height={ttH} rx="6" fill="#0f172a" />
                     <text x={cx} y={ty + 14} textAnchor="middle" fontSize="10" fill="#94a3b8">
-                      {p.label}{p.forecast ? " · 예상" : ""}
+                      {p.label}
                     </text>
                     <text x={cx} y={ty + 28} textAnchor="middle" fontSize="11" fontWeight="700" fill="#fff">
                       {fmt(p.amount)}
                     </text>
-                    {p.forecast && p.breakdown && (
-                      <text x={cx} y={ty + 42} textAnchor="middle" fontSize="9" fill="#cbd5e1">
-                        대기 {fmtShort(p.breakdown.pending ?? 0)} · 갱신 {fmtShort(p.breakdown.hostingRenewal ?? 0)}
-                      </text>
-                    )}
                   </g>
                 );
               })()}
-
-              {/* Forecast legend */}
-              {points.some((p) => p.forecast) && (
-                <g>
-                  <rect x={chartPadX} y={chartH + 6} width="10" height="10" rx="2" fill="none" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" />
-                  <text x={chartPadX + 14} y={chartH + 14} fontSize="9" fill="#94a3b8">예상 (대기 결제 + 호스팅 갱신)</text>
-                </g>
-              )}
             </svg>
           </div>
         </div>

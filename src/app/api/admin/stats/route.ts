@@ -35,16 +35,11 @@ export async function GET() {
     .filter((p) => p.status === "overdue")
     .reduce((s, p) => s + Number(p.amount), 0);
 
-  // Monthly revenue (ERP 개설 시점 2026-03 부터 현재까지 + forecast 2개월)
+  // Monthly revenue (ERP 개설 시점 2026-03 부터 현재까지)
   const now = new Date();
   const ERP_START_YEAR = 2026;
   const ERP_START_MONTH = 2; // 0-indexed: March
-  const monthlyRevenue: {
-    month: string;
-    amount: number;
-    forecast?: boolean;
-    breakdown?: { paid?: number; pending?: number; hostingRenewal?: number };
-  }[] = [];
+  const monthlyRevenue: { month: string; amount: number }[] = [];
   const start = new Date(ERP_START_YEAR, ERP_START_MONTH, 1);
   const cursor = new Date(start);
   while (cursor <= now) {
@@ -60,50 +55,6 @@ export async function GET() {
       .reduce((s, p) => s + Number(p.amount), 0);
     monthlyRevenue.push({ month: label, amount });
     cursor.setMonth(cursor.getMonth() + 1);
-  }
-
-  // Forecast: 다음 2개월 — pending 결제 + auto_renew 호스팅 만료 예정
-  const FORECAST_MONTHS = 2;
-  for (let i = 0; i < FORECAST_MONTHS; i++) {
-    const fc = new Date(now.getFullYear(), now.getMonth() + i + 1, 1);
-    const year = fc.getFullYear();
-    const month = fc.getMonth();
-    const label = `${year}-${String(month + 1).padStart(2, "0")}`;
-    // 1) pending 결제 (이번 달 미래)
-    const pendingForMonth = payments
-      .filter((p) => {
-        if (p.status !== "pending" && p.status !== "confirming") return false;
-        if (!p.payment_date) return false;
-        const pd = new Date(p.payment_date);
-        return pd.getFullYear() === year && pd.getMonth() === month;
-      })
-      .reduce((s, p) => s + Number(p.amount), 0);
-    // 2) auto_renew 호스팅 만료 예정 (해당 월에 end_date) — pending과 같은 client+같은 달이면 중복 제외
-    const pendingClientHostingKeys = new Set(
-      payments
-        .filter((p) => p.type === "호스팅" && (p.status === "pending" || p.status === "confirming") && p.payment_date)
-        .filter((p) => {
-          const pd = new Date(p.payment_date as string);
-          return pd.getFullYear() === year && pd.getMonth() === month;
-        })
-        .map((p) => p.client_id)
-    );
-    const hostingRenewalForMonth = hosting
-      .filter((h) => {
-        if (!h.auto_renew || !h.end_date) return false;
-        const ed = new Date(h.end_date);
-        if (ed.getFullYear() !== year || ed.getMonth() !== month) return false;
-        if (pendingClientHostingKeys.has(h.client_id)) return false;
-        return true;
-      })
-      .reduce((s, h) => s + Number(h.amount), 0);
-    const total = pendingForMonth + hostingRenewalForMonth;
-    monthlyRevenue.push({
-      month: label,
-      amount: total,
-      forecast: true,
-      breakdown: { pending: pendingForMonth, hostingRenewal: hostingRenewalForMonth },
-    });
   }
 
   // ── Hosting MRR / ARR ─────────────────────────────────
