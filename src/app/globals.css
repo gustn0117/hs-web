@@ -243,6 +243,8 @@ code, pre, .break-all {
   font-weight: 500;
   letter-spacing: -0.015em;
   transition: color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .p-tab:hover { color: var(--c-text); }
 .p-tab.active {
