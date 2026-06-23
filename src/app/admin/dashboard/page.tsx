@@ -74,23 +74,6 @@ function fmtMonthShort(m: string) {
   return parseInt(month, 10) + "월";
 }
 
-// Smooth-curve SVG path generator for line/area charts
-function buildSmoothPath(points: { x: number; y: number }[]): string {
-  if (points.length === 0) return "";
-  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
-  let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const cp1x = p0.x + (p1.x - p0.x) * 0.5;
-    const cp1y = p0.y;
-    const cp2x = p0.x + (p1.x - p0.x) * 0.5;
-    const cp2y = p1.y;
-    d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
-  }
-  return d;
-}
-
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -420,45 +403,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* ── KPI cards (4) ─────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Total revenue */}
-          <Link
-            href="/admin/payments?status=paid"
-            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative overflow-hidden no-underline transition-all"
-          >
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">총 수익</p>
-            <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{fmtShort(overview.totalRevenue)}원</p>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <span
-                className={`inline-flex items-center gap-0.5 text-[11px] font-bold ${
-                  derived.growthPct >= 0 ? "text-emerald-700" : "text-red-700"
-                }`}
-              >
-                {derived.growthPct >= 0 ? "▲" : "▼"} {Math.abs(derived.growthPct).toFixed(0)}%
-              </span>
-              <span className="text-[11px] text-slate-500">전월 대비</span>
-            </div>
-            <svg className="absolute top-3 right-3 w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-            {/* Mini sparkline */}
-            <svg viewBox="0 0 100 30" className="absolute right-3 bottom-3 w-20 h-7 opacity-60" aria-hidden>
-              <path
-                d={buildSmoothPath(
-                  monthlyRevenue.slice(-6).map((m, i, arr) => ({
-                    x: (i / Math.max(arr.length - 1, 1)) * 100,
-                    y: 30 - (m.amount / Math.max(...arr.map((x) => x.amount), 1)) * 25 - 2,
-                  }))
-                )}
-                fill="none"
-                stroke="#0f172a"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </Link>
-
+        {/* ── KPI cards (3) ─────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Pending */}
           <Link
             href="/admin/payments?status=pending"
