@@ -40,20 +40,37 @@ export async function GET() {
   const ERP_START_YEAR = 2026;
   const ERP_START_MONTH = 2; // 0-indexed: March
   const monthlyRevenue: { month: string; amount: number }[] = [];
+  const paidPaymentsByMonth: Record<
+    string,
+    { id: string; client_id: string; client_name: string; amount: number; type: string; description: string | null; payment_date: string }[]
+  > = {};
   const start = new Date(ERP_START_YEAR, ERP_START_MONTH, 1);
   const cursor = new Date(start);
   while (cursor <= now) {
     const year = cursor.getFullYear();
     const month = cursor.getMonth();
     const label = `${year}-${String(month + 1).padStart(2, "0")}`;
-    const amount = payments
+    const monthPayments = payments
       .filter((p) => {
         if (p.status !== "paid" || !p.payment_date) return false;
         const pd = new Date(p.payment_date);
         return pd.getFullYear() === year && pd.getMonth() === month;
       })
-      .reduce((s, p) => s + Number(p.amount), 0);
+      .sort((a, b) => (b.payment_date ?? "").localeCompare(a.payment_date ?? ""));
+    const amount = monthPayments.reduce((s, p) => s + Number(p.amount), 0);
     monthlyRevenue.push({ month: label, amount });
+    paidPaymentsByMonth[label] = monthPayments.map((p) => {
+      const client = clients.find((c) => c.id === p.client_id);
+      return {
+        id: p.id,
+        client_id: p.client_id,
+        client_name: client?.name ?? "알 수 없음",
+        amount: Number(p.amount),
+        type: p.type,
+        description: p.description ?? null,
+        payment_date: p.payment_date,
+      };
+    });
     cursor.setMonth(cursor.getMonth() + 1);
   }
 
@@ -234,6 +251,7 @@ export async function GET() {
       totalDomains: domains.length,
     },
     monthlyRevenue,
+    paidPaymentsByMonth,
     revenueByType,
     revenueByClient,
     hostingMRR,
