@@ -2,67 +2,53 @@ import type { Metadata } from "next";
 import { PageShell, Section } from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "홈페이지 제작 과정 - 상담부터 런칭까지 체계적 프로세스",
+  title: "홈페이지 진행 절차 — 정보 수집 · 초안 · 피드백 · 완료",
   description:
-    "HS WEB의 홈페이지 제작 과정을 확인하세요. 상담 & 기획, UI/UX 디자인, 프론트엔드 개발, 테스트, 런칭까지 체계적인 프로세스로 최상의 결과물을 만들어냅니다.",
-  keywords: ["홈페이지 제작 과정", "홈페이지 제작 절차", "웹사이트 개발 프로세스", "홈페이지 제작 기간"],
+    "HS WEB의 홈페이지 제작 진행 절차를 안내합니다. 필요한 정보를 제공받고, 그 정보를 바탕으로 초안을 제작해 보내드리며, 피드백 과정을 거쳐 최종 결과물로 완성합니다.",
+  keywords: ["홈페이지 제작 절차", "홈페이지 진행 과정", "웹사이트 제작 순서", "홈페이지 피드백"],
   alternates: { canonical: "https://hsweb.pics/process" },
 };
 
 const steps = [
   {
     n: "01",
-    title: "상담 · 요구사항 분석",
-    outcome: "기획안 · 견적서",
-    desc: "프로젝트 목표, 타겟 사용자, 필요 기능을 파악하고 범위를 명확히 합니다. 레퍼런스 분석 후 기획안과 견적서를 전달합니다.",
-    deliverables: ["요구사항 정의서", "와이어프레임 초안", "견적서 · 제안서"],
+    title: "정보 제공",
+    outcome: "프로젝트 정보 · 자료",
+    desc: "프로젝트 목적과 타깃, 원하는 분위기, 사이트에 들어갈 내용을 알려주세요. 보유하신 로고·이미지·텍스트 등 자료가 있으면 함께 전달해주시면 됩니다. 없으면 같이 정리해드립니다.",
+    deliverables: ["요구사항 · 참고 사이트", "로고 · 이미지 · 텍스트", "콘텐츠 자료 일체"],
   },
   {
     n: "02",
-    title: "계약 · 자료 수집",
-    outcome: "계약서 · 자료 체크",
-    desc: "계약 체결 후 로고, 이미지, 텍스트 등 필요한 자료를 전달받습니다.",
-    deliverables: ["전자 계약서", "자료 체크리스트", "프로젝트 일정표"],
+    title: "초안 제작",
+    outcome: "디자인 + 구조 초안",
+    desc: "전달받은 정보를 바탕으로 사이트의 디자인과 구조 초안을 제작합니다. 메인 페이지를 중심으로 내부 페이지의 방향성까지 한 번에 잡습니다.",
+    deliverables: ["메인 페이지 시안", "내부 페이지 구성안", "반응형 모바일 시안"],
   },
   {
     n: "03",
-    title: "UI/UX 디자인",
-    outcome: "디자인 시안 2~3종",
-    desc: "브랜드 아이덴티티에 맞는 UI/UX를 설계합니다. 메인 + 주요 내부 페이지 시안을 제공하고 2~3회 수정이 포함됩니다.",
-    deliverables: ["메인 페이지 시안", "내부 페이지 시안", "반응형 모바일 시안"],
+    title: "초안 전달 · 피드백",
+    outcome: "수정 반영 (2~3회)",
+    desc: "완성된 초안을 보내드립니다. 마음에 드는 부분과 수정하고 싶은 부분을 자유롭게 알려주시면 함께 다듬어 나갑니다. 디자인이 확정될 때까지 2~3회 수정이 포함됩니다.",
+    deliverables: ["피드백 검토", "디자인 수정 반영", "확정 시안 공유"],
   },
   {
     n: "04",
-    title: "개발 · 퍼블리싱",
-    outcome: "스테이징 사이트",
-    desc: "확정된 디자인을 기반으로 반응형 퍼블리싱과 기능 개발을 진행합니다. 크로스 브라우저 호환성을 보장합니다.",
-    deliverables: ["반응형 HTML/CSS", "백엔드 연동", "관리자 페이지 (해당 시)"],
-  },
-  {
-    n: "05",
-    title: "테스트 · 런칭",
+    title: "제작 완료 · 전달",
     outcome: "실 서비스 배포",
-    desc: "전체 페이지 QA, 성능 테스트, 메타 태그·sitemap 등 검색엔진 친화 코드 점검 후 도메인 연결과 호스팅 배포를 진행합니다. 본격적인 검색엔진 등록·SEO 작업은 별도 옵션입니다.",
-    deliverables: ["QA 리포트", "메타 태그 · sitemap 점검", "운영 가이드"],
-  },
-  {
-    n: "06",
-    title: "유지보수 · 운영",
-    outcome: "지속적 지원",
-    desc: "런칭 후 간단한 텍스트·이미지·콘텐츠 수정은 기간 제한 없이 계속 무료로 지원합니다.",
-    deliverables: ["유지보수 지원", "보안 업데이트", "성능 모니터링"],
+    desc: "확정된 시안을 기반으로 개발·퍼블리싱을 마무리하고, 전체 페이지 점검 후 실제 사이트로 배포합니다. 도메인 연결과 운영 가이드까지 함께 전달드립니다.",
+    deliverables: ["개발 · QA 점검", "도메인 · 호스팅 연결", "운영 가이드 전달"],
   },
 ];
 
 export default function ProcessPage() {
   return (
     <PageShell
-      breadcrumb={[{ label: "제작 과정" }]}
+      breadcrumb={[{ label: "진행 절차" }]}
       overline="HOW IT WORKS"
-      title="상담부터 런칭, 운영까지."
-      subtitle="모든 프로젝트는 동일한 체계로 진행됩니다. 각 단계마다 고객과 공유하며 투명하게."
+      title="정보 → 초안 → 피드백 → 완료."
+      subtitle="필요한 정보를 받아 초안을 만들고, 함께 피드백하며 다듬어 완성합니다. 단계마다 무엇을 진행하는지 투명하게 공유합니다."
       stats={[
-        { label: "총 단계", value: "6", suffix: "단계" },
+        { label: "진행 단계", value: "4", suffix: "단계" },
         { label: "시안 수정", value: "2~3", suffix: "회 포함" },
         { label: "소스코드", value: "100", suffix: "% 제공" },
         { label: "재의뢰율", value: "95", suffix: "%" },
@@ -92,15 +78,15 @@ export default function ProcessPage() {
               OUR WAY OF WORKING
             </p>
             <h3 className="text-[28px] md:text-[40px] font-black tracking-[-0.03em] text-white leading-[1.15] mb-4 max-w-[640px]">
-              투명한 프로세스,<br />
-              함께 만드는 결과.
+              정보 주시면 초안 만들고,<br />
+              함께 다듬어 완성합니다.
             </h3>
             <p className="text-[14.5px] md:text-[15.5px] text-white/75 leading-[1.75] max-w-[560px]">
-              모든 단계의 진행 상황과 일정을 실시간으로 공유합니다.
-              예상과 다른 이슈는 즉시 알리고, 함께 방향을 정합니다.
+              자료가 정리되어 있지 않아도 괜찮습니다. 필요한 정보부터 같이 정리해
+              초안을 제작하고, 피드백을 통해 원하는 결과물로 완성해 드립니다.
             </p>
             <div className="flex flex-wrap gap-2 mt-6">
-              {["단계별 공유", "수정 2~3회 포함", "전자 계약", "소스코드 이전"].map((tag) => (
+              {["정보 정리 함께", "수정 2~3회 포함", "단계별 공유", "소스코드 이전"].map((tag) => (
                 <span
                   key={tag}
                   className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 border border-white/20 text-white text-[12px] font-semibold backdrop-blur-sm"
@@ -114,7 +100,7 @@ export default function ProcessPage() {
       </Section>
 
       {/* Visual timeline */}
-      <Section overline="TIMELINE" title="6단계 프로세스">
+      <Section overline="TIMELINE" title="4단계 진행 절차">
         <div className="space-y-3">
           {steps.map((s) => (
             <div key={s.n} className="grid grid-cols-[72px_1fr] md:grid-cols-[120px_1fr] gap-4 md:gap-6 items-start p-6 md:p-7 rounded-[14px] border border-[var(--c-line)] bg-white hover:border-[var(--c-text)] transition-colors group">

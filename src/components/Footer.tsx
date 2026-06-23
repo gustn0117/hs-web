@@ -81,7 +81,7 @@ export default function Footer() {
             title="회사"
             links={[
               { label: "포트폴리오", href: "/portfolio" },
-              { label: "제작 과정", href: "/process" },
+              { label: "진행 절차", href: "/process" },
               { label: "가격 안내", href: "/pricing" },
               { label: "도메인·호스팅", href: "/domain-hosting" },
               { label: "고객 후기", href: "/testimonials" },

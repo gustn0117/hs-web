@@ -40,7 +40,7 @@ export default function NotFound() {
               { href: "/services", label: "서비스" },
               { href: "/portfolio", label: "포트폴리오" },
               { href: "/pricing", label: "가격" },
-              { href: "/process", label: "제작 과정" },
+              { href: "/process", label: "진행 절차" },
               { href: "/domain-hosting", label: "도메인·호스팅" },
             ].map((l) => (
               <li key={l.href}>

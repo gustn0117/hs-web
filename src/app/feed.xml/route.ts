@@ -31,10 +31,10 @@ export async function GET() {
         "프로젝트 규모에 맞는 합리적인 가격을 제안합니다. Basic, Professional, Enterprise 패키지.",
     },
     {
-      title: "홈페이지 제작 과정",
+      title: "홈페이지 진행 절차",
       link: `${SITE_URL}/process`,
       description:
-        "상담 & 기획부터 디자인, 개발, 런칭까지 체계적인 프로세스로 최상의 결과물을 만들어냅니다.",
+        "필요한 정보를 제공받고, 초안을 제작해 보내드리며, 피드백 과정을 거쳐 완성합니다. 4단계 진행 절차를 안내합니다.",
     },
     {
       title: "무료 상담 · 문의하기",

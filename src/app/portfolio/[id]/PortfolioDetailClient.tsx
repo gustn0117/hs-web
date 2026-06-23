@@ -198,7 +198,7 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
                   { href: "/portfolio", label: "포트폴리오 목록" },
                   { href: "/services", label: "서비스 안내" },
                   { href: "/pricing", label: "가격 안내" },
-                  { href: "/process", label: "제작 과정" },
+                  { href: "/process", label: "진행 절차" },
                 ].map((it) => (
                   <li key={it.href}>
                     <Link

@@ -35,7 +35,7 @@ const MENU: MenuItem[] = [
   {
     label: "정보",
     children: [
-      { href: "/process", label: "제작 과정", desc: "6단계 체계적 진행" },
+      { href: "/process", label: "진행 절차", desc: "정보 → 초안 → 피드백 → 완료" },
       { href: "/custom-development", label: "자체 개발 vs 플랫폼", desc: "코딩과 기성 솔루션의 차이" },
       { href: "/domain-hosting", label: "도메인·호스팅", desc: "기본 개념과 비용" },
       { href: "/nameserver-guide", label: "네임서버 변경 가이드", desc: "가비아·후이즈·카페24 등" },

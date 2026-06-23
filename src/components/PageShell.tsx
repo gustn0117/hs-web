@@ -203,7 +203,7 @@ export function DefaultSidebar() {
             { href: "/services", label: "서비스" },
             { href: "/portfolio", label: "포트폴리오" },
             { href: "/pricing", label: "가격 안내" },
-            { href: "/process", label: "제작 과정" },
+            { href: "/process", label: "진행 절차" },
             { href: "/domain-hosting", label: "도메인·호스팅" },
             { href: "/contact", label: "견적 문의" },
           ].map((it) => (

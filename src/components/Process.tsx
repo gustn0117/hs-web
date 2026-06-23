@@ -87,12 +87,12 @@ export default function Process() {
               PROCESS
             </p>
             <h2 className="text-[2.5rem] md:text-[3rem] font-extrabold text-white tracking-tight mb-5">
-              제작 과정
+              진행 절차
             </h2>
             <p className="text-gray-400 text-lg max-w-[520px] mx-auto leading-relaxed">
-              체계적인 4단계 프로세스로
+              정보 → 초안 → 피드백 → 완료의
               <br className="hidden sm:block" />
-              최상의 결과물을 만듭니다.
+              4단계로 함께 만듭니다.
             </p>
           </div>
 
