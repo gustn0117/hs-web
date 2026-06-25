@@ -52,12 +52,40 @@ interface Stats {
   expiredDomains: { id: string; domain_name: string; expires_date: string; client_id: string }[];
 }
 
+// Figma Modern 스타일 — alpha 배경 + rounded-full + 진한 텍스트
 const PAYMENT_STATUS: Record<string, { label: string; cls: string }> = {
-  paid: { label: "완료", cls: "bg-emerald-50 text-emerald-700 border border-emerald-100" },
-  confirming: { label: "확인중", cls: "bg-slate-50 text-slate-600 border border-slate-200" },
-  pending: { label: "대기", cls: "bg-amber-50 text-amber-700 border border-amber-100" },
-  overdue: { label: "미납", cls: "bg-red-50 text-red-700 border border-red-100" },
+  paid: { label: "완료", cls: "bg-emerald-100/50 text-emerald-800" },
+  confirming: { label: "확인중", cls: "bg-slate-100/70 text-slate-700" },
+  pending: { label: "대기", cls: "bg-amber-100/50 text-amber-800" },
+  overdue: { label: "미납", cls: "bg-red-100/50 text-red-700" },
 };
+
+// 클라이언트명 → 첫 글자 이니셜 + 일관된 컬러 (Figma Modern 아바타 패턴)
+const AVATAR_COLORS = [
+  "bg-slate-100 text-slate-700",
+  "bg-emerald-100 text-emerald-800",
+  "bg-amber-100 text-amber-800",
+  "bg-violet-100 text-violet-800",
+  "bg-sky-100 text-sky-800",
+  "bg-rose-100 text-rose-800",
+];
+function clientAvatarCls(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+function ClientAvatar({ name, size = 30 }: { name: string; size?: number }) {
+  const initial = (name || "?").trim().charAt(0).toUpperCase();
+  return (
+    <span
+      className={`inline-flex items-center justify-center rounded-full shrink-0 font-bold tabular-nums ${clientAvatarCls(name)}`}
+      style={{ width: size, height: size, fontSize: size <= 24 ? 11 : 12 }}
+      aria-hidden
+    >
+      {initial}
+    </span>
+  );
+}
 
 function fmt(n: number) {
   return Number(n).toLocaleString() + "원";
@@ -700,9 +728,10 @@ export default function AdminDashboard() {
                           className="flex items-center justify-between gap-3 px-3 py-2.5 hover:bg-slate-50 no-underline transition-colors"
                         >
                           <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <span className="text-[11px] text-slate-400 tabular-nums shrink-0 w-12">{p.payment_date.slice(5).replace("-", "/")}</span>
+                            <span className="text-[11px] text-slate-400 tabular-nums shrink-0 w-10">{p.payment_date.slice(5).replace("-", "/")}</span>
+                            <ClientAvatar name={p.client_name} size={24} />
                             <span className="text-[13px] text-slate-900 truncate font-medium">{p.client_name}</span>
-                            <span className="inline-flex items-center h-5 px-1.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold shrink-0">
+                            <span className="inline-flex items-center h-[20px] px-2 rounded-full bg-slate-100/70 text-slate-600 text-[10px] font-semibold shrink-0">
                               {p.type}
                             </span>
                             {p.description && (
@@ -1006,12 +1035,15 @@ export default function AdminDashboard() {
                         href={`/admin/clients/${p.client_id}`}
                         className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors no-underline group"
                       >
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <ClientAvatar name={p.client_name} size={32} />
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
+                            <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">진행중</span>
+                          <span className="inline-flex items-center h-[22px] px-2.5 text-[10px] font-semibold rounded-full bg-slate-900/8 text-slate-700">진행중</span>
                           <svg
                             className="w-4 h-4 text-slate-300 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all"
                             fill="none"
@@ -1172,15 +1204,16 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {recentPayments.map((p) => {
-                    const si = PAYMENT_STATUS[p.status] ?? { label: p.status, cls: "bg-slate-100 text-slate-600 border border-slate-200" };
+                    const si = PAYMENT_STATUS[p.status] ?? { label: p.status, cls: "bg-slate-100/70 text-slate-700" };
                     return (
                       <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                         <td className="py-3 px-5">
                           <Link
                             href={`/admin/clients/${p.client_id}`}
-                            className="inline-flex items-center gap-1 text-slate-900 font-semibold no-underline hover:text-slate-600 group"
+                            className="inline-flex items-center gap-2.5 text-slate-900 font-semibold no-underline hover:text-slate-600 group"
                           >
-                            {p.client_name}
+                            <ClientAvatar name={p.client_name} size={28} />
+                            <span>{p.client_name}</span>
                             <svg className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                             </svg>
@@ -1190,7 +1223,7 @@ export default function AdminDashboard() {
                         <td className="py-3 px-3 text-slate-500 max-w-[200px] truncate">{p.description || "-"}</td>
                         <td className="py-3 px-3 text-slate-900 font-bold text-right tabular-nums">{fmt(p.amount)}</td>
                         <td className="py-3 px-3 text-center">
-                          <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded ${si.cls}`}>{si.label}</span>
+                          <span className={`inline-flex items-center h-[22px] px-2.5 text-[11px] font-semibold rounded-full ${si.cls}`}>{si.label}</span>
                         </td>
                         <td className="py-3 px-5 text-slate-500 text-right tabular-nums text-xs">{p.payment_date || "-"}</td>
                       </tr>
