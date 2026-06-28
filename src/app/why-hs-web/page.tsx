@@ -671,7 +671,6 @@ export default function WhyHsWebPage() {
                 desc: "각 단계마다 진행 상황·일정을 실시간 공유합니다",
                 metric: "100%",
                 label: "공유율",
-                accent: "bg-indigo-50 text-indigo-700",
               },
               {
                 icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z",
@@ -679,7 +678,6 @@ export default function WhyHsWebPage() {
                 desc: "업무 시간 내 문의는 1시간 이내 답변드립니다",
                 metric: "1시간",
                 label: "이내",
-                accent: "bg-emerald-50 text-emerald-700",
               },
               {
                 icon: "M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9",
@@ -687,7 +685,6 @@ export default function WhyHsWebPage() {
                 desc: "콘텐츠 수정(텍스트·이미지)은 평생 무료입니다",
                 metric: "평생",
                 label: "무료",
-                accent: "bg-amber-50 text-amber-700",
               },
             ].map((c) => (
               <div
@@ -700,9 +697,9 @@ export default function WhyHsWebPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d={c.icon} />
                     </svg>
                   </span>
-                  <span className={`inline-flex items-baseline gap-1 px-3 py-1 rounded-full text-[12px] font-bold ${c.accent}`}>
+                  <span className="inline-flex items-baseline gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[12px] font-bold">
                     <span className="text-[16px] tabular-nums">{c.metric}</span>
-                    <span className="text-[10px] font-semibold opacity-80">{c.label}</span>
+                    <span className="text-[10px] font-semibold text-slate-500">{c.label}</span>
                   </span>
                 </div>
                 <h4 className="text-[15.5px] font-bold text-slate-900 mb-1.5 tracking-tight">{c.title}</h4>
@@ -730,46 +727,58 @@ export default function WhyHsWebPage() {
             </p>
           </div>
 
-          {/* Category quick chips */}
-          <div className="flex flex-wrap gap-2 mb-6 justify-center">
-            {Array.from(new Set(FAQS.map((f) => f.cat))).map((c) => (
-              <span
-                key={c}
-                className="inline-flex items-center h-7 px-3 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold tracking-wider"
-              >
-                {c}
-              </span>
-            ))}
-          </div>
-
-          <div className="max-w-[820px] mx-auto rounded-[16px] border border-slate-200 overflow-hidden bg-white divide-y divide-slate-100">
-            {FAQS.map((item, i) => (
-              <details key={i} className="group">
-                <summary className="flex items-start justify-between gap-4 px-5 md:px-6 py-5 cursor-pointer list-none hover:bg-slate-50/60 transition-colors">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <span className="text-[11px] font-bold text-indigo-500 tnum mt-1 shrink-0 w-7">Q{String(i + 1).padStart(2, "0")}</span>
-                    <div className="min-w-0">
-                      <span className="inline-flex items-center h-5 px-2 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold mr-2 mb-1 align-middle">
-                        {item.cat}
-                      </span>
-                      <span className="text-[15px] font-semibold text-slate-900 leading-[1.5] align-middle">{item.q}</span>
-                    </div>
+          {/* Category-grouped FAQ */}
+          <div className="max-w-[860px] mx-auto space-y-10">
+            {Array.from(new Set(FAQS.map((f) => f.cat))).map((cat) => {
+              const items = FAQS.filter((f) => f.cat === cat);
+              return (
+                <div key={cat}>
+                  {/* Category header */}
+                  <div className="flex items-baseline gap-3 mb-4 px-1">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 text-white text-[12px] font-bold tabular-nums">
+                      {items.length}
+                    </span>
+                    <h3 className="text-[18px] font-bold text-slate-900 tracking-tight">
+                      {cat}
+                    </h3>
+                    <span className="flex-1 h-px bg-slate-200" />
                   </div>
-                  <svg
-                    className="w-5 h-5 text-slate-400 shrink-0 group-open:rotate-180 transition-transform mt-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </summary>
-                <div className="px-5 md:px-6 pb-5 pl-[60px] md:pl-[60px] text-[14px] text-slate-600 leading-[1.8]">
-                  {item.a}
+
+                  {/* Accordion list */}
+                  <div className="rounded-[14px] border border-slate-200 bg-white overflow-hidden divide-y divide-slate-100">
+                    {items.map((item, idx) => {
+                      const globalIdx = FAQS.indexOf(item);
+                      return (
+                        <details key={idx} className="group">
+                          <summary className="flex items-start justify-between gap-4 px-5 md:px-6 py-5 cursor-pointer list-none hover:bg-slate-50 transition-colors">
+                            <div className="flex items-start gap-3 flex-1 min-w-0">
+                              <span className="text-[11px] font-bold text-slate-400 tnum mt-1 shrink-0 w-7">
+                                Q{String(globalIdx + 1).padStart(2, "0")}
+                              </span>
+                              <span className="text-[15px] font-semibold text-slate-900 leading-[1.55]">
+                                {item.q}
+                              </span>
+                            </div>
+                            <svg
+                              className="w-5 h-5 text-slate-400 shrink-0 group-open:rotate-180 group-open:text-slate-900 transition-all mt-1"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                          </summary>
+                          <div className="px-5 md:px-6 pb-5 pl-[60px] text-[14px] text-slate-600 leading-[1.8] bg-slate-50/40">
+                            {item.a}
+                          </div>
+                        </details>
+                      );
+                    })}
+                  </div>
                 </div>
-              </details>
-            ))}
+              );
+            })}
           </div>
 
           {/* Still curious */}
