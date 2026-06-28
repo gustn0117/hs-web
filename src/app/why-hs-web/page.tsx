@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -172,29 +173,32 @@ export default function WhyHsWebPage() {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="relative overflow-hidden bg-slate-900 text-white">
-        <div className="absolute inset-0 p-bg-grid-dots opacity-[0.08] pointer-events-none" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(800px 400px at 100% 0%, rgba(79,70,229,0.25) 0%, transparent 50%), radial-gradient(600px 300px at 0% 100%, rgba(99,102,241,0.18) 0%, transparent 50%)",
-          }}
+      <section className="relative overflow-hidden bg-slate-950 text-white">
+        <Image
+          src="/why-hs-web/hero.webp"
+          alt="HS WEB이 직접 제작한 반응형 웹사이트와 코드, 서버 운영 화면을 함께 보여주는 작업 공간"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[68%_center] opacity-90"
         />
-        <div className="relative max-w-[1100px] mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-32 text-center">
-          <p className="text-[11px] font-bold text-white/60 tracking-[0.2em] uppercase mb-5">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.96)_0%,rgba(2,6,23,0.86)_36%,rgba(2,6,23,0.48)_68%,rgba(2,6,23,0.22)_100%)] pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent pointer-events-none" />
+        <div className="relative max-w-[1100px] mx-auto px-6 min-h-[680px] md:min-h-[720px] flex items-center">
+          <div className="w-full max-w-[640px] pt-24 pb-16 md:pt-32 md:pb-20">
+            <p className="text-[11px] font-bold text-white/60 tracking-[0.2em] uppercase mb-5">
             WHY HS WEB · 솔직한 가격, 더 좋은 결과
           </p>
-          <h1 className="text-[34px] md:text-[56px] font-black tracking-[-0.04em] leading-[1.1] mb-6">
+            <h1 className="text-[36px] md:text-[60px] font-black tracking-[-0.04em] leading-[1.05] mb-6">
             왜 더 저렴한데,<br />
             결과는 더 좋을까요?
           </h1>
-          <p className="text-[15px] md:text-[18px] text-white/70 leading-[1.7] max-w-[640px] mx-auto mb-10">
+            <p className="text-[15px] md:text-[18px] text-white/75 leading-[1.7] max-w-[600px] mb-9">
             HS WEB이 어떤 구조로 운영되기에 다른 업체보다 저렴할 수 있는지,
             자체 코딩으로 만든 사이트는 무엇이 다른지,
             그리고 어떤 흐름으로 함께 만드는지 정리했습니다.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-[420px] sm:max-w-none mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center max-w-[420px] sm:max-w-none">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white text-slate-900 font-bold text-[15px] no-underline hover:bg-slate-100 transition-colors"
@@ -210,10 +214,10 @@ export default function WhyHsWebPage() {
             >
               포트폴리오 보기
             </Link>
-          </div>
+            </div>
 
-          {/* Trust strip */}
-          <div className="mt-14 grid grid-cols-3 max-w-[640px] mx-auto border-t border-white/10">
+            {/* Trust strip */}
+            <div className="mt-12 grid grid-cols-3 max-w-[620px] border-y border-white/10 bg-slate-950/25 backdrop-blur-sm">
             {[
               { v: "249,000", suffix: "원~", l: "시작가" },
               { v: "5", suffix: "배 빠름", l: "vs 워드프레스" },
@@ -232,6 +236,7 @@ export default function WhyHsWebPage() {
                 <p className="text-[11px] text-white/60 mt-1">{s.l}</p>
               </div>
             ))}
+            </div>
           </div>
         </div>
       </section>
@@ -251,6 +256,55 @@ export default function WhyHsWebPage() {
               <br className="hidden sm:inline" />
               일반적인 업체의 비용 구조를 단순화하고, 그만큼을 가격에 반영합니다.
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 lg:gap-10 items-center mb-12">
+            <figure className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-sm">
+              <Image
+                src="/why-hs-web/price-structure.webp"
+                alt="복잡한 일반 웹 에이전시 구조와 HS WEB의 직접 제작 구조를 비교하는 시각 이미지"
+                width={1672}
+                height={941}
+                sizes="(max-width: 1024px) 100vw, 640px"
+                className="w-full aspect-[16/9] object-cover"
+              />
+              <figcaption className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-2 text-[11px] font-bold">
+                <span className="inline-flex min-h-8 items-center justify-center rounded-[8px] bg-white/85 px-3 text-slate-500 backdrop-blur">
+                  여러 단계의 비용 구조
+                </span>
+                <span className="inline-flex min-h-8 items-center justify-center rounded-[8px] bg-slate-950/90 px-3 text-white backdrop-blur">
+                  직접 제작 · 직접 운영
+                </span>
+              </figcaption>
+            </figure>
+            <div>
+              <p className="text-[13px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-3">
+                이해 포인트
+              </p>
+              <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+                가격 차이는 결과물보다
+                <br className="hidden sm:block" />
+                {" "}
+                구조 차이에서 납니다.
+              </h3>
+              <p className="text-[14.5px] text-slate-600 leading-[1.8] mb-6">
+                일반 업체는 팀·사무실·영업·호스팅 마진이 가격에 얹힙니다.
+                HS WEB은 제작자와 클라이언트가 바로 연결되고, 서버도 직접 운영해
+                꼭 필요한 비용만 남깁니다.
+              </p>
+              <div className="space-y-3">
+                {[
+                  "기획·디자인·개발을 한 사람이 끝까지 담당",
+                  "외부 호스팅 마진 없이 자체 인프라 운영",
+                  "월 운영비 대신 결과물 중심으로 정산",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 border-l-2 border-indigo-500 pl-4">
+                    <span className="mt-1.5 h-2 w-2 rounded-full bg-indigo-500 shrink-0" />
+                    <p className="text-[13.5px] font-semibold text-slate-700 leading-[1.6]">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* 비교 카드 */}
@@ -349,6 +403,46 @@ export default function WhyHsWebPage() {
             </p>
           </div>
 
+          <div className="grid grid-cols-1 lg:grid-cols-[0.88fr_1.12fr] gap-8 lg:gap-10 items-center mb-12">
+            <div className="order-2 lg:order-1">
+              <p className="text-[13px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-3">
+                이해 포인트
+              </p>
+              <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+                필요한 코드만 남기면
+                <br className="hidden sm:block" />
+                {" "}
+                사이트가 가벼워집니다.
+              </h3>
+              <p className="text-[14.5px] text-slate-600 leading-[1.8] mb-6">
+                템플릿·플러그인 방식은 쓰지 않는 기능까지 함께 실리기 쉽습니다.
+                자체 코딩은 목적에 맞는 구조만 설계해 속도, SEO, 보안, 확장성에서
+                더 오래 버티는 자산이 됩니다.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {["빠른 로딩", "SEO 구조", "보안 안정성", "자유 확장"].map((item) => (
+                  <div key={item} className="h-11 rounded-[10px] border border-slate-200 bg-slate-50 flex items-center justify-center text-[13px] font-bold text-slate-700">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <figure className="relative order-1 lg:order-2 overflow-hidden rounded-[18px] border border-slate-200 bg-slate-950 shadow-sm">
+              <Image
+                src="/why-hs-web/custom-code.webp"
+                alt="무거운 템플릿 구조에서 가벼운 자체 코드 구조로 전환되어 빠른 반응형 사이트가 되는 시각 이미지"
+                width={1672}
+                height={941}
+                sizes="(max-width: 1024px) 100vw, 620px"
+                className="w-full aspect-[16/9] object-cover"
+              />
+              <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold text-slate-800 backdrop-blur">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                자체 코딩 구조
+              </div>
+            </figure>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {CODING_BENEFITS.map((b, i) => (
               <div
@@ -402,6 +496,24 @@ export default function WhyHsWebPage() {
               단계마다 무엇을 진행하는지 투명하게 공유합니다.
             </p>
           </div>
+
+          <figure className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-sm mb-12">
+            <Image
+              src="/why-hs-web/workflow.webp"
+              alt="정보 제공, 초안 제작, 피드백, 런칭으로 이어지는 HS WEB 제작 흐름 이미지"
+              width={1672}
+              height={941}
+              sizes="(max-width: 1100px) 100vw, 1100px"
+              className="w-full aspect-[16/7] object-cover object-center"
+            />
+            <figcaption className="absolute inset-x-4 bottom-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-bold">
+              {["정보 제공", "초안 제작", "피드백 반영", "런칭 · 전달"].map((label) => (
+                <span key={label} className="inline-flex min-h-8 items-center justify-center rounded-[8px] bg-white/85 px-3 text-slate-800 backdrop-blur">
+                  {label}
+                </span>
+              ))}
+            </figcaption>
+          </figure>
 
           {/* Workflow timeline */}
           <div className="relative">
