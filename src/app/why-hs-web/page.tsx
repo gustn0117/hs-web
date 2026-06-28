@@ -1,0 +1,577 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "왜 HS WEB인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
+  description:
+    "왜 HS WEB이 다른 업체보다 저렴한지, 자체 코딩으로 만든 사이트의 장점은 무엇인지, 그리고 어떤 흐름으로 함께 만드는지 한 페이지에 정리했습니다.",
+  alternates: { canonical: "https://hsweb.pics/why-hs-web" },
+};
+
+const PRICE_REASONS = [
+  {
+    n: "01",
+    title: "1인 전담 구조",
+    desc: "대표가 기획·디자인·개발을 모두 직접 진행합니다. 중간 단계의 마진과 커뮤니케이션 비용이 없습니다.",
+    impact: "전통적 분업 구조의 30~50% 비용 절감",
+  },
+  {
+    n: "02",
+    title: "자체 인프라 운영",
+    desc: "외부 서버 임대 없이 직접 운영하는 서버에 배포합니다. 호스팅 마진을 받지 않아 월 7,000원부터 가능합니다.",
+    impact: "월 호스팅 비용 30,000원 → 7,000원",
+  },
+  {
+    n: "03",
+    title: "사무실·영업 비용 0원",
+    desc: "사무실 임대료, 영업 인력, 광고 대행료 같은 고정비를 운영하지 않습니다. 그 비용을 가격에 반영하지 않습니다.",
+    impact: "동일 결과물 대비 약 50% 가격대",
+  },
+  {
+    n: "04",
+    title: "솔직한 가격",
+    desc: "워드프레스 업체의 '월 운영비 30만원' 같은 보수적 청구가 없습니다. 결과물 인도 시 정산이 끝나며, 콘텐츠 수정은 평생 무료입니다.",
+    impact: "초기 비용만 발생, 운영비 별도 없음",
+  },
+];
+
+const CODING_BENEFITS = [
+  {
+    icon: "M13 10V3L4 14h7v7l9-11h-7z",
+    title: "압도적 성능",
+    desc: "Next.js + React 기반으로 페이지 로딩 0.5~1초. 워드프레스 사이트(평균 3~5초) 대비 5배 빠릅니다.",
+    metric: "Lighthouse 90+",
+  },
+  {
+    icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+    title: "SEO 친화 구조",
+    desc: "메타 태그, sitemap.xml, robots.txt, 구조화 데이터(Schema.org) 등 검색엔진 최적화가 코드 단에서 완벽 적용됩니다.",
+    metric: "Google 친화 100%",
+  },
+  {
+    icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+    title: "보안 안정성",
+    desc: "워드프레스 플러그인의 알려진 보안 취약점이 존재하지 않습니다. 필요한 코드만 동작해 공격 표면이 작습니다.",
+    metric: "취약 플러그인 0개",
+  },
+  {
+    icon: "M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6",
+    title: "자유로운 확장",
+    desc: "관리자 페이지, API 연동, 결제 시스템, 회원 관리 등 어떤 기능도 자유롭게 추가할 수 있습니다. 플러그인 호환성 걱정 없음.",
+    metric: "기능 한계 없음",
+  },
+  {
+    icon: "M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25zm0 2.25v6m0 0h.008v.008H12v-.008z",
+    title: "100% 소유권",
+    desc: "소스코드를 통째로 인도받습니다. 다른 업체로 옮기거나 직접 운영하셔도 됩니다. 종속되지 않는 자산입니다.",
+    metric: "소스코드 전체 인도",
+  },
+  {
+    icon: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z",
+    title: "검색 상위 가능성",
+    desc: "코드 단의 SEO가 잘 되어 있어야 마케팅 효율도 올라갑니다. 처음부터 검색에 친화적인 구조로 만듭니다.",
+    metric: "구글·네이버 친화",
+  },
+];
+
+const FAQS = [
+  {
+    cat: "가격",
+    q: "정말 249,000원에 홈페이지 제작이 가능한가요?",
+    a: "네, 5페이지 반응형 홈페이지 기준 249,000원부터 가능합니다. 1인 운영 구조와 자체 인프라 덕분에 가능한 가격이며, 결과물 품질은 일반 업체의 500만원짜리와 동등합니다. 페이지 수가 늘거나 쇼핑몰·관리자 페이지 등 기능이 추가되면 그에 맞춰 견적이 조정됩니다.",
+  },
+  {
+    cat: "가격",
+    q: "정말 운영비가 0원인가요? 숨겨진 비용은 없나요?",
+    a: "운영비·관리비 명목의 정기 청구는 없습니다. 결과물 인도 시 정산이 끝나며, 콘텐츠 수정(텍스트·이미지)은 평생 무료로 지원합니다. 단 도메인 갱신비(연 3,000~30,000원)와 호스팅 비용(월 7,000원~)은 실비로 발생합니다. 모두 시중 최저가 수준입니다.",
+  },
+  {
+    cat: "가격",
+    q: "다른 업체는 1,000만원이라는데, 결과물 품질 차이가 없을까요?",
+    a: "외관과 기능만 봐서는 거의 차이가 없습니다. 오히려 자체 코딩으로 만든 사이트가 속도·SEO·보안 면에서 더 우수한 경우가 많습니다. 가격 차이의 본질은 결과물이 아니라 비용 구조 차이입니다(인건비·사무실·영업·광고비 등). 의심되시면 포트폴리오에서 실제 작업물을 확인해보시거나, 다른 업체 견적과 직접 비교해보시기 바랍니다.",
+  },
+  {
+    cat: "자체 코딩",
+    q: "워드프레스로 만들면 안 되나요? 더 쉽지 않나요?",
+    a: "워드프레스는 콘텐츠 직접 관리가 쉽다는 장점이 있지만, 성능·SEO·보안·유지보수에서 본질적 한계가 있습니다. 평균 페이지 로딩 3~5초(자체 코딩은 0.5~1초), 플러그인 보안 취약점, 사이트 무거움, 플러그인 호환성 문제 등. 단순 블로그가 아닌 비즈니스용 사이트라면 자체 코딩을 강력히 권장합니다.",
+  },
+  {
+    cat: "자체 코딩",
+    q: "Next.js·React 같은 최신 기술로 만든다는 게 어떤 의미인가요?",
+    a: "Next.js는 Vercel(현재 가장 빠르게 성장하는 웹 프레임워크), React는 Facebook·Netflix·Airbnb 등 글로벌 기업들이 사용하는 표준 기술입니다. 검증된 최신 기술 스택으로 만들기 때문에 5년 후에도 유지보수 가능하고, 어떤 개발자에게 넘겨도 이어 작업할 수 있는 자산이 됩니다.",
+  },
+  {
+    cat: "자체 코딩",
+    q: "소스코드를 정말 다 인도받을 수 있나요?",
+    a: "네, 100% 인도합니다. GitHub 저장소를 통째로 넘겨드리거나, 압축 파일로 전달합니다. 다른 개발사로 옮기시거나 직접 운영하셔도 됩니다. 한 번 받으신 코드는 영구히 소유하시는 자산입니다. HS WEB에 종속될 일이 없습니다.",
+  },
+  {
+    cat: "워크플로우",
+    q: "프로젝트 정보가 정리되어 있지 않은데 시작할 수 있을까요?",
+    a: "물론입니다. 많은 클라이언트가 비슷한 상황입니다. 첫 상담에서 무엇이 필요한지 함께 정리하고, 자료가 없는 부분(텍스트 작성, 이미지 준비 등)은 같이 풀어나갑니다. 부담 갖지 마시고 연락해주세요.",
+  },
+  {
+    cat: "워크플로우",
+    q: "총 제작 기간은 얼마나 걸리나요?",
+    a: "5페이지 일반 홈페이지 기준 약 2~3주, 쇼핑몰이나 관리자 페이지가 포함되는 경우 4~8주 정도입니다. 정확한 일정은 첫 상담 후 견적서와 함께 확정합니다. 급한 일정이 있으시면 우선 처리도 가능합니다.",
+  },
+  {
+    cat: "워크플로우",
+    q: "디자인이 마음에 안 들면 어떻게 하나요?",
+    a: "초안 단계에서 2~3회 수정이 기본 포함됩니다. 색상·레이아웃·폰트·이미지 등 자유롭게 의견 주시면 함께 다듬어 갑니다. 만약 큰 방향 변경이 필요하다면 별도 협의 후 진행하며, 디자인 시안 전 단계에서 취소하시는 경우 전액 환불 가능합니다.",
+  },
+  {
+    cat: "유지보수",
+    q: "런칭 후 텍스트·이미지 수정은 어떻게 요청하나요?",
+    a: "카톡·이메일·전화로 편하게 요청해주시면 됩니다. 보통 1~2일 이내 처리되며, 콘텐츠 수정(텍스트·이미지·간단한 추가)은 평생 무료입니다. 신규 기능 추가나 큰 구조 변경은 별도 견적으로 진행됩니다.",
+  },
+  {
+    cat: "결제",
+    q: "결제는 어떻게 진행되나요?",
+    a: "계약 체결 시 50%, 최종 납품 후 잔금 50% 지급이 기본입니다. Enterprise급은 단계별 정산도 가능합니다. 전자 계약서로 진행하며, 세금계산서 발행 가능합니다.",
+  },
+  {
+    cat: "결제",
+    q: "환불 정책은 어떻게 되나요?",
+    a: "디자인 시안 전 단계에서 취소 시 전액 환불, 이후 단계는 진행 정도에 따라 부분 환불합니다. 정확한 환불 조건은 계약서에 명시되어 있어 투명합니다. 일반 업체처럼 '계약 후 환불 불가' 같은 조항은 없습니다.",
+  },
+];
+
+const WORKFLOW_STEPS = [
+  {
+    n: 1,
+    title: "정보 제공",
+    summary: "필요한 정보를 받습니다",
+    detail: "프로젝트 목적·타깃·내용을 알려주세요. 자료(로고·이미지·텍스트)가 정리되어 있지 않아도 괜찮습니다. 함께 정리하며 시작합니다.",
+    time: "1~3일",
+  },
+  {
+    n: 2,
+    title: "초안 제작",
+    summary: "디자인 + 구조 초안",
+    detail: "전달받은 정보로 사이트의 디자인과 구조 초안을 만듭니다. 메인 + 내부 페이지 + 모바일 화면까지 한 번에 잡습니다.",
+    time: "3~7일",
+  },
+  {
+    n: 3,
+    title: "초안 전달 · 피드백",
+    summary: "함께 다듬어 나갑니다",
+    detail: "완성된 초안을 보내드리고, 마음에 드는 부분과 수정하고 싶은 부분을 자유롭게 알려주세요. 디자인 확정까지 2~3회 수정이 포함됩니다.",
+    time: "3~7일",
+  },
+  {
+    n: 4,
+    title: "제작 완료 · 전달",
+    summary: "사이트 완성 · 운영 시작",
+    detail: "확정된 시안을 기반으로 개발을 마무리하고 점검 후 실제 사이트로 배포합니다. 도메인 연결과 운영 가이드까지 함께 전달합니다.",
+    time: "5~10일",
+  },
+];
+
+export default function WhyHsWebPage() {
+  return (
+    <div className="bg-white">
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-slate-900 text-white">
+        <div className="absolute inset-0 p-bg-grid-dots opacity-[0.08] pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(800px 400px at 100% 0%, rgba(79,70,229,0.25) 0%, transparent 50%), radial-gradient(600px 300px at 0% 100%, rgba(99,102,241,0.18) 0%, transparent 50%)",
+          }}
+        />
+        <div className="relative max-w-[1100px] mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-32 text-center">
+          <p className="text-[11px] font-bold text-white/60 tracking-[0.2em] uppercase mb-5">
+            WHY HS WEB · 솔직한 가격, 더 좋은 결과
+          </p>
+          <h1 className="text-[34px] md:text-[56px] font-black tracking-[-0.04em] leading-[1.1] mb-6">
+            왜 더 저렴한데,<br />
+            결과는 더 좋을까요?
+          </h1>
+          <p className="text-[15px] md:text-[18px] text-white/70 leading-[1.7] max-w-[640px] mx-auto mb-10">
+            HS WEB이 어떤 구조로 운영되기에 다른 업체보다 저렴할 수 있는지,
+            자체 코딩으로 만든 사이트는 무엇이 다른지,
+            그리고 어떤 흐름으로 함께 만드는지 정리했습니다.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-[420px] sm:max-w-none mx-auto">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white text-slate-900 font-bold text-[15px] no-underline hover:bg-slate-100 transition-colors"
+            >
+              무료 상담 받기
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white/10 text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/15 transition-colors"
+            >
+              포트폴리오 보기
+            </Link>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mt-14 grid grid-cols-3 max-w-[640px] mx-auto border-t border-white/10">
+            {[
+              { v: "249,000", suffix: "원~", l: "시작가" },
+              { v: "5", suffix: "배 빠름", l: "vs 워드프레스" },
+              { v: "0", suffix: "원/월", l: "운영비" },
+            ].map((s, i) => (
+              <div
+                key={s.l}
+                className={`py-6 ${i > 0 ? "border-l border-white/10" : ""}`}
+              >
+                <p className="text-[22px] md:text-[26px] font-bold tabular-nums">
+                  {s.v}
+                  <span className="text-[12px] md:text-[14px] text-white/60 ml-1 font-semibold">
+                    {s.suffix}
+                  </span>
+                </p>
+                <p className="text-[11px] text-white/60 mt-1">{s.l}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 1 — 왜 저렴한가 */}
+      <section className="bg-slate-50 border-b border-slate-200">
+        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+              SECTION 01 · 가격의 비밀
+            </p>
+            <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+              왜 다른 업체보다 저렴할까요?
+            </h2>
+            <p className="text-[15px] md:text-[16px] text-slate-600 leading-[1.7] max-w-[640px] mx-auto">
+              결과물이 부실해서가 아닙니다.
+              <br className="hidden sm:inline" />
+              일반적인 업체의 비용 구조를 단순화하고, 그만큼을 가격에 반영합니다.
+            </p>
+          </div>
+
+          {/* 비교 카드 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-12">
+            {/* 일반 업체 */}
+            <div className="p-7 md:p-8 rounded-[16px] border border-slate-200 bg-white">
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-slate-400 mb-3">
+                일반 웹 에이전시
+              </p>
+              <p className="text-[22px] md:text-[24px] font-bold text-slate-700 leading-[1.3] mb-5">
+                평균 500만~1,500만원
+              </p>
+              <ul className="space-y-2.5 list-none m-0">
+                {[
+                  "기획자·디자이너·개발자 분업 → 인건비 3배",
+                  "사무실 임대료 · 영업팀 운영",
+                  "광고 대행료 · 마케팅 비용",
+                  "외부 서버 호스팅 마진",
+                  "월 운영비 30만원~ 별도 청구",
+                ].map((it) => (
+                  <li key={it} className="flex items-start gap-2 text-[13px] text-slate-500">
+                    <svg className="w-3.5 h-3.5 shrink-0 mt-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    {it}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* HS WEB */}
+            <div className="p-7 md:p-8 rounded-[16px] border-2 border-slate-900 bg-slate-900 text-white relative overflow-hidden">
+              <span className="absolute -top-3 -right-3 inline-flex items-center gap-1 h-7 px-3 rounded-full bg-indigo-500 text-white text-[11px] font-bold tracking-wider rotate-3 shadow-lg">
+                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                HS WEB
+              </span>
+              <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/60 mb-3">
+                같은 결과 · 더 합리적
+              </p>
+              <p className="text-[22px] md:text-[24px] font-bold leading-[1.3] mb-5">
+                249,000원부터
+              </p>
+              <ul className="space-y-2.5 list-none m-0">
+                {[
+                  "1인 전담 — 인건비 1배만 발생",
+                  "사무실·영업·광고 없음",
+                  "자체 서버 직접 운영",
+                  "호스팅 월 7,000원 원가 수준",
+                  "운영비 0원 · 콘텐츠 수정 평생 무료",
+                ].map((it) => (
+                  <li key={it} className="flex items-start gap-2 text-[13.5px] text-white/90 font-medium">
+                    <svg className="w-3.5 h-3.5 shrink-0 mt-1 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    {it}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* 4가지 가격 이유 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {PRICE_REASONS.map((r) => (
+              <div key={r.n} className="p-6 rounded-[14px] border border-slate-200 bg-white hover:border-slate-300 transition-colors">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-[14px] font-bold text-indigo-500 tnum">{r.n}</span>
+                  <h3 className="text-[16px] font-bold text-slate-900 tracking-tight">{r.title}</h3>
+                </div>
+                <p className="text-[13.5px] text-slate-600 leading-[1.7] mb-3">{r.desc}</p>
+                <div className="inline-flex items-center h-7 px-3 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold">
+                  {r.impact}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2 — 자체 코딩 장점 */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+              SECTION 02 · 코딩의 가치
+            </p>
+            <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+              자체 코딩만의 차이
+            </h2>
+            <p className="text-[15px] md:text-[16px] text-slate-600 leading-[1.7] max-w-[640px] mx-auto">
+              워드프레스·플랫폼 솔루션이 아니라
+              <br className="hidden sm:inline" />
+              Next.js · React로 처음부터 직접 만듭니다. 6가지가 결정적으로 달라집니다.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CODING_BENEFITS.map((b, i) => (
+              <div
+                key={b.title}
+                className="p-6 md:p-7 rounded-[16px] border border-slate-200 bg-white hover:border-slate-900 hover:shadow-sm transition-all"
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span className="inline-flex items-center justify-center w-11 h-11 rounded-[10px] bg-slate-900 text-white">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={b.icon} />
+                    </svg>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="text-[17px] font-bold text-slate-900 tracking-tight mb-2">{b.title}</h3>
+                <p className="text-[13.5px] text-slate-600 leading-[1.7] mb-4">{b.desc}</p>
+                <div className="inline-flex items-center h-6 px-2.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                  ✓ {b.metric}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 핵심 카피 */}
+          <div className="mt-10 p-7 md:p-8 rounded-[16px] bg-slate-50 border border-slate-200">
+            <p className="text-[13.5px] md:text-[15px] text-slate-700 leading-[1.8]">
+              <strong className="text-slate-900">워드프레스 사이트가 무겁고 느린 건</strong>{" "}
+              플랫폼의 모든 기능을 다 담아야 하기 때문입니다.
+              자체 코딩은 <strong className="text-slate-900">정말 필요한 코드만</strong> 들어갑니다.
+              그래서 빠르고, 보안이 단단하고, 어떤 기능도 자유롭게 추가할 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3 — 워크플로우 */}
+      <section className="bg-slate-50 border-b border-slate-200">
+        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+              SECTION 03 · 함께 만드는 방법
+            </p>
+            <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+              어떻게 진행되나요?
+            </h2>
+            <p className="text-[15px] md:text-[16px] text-slate-600 leading-[1.7] max-w-[640px] mx-auto">
+              정보를 받아 초안을 만들고, 피드백으로 다듬어 완성합니다.
+              <br className="hidden sm:inline" />
+              단계마다 무엇을 진행하는지 투명하게 공유합니다.
+            </p>
+          </div>
+
+          {/* Workflow timeline */}
+          <div className="relative">
+            {/* Connector line — desktop */}
+            <div className="hidden md:block absolute left-0 right-0 top-[80px] h-[2px] bg-slate-200" />
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-3 relative">
+              {WORKFLOW_STEPS.map((s, i) => (
+                <div key={s.n} className="relative">
+                  {/* Mobile connector */}
+                  {i < WORKFLOW_STEPS.length - 1 && (
+                    <div className="md:hidden absolute left-7 top-[64px] bottom-[-16px] w-[2px] bg-slate-200" />
+                  )}
+                  <div className="flex md:flex-col md:items-center gap-4 md:gap-0">
+                    {/* Number circle */}
+                    <span className="relative shrink-0 inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border-2 border-slate-200 text-slate-900 font-black text-[18px] md:text-[22px] z-10 md:mb-5 tnum">
+                      {s.n}
+                    </span>
+                    <div className="flex-1 md:text-center min-w-0">
+                      <p className="text-[12px] font-bold text-indigo-600 tracking-[0.12em] uppercase mb-1.5">
+                        {s.summary}
+                      </p>
+                      <h3 className="text-[16px] md:text-[17px] font-bold text-slate-900 tracking-tight mb-2">
+                        {s.title}
+                      </h3>
+                      <p className="text-[12.5px] text-slate-500 leading-[1.7] mb-3">{s.detail}</p>
+                      <span className="inline-flex items-center h-6 px-2.5 rounded-full bg-slate-900 text-white text-[11px] font-bold tabular-nums">
+                        예상 {s.time}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom note */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              { t: "투명한 진행", d: "각 단계마다 진행 상황·일정을 공유합니다" },
+              { t: "빠른 응답", d: "업무 시간 내 문의는 1시간 이내 답변" },
+              { t: "수정 무료", d: "콘텐츠 수정은 평생 무료로 지원합니다" },
+            ].map((c) => (
+              <div key={c.t} className="p-5 rounded-[12px] border border-slate-200 bg-white text-center">
+                <h4 className="text-[14px] font-bold text-slate-900 mb-1">{c.t}</h4>
+                <p className="text-[12.5px] text-slate-500 leading-[1.6]">{c.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+          <div className="text-center mb-14">
+            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+              SECTION 04 · 자주 묻는 질문
+            </p>
+            <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
+              궁금하신 점을 정리했습니다
+            </h2>
+            <p className="text-[15px] md:text-[16px] text-slate-600 leading-[1.7] max-w-[640px] mx-auto">
+              가격·자체 코딩·워크플로우·유지보수·결제까지
+              <br className="hidden sm:inline" />
+              실제로 많이 들어오는 질문들을 한 번에 정리했습니다.
+            </p>
+          </div>
+
+          {/* Category quick chips */}
+          <div className="flex flex-wrap gap-2 mb-6 justify-center">
+            {Array.from(new Set(FAQS.map((f) => f.cat))).map((c) => (
+              <span
+                key={c}
+                className="inline-flex items-center h-7 px-3 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold tracking-wider"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+
+          <div className="max-w-[820px] mx-auto rounded-[16px] border border-slate-200 overflow-hidden bg-white divide-y divide-slate-100">
+            {FAQS.map((item, i) => (
+              <details key={i} className="group">
+                <summary className="flex items-start justify-between gap-4 px-5 md:px-6 py-5 cursor-pointer list-none hover:bg-slate-50/60 transition-colors">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <span className="text-[11px] font-bold text-indigo-500 tnum mt-1 shrink-0 w-7">Q{String(i + 1).padStart(2, "0")}</span>
+                    <div className="min-w-0">
+                      <span className="inline-flex items-center h-5 px-2 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold mr-2 mb-1 align-middle">
+                        {item.cat}
+                      </span>
+                      <span className="text-[15px] font-semibold text-slate-900 leading-[1.5] align-middle">{item.q}</span>
+                    </div>
+                  </div>
+                  <svg
+                    className="w-5 h-5 text-slate-400 shrink-0 group-open:rotate-180 transition-transform mt-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </summary>
+                <div className="px-5 md:px-6 pb-5 pl-[60px] md:pl-[60px] text-[14px] text-slate-600 leading-[1.8]">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+
+          {/* Still curious */}
+          <div className="mt-8 text-center">
+            <p className="text-[13px] text-slate-500 mb-3">더 궁금한 점이 있으신가요?</p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 h-11 px-5 rounded-[10px] bg-slate-900 text-white text-[13.5px] font-bold no-underline hover:bg-slate-800 transition-colors"
+            >
+              직접 물어보기
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 p-bg-grid-dots opacity-[0.06] pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(600px 300px at 50% 0%, rgba(79,70,229,0.25) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-[1100px] mx-auto px-6 py-20 md:py-28 text-center">
+          <p className="text-[11px] font-bold text-white/60 tracking-[0.2em] uppercase mb-5">
+            READY TO START
+          </p>
+          <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] leading-[1.2] mb-4">
+            상담은 무료, 시작은 부담 없이.
+          </h2>
+          <p className="text-[15px] md:text-[16px] text-white/70 leading-[1.7] mb-10 max-w-[560px] mx-auto">
+            프로젝트 정보가 정리되어 있지 않아도 괜찮습니다.
+            대화를 통해 함께 정리합니다. 24시간 이내 회신드립니다.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-[420px] sm:max-w-none mx-auto">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white text-slate-900 font-bold text-[15px] no-underline hover:bg-slate-100 transition-colors"
+            >
+              무료 상담 신청
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+            <a
+              href="tel:010-3319-2509"
+              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white/10 text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/15 transition-colors tnum"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+              </svg>
+              010-3319-2509
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
