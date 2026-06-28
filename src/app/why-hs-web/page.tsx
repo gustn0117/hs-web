@@ -601,51 +601,112 @@ export default function WhyHsWebPage() {
             </figcaption>
           </figure>
 
-          {/* Workflow timeline */}
-          <div className="relative">
-            {/* Connector line — desktop */}
-            <div className="hidden md:block absolute left-0 right-0 top-[80px] h-[2px] bg-slate-200" />
+          {/* Workflow timeline — rich cards with gradient header */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 relative">
+            {WORKFLOW_STEPS.map((s, i) => (
+              <div key={s.n} className="relative group">
+                {/* Connector arrow — desktop only, between cards */}
+                {i < WORKFLOW_STEPS.length - 1 && (
+                  <div className="hidden lg:flex absolute -right-4 top-[68px] w-8 h-8 items-center justify-center z-10 pointer-events-none">
+                    <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                )}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-3 relative">
-              {WORKFLOW_STEPS.map((s, i) => (
-                <div key={s.n} className="relative">
-                  {/* Mobile connector */}
-                  {i < WORKFLOW_STEPS.length - 1 && (
-                    <div className="md:hidden absolute left-7 top-[64px] bottom-[-16px] w-[2px] bg-slate-200" />
-                  )}
-                  <div className="flex md:flex-col md:items-center gap-4 md:gap-0">
-                    {/* Number circle */}
-                    <span className="relative shrink-0 inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border-2 border-slate-200 text-slate-900 font-black text-[18px] md:text-[22px] z-10 md:mb-5 tnum">
-                      {s.n}
-                    </span>
-                    <div className="flex-1 md:text-center min-w-0">
-                      <p className="text-[12px] font-bold text-indigo-600 tracking-[0.12em] uppercase mb-1.5">
-                        {s.summary}
-                      </p>
-                      <h3 className="text-[16px] md:text-[17px] font-bold text-slate-900 tracking-tight mb-2">
-                        {s.title}
-                      </h3>
-                      <p className="text-[12.5px] text-slate-500 leading-[1.7] mb-3">{s.detail}</p>
-                      <span className="inline-flex items-center h-6 px-2.5 rounded-full bg-slate-900 text-white text-[11px] font-bold tabular-nums">
-                        예상 {s.time}
+                <div className="h-full rounded-[18px] bg-white border border-slate-200 overflow-hidden group-hover:border-slate-900 group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all">
+                  {/* Header — dark with big number */}
+                  <div className="relative px-6 pt-5 pb-4 bg-gradient-to-br from-slate-900 to-slate-700 text-white overflow-hidden">
+                    <div
+                      className="absolute inset-0 opacity-[0.07] pointer-events-none"
+                      style={{
+                        background:
+                          "radial-gradient(120px 80px at 100% 0%, rgba(255,255,255,0.8) 0%, transparent 60%)",
+                      }}
+                    />
+                    <div className="relative flex items-start justify-between">
+                      <span className="text-[44px] md:text-[52px] font-black leading-none tnum tracking-tighter">
+                        0{s.n}
+                      </span>
+                      <span className="inline-flex items-center h-5 px-2 rounded-full bg-white/15 text-white text-[9px] font-bold tracking-[0.14em] uppercase mt-2">
+                        Step
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6 flex flex-col h-[calc(100%-90px)]">
+                    <p className="text-[10.5px] font-bold text-indigo-600 tracking-[0.14em] uppercase mb-2">
+                      {s.summary}
+                    </p>
+                    <h3 className="text-[17px] md:text-[18px] font-bold text-slate-900 tracking-tight mb-3">
+                      {s.title}
+                    </h3>
+                    <p className="text-[13px] text-slate-600 leading-[1.7] mb-5 flex-1">
+                      {s.detail}
+                    </p>
+
+                    {/* Duration */}
+                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
+                      <svg className="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-[10px] text-slate-500 font-semibold">예상 소요</span>
+                      <span className="ml-auto text-[12.5px] font-bold text-slate-900 tabular-nums">
+                        {s.time}
                       </span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          {/* Bottom note */}
+          {/* Bottom — strong metric cards */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
-              { t: "투명한 진행", d: "각 단계마다 진행 상황·일정을 공유합니다" },
-              { t: "빠른 응답", d: "업무 시간 내 문의는 1시간 이내 답변" },
-              { t: "수정 무료", d: "콘텐츠 수정은 평생 무료로 지원합니다" },
+              {
+                icon: "M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM12 15a3 3 0 100-6 3 3 0 000 6z",
+                title: "투명한 진행",
+                desc: "각 단계마다 진행 상황·일정을 실시간 공유합니다",
+                metric: "100%",
+                label: "공유율",
+                accent: "bg-indigo-50 text-indigo-700",
+              },
+              {
+                icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z",
+                title: "빠른 응답",
+                desc: "업무 시간 내 문의는 1시간 이내 답변드립니다",
+                metric: "1시간",
+                label: "이내",
+                accent: "bg-emerald-50 text-emerald-700",
+              },
+              {
+                icon: "M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9",
+                title: "수정 무료",
+                desc: "콘텐츠 수정(텍스트·이미지)은 평생 무료입니다",
+                metric: "평생",
+                label: "무료",
+                accent: "bg-amber-50 text-amber-700",
+              },
             ].map((c) => (
-              <div key={c.t} className="p-5 rounded-[12px] border border-slate-200 bg-white text-center">
-                <h4 className="text-[14px] font-bold text-slate-900 mb-1">{c.t}</h4>
-                <p className="text-[12.5px] text-slate-500 leading-[1.6]">{c.d}</p>
+              <div
+                key={c.title}
+                className="group rounded-[16px] bg-white border border-slate-200 p-5 md:p-6 hover:border-slate-900 hover:shadow-md transition-all"
+              >
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <span className="inline-flex items-center justify-center w-11 h-11 rounded-[12px] bg-slate-900 text-white group-hover:scale-105 transition-transform">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d={c.icon} />
+                    </svg>
+                  </span>
+                  <span className={`inline-flex items-baseline gap-1 px-3 py-1 rounded-full text-[12px] font-bold ${c.accent}`}>
+                    <span className="text-[16px] tabular-nums">{c.metric}</span>
+                    <span className="text-[10px] font-semibold opacity-80">{c.label}</span>
+                  </span>
+                </div>
+                <h4 className="text-[15.5px] font-bold text-slate-900 mb-1.5 tracking-tight">{c.title}</h4>
+                <p className="text-[12.5px] text-slate-500 leading-[1.7]">{c.desc}</p>
               </div>
             ))}
           </div>
