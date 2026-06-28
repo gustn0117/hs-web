@@ -674,21 +674,21 @@ export default function WhyHsWebPage() {
           </figure>
 
           {/* Workflow timeline — rich cards with gradient header */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 relative items-stretch">
             {WORKFLOW_STEPS.map((s, i) => (
-              <div key={s.n} className="relative group">
+              <div key={s.n} className="relative group h-full">
                 {/* Connector arrow — desktop only, between cards */}
                 {i < WORKFLOW_STEPS.length - 1 && (
-                  <div className="hidden lg:flex absolute -right-4 top-[68px] w-8 h-8 items-center justify-center z-10 pointer-events-none">
+                  <div className="hidden lg:flex absolute -right-4 top-[60px] w-8 h-8 items-center justify-center z-10 pointer-events-none">
                     <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                     </svg>
                   </div>
                 )}
 
-                <div className="h-full rounded-[18px] bg-white border border-slate-200 overflow-hidden group-hover:border-slate-900 group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all">
+                <div className="flex flex-col h-full rounded-[18px] bg-white border border-slate-200 overflow-hidden group-hover:border-slate-900 group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all">
                   {/* Header — dark with big number */}
-                  <div className="relative px-6 pt-5 pb-4 bg-gradient-to-br from-slate-900 to-slate-700 text-white overflow-hidden">
+                  <div className="relative px-5 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 bg-gradient-to-br from-slate-900 to-slate-700 text-white overflow-hidden">
                     <div
                       className="absolute inset-0 opacity-[0.07] pointer-events-none"
                       style={{
@@ -696,30 +696,30 @@ export default function WhyHsWebPage() {
                           "radial-gradient(120px 80px at 100% 0%, rgba(255,255,255,0.8) 0%, transparent 60%)",
                       }}
                     />
-                    <div className="relative flex items-start justify-between">
-                      <span className="text-[44px] md:text-[52px] font-black leading-none tnum tracking-tighter">
+                    <div className="relative flex items-center justify-between">
+                      <span className="text-[34px] sm:text-[40px] lg:text-[48px] font-black leading-none tnum tracking-tighter">
                         0{s.n}
                       </span>
-                      <span className="inline-flex items-center h-5 px-2 rounded-full bg-white/15 text-white text-[9px] font-bold tracking-[0.14em] uppercase mt-2">
+                      <span className="inline-flex items-center h-5 px-2 rounded-full bg-white/15 text-white text-[9px] font-bold tracking-[0.14em] uppercase">
                         Step
                       </span>
                     </div>
                   </div>
 
                   {/* Body */}
-                  <div className="p-6 flex flex-col h-[calc(100%-90px)]">
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
                     <p className="text-[10.5px] font-bold text-indigo-600 tracking-[0.14em] uppercase mb-2">
                       {s.summary}
                     </p>
-                    <h3 className="text-[17px] md:text-[18px] font-bold text-slate-900 tracking-tight mb-3">
+                    <h3 className="text-[16px] md:text-[17px] font-bold text-slate-900 tracking-tight mb-2.5">
                       {s.title}
                     </h3>
-                    <p className="text-[13px] text-slate-600 leading-[1.7] mb-5 flex-1">
+                    <p className="text-[12.5px] md:text-[13px] text-slate-600 leading-[1.7] mb-4 flex-1">
                       {s.detail}
                     </p>
 
                     {/* Duration */}
-                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100 mt-auto">
                       <svg className="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -761,19 +761,17 @@ export default function WhyHsWebPage() {
             ].map((c) => (
               <div
                 key={c.title}
-                className="group rounded-[16px] bg-white border border-slate-200 p-5 md:p-6 hover:border-slate-900 hover:shadow-md transition-all"
+                className="relative group rounded-[16px] bg-white border border-slate-200 p-5 md:p-6 hover:border-slate-900 hover:shadow-md transition-all"
               >
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <span className="inline-flex items-center justify-center w-11 h-11 rounded-[12px] bg-slate-900 text-white group-hover:scale-105 transition-transform">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d={c.icon} />
-                    </svg>
-                  </span>
-                  <span className="inline-flex items-baseline gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[12px] font-bold">
-                    <span className="text-[16px] tabular-nums">{c.metric}</span>
-                    <span className="text-[10px] font-semibold text-slate-500">{c.label}</span>
-                  </span>
-                </div>
+                <span className="absolute top-5 right-5 md:top-6 md:right-6 inline-flex items-baseline gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+                  <span className="text-[14px] tabular-nums">{c.metric}</span>
+                  <span className="text-[10px] font-semibold text-slate-500">{c.label}</span>
+                </span>
+                <span className="inline-flex items-center justify-center w-11 h-11 rounded-[12px] bg-slate-900 text-white group-hover:scale-105 transition-transform mb-4">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={c.icon} />
+                  </svg>
+                </span>
                 <h4 className="text-[15.5px] font-bold text-slate-900 mb-1.5 tracking-tight">{c.title}</h4>
                 <p className="text-[12.5px] text-slate-500 leading-[1.7]">{c.desc}</p>
               </div>
