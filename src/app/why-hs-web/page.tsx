@@ -209,8 +209,8 @@ export default function WhyHsWebPage() {
       {/* HERO */}
       <section className="relative min-h-[760px] overflow-hidden bg-slate-950 text-white">
         <Image
-          src="/why-hs-web/hero-no-people.webp"
-          alt="사람 없이 반응형 웹사이트 화면, 코드 패널, 서버 인프라, 제작 흐름을 보여주는 HS WEB 히어로 이미지"
+          src="/why-hs-web/hero-code-screens.webp"
+          alt="사람 없이 검은 코드 화면이 표시된 모니터, 태블릿, 노트북과 서버 인프라를 보여주는 HS WEB 히어로 이미지"
           fill
           priority
           sizes="100vw"
