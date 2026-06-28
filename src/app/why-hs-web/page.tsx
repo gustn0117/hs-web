@@ -169,81 +169,140 @@ const WORKFLOW_STEPS = [
   },
 ];
 
+const HERO_PROOFS = [
+  { v: "249,000원~", l: "5페이지 반응형 시작가" },
+  { v: "0원/월", l: "관리비·운영비 별도 청구 없음" },
+  { v: "소스 전체", l: "완성 후 100% 인도" },
+];
+
+const LANDING_SUMMARY = [
+  {
+    title: "가격이 낮은 이유",
+    desc: "중간 영업·사무실·호스팅 마진을 걷어내고 제작자가 직접 진행합니다.",
+    metric: "약 50%",
+    label: "동일 결과물 대비 가격대",
+  },
+  {
+    title: "결과가 좋은 이유",
+    desc: "템플릿이 아니라 필요한 기능만 직접 코딩해 빠르고 가볍게 만듭니다.",
+    metric: "5배",
+    label: "워드프레스 대비 체감 속도",
+  },
+  {
+    title: "맡기기 쉬운 이유",
+    desc: "자료가 덜 준비되어도 상담에서 구조를 잡고 초안부터 같이 다듬습니다.",
+    metric: "2~3주",
+    label: "일반 홈페이지 제작 기간",
+  },
+];
+
+const QUICK_LINKS = [
+  { href: "#price", label: "가격 구조" },
+  { href: "#code", label: "자체 코딩" },
+  { href: "#workflow", label: "진행 방식" },
+  { href: "#faq", label: "FAQ" },
+];
+
 export default function WhyHsWebPage() {
   return (
     <div className="bg-white">
       {/* HERO */}
-      <section className="relative overflow-hidden bg-slate-950 text-white">
+      <section className="relative min-h-[760px] overflow-hidden bg-slate-950 text-white">
         <Image
-          src="/why-hs-web/hero.webp"
-          alt="HS WEB이 직접 제작한 반응형 웹사이트와 코드, 서버 운영 화면을 함께 보여주는 작업 공간"
+          src="/why-hs-web/hero-no-people.webp"
+          alt="사람 없이 반응형 웹사이트 화면, 코드 패널, 서버 인프라, 제작 흐름을 보여주는 HS WEB 히어로 이미지"
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[68%_center] opacity-90"
+          className="object-cover object-[70%_center] opacity-95"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.96)_0%,rgba(2,6,23,0.86)_36%,rgba(2,6,23,0.48)_68%,rgba(2,6,23,0.22)_100%)] pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent pointer-events-none" />
-        <div className="relative max-w-[1100px] mx-auto px-6 min-h-[680px] md:min-h-[720px] flex items-center">
-          <div className="w-full max-w-[640px] pt-24 pb-16 md:pt-32 md:pb-20">
-            <p className="text-[11px] font-bold text-white/60 tracking-[0.2em] uppercase mb-5">
-            WHY HS WEB · 솔직한 가격, 더 좋은 결과
-          </p>
-            <h1 className="text-[36px] md:text-[60px] font-black tracking-[-0.04em] leading-[1.05] mb-6">
-            왜 더 저렴한데,<br />
-            결과는 더 좋을까요?
-          </h1>
-            <p className="text-[15px] md:text-[18px] text-white/75 leading-[1.7] max-w-[600px] mb-9">
-            HS WEB이 어떤 구조로 운영되기에 다른 업체보다 저렴할 수 있는지,
-            자체 코딩으로 만든 사이트는 무엇이 다른지,
-            그리고 어떤 흐름으로 함께 만드는지 정리했습니다.
-          </p>
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center max-w-[420px] sm:max-w-none">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white text-slate-900 font-bold text-[15px] no-underline hover:bg-slate-100 transition-colors"
-            >
-              무료 상담 받기
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white/10 text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/15 transition-colors"
-            >
-              포트폴리오 보기
-            </Link>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.98)_0%,rgba(2,6,23,0.9)_32%,rgba(2,6,23,0.5)_64%,rgba(2,6,23,0.16)_100%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(680px_380px_at_18%_28%,rgba(36,89,176,0.34),transparent_72%)] pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-slate-950 via-slate-950/82 to-transparent pointer-events-none" />
+
+        <div className="relative max-w-[1120px] mx-auto px-6 min-h-[760px] flex items-center">
+          <div className="w-full max-w-[670px] pt-28 pb-28 md:pt-36 md:pb-32">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-bold text-white/80 backdrop-blur-md mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              1인 전담 · 자체 코딩 · 자체 인프라
+            </div>
+            <h1 className="text-[40px] md:text-[66px] font-black tracking-[-0.045em] leading-[1.04] mb-6">
+              홈페이지 제작,
+              <br />
+              더 가볍고 합리적으로.
+            </h1>
+            <p className="text-[15px] md:text-[19px] text-white/76 leading-[1.75] max-w-[610px] mb-9">
+              HS WEB은 불필요한 대행 구조를 줄이고, 직접 코딩한 빠른 웹사이트를 만듭니다.
+              낮은 가격의 이유와 좋은 결과의 이유가 같은 곳에서 시작됩니다.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center max-w-[430px] sm:max-w-none">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white text-slate-950 font-bold text-[15px] no-underline hover:bg-slate-100 transition-colors"
+              >
+                무료 상담 받기
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+              <Link
+                href="#price"
+                className="inline-flex items-center justify-center gap-2 h-13 px-7 rounded-[10px] bg-white/10 text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/15 transition-colors backdrop-blur-md"
+              >
+                가격 구조 보기
+              </Link>
             </div>
 
-            {/* Trust strip */}
-            <div className="mt-12 grid grid-cols-3 max-w-[620px] border-y border-white/10 bg-slate-950/25 backdrop-blur-sm">
-            {[
-              { v: "249,000", suffix: "원~", l: "시작가" },
-              { v: "5", suffix: "배 빠름", l: "vs 워드프레스" },
-              { v: "0", suffix: "원/월", l: "운영비" },
-            ].map((s, i) => (
-              <div
-                key={s.l}
-                className={`py-6 ${i > 0 ? "border-l border-white/10" : ""}`}
-              >
-                <p className="text-[22px] md:text-[26px] font-bold tabular-nums">
-                  {s.v}
-                  <span className="text-[12px] md:text-[14px] text-white/60 ml-1 font-semibold">
-                    {s.suffix}
-                  </span>
-                </p>
-                <p className="text-[11px] text-white/60 mt-1">{s.l}</p>
-              </div>
-            ))}
+            <div className="mt-11 grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-[650px]">
+              {HERO_PROOFS.map((s) => (
+                <div key={s.v} className="rounded-[10px] border border-white/12 bg-slate-950/34 px-4 py-4 backdrop-blur-md">
+                  <p className="text-[22px] font-black tabular-nums leading-none">{s.v}</p>
+                  <p className="mt-2 text-[11px] font-semibold text-white/58 leading-[1.45]">{s.l}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              {QUICK_LINKS.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex h-8 items-center rounded-full border border-white/12 bg-white/[0.07] px-3 text-[12px] font-bold text-white/70 no-underline hover:bg-white/12 hover:text-white transition-colors"
+                >
+                  {item.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
+      {/* VALUE SUMMARY */}
+      <section className="relative z-10 -mt-20 bg-transparent">
+        <div className="max-w-[1120px] mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {LANDING_SUMMARY.map((item) => (
+              <div key={item.title} className="rounded-[16px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.16)]">
+                <p className="text-[11px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-4">
+                  {item.title}
+                </p>
+                <div className="flex items-end gap-2 mb-3">
+                  <span className="text-[32px] md:text-[38px] font-black tracking-[-0.04em] text-slate-950 tabular-nums">
+                    {item.metric}
+                  </span>
+                  <span className="pb-1.5 text-[12px] font-bold text-slate-500">{item.label}</span>
+                </div>
+                <p className="text-[13.5px] text-slate-600 leading-[1.7]">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 1 — 왜 저렴한가 */}
-      <section className="bg-slate-50 border-b border-slate-200">
-        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+      <section id="price" className="bg-slate-50 border-b border-slate-200">
+        <div className="max-w-[1120px] mx-auto px-6 pt-28 pb-20 md:pt-32 md:pb-28">
           <div className="text-center mb-14">
             <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
               SECTION 01 · 가격의 비밀
@@ -258,13 +317,14 @@ export default function WhyHsWebPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 lg:gap-10 items-center mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.12fr_0.88fr] gap-8 lg:gap-12 items-center mb-12">
             <figure className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-sm">
               <Image
                 src="/why-hs-web/price-structure.webp"
                 alt="복잡한 일반 웹 에이전시 구조와 HS WEB의 직접 제작 구조를 비교하는 시각 이미지"
                 width={1672}
                 height={941}
+                loading="eager"
                 sizes="(max-width: 1024px) 100vw, 640px"
                 className="w-full aspect-[16/9] object-cover"
               />
@@ -277,7 +337,7 @@ export default function WhyHsWebPage() {
                 </span>
               </figcaption>
             </figure>
-            <div>
+            <div className="lg:pl-2">
               <p className="text-[13px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-3">
                 이해 포인트
               </p>
@@ -387,8 +447,8 @@ export default function WhyHsWebPage() {
       </section>
 
       {/* SECTION 2 — 자체 코딩 장점 */}
-      <section className="bg-white border-b border-slate-200">
-        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+      <section id="code" className="bg-white border-b border-slate-200">
+        <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
             <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
               SECTION 02 · 코딩의 가치
@@ -433,6 +493,7 @@ export default function WhyHsWebPage() {
                 alt="무거운 템플릿 구조에서 가벼운 자체 코드 구조로 전환되어 빠른 반응형 사이트가 되는 시각 이미지"
                 width={1672}
                 height={941}
+                loading="eager"
                 sizes="(max-width: 1024px) 100vw, 620px"
                 className="w-full aspect-[16/9] object-cover"
               />
@@ -477,12 +538,36 @@ export default function WhyHsWebPage() {
               그래서 빠르고, 보안이 단단하고, 어떤 기능도 자유롭게 추가할 수 있습니다.
             </p>
           </div>
+
+          <div className="mt-8 rounded-[18px] bg-slate-950 text-white p-7 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 overflow-hidden relative">
+            <div className="absolute inset-0 p-bg-grid-dots opacity-[0.06] pointer-events-none" />
+            <div className="relative">
+              <p className="text-[11px] font-bold text-emerald-300 tracking-[0.16em] uppercase mb-3">
+                맞춤 기능까지 고려한다면
+              </p>
+              <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.03em] leading-[1.2] mb-2">
+                처음부터 코드로 만드는 편이 더 오래 갑니다.
+              </h3>
+              <p className="text-[13.5px] md:text-[14.5px] text-white/65 leading-[1.7] max-w-[620px]">
+                관리자, 예약, 결제, 회원, API 연동처럼 이후에 필요한 기능도 같은 구조 위에서 확장할 수 있습니다.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="relative inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] bg-white text-slate-950 text-[14px] font-bold no-underline hover:bg-slate-100 transition-colors shrink-0"
+            >
+              기능 상담하기
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* SECTION 3 — 워크플로우 */}
-      <section className="bg-slate-50 border-b border-slate-200">
-        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+      <section id="workflow" className="bg-slate-50 border-b border-slate-200">
+        <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
             <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
               SECTION 03 · 함께 만드는 방법
@@ -503,6 +588,7 @@ export default function WhyHsWebPage() {
               alt="정보 제공, 초안 제작, 피드백, 런칭으로 이어지는 HS WEB 제작 흐름 이미지"
               width={1672}
               height={941}
+              loading="eager"
               sizes="(max-width: 1100px) 100vw, 1100px"
               className="w-full aspect-[16/7] object-cover object-center"
             />
@@ -567,8 +653,8 @@ export default function WhyHsWebPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-white border-b border-slate-200">
-        <div className="max-w-[1100px] mx-auto px-6 py-20 md:py-28">
+      <section id="faq" className="bg-white border-b border-slate-200">
+        <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
             <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
               SECTION 04 · 자주 묻는 질문
