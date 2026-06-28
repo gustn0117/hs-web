@@ -284,7 +284,7 @@ export default function WhyHsWebPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {LANDING_SUMMARY.map((item) => (
               <div key={item.title} className="rounded-[16px] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.16)]">
-                <p className="text-[11px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-4">
+                <p className="text-[11px] font-bold text-slate-900 tracking-[0.16em] uppercase mb-4">
                   {item.title}
                 </p>
                 <div className="flex items-end gap-2 mb-3">
@@ -304,7 +304,7 @@ export default function WhyHsWebPage() {
       <section id="price" className="bg-slate-50 border-b border-slate-200">
         <div className="max-w-[1120px] mx-auto px-6 pt-28 pb-20 md:pt-32 md:pb-28">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+            <p className="text-[11px] font-bold text-slate-900 tracking-[0.18em] uppercase mb-3">
               SECTION 01 · 가격의 비밀
             </p>
             <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -338,7 +338,7 @@ export default function WhyHsWebPage() {
               </figcaption>
             </figure>
             <div className="lg:pl-2">
-              <p className="text-[13px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-3">
+              <p className="text-[13px] font-bold text-slate-900 tracking-[0.16em] uppercase mb-3">
                 이해 포인트
               </p>
               <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -358,8 +358,8 @@ export default function WhyHsWebPage() {
                   "외부 호스팅 마진 없이 자체 인프라 운영",
                   "월 운영비 대신 결과물 중심으로 정산",
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 border-l-2 border-indigo-500 pl-4">
-                    <span className="mt-1.5 h-2 w-2 rounded-full bg-indigo-500 shrink-0" />
+                  <div key={item} className="flex items-start gap-3 border-l-2 border-slate-900 pl-4">
+                    <span className="mt-1.5 h-2 w-2 rounded-full bg-slate-900 shrink-0" />
                     <p className="text-[13.5px] font-semibold text-slate-700 leading-[1.6]">{item}</p>
                   </div>
                 ))}
@@ -397,7 +397,7 @@ export default function WhyHsWebPage() {
 
             {/* HS WEB */}
             <div className="p-7 md:p-8 rounded-[16px] border-2 border-slate-900 bg-slate-900 text-white relative overflow-hidden">
-              <span className="absolute -top-3 -right-3 inline-flex items-center gap-1 h-7 px-3 rounded-full bg-indigo-500 text-white text-[11px] font-bold tracking-wider rotate-3 shadow-lg">
+              <span className="absolute -top-3 -right-3 inline-flex items-center gap-1 h-7 px-3 rounded-full bg-slate-900 text-white text-[11px] font-bold tracking-wider rotate-3 shadow-lg">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
@@ -418,7 +418,7 @@ export default function WhyHsWebPage() {
                   "운영비 0원 · 콘텐츠 수정 평생 무료",
                 ].map((it) => (
                   <li key={it} className="flex items-start gap-2 text-[13.5px] text-white/90 font-medium">
-                    <svg className="w-3.5 h-3.5 shrink-0 mt-1 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg className="w-3.5 h-3.5 shrink-0 mt-1 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     {it}
@@ -433,11 +433,11 @@ export default function WhyHsWebPage() {
             {PRICE_REASONS.map((r) => (
               <div key={r.n} className="p-6 rounded-[14px] border border-slate-200 bg-white hover:border-slate-300 transition-colors">
                 <div className="flex items-baseline gap-3 mb-3">
-                  <span className="text-[14px] font-bold text-indigo-500 tnum">{r.n}</span>
+                  <span className="text-[14px] font-bold text-slate-700 tnum">{r.n}</span>
                   <h3 className="text-[16px] font-bold text-slate-900 tracking-tight">{r.title}</h3>
                 </div>
                 <p className="text-[13.5px] text-slate-600 leading-[1.7] mb-3">{r.desc}</p>
-                <div className="inline-flex items-center h-7 px-3 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold">
+                <div className="inline-flex items-center h-7 px-3 rounded-full bg-slate-100 text-slate-900 text-[11px] font-bold">
                   {r.impact}
                 </div>
               </div>
@@ -522,7 +522,7 @@ export default function WhyHsWebPage() {
       <section id="code" className="bg-white border-b border-slate-200">
         <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+            <p className="text-[11px] font-bold text-slate-900 tracking-[0.18em] uppercase mb-3">
               SECTION 02 · 코딩의 가치
             </p>
             <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -537,7 +537,7 @@ export default function WhyHsWebPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[0.88fr_1.12fr] gap-8 lg:gap-10 items-center mb-12">
             <div className="order-2 lg:order-1">
-              <p className="text-[13px] font-bold text-indigo-600 tracking-[0.16em] uppercase mb-3">
+              <p className="text-[13px] font-bold text-slate-900 tracking-[0.16em] uppercase mb-3">
                 이해 포인트
               </p>
               <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -641,7 +641,7 @@ export default function WhyHsWebPage() {
       <section id="workflow" className="bg-slate-50 border-b border-slate-200">
         <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+            <p className="text-[11px] font-bold text-slate-900 tracking-[0.18em] uppercase mb-3">
               SECTION 03 · 함께 만드는 방법
             </p>
             <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -708,26 +708,15 @@ export default function WhyHsWebPage() {
 
                   {/* Body */}
                   <div className="p-5 sm:p-6 flex flex-col flex-1">
-                    <p className="text-[10.5px] font-bold text-indigo-600 tracking-[0.14em] uppercase mb-2">
+                    <p className="text-[10.5px] font-bold text-slate-900 tracking-[0.14em] uppercase mb-2">
                       {s.summary}
                     </p>
                     <h3 className="text-[16px] md:text-[17px] font-bold text-slate-900 tracking-tight mb-2.5">
                       {s.title}
                     </h3>
-                    <p className="text-[12.5px] md:text-[13px] text-slate-600 leading-[1.7] mb-4 flex-1">
+                    <p className="text-[12.5px] md:text-[13px] text-slate-600 leading-[1.7] flex-1">
                       {s.detail}
                     </p>
-
-                    {/* Duration */}
-                    <div className="flex items-center gap-2 pt-4 border-t border-slate-100 mt-auto">
-                      <svg className="w-3.5 h-3.5 text-indigo-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-[10px] text-slate-500 font-semibold">예상 소요</span>
-                      <span className="ml-auto text-[12.5px] font-bold text-slate-900 tabular-nums">
-                        {s.time}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -784,7 +773,7 @@ export default function WhyHsWebPage() {
       <section id="faq" className="bg-white border-b border-slate-200">
         <div className="max-w-[1120px] mx-auto px-6 py-20 md:py-28">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-bold text-indigo-600 tracking-[0.18em] uppercase mb-3">
+            <p className="text-[11px] font-bold text-slate-900 tracking-[0.18em] uppercase mb-3">
               SECTION 04 · 자주 묻는 질문
             </p>
             <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.03em] text-slate-900 leading-[1.2] mb-4">
@@ -874,7 +863,7 @@ export default function WhyHsWebPage() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(600px 300px at 50% 0%, rgba(79,70,229,0.25) 0%, transparent 70%)",
+              "radial-gradient(600px 300px at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%)",
           }}
         />
         <div className="relative max-w-[1100px] mx-auto px-6 py-20 md:py-28 text-center">
