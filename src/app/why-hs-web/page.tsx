@@ -79,7 +79,7 @@ const FAQS = [
   {
     cat: "가격",
     q: "정말 249,000원에 홈페이지 제작이 가능한가요?",
-    a: "네, 5페이지 반응형 홈페이지 기준 249,000원부터 가능합니다. 1인 운영 구조와 자체 인프라 덕분에 가능한 가격이며, 결과물 품질은 일반 업체의 500만원짜리와 동등합니다. 페이지 수가 늘거나 쇼핑몰·관리자 페이지 등 기능이 추가되면 그에 맞춰 견적이 조정됩니다.",
+    a: "네, 일반 랜딩페이지 1장 기준의 시작가입니다. 1인 운영 구조와 자체 인프라 덕분에 가능한 가격이며, 결과물 품질은 일반 업체의 500만원짜리와 동등합니다. 페이지 수, 쇼핑몰·관리자 페이지·DB 연동 등 기능 범위에 따라 견적이 조정됩니다.",
   },
   {
     cat: "가격",
@@ -114,7 +114,7 @@ const FAQS = [
   {
     cat: "워크플로우",
     q: "총 제작 기간은 얼마나 걸리나요?",
-    a: "5페이지 일반 홈페이지 기준 약 2~3주, 쇼핑몰이나 관리자 페이지가 포함되는 경우 4~8주 정도입니다. 정확한 일정은 첫 상담 후 견적서와 함께 확정합니다. 급한 일정이 있으시면 우선 처리도 가능합니다.",
+    a: "일반 랜딩페이지는 약 1~2주, 5~10페이지 기업 홈페이지는 2~4주, 쇼핑몰이나 관리자 페이지가 포함되는 경우 4~8주 정도입니다. 정확한 일정은 첫 상담 후 견적서와 함께 확정합니다. 급한 일정이 있으시면 우선 처리도 가능합니다.",
   },
   {
     cat: "워크플로우",
@@ -170,7 +170,7 @@ const WORKFLOW_STEPS = [
 ];
 
 const HERO_PROOFS = [
-  { v: "249,000원~", l: "5페이지 반응형 시작가" },
+  { v: "249,000원~", l: "랜딩페이지 1장 시작가" },
   { v: "0원/월", l: "관리비·운영비 별도 청구 없음" },
   { v: "소스 전체", l: "완성 후 100% 인도" },
 ];
@@ -442,6 +442,78 @@ export default function WhyHsWebPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Trust box — 의심하시는 분들에게 */}
+          <div className="mt-12 relative overflow-hidden rounded-[18px] bg-slate-900 text-white p-7 md:p-10">
+            <div
+              className="absolute inset-0 pointer-events-none opacity-[0.06]"
+              style={{
+                background:
+                  "radial-gradient(500px 250px at 100% 0%, rgba(255,255,255,0.6) 0%, transparent 60%)",
+              }}
+            />
+            <div className="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-8 items-start">
+              <div>
+                <span className="inline-flex items-center h-7 px-3 rounded-full bg-white/10 text-white text-[11px] font-bold tracking-[0.14em] uppercase mb-5">
+                  TRUST · 의심해도 괜찮습니다
+                </span>
+                <h3 className="text-[24px] md:text-[30px] font-bold tracking-[-0.02em] leading-[1.25] mb-4">
+                  &ldquo;가격이 너무 싸서 의심되시나요?&rdquo;
+                </h3>
+                <p className="text-[14px] md:text-[15px] text-white/75 leading-[1.75]">
+                  많이 받는 질문입니다. 합리적인 의심입니다.<br />
+                  대신 결과물과 사후 보장으로 답해드립니다.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "이미 충분히 검증된 경험",
+                    desc: "수많은 홈페이지·랜딩페이지·관리자 페이지·웹 프로그램을 직접 개발해 운영해왔습니다. 포트폴리오에서 실제 라이브 사이트를 확인하실 수 있습니다.",
+                  },
+                  {
+                    title: "소스코드 100% 인도",
+                    desc: "완성된 사이트의 소스코드를 통째로 받으십니다. 본인의 자산으로 영구 소유하시고, 어떤 개발사로 옮기셔도 그대로 이어 작업이 가능합니다.",
+                  },
+                  {
+                    title: "다른 업체에서도 동일 서비스 가능",
+                    desc: "표준 기술(Next.js · React)로 만들기 때문에 다른 개발자도 이어받아 유지보수할 수 있습니다. HS WEB에 종속될 일이 없어 안심하시고 시작하셔도 됩니다.",
+                  },
+                ].map((t, i) => (
+                  <div key={t.title} className="flex items-start gap-4">
+                    <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/10 border border-white/15 text-white text-[13px] font-bold tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[15px] md:text-[16px] font-bold text-white mb-1.5 tracking-tight">
+                        {t.title}
+                      </h4>
+                      <p className="text-[12.5px] md:text-[13px] text-white/65 leading-[1.75]">
+                        {t.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom CTA strip */}
+            <div className="relative mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+              <p className="text-[13px] text-white/65">
+                실제 작업물부터 확인해보세요. 그 후 판단하셔도 늦지 않습니다.
+              </p>
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center justify-center gap-2 h-10 px-5 rounded-[10px] bg-white text-slate-900 font-bold text-[13px] no-underline hover:bg-slate-100 transition-colors"
+              >
+                포트폴리오 확인
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
