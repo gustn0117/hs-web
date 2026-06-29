@@ -465,8 +465,10 @@ export default function ServerMonitoring() {
 
           {/* Memory */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <div className="flex items-baseline justify-between mb-3">
-              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">메모리</h3>
+            <div className="flex items-baseline justify-between mb-3 gap-2">
+              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                메모리 <span className="text-slate-400 normal-case tracking-normal font-medium">(WSL)</span>
+              </h3>
               {system.memory.available && system.memory.data && (
                 <span
                   className="text-[10px] font-bold px-1.5 py-0.5 rounded"
@@ -484,6 +486,12 @@ export default function ServerMonitoring() {
                   sub={`${system.memory.data.usedGB} GB`}
                 />
                 <p className="text-[11px] text-slate-500 text-center mt-3 tabular-nums">전체 {system.memory.data.totalGB} GB</p>
+                <p
+                  className="text-[10px] text-slate-400 text-center mt-2 leading-[1.5]"
+                  title="WSL2 인스턴스에 할당된 메모리 기준입니다. Windows 작업관리자의 호스트 전체 RAM과는 다릅니다."
+                >
+                  WSL2 할당 메모리 기준 · Windows 작업관리자와 다를 수 있음
+                </p>
               </>
             ) : (
               <p className="text-slate-400 text-sm py-10 text-center">측정 불가</p>
