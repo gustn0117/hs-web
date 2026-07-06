@@ -225,7 +225,7 @@ export default function AdminDashboard() {
       const exp = Math.floor(Math.log10(v));
       const base = Math.pow(10, exp);
       const norm = v / base;
-      const nice = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+      const nice = norm <= 1 ? 1 : norm <= 1.5 ? 1.5 : norm <= 2 ? 2 : norm <= 3 ? 3 : norm <= 5 ? 5 : norm <= 7.5 ? 7.5 : 10;
       return nice * base;
     };
     const max = niceMax(rawMax);
