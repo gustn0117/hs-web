@@ -93,7 +93,7 @@ const inputClass =
 const labelClass =
   "block text-slate-700 text-xs font-semibold mb-1.5";
 const cardClass =
-  "bg-white border border-slate-200 rounded-xl p-5";
+  "bg-white border border-slate-200 p-5";
 const btnPrimary =
   "inline-flex items-center justify-center px-4 h-9 bg-slate-900 text-white rounded-md text-sm font-semibold border-0 cursor-pointer transition-colors hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed";
 const btnSecondary =
@@ -230,7 +230,7 @@ function Toast({ message, type, onClose }: { message: string; type: "success" | 
 
   return (
     <div
-      className={`fixed top-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 ${
+      className={`fixed top-6 right-6 z-50 px-5 py-3 shadow-lg text-sm font-medium flex items-center gap-2 ${
         type === "success" ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
       }`}
       style={{ animation: "slideInRight 0.3s ease" }}
@@ -305,7 +305,7 @@ function CustomSelect({
         </svg>
       </button>
       {open && (
-        <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden animate-[fadeSlideDown_0.15s_ease]">
+        <div className="absolute z-30 top-full left-0 right-0 mt-1 bg-white border border-slate-200 shadow-lg overflow-hidden animate-[fadeSlideDown_0.15s_ease]">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -391,7 +391,7 @@ function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value:
         {value && <span onClick={clearDate} className="p-0.5 hover:bg-slate-200 rounded-full transition-colors"><svg className="w-3.5 h-3.5 text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></span>}
       </button>
       {open && (
-        <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
+        <div className="absolute z-30 top-full left-0 mt-1 bg-white border border-slate-200 shadow-lg p-4 w-[300px] animate-[fadeSlideDown_0.15s_ease]">
           {showYearPicker ? (
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -967,7 +967,7 @@ export default function ClientDetailPage() {
   // Inline hosting form
   // =========================================================================
   const renderHostingForm = () => (
-    <div className="bg-blue-50/50 rounded-xl p-4 mb-3 border border-blue-100">
+    <div className="bg-blue-50/50 p-4 mb-3 border border-blue-100">
       <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingHostingId ? "호스팅 수정" : "호스팅 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>금액 (원) *</label><AmountInput value={hostingForm.amount} onChange={(v) => setHostingForm((p) => ({ ...p, amount: v }))} /></div>
@@ -988,7 +988,7 @@ export default function ClientDetailPage() {
   // Inline domain form
   // =========================================================================
   const renderDomainForm = () => (
-    <div className="bg-emerald-50/50 rounded-xl p-4 mb-3 border border-emerald-100">
+    <div className="bg-emerald-50/50 p-4 mb-3 border border-emerald-100">
       <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingDomainId ? "도메인 수정" : "도메인 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>도메인명 *</label><input className={inputClass} placeholder="example.com" value={domainForm.domain_name} onChange={(e) => setDomainForm((p) => ({ ...p, domain_name: e.target.value }))} /></div>
@@ -1010,7 +1010,7 @@ export default function ClientDetailPage() {
   // Inline marketing form
   // =========================================================================
   const renderMarketingForm = () => (
-    <div className="bg-purple-50/50 rounded-xl p-4 mb-3 border border-purple-100">
+    <div className="bg-purple-50/50 p-4 mb-3 border border-purple-100">
       <h5 className="text-[#0f172a] text-sm font-semibold mb-3">{editingMarketingId ? "마케팅 수정" : "마케팅 추가"}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><label className={labelClass}>유형 *</label><CustomSelect options={marketingTypeOptions} value={marketingForm.type} onChange={(v) => setMarketingForm((p) => ({ ...p, type: v }))} /></div>
@@ -1121,7 +1121,7 @@ export default function ClientDetailPage() {
             const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
 
             return (
-              <div key={h.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
+              <div key={h.id} className="bg-slate-50 px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     {/* Amount + Badges */}
@@ -1198,7 +1198,7 @@ export default function ClientDetailPage() {
             const badge = daysUntil !== null ? getRenewalBadge(daysUntil) : null;
 
             return (
-              <div key={d.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
+              <div key={d.id} className="bg-slate-50 px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -1256,7 +1256,7 @@ export default function ClientDetailPage() {
               "기타": "bg-slate-100 text-slate-600 border-slate-200",
             };
             return (
-              <div key={m.id} className="bg-slate-50 rounded-xl px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
+              <div key={m.id} className="bg-slate-50 px-4 py-3.5 mb-2 hover:bg-slate-100/80 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -1347,15 +1347,15 @@ export default function ClientDetailPage() {
         {/* Summary cards */}
         {payments.length > 0 && (
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-4 text-center">
+            <div className="bg-emerald-50 border border-emerald-200 px-4 py-4 text-center">
               <p className="text-emerald-600 text-xs font-medium mb-1">완료</p>
               <p className="text-emerald-700 font-bold">{formatAmount(totalPaid)}</p>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-4 text-center">
+            <div className="bg-amber-50 border border-amber-200 px-4 py-4 text-center">
               <p className="text-amber-600 text-xs font-medium mb-1">대기</p>
               <p className="text-amber-700 font-bold">{formatAmount(totalPending)}</p>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-4 text-center">
+            <div className="bg-red-50 border border-red-200 px-4 py-4 text-center">
               <p className="text-red-500 text-xs font-medium mb-1">미납</p>
               <p className="text-red-700 font-bold">{formatAmount(totalOverdue)}</p>
             </div>
@@ -1410,7 +1410,7 @@ export default function ClientDetailPage() {
             <p className="text-[#64748b] text-sm">등록된 결제 내역이 없습니다.</p>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

@@ -174,7 +174,7 @@ export default function AdminLoginPage() {
           </p>
 
           {/* System status card */}
-          <div className="mt-8 max-w-[440px] rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md overflow-hidden">
+          <div className="mt-8 max-w-[440px] bg-white/[0.04] border border-white/10 backdrop-blur-md overflow-hidden">
             <div className="px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
               <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/55">
                 System Status
@@ -211,7 +211,7 @@ export default function AdminLoginPage() {
           </div>
 
           {/* Console-like recent activity */}
-          <div className="mt-4 max-w-[440px] rounded-xl bg-[#0a0f1c]/80 border border-white/10 backdrop-blur-md overflow-hidden">
+          <div className="mt-4 max-w-[440px] bg-[#0a0f1c]/80 border border-white/10 backdrop-blur-md overflow-hidden">
             <div className="px-4 py-2 border-b border-white/10 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#ff5f57]" />
               <span className="w-2 h-2 rounded-full bg-[#febc2e]" />

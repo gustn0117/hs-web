@@ -329,12 +329,12 @@ export default function ServerMonitoring() {
             <div className="h-7 bg-slate-200 rounded w-48" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-44 bg-white rounded-xl border border-slate-200" />
+                <div key={i} className="h-44 bg-white border border-slate-200" />
               ))}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-72 bg-white rounded-xl border border-slate-200" />
+                <div key={i} className="h-72 bg-white border border-slate-200" />
               ))}
             </div>
           </div>
@@ -437,7 +437,7 @@ export default function ServerMonitoring() {
         {/* System gauges (4) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {/* CPU */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white border border-slate-200 p-5">
             <div className="flex items-baseline justify-between mb-3">
               <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">CPU</h3>
               {system.cpu.available && system.cpu.data && (
@@ -464,7 +464,7 @@ export default function ServerMonitoring() {
           </div>
 
           {/* Memory */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white border border-slate-200 p-5">
             <div className="flex items-baseline justify-between mb-3 gap-2">
               <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 메모리 <span className="text-slate-400 normal-case tracking-normal font-medium">(WSL)</span>
@@ -499,7 +499,7 @@ export default function ServerMonitoring() {
           </div>
 
           {/* Disk */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white border border-slate-200 p-5">
             <div className="flex items-baseline justify-between mb-3">
               <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">디스크</h3>
               {system.disk.available && system.disk.data && (
@@ -526,7 +526,7 @@ export default function ServerMonitoring() {
           </div>
 
           {/* Uptime */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white border border-slate-200 p-5">
             <div className="flex items-baseline justify-between mb-3">
               <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">업타임</h3>
               <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">정상</span>
@@ -555,7 +555,7 @@ export default function ServerMonitoring() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {/* Disk breakdown */}
           {data.diskBreakdown && (
-            <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
+            <div className="lg:col-span-2 bg-white border border-slate-200 p-6">
               <div className="flex items-baseline justify-between mb-5">
                 <h3 className="text-sm font-semibold text-slate-900">디스크 사용량 상세</h3>
                 <p className="text-xs text-slate-500">프로젝트·DB 단위</p>
@@ -660,7 +660,7 @@ export default function ServerMonitoring() {
 
           {/* Visitor analytics */}
           {analytics && (
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <div className="bg-white border border-slate-200 p-6">
               <div className="flex items-baseline justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-900">방문자 추이</h3>
                 <p className="text-xs text-slate-500">최근 6개월</p>
@@ -710,7 +710,7 @@ export default function ServerMonitoring() {
         </div>
 
         {/* Docker services */}
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white border border-slate-200 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold text-slate-900">서비스 현황</h3>
@@ -933,7 +933,7 @@ export default function ServerMonitoring() {
         {/* Bottom: ports + network */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Host ports */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white border border-slate-200 p-6">
             <div className="flex items-baseline justify-between mb-4">
               <h3 className="text-sm font-semibold text-slate-900">호스트 포트</h3>
               <p className="text-xs text-slate-500">컨테이너 외</p>
@@ -959,7 +959,7 @@ export default function ServerMonitoring() {
           </div>
 
           {/* Network traffic */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white border border-slate-200 p-6">
             <div className="flex items-baseline justify-between mb-4">
               <h3 className="text-sm font-semibold text-slate-900">네트워크 트래픽</h3>
               <p className="text-xs text-slate-500">물리 인터페이스</p>

@@ -145,7 +145,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
   };
 
   const inputClass =
-    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
+    "w-full px-4 py-3 bg-gray-50 border border-gray-200 text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
   const labelClass = "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
 
   return (
@@ -244,7 +244,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
           >
             {uploading ? "업로드 중..." : form.thumbnail ? "변경" : "이미지 선택"}
           </button>
@@ -279,7 +279,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
           type="button"
           onClick={() => galleryInputRef.current?.click()}
           disabled={uploading}
-          className="px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
+          className="px-4 py-2.5 bg-gray-100 border border-gray-200 text-[var(--color-gray)] text-sm hover:bg-gray-200 hover:border-gray-300 transition-all cursor-pointer disabled:opacity-50"
         >
           {uploading ? "업로드 중..." : "+ 이미지 추가"}
         </button>
@@ -343,7 +343,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white font-semibold border-none cursor-pointer transition-all  hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {saving ? (
             <>
@@ -362,7 +362,7 @@ export default function PortfolioForm({ initialData, editId }: Props) {
         <button
           type="button"
           onClick={() => router.push("/admin/portfolio")}
-          className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-gray-200"
+          className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] font-semibold cursor-pointer transition-all hover:bg-gray-200"
         >
           취소
         </button>

@@ -54,7 +54,7 @@ export default function AdminPortfolioPage() {
           </div>
           <Link
             href="/admin/portfolio/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl text-sm font-semibold no-underline hover:shadow-lg hover:shadow-blue-500/25 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white text-sm font-semibold no-underline  hover:shadow-blue-500/25 transition-all"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -80,7 +80,7 @@ export default function AdminPortfolioPage() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-all group"
+                className="bg-white border border-gray-200 overflow-hidden  transition-all group"
               >
                 {/* Thumbnail */}
                 <div className="h-36 bg-gradient-to-br from-gray-100 to-gray-50 relative">

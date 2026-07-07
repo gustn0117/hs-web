@@ -203,7 +203,7 @@ function ClientsInner() {
         {/* KPI summary cards */}
         {!loading && clients.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="bg-white border border-slate-200 p-5">
               <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">활성 클라이언트</p>
               <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">
                 {stats.activeCount}
@@ -217,7 +217,7 @@ function ClientsInner() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-5 relative overflow-hidden">
+            <div className="bg-white border border-slate-200 p-5 relative overflow-hidden">
               <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">최근 30일 신규</p>
               <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{stats.newCount}</p>
               <p className="text-[11px] text-slate-500 mt-1.5">최근 6개월 가입 추이</p>
@@ -234,7 +234,7 @@ function ClientsInner() {
               </svg>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="bg-white border border-slate-200 p-5">
               <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">총 프로젝트</p>
               <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{stats.totalProjects}</p>
               <div className="flex items-center gap-2 mt-1.5 text-[11px] text-slate-500">
@@ -244,7 +244,7 @@ function ClientsInner() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="bg-white border border-slate-200 p-5">
               <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">상태 분포</p>
               <div className="mt-2.5 space-y-1.5">
                 {Object.entries(stats.projectStatusCounts)
@@ -279,7 +279,7 @@ function ClientsInner() {
 
         {/* Filter / search bar */}
         {clients.length > 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 p-3">
+          <div className="bg-white border border-slate-200 p-3">
             <div className="flex flex-col lg:flex-row gap-2">
               {/* Search */}
               <div className="relative flex-1">
@@ -376,7 +376,7 @@ function ClientsInner() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse">
+              <div key={i} className="bg-white border border-slate-200 p-5 animate-pulse">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-slate-200 rounded-full" />
                   <div className="flex-1">
@@ -390,7 +390,7 @@ function ClientsInner() {
             ))}
           </div>
         ) : clients.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 py-20 text-center">
+          <div className="bg-white border border-slate-200 py-20 text-center">
             <div className="w-12 h-12 mx-auto mb-3 bg-slate-100 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
@@ -402,7 +402,7 @@ function ClientsInner() {
             </Link>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 py-16 text-center">
+          <div className="bg-white border border-slate-200 py-16 text-center">
             <p className="text-sm text-slate-500">검색 결과가 없습니다.</p>
           </div>
         ) : view === "grid" ? (
@@ -411,7 +411,7 @@ function ClientsInner() {
               <div
                 key={client.id}
                 onClick={() => router.push(`/admin/clients/${client.id}`)}
-                className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-slate-400 hover:shadow-sm transition-all cursor-pointer group"
+                className="bg-white border border-slate-200 overflow-hidden hover:border-slate-400  transition-all cursor-pointer group"
               >
                 <div className="p-5">
                   <div className="flex items-start gap-3 mb-4">
@@ -497,7 +497,7 @@ function ClientsInner() {
           </div>
         ) : (
           // List view
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="bg-white border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[800px]">
                 <thead>

@@ -132,7 +132,7 @@ function PaymentsInner() {
         </div>
 
         {/* Search & Filters */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-6 shadow-sm">
+        <div className="bg-white border border-gray-200 p-4 mb-6 shadow-sm">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -143,14 +143,14 @@ function PaymentsInner() {
                 placeholder="클라이언트명, 유형, 설명으로 검색..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 focus:bg-white transition-all placeholder:text-gray-400"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 focus:bg-white transition-all placeholder:text-gray-400"
               />
             </div>
             <div className="flex gap-2">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                className="px-3 py-2.5 bg-gray-50 border border-gray-200 text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
               >
                 <option value="all">전체 상태</option>
                 <option value="paid">완료</option>
@@ -161,7 +161,7 @@ function PaymentsInner() {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
+                className="px-3 py-2.5 bg-gray-50 border border-gray-200 text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)] cursor-pointer"
               >
                 <option value="all">전체 유형</option>
                 {types.map((t) => (
@@ -174,7 +174,7 @@ function PaymentsInner() {
 
         {/* Table */}
         {loading ? (
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+          <div className="bg-white border border-gray-200 p-6 shadow-sm">
             <div className="animate-pulse space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="h-10 bg-gray-100 rounded-lg" />
@@ -186,7 +186,7 @@ function PaymentsInner() {
             <p className="text-[var(--color-gray)]">결제 내역이 없습니다.</p>
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-white border border-gray-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[700px]">
                 <thead>

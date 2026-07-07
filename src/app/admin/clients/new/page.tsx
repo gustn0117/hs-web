@@ -46,7 +46,7 @@ export default function NewClientPage() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
+    "w-full px-4 py-3 bg-gray-50 border border-gray-200 text-[var(--color-dark)] text-[0.95rem] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 transition-all placeholder:text-gray-400";
   const labelClass =
     "block text-[var(--color-dark-2)] text-sm font-medium mb-2";
 
@@ -71,7 +71,7 @@ export default function NewClientPage() {
 
         <form onSubmit={handleSubmit} noValidate className="max-w-[800px]">
           {error && (
-            <div className="px-4 py-3 mb-5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
+            <div className="px-4 py-3 mb-5 bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2">
               <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
@@ -79,7 +79,7 @@ export default function NewClientPage() {
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+          <div className="bg-white border border-gray-200 p-6 shadow-sm mb-6">
             <div className="space-y-5">
               <div>
                 <label className={labelClass}>클라이언트 이름 *</label>
@@ -109,7 +109,7 @@ export default function NewClientPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white rounded-xl font-semibold border-none cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white font-semibold border-none cursor-pointer transition-all  hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving ? (
                 <>
@@ -126,7 +126,7 @@ export default function NewClientPage() {
             <button
               type="button"
               onClick={() => router.push("/admin/clients")}
-              className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] rounded-xl font-semibold cursor-pointer transition-all hover:bg-gray-200"
+              className="px-8 py-3 bg-gray-100 border border-gray-200 text-[var(--color-gray)] font-semibold cursor-pointer transition-all hover:bg-gray-200"
             >
               취소
             </button>

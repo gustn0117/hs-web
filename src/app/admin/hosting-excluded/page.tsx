@@ -103,7 +103,7 @@ export default function HostingExcludedPage() {
 
         {/* Reason summary */}
         {items.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
+          <div className="bg-white border border-gray-200 p-5 mb-6">
             <h3 className="text-xs font-semibold text-[var(--color-gray)] uppercase tracking-wider mb-3">
               사유별 집계
             </h3>
@@ -139,11 +139,11 @@ export default function HostingExcludedPage() {
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded-xl" />
+              <div key={i} className="h-20 bg-gray-200" />
             ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+          <div className="bg-white border border-gray-200 p-12 text-center">
             <p className="text-[var(--color-gray)] text-sm mb-2">제외된 프로젝트가 없습니다.</p>
             <p className="text-xs text-[var(--color-gray)]">
               대시보드의 호스팅 결제 미확인 목록에서 프로젝트별로 제외 처리할 수 있습니다.
@@ -154,7 +154,7 @@ export default function HostingExcludedPage() {
             검색 결과가 없습니다.
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-white border border-gray-200 overflow-hidden">
             <div className="divide-y divide-gray-100">
               {filtered.map((item) => (
                 <div key={item.id} className="px-6 py-4 flex items-start justify-between gap-4">

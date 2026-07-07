@@ -332,7 +332,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
               <button
                 onClick={handlePrint}
                 disabled={saving}
-                className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none shadow-sm disabled:opacity-50"
+                className="px-6 py-2.5 bg-[var(--color-primary)] text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer border-none shadow-sm disabled:opacity-50"
               >
                 {saving ? "저장 중..." : "PDF 발행"}
               </button>
@@ -341,7 +341,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1 w-fit">
+        <div className="flex gap-1 mb-6 bg-gray-100 p-1 w-fit">
           <button
             onClick={() => setTab("new")}
             className={`px-5 py-2 rounded-lg text-sm font-semibold cursor-pointer border-none transition-all ${
@@ -361,7 +361,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
         </div>
 
         {tab === "list" ? (
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
+          <div className="bg-white border border-gray-200 shadow-sm">
             {listLoading ? (
               <div className="p-8 text-center text-[var(--color-gray)] text-sm">불러오는 중...</div>
             ) : saved.length === 0 ? (
@@ -417,7 +417,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
           {/* ===== 입력 폼 ===== */}
           <div className="space-y-6">
             {/* 기본 정보 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
               <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">기본 정보</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -444,7 +444,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
             </div>
 
             {/* 견적 항목 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold text-[var(--color-dark)]">견적 내역</h3>
                 <button onClick={addItem} className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none">
@@ -453,7 +453,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
               </div>
               <div className="space-y-4">
                 {items.map((item, idx) => (
-                  <div key={idx} className="border border-gray-100 rounded-xl p-4 relative">
+                  <div key={idx} className="border border-gray-100 p-4 relative">
                     {items.length > 1 && (
                       <button onClick={() => removeItem(idx)} className="absolute top-2 right-2 text-[var(--color-gray)] hover:text-red-500 cursor-pointer bg-transparent border-none text-lg">×</button>
                     )}
@@ -506,7 +506,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
             </div>
 
             {/* 제작 사양 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
               <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">제작 사양</h3>
               <div className="space-y-3">
                 {specs.map((spec, idx) => (
@@ -527,7 +527,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
             </div>
 
             {/* 비고 */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
               <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">비고 및 유의사항</h3>
               <textarea
                 value={notes}
@@ -540,7 +540,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
           </div>
 
           {/* ===== 미리보기 ===== */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm sticky top-4 self-start">
+          <div className="bg-white border border-gray-200 p-6 shadow-sm sticky top-4 self-start">
             <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">미리보기</h3>
             <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
               <div className="p-6 text-[8px] leading-[1.5] origin-top-left" style={{ fontSize: "8px" }}>

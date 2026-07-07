@@ -68,7 +68,7 @@ export default function ProjectsPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer border-none transition-all ${
+              className={`px-4 py-2 text-sm font-semibold cursor-pointer border-none transition-all ${
                 filter === "all" ? "bg-[var(--color-dark)] text-white" : "bg-white text-[var(--color-gray)] border border-gray-200 hover:bg-gray-50"
               }`}
             >
@@ -80,7 +80,7 @@ export default function ProjectsPage() {
                 <button
                   key={s}
                   onClick={() => setFilter(s)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer transition-all border ${
+                  className={`px-4 py-2 text-sm font-semibold cursor-pointer transition-all border ${
                     filter === s ? `${st.bg} ${st.text} ${st.border}` : "bg-white text-[var(--color-gray)] border-gray-200 hover:bg-gray-50"
                   }`}
                 >
@@ -96,7 +96,7 @@ export default function ProjectsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="프로젝트 또는 클라이언트 검색"
-            className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm w-full sm:w-64"
+            className="px-4 py-2.5 border border-gray-200 text-sm w-full sm:w-64"
           />
         </div>
 
@@ -104,11 +104,11 @@ export default function ProjectsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-32 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+              <div key={i} className="h-32 bg-white border border-gray-100 animate-pulse" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
+          <div className="bg-white border border-gray-200 p-16 text-center">
             <p className="text-[var(--color-gray)]">
               {search ? "검색 결과가 없습니다." : "프로젝트가 없습니다."}
             </p>
@@ -121,7 +121,7 @@ export default function ProjectsPage() {
                 <Link
                   key={p.id}
                   href={`/admin/clients/${p.client_id}`}
-                  className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:shadow-gray-100 hover:-translate-y-0.5 transition-all no-underline group"
+                  className="bg-white border border-gray-200 p-6 hover:-translate-y-0.5 transition-all no-underline group"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${st.bg} ${st.text} border ${st.border}`}>

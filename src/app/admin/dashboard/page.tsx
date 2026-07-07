@@ -215,12 +215,12 @@ export default function AdminDashboard() {
             <div className="h-7 bg-slate-200 rounded w-48" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-28 bg-white rounded-xl border border-slate-200" />
+                <div key={i} className="h-28 bg-white border border-slate-200" />
               ))}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div className="lg:col-span-2 h-72 bg-white rounded-xl border border-slate-200" />
-              <div className="h-72 bg-white rounded-xl border border-slate-200" />
+              <div className="lg:col-span-2 h-72 bg-white border border-slate-200" />
+              <div className="h-72 bg-white border border-slate-200" />
             </div>
           </div>
         </div>
@@ -409,7 +409,7 @@ export default function AdminDashboard() {
           {/* Pending */}
           <Link
             href="/admin/payments?status=pending"
-            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative no-underline transition-all"
+            className="group bg-white border border-slate-200 hover:border-slate-300  p-5 relative no-underline transition-all"
           >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">미수금</p>
             <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">{fmtShort(overview.pendingAmount)}원</p>
@@ -435,10 +435,10 @@ export default function AdminDashboard() {
           {/* Overdue */}
           <Link
             href="/admin/payments?status=overdue"
-            className={`group rounded-xl border p-5 relative no-underline transition-all ${
+            className={`group border p-5 relative no-underline transition-all ${
               overview.overdueAmount > 0
-                ? "bg-red-50/40 border-red-200 border-l-4 border-l-red-500 hover:border-red-300 hover:shadow-sm"
-                : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+                ? "bg-red-50/40 border-red-200 border-l-4 border-l-red-500 hover:border-red-300 "
+                : "bg-white border-slate-200 hover:border-slate-300 "
             }`}
           >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">미납금</p>
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
           {/* Clients / projects */}
           <Link
             href="/admin/clients?filter=active"
-            className="group bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm p-5 relative no-underline transition-all"
+            className="group bg-white border border-slate-200 hover:border-slate-300  p-5 relative no-underline transition-all"
           >
             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">활성 자원</p>
             <p className="text-[26px] font-bold text-slate-900 mt-2 tabular-nums">
@@ -482,7 +482,7 @@ export default function AdminDashboard() {
 
         {/* ── Critical alert: overdue payments ────── */}
         {overduePayments.length > 0 && (
-          <div className="bg-white rounded-xl border border-red-200 overflow-hidden">
+          <div className="bg-white border border-red-200 overflow-hidden">
             <div className="px-5 py-3 border-b border-red-100 bg-red-50/50 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-red-800 flex items-center gap-2">
                 <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -543,7 +543,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ── Revenue trend (line/area) ───────────── */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="bg-white border border-slate-200 p-6">
           <div className="flex items-end justify-between mb-5 gap-4 flex-wrap">
             <div>
               <h3 className="text-base font-semibold text-slate-900 tracking-tight">월별 수익 추이</h3>
@@ -724,7 +724,7 @@ export default function AdminDashboard() {
         {/* ── Donut + Project status ──────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 items-start">
           {/* Donut: revenue by type */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
+          <div className="lg:col-span-2 bg-white border border-slate-200 p-6">
             <h3 className="text-base font-semibold text-slate-900 tracking-tight mb-1">수익 유형별</h3>
             <p className="text-xs text-slate-500 mb-5">결제 완료 기준</p>
 
@@ -771,7 +771,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Project status horizontal bars */}
-          <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6">
+          <div className="lg:col-span-3 bg-white border border-slate-200 p-6">
             <div className="flex items-baseline justify-between mb-5">
               <div>
                 <h3 className="text-base font-semibold text-slate-900 tracking-tight">프로젝트 현황</h3>
@@ -868,7 +868,7 @@ export default function AdminDashboard() {
         {/* ── MRR + 고객별 매출 집중도 ──────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 items-stretch">
           {/* MRR card */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 flex flex-col">
+          <div className="lg:col-span-2 bg-white border border-slate-200 p-6 flex flex-col">
             <div className="mb-4">
               <h3 className="text-base font-semibold text-slate-900 tracking-tight">정기 매출 (MRR)</h3>
               <p className="text-xs text-slate-500 mt-0.5">호스팅 기준 · 월정액 환산</p>
@@ -910,7 +910,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* 고객별 매출 집중도 TOP */}
-          <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6 flex flex-col">
+          <div className="lg:col-span-3 bg-white border border-slate-200 p-6 flex flex-col">
             <div className="flex items-baseline justify-between mb-5 gap-3 flex-wrap">
               <div>
                 <h3 className="text-base font-semibold text-slate-900 tracking-tight">고객별 매출 집중도</h3>
@@ -962,7 +962,7 @@ export default function AdminDashboard() {
         {(() => {
           const inProgress = activeProjects.filter((p) => p.status === "진행중");
           return (
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="bg-white border border-slate-200 overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-2 flex-wrap">
                 <div>
                   <div className="flex items-center gap-2">
@@ -1037,7 +1037,7 @@ export default function AdminDashboard() {
         {/* ── Action items grid: hosting + alerts ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Hosting unconfirmed */}
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="bg-white border border-slate-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-base font-semibold text-slate-900 tracking-tight">호스팅 결제 미확인</h3>
@@ -1085,7 +1085,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Renewal alerts */}
-          <div id="renewal-alerts" className="scroll-mt-20 bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div id="renewal-alerts" className="scroll-mt-20 bg-white border border-slate-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
                 <h3 className="text-base font-semibold text-slate-900 tracking-tight">갱신 · 만료 알림</h3>
@@ -1151,7 +1151,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* ── Recent payments ─────────────────────── */}
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white border border-slate-200 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <h3 className="text-base font-semibold text-slate-900 tracking-tight">최근 결제 내역</h3>
             <Link href="/admin/payments" className="text-xs text-slate-500 hover:text-slate-900 no-underline">
@@ -1213,7 +1213,7 @@ export default function AdminDashboard() {
           onClick={() => !excludeSaving && setExcludeTarget(null)}
         >
           <div
-            className="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl"
+            className="bg-white w-full max-w-md p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-slate-900 font-bold text-lg mb-1">호스팅 결제 미확인에서 제외</h3>

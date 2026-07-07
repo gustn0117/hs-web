@@ -89,7 +89,7 @@ export default function AdminInquiries() {
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded-xl" />
+              <div key={i} className="h-20 bg-gray-200" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
@@ -107,12 +107,12 @@ export default function AdminInquiries() {
                     setSelected(inq);
                     if (!inq.is_read) markAsRead(inq.id);
                   }}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                  className={`p-4 border cursor-pointer transition-all ${
                     selected?.id === inq.id
                       ? "border-[var(--color-primary)] bg-blue-50/50 shadow-md"
                       : !inq.is_read
-                      ? "border-blue-200 bg-white hover:shadow-md"
-                      : "border-gray-200 bg-white hover:shadow-sm"
+                      ? "border-blue-200 bg-white "
+                      : "border-gray-200 bg-white "
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -141,7 +141,7 @@ export default function AdminInquiries() {
 
             {/* Detail */}
             {selected ? (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm h-fit sticky top-8">
+              <div className="bg-white border border-gray-200 p-6 shadow-sm h-fit sticky top-8">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-bold text-lg text-[var(--color-dark)]">문의 상세</h3>
                   <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function AdminInquiries() {
                   )}
                   <div>
                     <p className="text-xs text-[var(--color-gray)] mb-1">문의 내용</p>
-                    <p className="text-sm text-[var(--color-dark)] whitespace-pre-wrap leading-relaxed bg-gray-50 rounded-xl p-4">
+                    <p className="text-sm text-[var(--color-dark)] whitespace-pre-wrap leading-relaxed bg-gray-50 p-4">
                       {selected.message || "내용 없음"}
                     </p>
                   </div>
@@ -193,20 +193,20 @@ export default function AdminInquiries() {
                 <div className="mt-6 pt-4 border-t border-gray-100 flex gap-2">
                   <a
                     href={`tel:${selected.phone}`}
-                    className="flex-1 py-2.5 bg-[var(--color-primary)] text-white text-sm font-medium rounded-xl text-center no-underline hover:opacity-90 transition-opacity"
+                    className="flex-1 py-2.5 bg-[var(--color-primary)] text-white text-sm font-medium text-center no-underline hover:opacity-90 transition-opacity"
                   >
                     전화하기
                   </a>
                   <button
                     onClick={() => deleteInquiry(selected.id)}
-                    className="px-4 py-2.5 bg-red-50 text-red-600 text-sm font-medium rounded-xl border border-red-200 cursor-pointer hover:bg-red-100 transition-colors"
+                    className="px-4 py-2.5 bg-red-50 text-red-600 text-sm font-medium border border-red-200 cursor-pointer hover:bg-red-100 transition-colors"
                   >
                     삭제
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-center h-64 text-[var(--color-gray)] text-sm">
+              <div className="bg-white border border-gray-200 p-6 shadow-sm flex items-center justify-center h-64 text-[var(--color-gray)] text-sm">
                 문의를 선택하면 상세 내용이 표시됩니다.
               </div>
             )}
