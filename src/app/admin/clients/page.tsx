@@ -417,14 +417,13 @@ function ClientsInner() {
                   <div className="flex items-start gap-3 mb-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-slate-900 font-bold text-sm truncate">{client.name}</h3>
+                        <h3 className="text-slate-900 font-bold text-[17px] truncate tracking-tight">{client.name}</h3>
                         {client.is_active ? (
                           <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-1.5 py-0.5 rounded font-bold shrink-0">활성</span>
                         ) : (
                           <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded font-bold shrink-0">비활성</span>
                         )}
                       </div>
-                      <p className="text-slate-500 text-xs truncate mt-0.5">@{client.username}</p>
                     </div>
                     <button
                       onClick={(e) => handleDelete(e, client.id, client.name)}
@@ -518,10 +517,7 @@ function ClientsInner() {
                       className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors cursor-pointer"
                     >
                       <td className="py-3 px-5">
-                        <div className="min-w-0">
-                          <p className="font-bold text-slate-900 truncate">{client.name}</p>
-                          <p className="text-xs text-slate-500 truncate">@{client.username}</p>
-                        </div>
+                        <p className="font-bold text-slate-900 text-[15px] truncate tracking-tight">{client.name}</p>
                       </td>
                       <td className="py-3 px-3 text-slate-700 text-xs">
                         {client.email && <p className="truncate max-w-[200px]">{client.email}</p>}
