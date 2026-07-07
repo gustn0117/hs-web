@@ -1544,9 +1544,6 @@ export default function ClientDetailPage() {
             <div>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl shrink-0 ${client.is_active ? "bg-slate-900" : "bg-slate-400"}`}>
-                    {client.name.charAt(0)}
-                  </div>
                   <div>
                     <div className="flex items-center gap-2.5 mb-1">
                       <h2 className="text-xl font-bold text-[#0f172a]">{client.name}</h2>

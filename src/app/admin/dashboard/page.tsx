@@ -60,28 +60,6 @@ const PAYMENT_STATUS: Record<string, { label: string; cls: string }> = {
   overdue: { label: "미납", cls: "bg-red-100/50 text-red-700" },
 };
 
-// 클라이언트 아바타 — 이니셜 대신 통일된 체크 SVG 아이콘
-function ClientAvatar({ size = 30 }: { name?: string; size?: number }) {
-  const iconSize = Math.round(size * 0.55);
-  return (
-    <span
-      className="inline-flex items-center justify-center rounded-full shrink-0 bg-slate-100 text-slate-600"
-      style={{ width: size, height: size }}
-      aria-hidden
-    >
-      <svg
-        style={{ width: iconSize, height: iconSize }}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2.5}
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-      </svg>
-    </span>
-  );
-}
-
 function fmt(n: number) {
   return Number(n).toLocaleString() + "원";
 }
@@ -724,7 +702,6 @@ export default function AdminDashboard() {
                         >
                           <div className="flex items-center gap-3 min-w-0 flex-1">
                             <span className="text-[11px] text-slate-400 tabular-nums shrink-0 w-10">{p.payment_date.slice(5).replace("-", "/")}</span>
-                            <ClientAvatar name={p.client_name} size={24} />
                             <span className="text-[13px] text-slate-900 truncate font-medium">{p.client_name}</span>
                             <span className="inline-flex items-center h-[20px] px-2 rounded-full bg-slate-100/70 text-slate-600 text-[10px] font-semibold shrink-0">
                               {p.type}
@@ -1031,7 +1008,6 @@ export default function AdminDashboard() {
                         className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors no-underline group"
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <ClientAvatar name={p.client_name} size={32} />
                           <div className="min-w-0">
                             <p className="text-sm font-bold text-slate-900 truncate">{p.name}</p>
                             <p className="text-xs text-slate-500 truncate">{p.client_name}</p>
@@ -1205,9 +1181,8 @@ export default function AdminDashboard() {
                         <td className="py-3 px-5">
                           <Link
                             href={`/admin/clients/${p.client_id}`}
-                            className="inline-flex items-center gap-2.5 text-slate-900 font-semibold no-underline hover:text-slate-600 group"
+                            className="inline-flex items-center gap-1 text-slate-900 font-semibold no-underline hover:text-slate-600 group"
                           >
-                            <ClientAvatar name={p.client_name} size={28} />
                             <span>{p.client_name}</span>
                             <svg className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

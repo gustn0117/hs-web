@@ -415,13 +415,6 @@ function ClientsInner() {
               >
                 <div className="p-5">
                   <div className="flex items-start gap-3 mb-4">
-                    <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 ${
-                        client.is_active ? "bg-slate-900" : "bg-slate-400"
-                      }`}
-                    >
-                      {client.name.charAt(0)}
-                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="text-slate-900 font-bold text-sm truncate">{client.name}</h3>
@@ -525,18 +518,9 @@ function ClientsInner() {
                       className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors cursor-pointer"
                     >
                       <td className="py-3 px-5">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-md flex items-center justify-center text-white font-bold text-xs shrink-0 ${
-                              client.is_active ? "bg-slate-900" : "bg-slate-400"
-                            }`}
-                          >
-                            {client.name.charAt(0)}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-bold text-slate-900 truncate">{client.name}</p>
-                            <p className="text-xs text-slate-500 truncate">@{client.username}</p>
-                          </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-slate-900 truncate">{client.name}</p>
+                          <p className="text-xs text-slate-500 truncate">@{client.username}</p>
                         </div>
                       </td>
                       <td className="py-3 px-3 text-slate-700 text-xs">
