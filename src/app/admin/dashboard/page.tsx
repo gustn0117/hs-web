@@ -60,29 +60,24 @@ const PAYMENT_STATUS: Record<string, { label: string; cls: string }> = {
   overdue: { label: "미납", cls: "bg-red-100/50 text-red-700" },
 };
 
-// 클라이언트명 → 첫 글자 이니셜 + 일관된 컬러 (Figma Modern 아바타 패턴)
-const AVATAR_COLORS = [
-  "bg-slate-100 text-slate-700",
-  "bg-emerald-100 text-emerald-800",
-  "bg-amber-100 text-amber-800",
-  "bg-violet-100 text-violet-800",
-  "bg-sky-100 text-sky-800",
-  "bg-rose-100 text-rose-800",
-];
-function clientAvatarCls(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-function ClientAvatar({ name, size = 30 }: { name: string; size?: number }) {
-  const initial = (name || "?").trim().charAt(0).toUpperCase();
+// 클라이언트 아바타 — 이니셜 대신 통일된 체크 SVG 아이콘
+function ClientAvatar({ size = 30 }: { name?: string; size?: number }) {
+  const iconSize = Math.round(size * 0.55);
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full shrink-0 font-bold tabular-nums ${clientAvatarCls(name)}`}
-      style={{ width: size, height: size, fontSize: size <= 24 ? 11 : 12 }}
+      className="inline-flex items-center justify-center rounded-full shrink-0 bg-slate-100 text-slate-600"
+      style={{ width: size, height: size }}
       aria-hidden
     >
-      {initial}
+      <svg
+        style={{ width: iconSize, height: iconSize }}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2.5}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
     </span>
   );
 }
