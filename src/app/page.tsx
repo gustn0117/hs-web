@@ -74,112 +74,136 @@ export default async function Home() {
 
   return (
     <>
-      {/* ═════════ HERO ═════════ */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28">
-        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-50" />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white via-white/95 to-transparent" />
+      {/* ═════════ HERO — dark cinematic ═════════ */}
+      <section className="relative overflow-hidden bg-slate-950 text-white min-h-[720px] md:min-h-screen flex items-center">
+        {/* Warm ambient glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 90% 60% at 30% 30%, rgba(212,180,133,0.10) 0%, transparent 55%), radial-gradient(ellipse 60% 40% at 80% 70%, rgba(255,255,255,0.04) 0%, transparent 60%)",
+          }}
+        />
+        {/* Subtle grain */}
+        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.04]" />
+        {/* Bottom vignette */}
+        <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-slate-950 to-transparent" />
 
-        {/* Ambient radial glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none" style={{
-          background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(10, 42, 94, 0.07) 0%, transparent 60%)"
-        }} />
+        <div className="relative max-w-[1200px] mx-auto px-6 md:px-8 py-32 md:py-40 w-full">
+          {/* Overline */}
+          <p
+            className="text-[10px] md:text-[11px] font-semibold tracking-[0.3em] text-white/50 uppercase mb-8 hero-fade-up"
+            style={{ animationDelay: "0.05s" }}
+          >
+            HS WEB · 웹 에이전시 · SEOUL 2026
+          </p>
 
-        <div className="relative max-w-[900px] mx-auto px-5 text-center">
-          <h1 className="p-display mb-7">
-            <span className="block hero-blur-in" style={{ animationDelay: "0.05s" }}>
-              비즈니스의 시작,
+          {/* Main title */}
+          <h1
+            className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[92px] font-light tracking-[-0.03em] leading-[1.05] mb-8 hero-fade-up"
+            style={{ animationDelay: "0.18s" }}
+          >
+            <span className="block">
+              보이지 않는 곳까지<span aria-hidden className="text-white/30">.</span>
             </span>
-            <span className="block hero-blur-in" style={{ animationDelay: "0.25s" }}>
-              <span className="hero-word-rotator align-baseline">
-                <span className="hero-word-rotator-track">
-                  <span>제대로 된</span>
-                  <span>빠르고 정확한</span>
-                  <span>감각적인</span>
-                  <span>실속 있는</span>
-                  <span>제대로 된</span>
-                </span>
-              </span>{" "}
-              <span className="relative inline-block">
-                <span
-                  className="hero-gradient-text hero-text-shimmer"
-                  data-text="웹 서비스"
-                >
-                  웹 서비스
-                </span>
-                <span
-                  aria-hidden
-                  className="hero-scribble absolute left-0 right-0 bottom-[-4px] md:bottom-[-6px] h-[8px] md:h-[12px] bg-[var(--c-main)]/15 rounded-sm"
-                />
-              </span>
-              <wbr />
-              부터.
+            <span className="block text-white/60 font-thin italic">
+              Made with intention.
             </span>
           </h1>
 
+          {/* Divider line */}
+          <div
+            className="w-12 h-px bg-white/25 mb-8 hero-fade-up"
+            style={{ animationDelay: "0.3s" }}
+          />
+
+          {/* Description */}
           <p
-            className="text-[16px] md:text-[19px] text-[var(--c-text-2)] max-w-[560px] mx-auto leading-[1.7] mb-10 hero-fade-up"
-            style={{ animationDelay: "0.45s" }}
+            className="text-[15px] md:text-[17px] text-white/65 leading-[1.9] max-w-[560px] mb-12 hero-fade-up"
+            style={{ animationDelay: "0.4s" }}
           >
-            기획 · 디자인 · 개발 · 운영까지.<br className="hidden md:block" />
-            10분 상담으로 견적·일정을 확인하세요
-            <span className="hero-cursor" aria-hidden />
+            기획부터 디자인, 개발, 운영까지.<br />
+            비즈니스에 필요한 웹의 모든 과정을 함께합니다.
           </p>
 
+          {/* Actions */}
           <div
-            className="flex items-center gap-3 justify-center flex-wrap mb-8 hero-fade-up"
+            className="flex flex-col sm:flex-row gap-3 sm:items-center mb-16 md:mb-24 hero-fade-up"
             style={{ animationDelay: "0.5s" }}
           >
-            <Link href="/contact" className="p-btn p-btn-dark p-btn-xl hero-pulse-glow">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 h-13 md:h-14 px-7 md:px-8 bg-white text-slate-950 font-semibold text-[14px] tracking-wide no-underline hover:bg-white/90 transition-colors"
+            >
               무료 상담 신청
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>
-            <Link href="/portfolio" className="p-btn p-btn-xl">
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center justify-center gap-2 h-13 md:h-14 px-7 md:px-8 text-white font-medium text-[14px] tracking-wide no-underline border border-white/20 hover:border-white/40 hover:bg-white/5 transition-colors"
+            >
               포트폴리오 보기
             </Link>
           </div>
 
+          {/* Bottom meta */}
           <div
-            className="flex flex-col items-center gap-1.5 sm:flex-row sm:gap-5 sm:justify-center sm:flex-wrap text-[12px] text-[var(--c-sub)] hero-fade-up"
+            className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6 text-[11px] md:text-[12px] text-white/40 hero-fade-up tracking-wide"
             style={{ animationDelay: "0.65s" }}
           >
-            <div className="flex items-center gap-1.5">
-              <span className="inline-flex w-2 h-2 rounded-full bg-[var(--c-new)] animate-pulse" />
-              <span>지금 상담 접수 가능</span>
-            </div>
-            <span className="p-sep hidden sm:inline-block" />
-            <a href="tel:010-3319-2509" className="tnum font-semibold text-[var(--c-text)] hover:text-[var(--c-main)] no-underline keep">010-3319-2509</a>
-            <span className="p-sep hidden sm:inline-block" />
-            <span className="flex items-center gap-1.5">
-              <svg className="w-3 h-3 text-[var(--c-event)]" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              평균 만족도 <strong className="text-[var(--c-text)]">5.0/5.0</strong>
+            <span className="flex items-center gap-2">
+              <span className="inline-flex w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>NOW ACCEPTING · 지금 상담 접수</span>
             </span>
+            <span className="hidden sm:inline-block h-px w-8 bg-white/15" />
+            <a
+              href="tel:010-3319-2509"
+              className="tnum font-medium text-white/70 hover:text-white no-underline"
+            >
+              010-3319-2509
+            </a>
           </div>
 
-          {/* hidden fallback to keep portfolio count reference */}
+          {/* hidden portfolio count for SEO */}
           <span className="hidden" aria-hidden>{portfolio.length || 12}</span>
         </div>
 
-        {/* Stats bar — compact, full width inside hero */}
-        <div className="relative max-w-[1280px] mx-auto px-5">
-          <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-b border-[var(--c-line)]">
+        {/* Scroll indicator */}
+        <a
+          href="#services"
+          className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-3 text-white/40 hover:text-white/80 no-underline transition-colors"
+        >
+          <span className="text-[10px] tracking-[0.35em] font-semibold">SCROLL</span>
+          <span className="w-px h-10 bg-white/20" />
+        </a>
+      </section>
+
+      {/* ═════════ Stats strip — light, understated ═════════ */}
+      <section className="border-b border-[var(--c-line)] bg-white">
+        <div className="max-w-[1280px] mx-auto px-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
             {[
-              { num: "249,000", unit: "원~", label: "제작 시작가", numSize: "text-[28px] md:text-[34px] lg:text-[40px]" },
-              { num: "100", unit: "%", label: "소스코드 제공", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
-              { num: "95", unit: "%", label: "재의뢰율", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
-              { num: "100", unit: "%", label: "반응형 적용", numSize: "text-[32px] md:text-[42px] lg:text-[52px]" },
+              { num: "249,000", unit: "원~", label: "제작 시작가" },
+              { num: "100", unit: "%", label: "소스코드 제공" },
+              { num: "95", unit: "%", label: "재의뢰율" },
+              { num: "100", unit: "%", label: "반응형 적용" },
             ].map((s, i) => (
               <div
                 key={s.label}
-                className={`py-7 md:py-9 px-4 md:px-6 ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
+                className={`py-7 md:py-10 px-4 md:px-6 ${i !== 0 ? "md:border-l" : ""} ${i < 2 ? "border-b md:border-b-0" : ""} ${i % 2 === 1 ? "border-l" : ""} border-[var(--c-line)]`}
               >
-                <p className="text-[11px] text-[var(--c-sub)] font-semibold mb-3 keep tracking-wider uppercase">{s.label}</p>
-                <p className="p-stat nowrap flex items-baseline">
-                  <span className={`${s.numSize} leading-none`}>{s.num}</span>
-                  <span className="text-[13px] md:text-[15px] text-[var(--c-sub)] font-bold ml-1">{s.unit}</span>
+                <p className="text-[10px] md:text-[11px] text-[var(--c-sub)] font-semibold mb-3 keep tracking-[0.15em] uppercase">
+                  {s.label}
+                </p>
+                <p className="nowrap flex items-baseline">
+                  <span className="text-[26px] md:text-[36px] lg:text-[44px] font-light tracking-tight text-[var(--c-text)] leading-none tabular-nums">
+                    {s.num}
+                  </span>
+                  <span className="text-[13px] md:text-[15px] text-[var(--c-sub)] font-medium ml-1">
+                    {s.unit}
+                  </span>
                 </p>
               </div>
             ))}
