@@ -167,24 +167,6 @@ export default async function Home() {
             </Link>
           </div>
 
-          {/* Bottom meta */}
-          <div
-            className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6 text-[11px] md:text-[12px] text-white/40 hero-fade-up tracking-wide"
-            style={{ animationDelay: "0.65s" }}
-          >
-            <span className="flex items-center gap-2">
-              <span className="inline-flex w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>NOW ACCEPTING · 지금 상담 접수</span>
-            </span>
-            <span className="hidden sm:inline-block h-px w-8 bg-white/15" />
-            <a
-              href="tel:010-3319-2509"
-              className="tnum font-medium text-white/70 hover:text-white no-underline"
-            >
-              010-3319-2509
-            </a>
-          </div>
-
           {/* hidden portfolio count for SEO */}
           <span className="hidden" aria-hidden>{portfolio.length || 12}</span>
         </div>
