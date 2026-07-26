@@ -108,64 +108,25 @@ export default async function Home() {
         {/* Bottom vignette */}
         <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-slate-950 to-transparent" />
 
-        <div className="relative max-w-[1200px] mx-auto px-6 md:px-8 py-32 md:py-40 w-full">
-          {/* Overline */}
-          <p
-            className="text-[10px] md:text-[11px] font-semibold tracking-[0.3em] text-white/50 uppercase mb-8 hero-fade-up"
-            style={{ animationDelay: "0.05s" }}
-          >
-            HS WEB · 웹 에이전시 · SEOUL 2026
-          </p>
-
+        <div className="relative max-w-[1200px] mx-auto px-6 md:px-8 py-32 md:py-40 w-full text-center">
           {/* Main title */}
           <h1
             className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[92px] font-light tracking-[-0.03em] leading-[1.05] mb-8 hero-fade-up"
             style={{ animationDelay: "0.18s" }}
           >
             <span className="block">
-              보이지 않는 곳까지<span aria-hidden className="text-white/30">.</span>
+              감각이 담긴 웹<span aria-hidden className="text-white/30">.</span>
             </span>
             <span className="block text-white/60 font-thin italic">
-              Made with intention.
+              Crafted with intention.
             </span>
           </h1>
 
           {/* Divider line */}
           <div
-            className="w-12 h-px bg-white/25 mb-8 hero-fade-up"
+            className="w-12 h-px bg-white/25 mx-auto hero-fade-up"
             style={{ animationDelay: "0.3s" }}
           />
-
-          {/* Description */}
-          <p
-            className="text-[15px] md:text-[17px] text-white/65 leading-[1.9] max-w-[560px] mb-12 hero-fade-up"
-            style={{ animationDelay: "0.4s" }}
-          >
-            기획부터 디자인, 개발, 운영까지.<br />
-            비즈니스에 필요한 웹의 모든 과정을 함께합니다.
-          </p>
-
-          {/* Actions */}
-          <div
-            className="flex flex-col sm:flex-row gap-3 sm:items-center mb-16 md:mb-24 hero-fade-up"
-            style={{ animationDelay: "0.5s" }}
-          >
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 h-13 md:h-14 px-7 md:px-8 bg-white text-slate-950 font-semibold text-[14px] tracking-wide no-underline hover:bg-white/90 transition-colors"
-            >
-              무료 상담 신청
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center justify-center gap-2 h-13 md:h-14 px-7 md:px-8 text-white font-medium text-[14px] tracking-wide no-underline border border-white/20 hover:border-white/40 hover:bg-white/5 transition-colors"
-            >
-              포트폴리오 보기
-            </Link>
-          </div>
 
           {/* hidden portfolio count for SEO */}
           <span className="hidden" aria-hidden>{portfolio.length || 12}</span>
