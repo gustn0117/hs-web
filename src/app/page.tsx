@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 import { services } from "@/lib/services";
 
@@ -76,6 +77,24 @@ export default async function Home() {
     <>
       {/* ═════════ HERO — dark cinematic ═════════ */}
       <section className="relative overflow-hidden bg-slate-950 text-white min-h-[720px] md:min-h-screen flex items-center">
+        {/* Office background — generated for the homepage hero */}
+        <Image
+          src="/home-hero-office.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          aria-hidden="true"
+          className="object-cover object-[61%_center] md:object-center"
+        />
+        {/* Keep the headline readable without hiding the office atmosphere */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(2,6,23,0.9) 0%, rgba(2,6,23,0.72) 42%, rgba(2,6,23,0.32) 72%, rgba(2,6,23,0.2) 100%), linear-gradient(180deg, rgba(2,6,23,0.18) 0%, rgba(2,6,23,0.08) 58%, rgba(2,6,23,0.72) 100%)",
+          }}
+        />
         {/* Warm ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
