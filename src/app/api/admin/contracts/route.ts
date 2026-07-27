@@ -38,6 +38,8 @@ export async function POST(request: Request) {
       client_company: body.client_company || null,
       client_phone: body.client_phone || null,
       client_email: body.client_email || null,
+      supplier_company: body.supplier_company?.trim() || "HS WEB",
+      supplier_representative: body.supplier_representative?.trim() || "심현수",
       project_name: body.project_name,
       project_scope: body.project_scope || null,
       start_date: body.start_date || null,

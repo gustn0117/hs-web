@@ -10,6 +10,8 @@ interface Contract {
   contract_number: string;
   client_name: string;
   client_company: string;
+  supplier_company: string | null;
+  supplier_representative: string | null;
   project_name: string;
   project_scope: string;
   start_date: string;
@@ -178,7 +180,7 @@ export default function SignPage() {
             <p className="mb-6">
               <strong className="text-[#2c2418]">{contract.client_name}</strong>
               {contract.client_company && <span> ({contract.client_company})</span>}
-              (이하 &ldquo;갑&rdquo;이라 한다)과 <strong className="text-[#2c2418]">HS WEB</strong> (대표 심현수, 이하 &ldquo;을&rdquo;이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
+              (이하 &ldquo;갑&rdquo;이라 한다)과 <strong className="text-[#2c2418]">{contract.supplier_company || "HS WEB"}</strong> (대표 {contract.supplier_representative || "심현수"}, 이하 &ldquo;을&rdquo;이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
             </p>
 
             <div className="w-full h-px bg-[#e5ddd0] my-6" />
@@ -287,10 +289,10 @@ export default function SignPage() {
               <div className="text-center">
                 <p className="text-xs text-[#8a7e6b] mb-3 font-semibold tracking-wider">을 (수급인)</p>
                 <div className="border-b-2 border-[#2c2418] pb-2 mb-2 min-h-[60px] flex items-end justify-center">
-                  <p className="text-lg font-bold text-[#2c2418] italic">HS WEB</p>
+                  <p className="text-lg font-bold text-[#2c2418] italic">{contract.supplier_company || "HS WEB"}</p>
                 </div>
-                <p className="text-sm font-bold text-[#2c2418]">심현수</p>
-                <p className="text-xs text-[#8a7e6b]">HS WEB 대표</p>
+                <p className="text-sm font-bold text-[#2c2418]">{contract.supplier_representative || "심현수"}</p>
+                <p className="text-xs text-[#8a7e6b]">{contract.supplier_company || "HS WEB"} 대표</p>
               </div>
             </div>
           </div>

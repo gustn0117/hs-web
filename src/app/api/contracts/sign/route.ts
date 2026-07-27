@@ -55,6 +55,8 @@ export async function POST(request: Request) {
   const hashPayload = JSON.stringify({
     contract_number: contract.contract_number,
     client_name: contract.client_name,
+    supplier_company: contract.supplier_company,
+    supplier_representative: contract.supplier_representative,
     project_name: contract.project_name,
     total_amount: contract.total_amount,
     items: contract.items,

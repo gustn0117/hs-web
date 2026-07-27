@@ -15,6 +15,8 @@ interface Contract {
   client_company: string;
   client_phone: string;
   client_email: string;
+  supplier_company: string | null;
+  supplier_representative: string | null;
   project_name: string;
   project_scope: string;
   start_date: string;
@@ -160,6 +162,8 @@ export default function ContractsPage() {
   const [clientCompany, setClientCompany] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+  const [supplierCompany, setSupplierCompany] = useState("HS WEB");
+  const [supplierRepresentative, setSupplierRepresentative] = useState("심현수");
   const [projectName, setProjectName] = useState("");
   const [projectScope, setProjectScope] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
@@ -223,6 +227,8 @@ export default function ContractsPage() {
           client_company: clientCompany,
           client_phone: clientPhone,
           client_email: clientEmail,
+          supplier_company: supplierCompany,
+          supplier_representative: supplierRepresentative,
           project_name: projectName,
           project_scope: projectScope,
           total_amount: totalAmount,
@@ -405,6 +411,30 @@ export default function ContractsPage() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* 수급인 (을) */}
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-[var(--color-dark)]">수급인 정보 (을)</h3>
+                <button
+                  onClick={() => { setSupplierCompany("HS WEB"); setSupplierRepresentative("심현수"); }}
+                  className="text-xs text-[var(--color-gray)] hover:text-[var(--color-dark)] cursor-pointer bg-transparent border-none"
+                >
+                  기본값으로 되돌리기
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-[var(--color-gray)] mb-1">회사/상호</label>
+                  <input value={supplierCompany} onChange={(e) => setSupplierCompany(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="HS WEB" />
+                </div>
+                <div>
+                  <label className="block text-xs text-[var(--color-gray)] mb-1">대표</label>
+                  <input value={supplierRepresentative} onChange={(e) => setSupplierRepresentative(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="심현수" />
+                </div>
+              </div>
+              <p className="text-[11px] text-[var(--color-gray)] mt-2">계약서에 &ldquo;을&rdquo;로 표기됩니다. (기본값: HS WEB · 심현수)</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -670,6 +700,8 @@ function buildContractHtml(c: Contract): string {
   const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
   const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
   const filename = buildContractFilename(c);
+  const supCompany = c.supplier_company || "HS WEB";
+  const supRep = c.supplier_representative || "심현수";
 
   const paymentRows = (c.payment_terms || []).map((pt: PaymentTerm) =>
     `<tr><td class="l b">${pt.label}</td><td class="r b">${fmtN(pt.amount)}원</td><td class="l">${pt.due}</td></tr>`
@@ -726,7 +758,7 @@ h2 { font-size: 11pt; margin: 16px 0 6px; }
 </div>
 
 <p style="margin-bottom:14px;font-size:9.5pt;line-height:1.8">
-  <strong>${c.client_name}</strong>${c.client_company ? ` (${c.client_company})` : ""} (이하 "갑"이라 한다)과 <strong>HS WEB</strong> (대표 심현수, 이하 "을"이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
+  <strong>${c.client_name}</strong>${c.client_company ? ` (${c.client_company})` : ""} (이하 "갑"이라 한다)과 <strong>${supCompany}</strong> (대표 ${supRep}, 이하 "을"이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
 </p>
 
 <hr style="border:none;border-top:1px solid #ddd;margin:14px 0" />
@@ -767,9 +799,9 @@ ${specRows ? `
   </div>
   <div class="sig-box">
     <p style="font-size:8pt;color:#888;margin-bottom:6px;font-weight:700;letter-spacing:2px">을 (수급인)</p>
-    <div class="line"><span style="font-size:14pt;font-weight:900;font-style:italic">HS WEB</span></div>
-    <p class="b">심현수</p>
-    <p style="color:#888">HS WEB 대표</p>
+    <div class="line"><span style="font-size:14pt;font-weight:900;font-style:italic">${supCompany}</span></div>
+    <p class="b">${supRep}</p>
+    <p style="color:#888">${supCompany} 대표</p>
   </div>
 </div>
 
