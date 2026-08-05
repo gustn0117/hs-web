@@ -40,6 +40,7 @@ const MENU: MenuItem[] = [
       { href: "/domain-hosting", label: "도메인·호스팅", desc: "기본 개념과 비용" },
       { href: "/nameserver-guide", label: "네임서버 변경 가이드", desc: "가비아·후이즈·카페24 등" },
       { href: "/seo", label: "검색엔진 최적화", desc: "SEO 작업 범위와 비용" },
+      { href: "/pg-guide", label: "PG(전자결제) 연동 안내", desc: "기술 연동 100% · 심사는 직접" },
       { href: "/testimonials", label: "고객 후기", desc: "실제 클라이언트 평가" },
     ],
   },
