@@ -36,14 +36,14 @@ export default function RotatingHeroTitle() {
 
   return (
     <h1
-      className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[92px] font-light tracking-[-0.03em] leading-[1.05] mb-8"
+      className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[92px] font-light tracking-[-0.03em] leading-[1.2] mb-8"
       aria-label={`${p.ko}. ${p.en}`}
     >
       {/* Line 1 — 한글 */}
       <span
         key={`ko-${idx}`}
         className="block"
-        style={{ minHeight: "1.1em" }}
+        style={{ minHeight: "1.3em", paddingBottom: "0.05em", overflow: "visible" }}
         aria-hidden
       >
         {koChars.map((ch, i) => (
@@ -63,11 +63,16 @@ export default function RotatingHeroTitle() {
         </span>
       </span>
 
-      {/* Line 2 — 영문 (italic, 반투명) */}
+      {/* Line 2 — 영문 (italic, 반투명) · descender + italic 오버플로 여유 */}
       <span
         key={`en-${idx}`}
         className="block text-white/60 font-thin italic"
-        style={{ minHeight: "1.1em" }}
+        style={{
+          minHeight: "1.4em",
+          paddingBottom: "0.2em",
+          paddingRight: "0.15em",
+          overflow: "visible",
+        }}
         aria-hidden
       >
         {enChars.map((ch, i) => (
