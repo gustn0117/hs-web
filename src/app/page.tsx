@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 import { services } from "@/lib/services";
+import RotatingHeroTitle from "@/components/RotatingHeroTitle";
 
 export const revalidate = 60;
 
@@ -109,18 +110,8 @@ export default async function Home() {
         <div className="absolute inset-x-0 bottom-0 h-40 pointer-events-none bg-gradient-to-t from-slate-950 to-transparent" />
 
         <div className="relative max-w-[1200px] mx-auto px-6 md:px-8 py-32 md:py-40 w-full text-center">
-          {/* Main title */}
-          <h1
-            className="text-[42px] sm:text-[56px] md:text-[76px] lg:text-[92px] font-light tracking-[-0.03em] leading-[1.05] mb-8 hero-fade-up"
-            style={{ animationDelay: "0.18s" }}
-          >
-            <span className="block">
-              감각이 담긴 웹<span aria-hidden className="text-white/30">.</span>
-            </span>
-            <span className="block text-white/60 font-thin italic">
-              Crafted with intention.
-            </span>
-          </h1>
+          {/* Main title — 8가지 문구 회전 */}
+          <RotatingHeroTitle />
 
           {/* Divider line */}
           <div
