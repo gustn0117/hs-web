@@ -20,6 +20,19 @@ export async function PATCH(
   if (typeof body.done === "boolean") update.done = body.done;
   if ("memo" in body) update.memo = body.memo;
   if (typeof body.position === "number") update.position = body.position;
+  if ("due_date" in body) {
+    const raw = body.due_date;
+    if (raw === null) {
+      update.due_date = null;
+    } else if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+      update.due_date = raw;
+    } else {
+      return NextResponse.json(
+        { error: "날짜 형식이 올바르지 않습니다." },
+        { status: 400 }
+      );
+    }
+  }
 
   const { data, error } = await supabase
     .from("dashboard_todos")

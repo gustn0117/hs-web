@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import AdminHeader from "../components/AdminHeader";
+import DashboardCalendar from "../components/DashboardCalendar";
 
 interface Stats {
   overview: {
@@ -479,6 +480,9 @@ export default function AdminDashboard() {
             </svg>
           </Link>
         </div>
+
+        {/* ── Calendar + todos ───────────────────── */}
+        <DashboardCalendar />
 
         {/* ── Critical alert: overdue payments ────── */}
         {overduePayments.length > 0 && (
