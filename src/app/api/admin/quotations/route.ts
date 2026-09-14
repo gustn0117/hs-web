@@ -35,7 +35,6 @@ export async function POST(request: Request) {
       include_vat: body.include_vat,
       items: body.items,
       specs: body.specs,
-      hosting: body.hosting ?? null,
       notes: body.notes,
       subtotal: body.subtotal,
       vat: body.vat,
