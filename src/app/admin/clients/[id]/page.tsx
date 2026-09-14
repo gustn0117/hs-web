@@ -368,10 +368,12 @@ function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value:
   const prevMonth = () => { if (viewMonth === 0) { setViewYear((y) => y - 1); setViewMonth(11); } else setViewMonth((m) => m - 1); };
   const nextMonth = () => { if (viewMonth === 11) { setViewYear((y) => y + 1); setViewMonth(0); } else setViewMonth((m) => m + 1); };
 
-  const selectDate = (day: number) => {
-    const mm = String(viewMonth + 1).padStart(2, "0");
+  // 연·월을 인자로 받는다. setViewYear/setViewMonth 직후 같은 클릭에서 부르면
+  // 아직 갱신 전 값(보고 있던 달)을 읽기 때문에 "오늘"은 반드시 직접 넘겨야 한다.
+  const selectDate = (day: number, year = viewYear, month = viewMonth) => {
+    const mm = String(month + 1).padStart(2, "0");
     const dd = String(day).padStart(2, "0");
-    onChange(`${viewYear}-${mm}-${dd}`);
+    onChange(`${year}-${mm}-${dd}`);
     setOpen(false);
     setShowYearPicker(false);
   };
@@ -421,7 +423,7 @@ function DatePicker({ value, onChange, placeholder = "날짜 선택" }: { value:
                 })}
               </div>
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate()); }} className="text-xs text-[#0f172a] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
+                <button type="button" onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()); selectDate(today.getDate(), today.getFullYear(), today.getMonth()); }} className="text-xs text-[#0f172a] bg-transparent border-none cursor-pointer hover:underline font-medium">오늘</button>
                 {value && <button type="button" onClick={clearDate} className="text-xs text-[#64748b] bg-transparent border-none cursor-pointer hover:underline">초기화</button>}
               </div>
             </div>
