@@ -45,6 +45,10 @@ interface Quotation {
   total: number;
   subtotal: number;
   include_vat: boolean;
+  hosting?: {
+    mode: "separate" | "included";
+    items: { name: string; cycle: "월" | "년"; price: number; count: number }[];
+  } | null;
 }
 
 const DEFAULT_TERMS = `제 1 조 (목적)
@@ -200,7 +204,17 @@ export default function ContractsPage() {
     const q = quotations.find((x) => x.id === qid);
     if (!q) return;
     setSelectedQuotation(qid);
-    setItems(q.items);
+    // "합계에 포함"으로 만든 견적서는 총액에 호스팅·도메인이 들어 있으므로
+    // 계약 항목에도 같은 줄을 붙여 항목 합과 총액을 맞춘다.
+    const hostingRows: LineItem[] =
+      q.hosting?.mode === "included"
+        ? q.hosting.items.map((h) => ({
+            name: h.name,
+            method: `${h.cycle} ${h.price.toLocaleString()}원 × ${h.count}${h.cycle === "월" ? "개월" : "년"}`,
+            unitPrice: h.price * h.count,
+          }))
+        : [];
+    setItems([...q.items, ...hostingRows]);
     setSpecs(q.specs);
     setTotalAmount(q.total);
     setProjectName(q.items[0]?.name || "웹사이트 제작");

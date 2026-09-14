@@ -14,6 +14,36 @@ interface Spec {
   value: string;
 }
 
+interface HostingItem {
+  name: string;
+  cycle: "월" | "년";
+  price: number;
+  count: number;
+}
+
+interface HostingInfo {
+  mode: "separate" | "included";
+  items: HostingItem[];
+}
+
+// 사이트 도메인·호스팅 안내 페이지의 최저가 기준. 견적서마다 수정한다.
+const DEFAULT_HOSTING_ITEMS: HostingItem[] = [
+  { name: "호스팅", cycle: "월", price: 7000, count: 12 },
+  { name: "도메인 (.com)", cycle: "년", price: 20000, count: 1 },
+];
+
+function hostingAmount(h: HostingItem) {
+  return h.price * h.count;
+}
+
+function hostingUnitLabel(h: HostingItem) {
+  return `${h.cycle} ${fmtNum(h.price)}원`;
+}
+
+function hostingPeriodLabel(h: HostingItem) {
+  return `${h.count}${h.cycle === "월" ? "개월" : "년"}`;
+}
+
 const DEFAULT_SPECS: Spec[] = [
   { label: "제작 방식", value: "맞춤형 홈페이지 제작 (기획 · 디자인 · 퍼블리싱 작업 포함)" },
   { label: "제작 단가", value: "" },
@@ -63,6 +93,7 @@ interface SavedQuotation {
   include_vat: boolean;
   subtotal: number;
   vat: number;
+  hosting?: HostingInfo | null;
 }
 
 export default function QuotationPage() {
@@ -82,6 +113,9 @@ export default function QuotationPage() {
   ]);
 
   const [specs, setSpecs] = useState<Spec[]>(DEFAULT_SPECS);
+  const [hostingOn, setHostingOn] = useState(false);
+  const [hostingMode, setHostingMode] = useState<HostingInfo["mode"]>("separate");
+  const [hostingItems, setHostingItems] = useState<HostingItem[]>(DEFAULT_HOSTING_ITEMS);
   const [notes, setNotes] = useState(DEFAULT_NOTES.join("\n"));
 
   const fetchList = useCallback(async () => {
@@ -109,6 +143,9 @@ export default function QuotationPage() {
     setItems([{ name: "맞춤형 홈페이지 제작", method: "기획·디자인·퍼블리싱", unitPrice: 1000000 }]);
     setSpecs(DEFAULT_SPECS);
     setNotes(DEFAULT_NOTES.join("\n"));
+    setHostingOn(false);
+    setHostingMode("separate");
+    setHostingItems(DEFAULT_HOSTING_ITEMS);
   };
 
   const loadQuotation = (q: SavedQuotation) => {
@@ -120,6 +157,9 @@ export default function QuotationPage() {
     setItems(q.items);
     setSpecs(q.specs);
     setNotes(q.notes);
+    setHostingOn(!!q.hosting);
+    setHostingMode(q.hosting?.mode ?? "separate");
+    setHostingItems(q.hosting?.items?.length ? q.hosting.items : DEFAULT_HOSTING_ITEMS);
     setTab("new");
   };
 
@@ -129,14 +169,33 @@ export default function QuotationPage() {
     fetchList();
   };
 
-  const subtotal = items.reduce((s, item) => s + item.unitPrice, 0);
+  const hostingSum = hostingItems.reduce((s, h) => s + hostingAmount(h), 0);
+  const hostingIncluded = hostingOn && hostingMode === "included" && hostingItems.length > 0;
+  const hostingSeparate = hostingOn && hostingMode === "separate" && hostingItems.length > 0;
+
+  // 견적 내역 표에 그릴 행. "합계에 포함"이면 호스팅·도메인 줄이 뒤에 붙는다.
+  const tableRows = [
+    ...items.map((item) => ({ name: item.name, method: item.method, unitPrice: item.unitPrice, amount: item.unitPrice })),
+    ...(hostingIncluded
+      ? hostingItems.map((h) => ({
+          name: h.name,
+          method: `${hostingUnitLabel(h)} × ${hostingPeriodLabel(h)}`,
+          unitPrice: h.price,
+          amount: hostingAmount(h),
+        }))
+      : []),
+  ];
+
+  const subtotal = tableRows.reduce((s, row) => s + row.amount, 0);
   const vat = includeVat ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal + vat;
+
+  const priceSpecValue = `${fmtNum(subtotal)} 원 (호스팅 / 도메인 ${hostingIncluded ? "포함" : "별도"})`;
 
   // Auto-fill 제작 단가
   const specsWithPrice = specs.map((s) =>
     s.label === "제작 단가"
-      ? { ...s, value: `${fmtNum(subtotal)} 원 (호스팅 / 도메인 별도)` }
+      ? { ...s, value: priceSpecValue }
       : s
   );
 
@@ -151,6 +210,18 @@ export default function QuotationPage() {
   const removeItem = (idx: number) => {
     if (items.length <= 1) return;
     setItems((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const updateHostingItem = <K extends keyof HostingItem>(idx: number, field: K, value: HostingItem[K]) => {
+    setHostingItems((prev) => prev.map((h, i) => (i === idx ? { ...h, [field]: value } : h)));
+  };
+
+  const addHostingItem = () => {
+    setHostingItems((prev) => [...prev, { name: "", cycle: "년", price: 0, count: 1 }]);
+  };
+
+  const removeHostingItem = (idx: number) => {
+    setHostingItems((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const updateSpec = (idx: number, value: string) => {
@@ -171,6 +242,7 @@ export default function QuotationPage() {
           include_vat: includeVat,
           items,
           specs: specsWithPrice,
+          hosting: hostingOn && hostingItems.length > 0 ? { mode: hostingMode, items: hostingItems } : null,
           notes,
           subtotal,
           vat,
@@ -183,21 +255,51 @@ export default function QuotationPage() {
 
   const handlePrint = () => {
     saveToDb();
-    const itemsHtml = items.map((item, idx) => `
+    const itemsHtml = tableRows.map((item, idx) => `
       <tr>
         <td class="c">${idx + 1}</td>
         <td class="name">${item.name}</td>
         <td class="c">${item.method}</td>
         <td class="r">${fmtNum(item.unitPrice)} 원</td>
-        <td class="r b">${fmtNum(item.unitPrice)} 원</td>
+        <td class="r b">${fmtNum(item.amount)} 원</td>
       </tr>`).join("");
 
-    const emptyRows = items.length < 3
-      ? [...Array(3 - items.length)].map(() => `<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>`).join("")
+    const emptyRows = tableRows.length < 3
+      ? [...Array(3 - tableRows.length)].map(() => `<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr>`).join("")
       : "";
 
     const specsHtml = specsWithPrice.map((s) => `
       <tr><td class="lbl">${s.label}</td><td>${s.value}</td></tr>`).join("");
+
+    const hostingHtml = hostingSeparate
+      ? `
+<div class="sec">호스팅·도메인 (실비, 별도)</div>
+<table style="margin-bottom:16px">
+  <thead>
+    <tr>
+      <th style="width:28px">No.</th>
+      <th style="width:32%">항 목</th>
+      <th style="width:22%">단 가</th>
+      <th style="width:20%">기 간</th>
+      <th style="width:20%">금 액</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${hostingItems.map((h, idx) => `
+    <tr>
+      <td class="c">${idx + 1}</td>
+      <td class="name">${h.name}</td>
+      <td class="r">${hostingUnitLabel(h)}</td>
+      <td class="c">${hostingPeriodLabel(h)}</td>
+      <td class="r b">${fmtNum(hostingAmount(h))} 원</td>
+    </tr>`).join("")}
+    <tr class="sub-row">
+      <td colspan="4" class="r b">소 계 (제작비 합계와 별도)</td>
+      <td class="r b">${fmtNum(hostingSum)} 원</td>
+    </tr>
+  </tbody>
+</table>`
+      : "";
 
     const notesHtml = notes.split("\n").filter(Boolean).map((l) => `<p>· ${l}</p>`).join("");
 
@@ -291,6 +393,8 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
     </tr>
   </tbody>
 </table>
+
+${hostingHtml}
 
 <div class="sec">제작 사양</div>
 <table style="margin-bottom:16px">
@@ -488,6 +592,12 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t border-gray-100 text-sm">
+                {hostingIncluded && (
+                  <div className="flex justify-between text-[var(--color-gray)] mb-1">
+                    <span>호스팅·도메인 포함</span>
+                    <span>+{fmtNum(hostingSum)}원</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-[var(--color-dark-2)]">
                   <span>소계</span>
                   <span className="font-semibold">{fmtNum(subtotal)}원</span>
@@ -505,6 +615,116 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
               </div>
             </div>
 
+            {/* 호스팅·도메인 */}
+            <div className="bg-white border border-gray-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--color-dark)] cursor-pointer">
+                  <input type="checkbox" checked={hostingOn} onChange={(e) => setHostingOn(e.target.checked)} className="rounded" />
+                  호스팅·도메인 포함
+                </label>
+                {hostingOn && (
+                  <button onClick={addHostingItem} className="text-xs text-[var(--color-accent)] font-semibold hover:underline cursor-pointer bg-transparent border-none">
+                    + 항목 추가
+                  </button>
+                )}
+              </div>
+
+              {hostingOn && (
+                <div className="mt-4">
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    {([
+                      ["separate", "제작비와 별도 표기"],
+                      ["included", "견적 합계에 포함"],
+                    ] as const).map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setHostingMode(mode)}
+                        aria-pressed={hostingMode === mode}
+                        className={`px-3 py-2 rounded-lg text-sm border cursor-pointer transition-colors ${
+                          hostingMode === mode
+                            ? "border-[var(--color-dark)] bg-[var(--color-dark)] text-white font-semibold"
+                            : "border-gray-200 bg-white text-[var(--color-dark-2)] hover:bg-gray-50"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[var(--color-gray)] mb-4">
+                    {hostingMode === "included"
+                      ? "견적 내역에 줄로 들어가 소계·부가세·합계에 합산됩니다. 실비 대행 비용에도 부가세가 붙습니다."
+                      : "제작비 합계는 그대로 두고, 견적서에 별도 표로 표시합니다."}
+                  </p>
+
+                  {hostingItems.length === 0 ? (
+                    <p className="text-sm text-[var(--color-gray)] py-4 text-center">항목이 없습니다. 오른쪽 위 &quot;+ 항목 추가&quot;로 넣어주세요.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {hostingItems.map((h, idx) => (
+                        <div key={idx} className="border border-gray-100 p-4 relative">
+                          <button onClick={() => removeHostingItem(idx)} aria-label="항목 삭제" className="absolute top-2 right-2 text-[var(--color-gray)] hover:text-red-500 cursor-pointer bg-transparent border-none text-lg">×</button>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="sm:col-span-2">
+                              <label className="block text-xs text-[var(--color-gray)] mb-1">항목명</label>
+                              <input value={h.name} onChange={(e) => updateHostingItem(idx, "name", e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="호스팅" />
+                            </div>
+                            <div>
+                              <label className="block text-xs text-[var(--color-gray)] mb-1">단가</label>
+                              <div className="flex gap-1.5">
+                                <select
+                                  value={h.cycle}
+                                  onChange={(e) => updateHostingItem(idx, "cycle", e.target.value as HostingItem["cycle"])}
+                                  className="px-2 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+                                  aria-label="결제 주기"
+                                >
+                                  <option value="월">월</option>
+                                  <option value="년">년</option>
+                                </select>
+                                <div className="relative flex-1 min-w-0">
+                                  <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={h.price ? fmtNum(h.price) : ""}
+                                    onChange={(e) => updateHostingItem(idx, "price", Number(e.target.value.replace(/[^0-9]/g, "")) || 0)}
+                                    className="w-full px-3 py-2 pr-8 border border-gray-200 rounded-lg text-sm"
+                                    placeholder="7,000"
+                                  />
+                                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[var(--color-gray)]">원</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-[var(--color-gray)] mb-1">기간</label>
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  value={h.count ? String(h.count) : ""}
+                                  onChange={(e) => updateHostingItem(idx, "count", Number(e.target.value.replace(/[^0-9]/g, "")) || 0)}
+                                  className="w-full px-3 py-2 pr-12 border border-gray-200 rounded-lg text-sm"
+                                  placeholder="12"
+                                />
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[var(--color-gray)]">{h.cycle === "월" ? "개월" : "년"}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-xs text-right text-[var(--color-gray)]">
+                            금액 <span className="font-semibold text-[var(--color-dark)]">{fmtNum(hostingAmount(h))}원</span>
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="mt-4 pt-4 border-t border-gray-100 text-sm flex justify-between text-[var(--color-dark)] font-semibold">
+                    <span>호스팅·도메인 합계</span>
+                    <span>{fmtNum(hostingSum)}원</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* 제작 사양 */}
             <div className="bg-white border border-gray-200 p-6 shadow-sm">
               <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-4">제작 사양</h3>
@@ -514,7 +734,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                     <label className="block text-xs text-[var(--color-gray)] mb-1">{spec.label}</label>
                     {spec.label === "제작 단가" ? (
                       <input
-                        value={`${fmtNum(subtotal)} 원 (호스팅 / 도메인 별도)`}
+                        value={priceSpecValue}
                         readOnly
                         className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-[var(--color-dark)]"
                       />
@@ -589,17 +809,17 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                         </tr>
                       </thead>
                       <tbody>
-                        {items.map((item, idx) => (
+                        {tableRows.map((item, idx) => (
                           <tr key={idx}>
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{idx + 1}</td>
                             <td style={{ padding: "8px 8px", fontSize: "7.5px", border: "1px solid #ddd", fontWeight: 600 }}>{item.name}</td>
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{item.method}</td>
                             <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right" }}>{fmtNum(item.unitPrice)} 원</td>
-                            <td style={{ padding: "8px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>{fmtNum(item.unitPrice)} 원</td>
+                            <td style={{ padding: "8px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>{fmtNum(item.amount)} 원</td>
                           </tr>
                         ))}
                         {/* Empty rows */}
-                        {items.length < 3 && [...Array(3 - items.length)].map((_, i) => (
+                        {tableRows.length < 3 && [...Array(3 - tableRows.length)].map((_, i) => (
                           <tr key={`empty-${i}`}>
                             <td style={{ padding: "8px 4px", border: "1px solid #ddd", height: "28px" }}>&nbsp;</td>
                             <td style={{ border: "1px solid #ddd" }}></td>
@@ -630,6 +850,39 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                         </tr>
                       </tbody>
                     </table>
+
+                    {/* Hosting & domain (separate) */}
+                    {hostingSeparate && (
+                      <>
+                        <div style={{ fontSize: "8px", fontWeight: 800, marginBottom: "8px" }}>■ 호스팅·도메인 (실비, 별도)</div>
+                        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "20px" }}>No.</th>
+                              <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "30%" }}>항 목</th>
+                              <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>단 가</th>
+                              <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>기 간</th>
+                              <th style={{ background: "#f5f5f5", padding: "6px 4px", fontSize: "7px", fontWeight: 700, border: "1px solid #ddd", width: "22%" }}>금 액</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {hostingItems.map((h, idx) => (
+                              <tr key={idx}>
+                                <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{idx + 1}</td>
+                                <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", fontWeight: 600 }}>{h.name}</td>
+                                <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right" }}>{hostingUnitLabel(h)}</td>
+                                <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "center" }}>{hostingPeriodLabel(h)}</td>
+                                <td style={{ padding: "8px 4px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700 }}>{fmtNum(hostingAmount(h))} 원</td>
+                              </tr>
+                            ))}
+                            <tr>
+                              <td colSpan={4} style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700, borderTop: "2px solid #ccc" }}>소 계 (제작비 합계와 별도)</td>
+                              <td style={{ padding: "6px 8px", fontSize: "7.5px", border: "1px solid #ddd", textAlign: "right", fontWeight: 700, borderTop: "2px solid #ccc" }}>{fmtNum(hostingSum)} 원</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </>
+                    )}
 
                     {/* Specs */}
                     <div style={{ fontSize: "8px", fontWeight: 800, marginBottom: "8px" }}>■ 제작 사양</div>
