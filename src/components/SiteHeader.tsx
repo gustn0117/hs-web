@@ -72,12 +72,6 @@ const PANEL_GROUPS: { key: string; items: { href: string; label: string; icon: s
   },
 ];
 
-const PANEL_CHIPS = [
-  { href: "/portfolio", label: "포트폴리오" },
-  { href: "/pricing", label: "가격 안내" },
-  { href: "/contact", label: "문의하기" },
-];
-
 export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -167,32 +161,18 @@ export default function SiteHeader() {
           }`}
         >
           {/* 상단 밴드 */}
-          <div className="bg-[var(--c-text)] text-white px-5 pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] font-semibold tracking-[0.28em]">HS WEB</span>
-              <button
-                type="button"
-                onClick={close}
-                aria-label="전체메뉴 닫기"
-                className="w-8 h-8 -mr-1.5 inline-flex items-center justify-center text-white/70 hover:text-white cursor-pointer bg-transparent border-0 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {PANEL_CHIPS.map((c) => (
-                <Link
-                  key={c.href}
-                  href={c.href}
-                  onClick={close}
-                  className="inline-flex items-center h-8 px-3 border border-white/25 text-[12px] text-white/85 hover:bg-white/10 hover:text-white no-underline transition-colors"
-                >
-                  {c.label}
-                </Link>
-              ))}
-            </div>
+          <div className="bg-[var(--c-text)] text-white px-5 h-14 flex items-center justify-between shrink-0">
+            <span className="text-[12.5px] font-semibold tracking-[0.28em]">HS WEB</span>
+            <button
+              type="button"
+              onClick={close}
+              aria-label="전체메뉴 닫기"
+              className="w-8 h-8 -mr-1.5 inline-flex items-center justify-center text-white/70 hover:text-white cursor-pointer bg-transparent border-0 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           {/* 본문 */}
