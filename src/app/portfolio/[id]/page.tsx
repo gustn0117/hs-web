@@ -40,7 +40,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const description =
     item.description ||
     `${item.client ? item.client + " · " : ""}${item.category || "홈페이지"} 제작 사례. 기획부터 디자인, 개발, 배포까지 HS WEB이 직접 진행했습니다.`;
-  const title = `${item.title} | ${item.category || "홈페이지 제작"} 제작 사례`;
+  // 같은 제목이 겹칠 수 있어(예: 아파트 분양 홈페이지 제작) 고객사명을 함께 넣어 구분한다.
+  const client = item.client && item.client !== item.title ? `${item.client} · ` : "";
+  const title = `${item.title} | ${client}${item.category || "홈페이지 제작"} 제작 사례`;
 
   return {
     title,
