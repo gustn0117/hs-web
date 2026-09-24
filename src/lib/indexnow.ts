@@ -22,7 +22,18 @@ export interface IndexNowResult {
 
 /** 최대 10,000개까지 한 번에 보낼 수 있다. */
 export async function submitToIndexNow(urls: string[]): Promise<IndexNowResult[]> {
-  const urlList = [...new Set(urls)].filter((u) => u.startsWith(SITE_URL)).slice(0, 10000);
+  const cleaned: string[] = [...new Set(urls)]
+    .filter((u) => u.startsWith(SITE_URL))
+    // 루트는 슬래시를 붙여 정규화한다.
+    .map((u) => (u === SITE_URL ? `${SITE_URL}/` : u));
+
+  // 네이버는 홈 주소만 단독으로 보내면 "Invalid urls"(422)로 거부한다.
+  // 다른 페이지와 함께 보내면 정상 접수되므로 목록 페이지를 함께 싣는다.
+  const root = `${SITE_URL}/`;
+  const onlyRoot = cleaned.length > 0 && !cleaned.some((u) => u !== root);
+  const withCompanion: string[] = onlyRoot ? [...cleaned, `${SITE_URL}/portfolio`] : cleaned;
+
+  const urlList = withCompanion.slice(0, 10000);
   if (urlList.length === 0) return [];
 
   const body = JSON.stringify({
