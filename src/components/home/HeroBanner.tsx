@@ -3,12 +3,6 @@ import Link from "next/link";
 /** 사진을 넣을 때만 채우면 된다. 비어 있으면 빗금 자리표시자가 보인다. */
 const HERO_IMAGE = "";
 
-const POINTS = [
-  { value: "300건+", label: "제작 실적" },
-  { value: "249,000원~", label: "시작 가격" },
-  { value: "평생 무료", label: "간단 수정" },
-];
-
 export default function HeroBanner() {
   return (
     <section className="relative bg-[#0b1220] text-white overflow-hidden min-h-[560px] md:min-h-[680px] flex items-center">
@@ -52,14 +46,6 @@ export default function HeroBanner() {
             </Link>
           </div>
 
-          <dl className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-5">
-            {POINTS.map((p) => (
-              <div key={p.label}>
-                <dt className="text-[12px] text-white/55">{p.label}</dt>
-                <dd className="mt-1 text-[20px] md:text-[24px] font-extrabold tracking-[-0.02em] tnum">{p.value}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
     </section>
