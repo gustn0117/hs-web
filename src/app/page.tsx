@@ -133,7 +133,7 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-4">
-              <Link href={`/portfolio/${lead.id}`} className="group block no-underline">
+              <Link href={`/portfolio/${lead.seq}`} className="group block no-underline">
                 <div className="aspect-[16/11] bg-[var(--c-bg-2)] overflow-hidden">
                   {lead.thumbnail && (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -157,7 +157,7 @@ export default async function Home() {
 
               <div className="grid grid-cols-2 gap-4 content-start">
                 {rest.map((p) => (
-                  <Link key={p.id} href={`/portfolio/${p.id}`} className="group block no-underline">
+                  <Link key={p.id} href={`/portfolio/${p.seq}`} className="group block no-underline">
                     <div className="aspect-[4/3] bg-[var(--c-bg-2)] overflow-hidden">
                       {p.thumbnail && (
                         // eslint-disable-next-line @next/next/no-img-element

@@ -105,7 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const items = await getPortfolioItems();
     portfolioPages = items.map((item) => ({
-      url: `${SITE_URL}/portfolio/${item.id}`,
+      url: `${SITE_URL}/portfolio/${item.seq}`,
       lastModified: item.updatedAt || now,
       changeFrequency: "monthly" as const,
       priority: 0.7,

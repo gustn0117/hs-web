@@ -2,6 +2,8 @@ import { supabase } from "./supabase";
 
 export interface PortfolioItem {
   id: string;
+  /** 사람이 읽고 공유하기 쉬운 순번. /portfolio/1 같은 주소에 쓴다. */
+  seq: number;
   title: string;
   category: string;
   client: string;
@@ -28,6 +30,7 @@ export function getStorageUrl(filePath: string): string {
 function rowToItem(row: Record<string, unknown>): PortfolioItem {
   return {
     id: row.id as string,
+    seq: (row.seq as number) ?? 0,
     title: row.title as string,
     category: row.category as string,
     client: row.client as string,
@@ -66,12 +69,33 @@ export async function getPortfolioItem(id: string): Promise<PortfolioItem | null
   return rowToItem(data);
 }
 
+export async function getPortfolioItemBySeq(seq: number): Promise<PortfolioItem | null> {
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("*")
+    .eq("seq", seq)
+    .single();
+
+  if (error) return null;
+  return rowToItem(data);
+}
+
 export async function createPortfolioItem(
-  input: Omit<PortfolioItem, "id" | "createdAt" | "updatedAt">
+  input: Omit<PortfolioItem, "id" | "createdAt" | "updatedAt" | "seq">
 ): Promise<PortfolioItem> {
+  // 새 항목에는 다음 순번을 자동으로 붙인다. /portfolio/48 처럼 바로 쓰인다.
+  const { data: last } = await supabase
+    .from("portfolio")
+    .select("seq")
+    .order("seq", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextSeq = ((last?.seq as number) ?? 0) + 1;
+
   const { data, error } = await supabase
     .from("portfolio")
     .insert({
+      seq: nextSeq,
       title: input.title,
       category: input.category,
       client: input.client,

@@ -6,7 +6,7 @@ import type { PortfolioItem } from "@/lib/portfolio";
 import { Breadcrumb, PageHeader } from "@/components/PageShell";
 
 interface NavItem {
-  id: string;
+  seq: number;
   title: string;
   thumbnail: string;
   category: string;
@@ -22,6 +22,46 @@ function fmtDate(iso: string) {
   if (!iso) return "-";
   const d = new Date(iso);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** 본문 형식: "## 소제목", "- 목록", 나머지는 문단 */
+function ContentBody({ text }: { text: string }) {
+  const blocks: React.ReactNode[] = [];
+  let list: string[] = [];
+
+  const flushList = (key: string) => {
+    if (list.length === 0) return;
+    blocks.push(
+      <ul key={key} className="list-disc pl-5 my-3 space-y-1.5">
+        {list.map((li, i) => (
+          <li key={i}>{li}</li>
+        ))}
+      </ul>
+    );
+    list = [];
+  };
+
+  text.split("\n").forEach((raw, i) => {
+    const line = raw.trim();
+    if (line.startsWith("## ")) {
+      flushList(`ul-${i}`);
+      blocks.push(
+        <h3 key={i} className="text-[15px] font-bold text-[var(--color-text)] mt-6 first:mt-0 mb-2">
+          {line.slice(3)}
+        </h3>
+      );
+      return;
+    }
+    if (line.startsWith("- ")) {
+      list.push(line.slice(2));
+      return;
+    }
+    flushList(`ul-${i}`);
+    if (line) blocks.push(<p key={i} className="my-2">{line}</p>);
+  });
+  flushList("ul-last");
+
+  return <>{blocks}</>;
 }
 
 export default function PortfolioDetailClient({ item, prevItem, nextItem }: Props) {
@@ -81,8 +121,8 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
                 <div className="p-section-head">
                   <h2>상세 설명</h2>
                 </div>
-                <div className="p-4 text-[13px] text-[var(--color-text-2)] leading-relaxed whitespace-pre-line">
-                  {item.content}
+                <div className="p-4 text-[13px] text-[var(--color-text-2)] leading-relaxed">
+                  <ContentBody text={item.content} />
                 </div>
               </section>
             )}
@@ -148,7 +188,7 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-[var(--color-border)] bg-white divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-border)]">
               {prevItem && (
                 <Link
-                  href={`/portfolio/${prevItem.id}`}
+                  href={`/portfolio/${prevItem.seq}`}
                   className="flex items-center gap-2 px-4 py-3 no-underline hover:bg-[var(--color-bg-alt)]"
                 >
                   <span className="text-[var(--color-muted-2)]">‹</span>
@@ -161,7 +201,7 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
 
               {nextItem && (
                 <Link
-                  href={`/portfolio/${nextItem.id}`}
+                  href={`/portfolio/${nextItem.seq}`}
                   className="flex items-center justify-end gap-2 px-4 py-3 no-underline hover:bg-[var(--color-bg-alt)]"
                 >
                   <div className="min-w-0 text-right">

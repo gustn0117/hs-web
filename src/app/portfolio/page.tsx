@@ -52,7 +52,7 @@ export default async function PortfolioPage() {
           {/* Featured work — magazine hero */}
           {featured && (
             <Section>
-              <Link href={`/portfolio/${featured.id}`} className="no-underline block group">
+              <Link href={`/portfolio/${featured.seq}`} className="no-underline block group">
                 <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 items-stretch">
                   <div className="p-showcase !rounded-[16px] relative md:min-h-[320px]">
                     {featured.thumbnail ? (
@@ -111,7 +111,7 @@ export default async function PortfolioPage() {
                 {rest.map((p, i) => (
                   <Link
                     key={p.id}
-                    href={`/portfolio/${p.id}`}
+                    href={`/portfolio/${p.seq}`}
                     className="group no-underline block"
                   >
                     <div className="p-showcase sm:!aspect-square !rounded-[12px] mb-3 relative">

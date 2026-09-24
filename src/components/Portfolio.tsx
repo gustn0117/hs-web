@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 interface PortfolioItem {
+  seq: number;
   id: string;
   title: string;
   category: string;
@@ -114,7 +115,7 @@ export default function Portfolio({ items }: { items?: PortfolioItem[] }) {
                 return (
                   <Link
                     key={p.id}
-                    href={`/portfolio/${p.id}`}
+                    href={`/portfolio/${p.seq}`}
                     className="fade-up rounded-2xl overflow-hidden bg-white border border-gray-100 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-gray-200/50 group no-underline text-inherit relative"
                     style={{ transitionDelay: `${i * 60}ms` }}
                   >
