@@ -59,26 +59,31 @@ export function PageHero({
   actions?: React.ReactNode;
 }) {
   return (
-    <section className="relative border-b border-[var(--c-line)] overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-50" />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[var(--c-bg-1)] via-white to-white" />
-
-      <div className="relative max-w-[1280px] mx-auto px-5 pt-10 pb-16 md:pt-14 md:pb-20">
+    <section className="bg-white">
+      <div className="max-w-[1280px] mx-auto px-5 pt-8 pb-10 md:pt-10 md:pb-14">
         <Breadcrumb items={breadcrumb} />
 
-        <div className="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-          <div className="max-w-[720px]">
+        <div className="mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div className="max-w-[820px]">
             {overline && <p className="p-overline mb-3">{overline}</p>}
-            <h1 className="p-h1-xl mb-4">{title}</h1>
-            {subtitle && (
-              <p className="text-[16px] md:text-[18px] text-[var(--c-sub)] leading-[1.7]">{subtitle}</p>
-            )}
+            <h1 className="text-[32px] md:text-[46px] font-extrabold tracking-[-0.035em] leading-[1.2] text-[var(--c-text)]">
+              {title}
+            </h1>
           </div>
           {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
         </div>
 
+        {/* 만나교회식 굵은 구분선 */}
+        <div className="mt-6 border-t-2 border-[var(--c-text)]" />
+
+        {subtitle && (
+          <p className="mt-6 text-[16px] md:text-[18px] text-[var(--c-sub)] leading-[1.75] max-w-[820px]">
+            {subtitle}
+          </p>
+        )}
+
         {stats && stats.length > 0 && (
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 border-t border-[var(--c-line)]">
+          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 border-t border-[var(--c-line)]">
             {stats.map((s, i) => (
               <div
                 key={s.label}
