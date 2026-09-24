@@ -21,10 +21,7 @@ export default function HeroBanner() {
 
       <div className="relative w-full max-w-[1280px] mx-auto px-5 pt-16 pb-32 md:pt-24 md:pb-44">
         <div className="max-w-[820px]">
-          <p className="text-[13px] md:text-[15px] font-bold text-white/75">
-            300건 이상 제작 · 검증된 업체
-          </p>
-          <h1 className="mt-3 md:mt-4 text-[38px] md:text-[64px] font-extrabold leading-[1.15] tracking-[-0.035em]">
+          <h1 className="text-[38px] md:text-[64px] font-extrabold leading-[1.15] tracking-[-0.035em]">
             홈페이지, 프로그램 제작
           </h1>
           <p className="mt-5 text-[15px] md:text-[18px] text-white/75 leading-[1.7]">
