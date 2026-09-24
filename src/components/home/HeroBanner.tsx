@@ -1,21 +1,18 @@
+import Image from "next/image";
 import Link from "next/link";
 
-/** 사진을 넣을 때만 채우면 된다. 비어 있으면 빗금 자리표시자가 보인다. */
-const HERO_IMAGE = "";
+const HERO_IMAGE = "/home-hero-studio-v2.webp";
 
 export default function HeroBanner() {
   return (
     <section className="relative bg-[#0b1220] text-white overflow-hidden min-h-[560px] md:min-h-[680px] flex items-center">
-      <div
-        className="absolute inset-0"
-        style={
-          HERO_IMAGE
-            ? { backgroundImage: `url(${HERO_IMAGE})`, backgroundSize: "cover", backgroundPosition: "center" }
-            : {
-                backgroundImage:
-                  "repeating-linear-gradient(45deg, #101a2e 0px, #101a2e 14px, #16223a 14px, #16223a 28px)",
-              }
-        }
+      <Image
+        src={HERO_IMAGE}
+        alt=""
+        fill
+        preload
+        sizes="100vw"
+        className="object-cover object-[68%_center] md:object-center"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/95 via-[#0b1220]/70 to-[#0b1220]/40" />
 
