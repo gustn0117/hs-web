@@ -28,16 +28,13 @@ export default function HeroBanner() {
       <div className="relative w-full max-w-[1280px] mx-auto px-5 pt-16 pb-32 md:pt-24 md:pb-44">
         <div className="max-w-[820px]">
           <p className="text-[13px] md:text-[15px] font-bold text-white/75">
-            300건 이상 제작 · 검증된 웹에이전시
+            300건 이상 제작 · 검증된 업체
           </p>
-          <h1 className="mt-3 md:mt-4 text-[34px] md:text-[60px] font-extrabold leading-[1.15] tracking-[-0.03em]">
-            300번의 경험이
-            <br />
-            결과로 증명합니다
+          <h1 className="mt-3 md:mt-4 text-[38px] md:text-[64px] font-extrabold leading-[1.15] tracking-[-0.035em]">
+            홈페이지, 프로그램 제작
           </h1>
-          <p className="mt-5 text-[15px] md:text-[18px] text-white/75 leading-[1.7] max-w-[620px]">
-            홈페이지부터 쇼핑몰, 관리 시스템까지 300건 넘게 만들어 왔습니다.
-            기획·디자인·개발·배포를 한 곳에서 맡고, 만든 뒤에도 계속 봐드립니다.
+          <p className="mt-5 text-[15px] md:text-[18px] text-white/75 leading-[1.7]">
+            기획부터 디자인, 개발, 배포까지 한 곳에서.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
