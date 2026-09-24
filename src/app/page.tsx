@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getPortfolioItems } from "@/lib/portfolio";
-import HeroSlider from "@/components/home/HeroSlider";
+import HeroBanner from "@/components/home/HeroBanner";
 
 export const revalidate = 60;
 
@@ -45,7 +45,7 @@ export default async function Home() {
 
   return (
     <>
-      <HeroSlider />
+      <HeroBanner />
 
       {/* 히어로에 겹쳐 올라오는 카드 */}
       <section className="relative z-20 -mt-24 md:-mt-28">
