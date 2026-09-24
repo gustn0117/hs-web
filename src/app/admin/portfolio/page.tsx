@@ -18,6 +18,8 @@ interface PortfolioItem {
 export default function AdminPortfolioPage() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [indexing, setIndexing] = useState(false);
+  const [indexMsg, setIndexMsg] = useState<string | null>(null);
   const router = useRouter();
 
   const fetchItems = async () => {
@@ -30,6 +32,25 @@ export default function AdminPortfolioPage() {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  const requestIndexing = async () => {
+    if (indexing) return;
+    setIndexing(true);
+    setIndexMsg(null);
+    try {
+      const res = await fetch("/api/admin/indexnow", { method: "POST" });
+      const data = await res.json();
+      setIndexMsg(
+        res.ok
+          ? `주소 ${data.count}개를 네이버·빙에 알렸습니다.`
+          : `요청이 실패했습니다. 잠시 후 다시 시도해 주세요.`
+      );
+    } catch {
+      setIndexMsg("요청이 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setIndexing(false);
+    }
+  };
 
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`"${title}" 포트폴리오를 삭제하시겠습니까?`)) return;
@@ -52,6 +73,17 @@ export default function AdminPortfolioPage() {
               {items.length}개의 프로젝트
             </p>
           </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={requestIndexing}
+              disabled={indexing}
+              className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-200 bg-white text-[var(--color-dark)] text-sm rounded-lg cursor-pointer hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992V4.356M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              {indexing ? "요청 중…" : "검색엔진 색인 요청"}
+            </button>
           <Link
             href="/admin/portfolio/new"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[var(--color-primary)] to-blue-600 text-white text-sm font-semibold no-underline  hover:shadow-blue-500/25 transition-all"
@@ -61,7 +93,14 @@ export default function AdminPortfolioPage() {
             </svg>
             새 포트폴리오
           </Link>
+          </div>
         </div>
+
+        {indexMsg && (
+          <div className="mb-6 px-4 py-3 border border-gray-200 bg-white rounded-lg text-sm text-[var(--color-dark-2)]">
+            {indexMsg}
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-20 text-[var(--color-gray)]">로딩 중...</div>

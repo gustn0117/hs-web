@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPortfolioItem, updatePortfolioItem, deletePortfolioItem } from "@/lib/portfolio";
 import { isAuthenticated } from "@/lib/auth";
+import { submitToIndexNow, portfolioUrls } from "@/lib/indexnow";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "항목을 찾을 수 없습니다." }, { status: 404 });
   }
 
+  // 내용이 바뀌었으니 검색엔진에 다시 알린다.
+  await submitToIndexNow(portfolioUrls(item.seq)).catch(() => []);
+
   return NextResponse.json({ item });
 }
 
@@ -35,11 +39,16 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   }
 
   const { id } = await params;
+  // 삭제 전에 번호를 확보해야 어떤 주소가 사라졌는지 알릴 수 있다.
+  const target = await getPortfolioItem(id);
   const success = await deletePortfolioItem(id);
 
   if (!success) {
     return NextResponse.json({ error: "항목을 찾을 수 없습니다." }, { status: 404 });
   }
+
+  // 사라진 주소도 알려야 검색 결과에서 정리된다.
+  await submitToIndexNow(portfolioUrls(target?.seq)).catch(() => []);
 
   return NextResponse.json({ success: true });
 }
