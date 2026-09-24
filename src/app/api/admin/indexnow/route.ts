@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
-import { getPortfolioItems } from "@/lib/portfolio";
+import sitemap from "@/app/sitemap";
 import { submitToIndexNow, SITE_URL } from "@/lib/indexnow";
 
 export const dynamic = "force-dynamic";
@@ -15,15 +15,12 @@ export async function POST(request: Request) {
   let urls: string[] = Array.isArray(body.urls) ? body.urls : [];
 
   if (urls.length === 0) {
-    // 기본: 주요 페이지 + 포트폴리오 전체
-    const items = await getPortfolioItems();
+    // 사이트맵을 그대로 읽어 모든 공개 페이지를 보낸다. 페이지가 늘어도 따로 손댈 필요가 없다.
+    const entries = await sitemap();
     urls = [
-      SITE_URL,
-      `${SITE_URL}/portfolio`,
-      `${SITE_URL}/services`,
-      `${SITE_URL}/pricing`,
-      `${SITE_URL}/contact`,
-      ...items.filter((i) => i.seq > 0).map((i) => `${SITE_URL}/portfolio/${i.seq}`),
+      ...entries.map((e) => (typeof e.url === "string" ? e.url : String(e.url))),
+      `${SITE_URL}/sitemap.xml`,
+      `${SITE_URL}/feed.xml`,
     ];
   }
 
