@@ -16,6 +16,7 @@ interface Props {
   item: PortfolioItem;
   prevItem: NavItem | null;
   nextItem: NavItem | null;
+  related: { seq: number; title: string; thumbnail: string; category: string; client: string }[];
 }
 
 function fmtDate(iso: string) {
@@ -64,7 +65,7 @@ function ContentBody({ text }: { text: string }) {
   return <>{blocks}</>;
 }
 
-export default function PortfolioDetailClient({ item, prevItem, nextItem }: Props) {
+export default function PortfolioDetailClient({ item, prevItem, nextItem, related }: Props) {
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   return (
@@ -181,6 +182,43 @@ export default function PortfolioDetailClient({ item, prevItem, nextItem }: Prop
                     방문하기 →
                   </a>
                 </div>
+              </section>
+            )}
+
+            {/* 같은 분류의 다른 사례 */}
+            {related.length > 0 && (
+              <section className="border border-[var(--color-border)] bg-white">
+                <div className="p-section-head">
+                  <h2>{item.category ? `${item.category} 다른 사례` : "다른 제작 사례"}</h2>
+                </div>
+                <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-3">
+                  {related.map((r, i) => (
+                    <li
+                      key={r.seq}
+                      className={`${i > 0 ? "border-t sm:border-t-0 sm:border-l border-[var(--color-border)]" : ""}`}
+                    >
+                      <Link href={`/portfolio/${r.seq}`} className="block no-underline group p-3">
+                        <span className="block aspect-[4/3] bg-[var(--color-bg-alt)] overflow-hidden">
+                          {r.thumbnail && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={r.thumbnail}
+                              alt={`${r.title} 제작 사례 미리보기`}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                            />
+                          )}
+                        </span>
+                        <span className="block mt-2 text-[10px] text-[var(--color-muted)]">{r.category}</span>
+                        <span className="block text-[13px] font-semibold text-[var(--color-text)] leading-snug group-hover:text-[var(--color-point)] transition-colors">
+                          {r.title}
+                        </span>
+                        {r.client && r.client !== r.title && (
+                          <span className="block text-[11px] text-[var(--color-muted)] mt-0.5">{r.client}</span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </section>
             )}
 

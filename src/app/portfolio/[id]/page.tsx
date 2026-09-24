@@ -90,6 +90,17 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
   const prevItem = currentIndex > 0 ? sorted[currentIndex - 1] : null;
   const nextItem = currentIndex >= 0 && currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
 
+  // 같은 분류의 다른 사례를 최대 3건 고른다. 모자라면 다른 분류로 채운다.
+  const sameCategory = sorted.filter((i) => i.id !== item.id && i.category === item.category);
+  const fillers = sorted.filter((i) => i.id !== item.id && i.category !== item.category);
+  const related = [...sameCategory, ...fillers].slice(0, 3).map((i) => ({
+    seq: i.seq,
+    title: i.title,
+    thumbnail: i.thumbnail,
+    category: i.category,
+    client: i.client,
+  }));
+
   const url = `${SITE_URL}/portfolio/${item.seq}`;
   const description = item.description || `${item.title} 제작 사례`;
 
@@ -129,6 +140,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
         item={item}
         prevItem={prevItem ? { seq: prevItem.seq, title: prevItem.title, thumbnail: prevItem.thumbnail, category: prevItem.category } : null}
         nextItem={nextItem ? { seq: nextItem.seq, title: nextItem.title, thumbnail: nextItem.thumbnail, category: nextItem.category } : null}
+        related={related}
       />
     </>
   );
