@@ -7,3 +7,9 @@ export function refreshInsightPages(seq?: number) {
   revalidatePath("/sitemap.xml");
   revalidatePath("/feed.xml");
 }
+
+export function refreshPortfolioPages(seq?: number) {
+  if (seq) revalidatePath(`/portfolio/${seq}`);
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+}
