@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import ThumbPlaceholder from "@/components/ThumbPlaceholder";
 import { getPublishedPosts } from "@/lib/posts";
 import { GUIDES } from "@/lib/guides";
 import { PageShell } from "@/components/PageShell";
@@ -86,18 +88,31 @@ export default async function InsightsPage() {
           제작을 준비하거나 홈페이지를 운영하며 자주 막히는 부분을 주제별로 정리해뒀습니다.
         </p>
 
-        <ul className="list-none m-0 p-0 mt-5 grid gap-3 md:grid-cols-2">
+        <ul className="list-none m-0 p-0 mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {GUIDES.map((g) => (
             <li key={g.href}>
               <Link
                 href={g.href}
-                className="flex flex-col h-full px-5 py-5 border border-[var(--c-line)] bg-white no-underline group hover:border-[var(--c-main)] transition-colors"
+                className="flex flex-col h-full border border-[var(--c-line)] bg-white no-underline group hover:border-[var(--c-main)] transition-colors"
               >
-                <span className="text-[12px] font-semibold text-[var(--c-main)]">{g.tag}</span>
-                <span className="mt-1.5 text-[15px] md:text-[16px] font-bold text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
-                  {g.title}
-                </span>
-                <span className="mt-1.5 text-[13.5px] text-[var(--c-sub)] leading-[1.7]">{g.summary}</span>
+                {g.image ? (
+                  <Image
+                    src={g.image}
+                    alt=""
+                    width={640}
+                    height={400}
+                    className="w-full aspect-[16/10] object-cover border-b border-[var(--c-line)]"
+                  />
+                ) : (
+                  <ThumbPlaceholder />
+                )}
+                <div className="flex-1 px-5 py-4">
+                  <span className="block text-[12px] font-semibold text-[var(--c-main)]">{g.tag}</span>
+                  <span className="block mt-1.5 text-[15px] md:text-[16px] font-bold text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                    {g.title}
+                  </span>
+                  <span className="block mt-1.5 text-[13.5px] text-[var(--c-sub)] leading-[1.7]">{g.summary}</span>
+                </div>
               </Link>
             </li>
           ))}
