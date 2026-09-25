@@ -94,6 +94,9 @@ export default function DashboardCalendar() {
   const [adding, setAdding] = useState(false);
   const [showUnscheduled, setShowUnscheduled] = useState(false);
   const [showUnscheduledDone, setShowUnscheduledDone] = useState(false);
+  const [openMemoId, setOpenMemoId] = useState<string | null>(null);
+  const [memoDraft, setMemoDraft] = useState("");
+  const [memoSaving, setMemoSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const days = useMemo(() => {
@@ -217,6 +220,24 @@ export default function DashboardCalendar() {
       setTodos(before);
       setError("변경 사항을 저장하지 못했습니다.");
     }
+  };
+
+  const openMemo = (t: Todo) => {
+    if (openMemoId === t.id) {
+      setOpenMemoId(null);
+      return;
+    }
+    setOpenMemoId(t.id);
+    setMemoDraft(t.memo ?? "");
+  };
+
+  const saveMemo = async (id: string) => {
+    if (memoSaving) return;
+    setMemoSaving(true);
+    const value = memoDraft.trim();
+    await patchTodo(id, { memo: value || null });
+    setMemoSaving(false);
+    setOpenMemoId(null);
   };
 
   const removeTodo = async (id: string) => {
@@ -416,30 +437,87 @@ export default function DashboardCalendar() {
             {selectedTodos.length > 0 ? (
               <ul className="list-none m-0 p-0 divide-y divide-slate-100">
                 {selectedTodos.map((t) => (
-                  <li key={t.id} className="group flex items-start gap-2.5 px-4 py-2.5 hover:bg-slate-50 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={t.done}
-                      onChange={() => patchTodo(t.id, { done: !t.done })}
-                      className="mt-[3px] w-3.5 h-3.5 shrink-0 accent-slate-900 cursor-pointer"
-                      aria-label={`${t.text} 완료 표시`}
-                    />
-                    <span
-                      className={`flex-1 text-[12px] leading-snug break-words ${
-                        t.done ? "text-slate-400 line-through" : "text-slate-800"
-                      }`}
-                    >
-                      {t.text}
-                    </span>
-                    <button
-                      onClick={() => removeTodo(t.id)}
-                      aria-label="할 일 삭제"
-                      className="shrink-0 w-5 h-5 inline-flex items-center justify-center text-slate-300 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer bg-transparent border-0 transition-colors"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                  <li key={t.id} className="group">
+                    <div className="flex items-start gap-2.5 px-4 py-2.5 hover:bg-slate-50 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={t.done}
+                        onChange={() => patchTodo(t.id, { done: !t.done })}
+                        className="mt-[3px] w-3.5 h-3.5 shrink-0 accent-slate-900 cursor-pointer"
+                        aria-label={`${t.text} 완료 표시`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => openMemo(t)}
+                        aria-expanded={openMemoId === t.id}
+                        className={`flex-1 min-w-0 text-left text-[12px] leading-snug break-words cursor-pointer bg-transparent border-0 p-0 ${
+                          t.done ? "text-slate-400 line-through" : "text-slate-800"
+                        }`}
+                      >
+                        {t.text}
+                        {t.memo && (
+                          <span className="ml-1.5 inline-flex items-center align-middle text-slate-400" title="상세내용 있음">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5M4.5 4.5h15v15h-15z" />
+                            </svg>
+                          </span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => removeTodo(t.id)}
+                        aria-label="할 일 삭제"
+                        className="shrink-0 w-5 h-5 inline-flex items-center justify-center text-slate-300 hover:text-red-600 opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer bg-transparent border-0 transition-colors"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {openMemoId === t.id ? (
+                      <div className="px-4 pb-3 pl-[34px]">
+                        <textarea
+                          value={memoDraft}
+                          onChange={(e) => setMemoDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Escape") setOpenMemoId(null);
+                            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) saveMemo(t.id);
+                          }}
+                          rows={4}
+                          autoFocus
+                          placeholder="상세내용을 적어주세요. 줄바꿈도 그대로 저장됩니다."
+                          className="w-full px-2.5 py-2 border border-slate-200 text-[12px] text-slate-800 leading-[1.6] placeholder:text-slate-400 focus:outline-none focus:border-slate-900 resize-y transition-colors"
+                        />
+                        <div className="flex items-center justify-end gap-2 mt-2">
+                          <span className="mr-auto text-[11px] text-slate-400">⌘/Ctrl + Enter 로 저장</span>
+                          <button
+                            type="button"
+                            onClick={() => setOpenMemoId(null)}
+                            className="h-7 px-2.5 text-[11px] text-slate-500 hover:text-slate-800 cursor-pointer bg-transparent border-0 transition-colors"
+                          >
+                            닫기
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => saveMemo(t.id)}
+                            disabled={memoSaving}
+                            className="h-7 px-3 text-[11px] font-semibold bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-0 transition-colors"
+                          >
+                            {memoSaving ? "저장 중…" : "저장"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      t.memo && (
+                        <button
+                          type="button"
+                          onClick={() => openMemo(t)}
+                          className="block w-full text-left px-4 pb-2.5 pl-[34px] text-[11.5px] text-slate-500 leading-[1.6] whitespace-pre-line cursor-pointer bg-transparent border-0 hover:text-slate-700 transition-colors"
+                        >
+                          {t.memo}
+                        </button>
+                      )
+                    )}
                   </li>
                 ))}
               </ul>
