@@ -1,12 +1,39 @@
 import { services } from "@/lib/services";
+import { getPortfolioItems } from "@/lib/portfolio";
 
 const SITE_URL = "https://hsweb.pics";
 const SITE_NAME = "HS WEB";
 
+interface FeedItem {
+  title: string;
+  link: string;
+  description: string;
+  pubDate?: string;
+}
+
+export const revalidate = 600;
+
 export async function GET() {
   const now = new Date().toUTCString();
 
-  const items = [
+  // 포트폴리오는 최근에 올린 것이 앞에 오도록 한다.
+  let portfolioItems: FeedItem[] = [];
+  try {
+    const items = await getPortfolioItems();
+    portfolioItems = items
+      .filter((i) => i.seq > 0)
+      .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""))
+      .map((i) => ({
+        title: `${i.title} | ${i.category || "홈페이지 제작"} 제작 사례`,
+        link: `${SITE_URL}/portfolio/${i.seq}`,
+        description: i.description || `${i.title} 제작 사례입니다.`,
+        pubDate: i.updatedAt ? new Date(i.updatedAt).toUTCString() : undefined,
+      }));
+  } catch {
+    // DB 연결 실패 시 포트폴리오 없이 내보낸다.
+  }
+
+  const items: FeedItem[] = [
     {
       title: "홈페이지 제작 전문 웹에이전시 HS WEB",
       link: SITE_URL,
@@ -42,6 +69,7 @@ export async function GET() {
       description:
         "홈페이지 제작, 쇼핑몰 구축, 랜딩페이지 제작 무료 상담을 받아보세요.",
     },
+    ...portfolioItems,
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -58,8 +86,9 @@ ${items
     (item) => `    <item>
       <title>${escapeXml(item.title)}</title>
       <link>${item.link}</link>
-      <guid>${item.link}</guid>
-      <description>${escapeXml(item.description)}</description>
+      <guid isPermaLink="true">${item.link}</guid>
+      <description>${escapeXml(item.description)}</description>${item.pubDate ? `
+      <pubDate>${item.pubDate}</pubDate>` : ""}
     </item>`
   )
   .join("\n")}
