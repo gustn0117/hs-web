@@ -24,6 +24,13 @@ export const GUIDES: Guide[] = [
     image: "/insights/custom-vs-platform.webp",
   },
   {
+    href: "/ai-development",
+    title: "AI로 만들면 되는 거 아닌가?",
+    summary: "AI가 코드를 만드는 것과 실제 서비스를 안정적으로 운영하는 것의 차이를 시스템·보안·유지보수 관점에서 정리했습니다.",
+    tag: "개발 상식",
+    image: "/insights/ai-development.webp",
+  },
+  {
     href: "/domain-hosting",
     title: "도메인·호스팅이란?",
     summary: "도메인과 호스팅이 각각 무엇이고 홈페이지를 유지하는 데 왜 둘 다 필요한지 설명합니다.",
