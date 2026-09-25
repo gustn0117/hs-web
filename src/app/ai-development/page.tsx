@@ -142,18 +142,19 @@ export default function AiDevelopmentPage() {
           width={1280}
           height={800}
           priority
-          className="block w-full h-auto"
+          className="block w-full aspect-[21/9] object-cover"
         />
       </div>
 
-      <section className="max-w-[900px]">
+      {/* 본문은 어디서나 같은 두 칸 비율을 쓴다. 왼쪽이 글, 오른쪽이 요약. */}
+      <section className="grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-10">
         <p className="text-[16px] md:text-[18px] text-[var(--c-text-2)] leading-[1.9]">
           최근 AI는 화면 제작부터 코드 작성, 데이터베이스 연결까지 상당 부분 수행합니다. 간단한 소개 페이지나
           프로토타입이라면 몇 시간 만에 결과물이 나오기도 합니다. 하지만 <strong className="text-[var(--c-text)]">코드가
           만들어지는 것</strong>과 <strong className="text-[var(--c-text)]">실제로 안정적으로 운영할 수 있는 서비스를
           개발하는 것</strong>은 전혀 다른 문제입니다.
         </p>
-        <div className="mt-6 rounded-[14px] border-l-4 border-[var(--c-main)] bg-[var(--c-main-bg)] px-5 py-5 md:px-7">
+        <div className="rounded-[14px] border-l-4 border-[var(--c-main)] bg-[var(--c-main-bg)] px-5 py-5 md:px-7">
           <p className="text-[16px] md:text-[18px] font-bold text-[var(--c-text)] leading-[1.7]">
             화면을 만드는 것은 개발의 일부입니다. 실제 서비스는 데이터, 서버, 보안, 장애 대응과 유지보수까지
             포함해 판단해야 합니다.
@@ -164,27 +165,29 @@ export default function AiDevelopmentPage() {
       {topics.map((topic) => (
         <Section key={topic.number} overline={topic.number} title={topic.title}>
           <div className="rounded-[16px] border border-[var(--c-line)] bg-white p-6 md:p-8">
-            <div className="max-w-[920px] space-y-4">
-              {topic.paragraphs.map((paragraph, index) => (
-                <p key={index} className="text-[14.5px] md:text-[15.5px] text-[var(--c-text-2)] leading-[1.85]">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-
-            {topic.points && (
-              <ul className="mt-6 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-3">
-                {topic.points.map((point) => (
-                  <li
-                    key={point}
-                    className="flex min-h-11 items-center gap-2 rounded-[9px] bg-[var(--c-bg-1)] px-3 py-2.5 text-[12.5px] font-semibold text-[var(--c-text-2)]"
-                  >
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-main)]" />
-                    {point}
-                  </li>
+            <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-10">
+              <div className="space-y-4">
+                {topic.paragraphs.map((paragraph, index) => (
+                  <p key={index} className="text-[14.5px] md:text-[15.5px] text-[var(--c-text-2)] leading-[1.85]">
+                    {paragraph}
+                  </p>
                 ))}
-              </ul>
-            )}
+              </div>
+
+              {topic.points && (
+                <ul className="grid list-none grid-cols-2 gap-2 p-0">
+                  {topic.points.map((point) => (
+                    <li
+                      key={point}
+                      className="flex min-h-11 items-center gap-2 rounded-[9px] bg-[var(--c-bg-1)] px-3 py-2.5 text-[12.5px] font-semibold text-[var(--c-text-2)]"
+                    >
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-main)]" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <div className="mt-6 border-t border-[var(--c-line)] pt-5">
               <p className="text-[14px] font-bold text-[var(--c-main)] leading-[1.75]">{topic.takeaway}</p>
@@ -194,12 +197,12 @@ export default function AiDevelopmentPage() {
       ))}
 
       <Section overline="CONCLUSION" title="AI냐 개발자냐의 문제가 아닙니다">
-        <div className="rounded-[18px] bg-[var(--c-text)] px-6 py-8 text-white md:px-10 md:py-10">
-          <p className="max-w-[920px] text-[18px] md:text-[22px] font-bold leading-[1.65] tracking-[-0.02em]">
+        <div className="grid gap-6 rounded-[18px] bg-[var(--c-text)] px-6 py-8 text-white md:px-10 md:py-10 lg:grid-cols-[1.25fr_1fr] lg:items-start lg:gap-10">
+          <p className="text-[18px] md:text-[22px] font-bold leading-[1.65] tracking-[-0.02em]">
             앞으로의 개발은 AI를 사용하느냐의 문제가 아니라, AI를 활용하면서도 전체 시스템을 제대로 설계하고
             검증할 수 있는 역량이 있느냐의 문제가 될 가능성이 높습니다.
           </p>
-          <p className="mt-5 max-w-[920px] text-[14px] md:text-[15px] text-white/70 leading-[1.85]">
+          <p className="text-[14px] md:text-[15px] text-white/70 leading-[1.85]">
             기업 홈페이지, 쇼핑몰, 예약 시스템, 관리자 프로그램, 사내 시스템처럼 실제 고객과 데이터가 존재하는
             서비스는 데이터베이스 설계, 서버 구조, 내부 로직 최적화, 보안, 트래픽 대응, 장애 처리, 백업,
             유지보수와 확장성까지 확인해야 비로소 안정적으로 운영할 수 있습니다.
