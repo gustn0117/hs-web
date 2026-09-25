@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// 상단은 처음 온 사람이 바로 찾는 것만 둔다. 나머지는 전체메뉴에 있다.
 const NAV: { label: string; href: string }[] = [
   { label: "서비스", href: "/services" },
   { label: "포트폴리오", href: "/portfolio" },
   { label: "가격", href: "/pricing" },
-  { label: "진행 절차", href: "/process" },
-  { label: "정보", href: "/domain-hosting" },
   { label: "정보공유", href: "/insights" },
   { label: "후기", href: "/testimonials" },
   { label: "문의", href: "/contact" },
@@ -50,7 +49,7 @@ const PANEL_GROUPS: { key: string; items: { href: string; label: string; icon: s
     ],
   },
   {
-    key: "정보",
+    key: "가이드",
     items: [
       { href: "/insights", label: "정보공유", icon: I.folder },
       { href: "/process", label: "진행 절차", icon: I.route },
@@ -68,7 +67,6 @@ const PANEL_GROUPS: { key: string; items: { href: string; label: string; icon: s
       { href: "/portfolio", label: "포트폴리오", icon: I.folder },
       { href: "/pricing", label: "가격 안내", icon: I.card },
       { href: "/testimonials", label: "고객 후기", icon: I.chat },
-      { href: "/contact", label: "문의하기", icon: I.user },
       { href: "/client", label: "고객 포털", icon: I.shield },
     ],
   },
