@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/posts";
+import { GUIDES } from "@/lib/guides";
 import { PageShell } from "@/components/PageShell";
 
 const SITE_URL = "https://hsweb.pics";
@@ -8,9 +9,9 @@ const SITE_URL = "https://hsweb.pics";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "정보공유 - 홈페이지 제작 정보와 사례 이야기",
+  title: "정보공유 - 홈페이지 제작 정보와 가이드",
   description:
-    "홈페이지 제작 비용, 도메인·호스팅, 검색 노출처럼 실제로 자주 받는 질문을 정리했습니다. HS WEB이 현장에서 겪은 기준으로 씁니다.",
+    "홈페이지 제작 비용, 진행 절차, 도메인·호스팅, 네임서버 변경, 검색엔진 최적화, PG 연동까지 실제로 자주 받는 질문을 정리했습니다. HS WEB이 현장에서 겪은 기준으로 씁니다.",
   alternates: { canonical: `${SITE_URL}/insights` },
   openGraph: {
     type: "website",
@@ -39,12 +40,9 @@ export default async function InsightsPage() {
       title="정보공유"
       subtitle="홈페이지 제작을 준비하며 자주 묻는 것들을 현장 기준으로 정리했습니다."
     >
-      {posts.length === 0 ? (
-        <div className="border border-[var(--c-line)] bg-white py-16 text-center">
-          <p className="text-[14px] text-[var(--c-sub)]">아직 올라온 글이 없습니다.</p>
-        </div>
-      ) : (
-        <>
+      {posts.length > 0 && (
+        <section className="mb-14">
+          <h2 className="text-[17px] font-extrabold tracking-[-0.02em] text-[var(--c-text)] mb-4">새 글</h2>
           {(categories.length > 0 || regions.length > 0) && (
             <div className="flex flex-wrap items-center gap-1.5 mb-6">
               {categories.map((c) => (
@@ -69,9 +67,9 @@ export default async function InsightsPage() {
                     {p.region && <span>{p.region}</span>}
                     <span className="tnum">{fmtDate(p.publishedAt)}</span>
                   </div>
-                  <h2 className="mt-2 text-[19px] md:text-[22px] font-extrabold tracking-[-0.03em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                  <h3 className="mt-2 text-[19px] md:text-[22px] font-extrabold tracking-[-0.03em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
                     {p.title}
-                  </h2>
+                  </h3>
                   {p.summary && (
                     <p className="mt-2 text-[14px] md:text-[15px] text-[var(--c-sub)] leading-[1.7] line-clamp-2">{p.summary}</p>
                   )}
@@ -79,8 +77,32 @@ export default async function InsightsPage() {
               </li>
             ))}
           </ul>
-        </>
+        </section>
       )}
+
+      <section>
+        <h2 className="text-[17px] font-extrabold tracking-[-0.02em] text-[var(--c-text)]">제작 가이드</h2>
+        <p className="mt-1.5 text-[14px] text-[var(--c-sub)] leading-[1.7]">
+          제작을 준비하거나 홈페이지를 운영하며 자주 막히는 부분을 주제별로 정리해뒀습니다.
+        </p>
+
+        <ul className="list-none m-0 p-0 mt-5 grid gap-3 md:grid-cols-2">
+          {GUIDES.map((g) => (
+            <li key={g.href}>
+              <Link
+                href={g.href}
+                className="flex flex-col h-full px-5 py-5 border border-[var(--c-line)] bg-white no-underline group hover:border-[var(--c-main)] transition-colors"
+              >
+                <span className="text-[12px] font-semibold text-[var(--c-main)]">{g.tag}</span>
+                <span className="mt-1.5 text-[15px] md:text-[16px] font-bold text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                  {g.title}
+                </span>
+                <span className="mt-1.5 text-[13.5px] text-[var(--c-sub)] leading-[1.7]">{g.summary}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </PageShell>
   );
 }
