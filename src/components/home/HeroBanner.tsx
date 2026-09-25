@@ -10,7 +10,7 @@ export default function HeroBanner() {
         src={HERO_IMAGE}
         alt=""
         fill
-        preload
+        priority
         sizes="100vw"
         className="object-cover object-[68%_center] md:object-center"
       />

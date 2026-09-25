@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { getAllPosts, createPost } from "@/lib/posts";
 import { submitToIndexNow, SITE_URL } from "@/lib/indexnow";
+import { refreshInsightPages } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,8 @@ export async function POST(request: Request) {
     published: Boolean(body.published),
     publishedAt: body.publishedAt ?? "",
   });
+
+  refreshInsightPages(post.seq);
 
   // 공개 글만 검색엔진에 알린다.
   if (post.published) {
