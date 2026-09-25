@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { services } from "@/lib/services";
 import { getPortfolioItems } from "@/lib/portfolio";
+import { getPublishedPosts } from "@/lib/posts";
 
 const SITE_URL = "https://hsweb.pics";
 
@@ -114,5 +115,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // DB 연결 실패 시 포트폴리오 없이 진행
   }
 
-  return [...staticPages, ...servicePages, ...portfolioPages];
+  let postPages: MetadataRoute.Sitemap = [];
+  try {
+    const posts = await getPublishedPosts();
+    postPages = [
+      { url: `${SITE_URL}/insights`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 },
+      ...posts
+        .filter((p) => p.seq > 0)
+        .map((p) => ({
+          url: `${SITE_URL}/insights/${p.seq}`,
+          lastModified: p.updatedAt || now,
+          changeFrequency: "monthly" as const,
+          priority: 0.7,
+        })),
+    ];
+  } catch {
+    // DB 연결 실패 시 정보공유 없이 진행
+  }
+
+  return [...staticPages, ...servicePages, ...portfolioPages, ...postPages];
 }

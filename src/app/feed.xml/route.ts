@@ -1,5 +1,6 @@
 import { services } from "@/lib/services";
 import { getPortfolioItems } from "@/lib/portfolio";
+import { getPublishedPosts } from "@/lib/posts";
 
 const SITE_URL = "https://hsweb.pics";
 const SITE_NAME = "HS WEB";
@@ -33,7 +34,24 @@ export async function GET() {
     // DB 연결 실패 시 포트폴리오 없이 내보낸다.
   }
 
+  // 정보공유 글은 가장 최근 것이 앞에 오도록 맨 앞에 붙인다.
+  let postItems: FeedItem[] = [];
+  try {
+    const posts = await getPublishedPosts();
+    postItems = posts
+      .filter((p) => p.seq > 0)
+      .map((p) => ({
+        title: p.title,
+        link: `${SITE_URL}/insights/${p.seq}`,
+        description: p.summary || p.title,
+        pubDate: p.publishedAt ? new Date(p.publishedAt).toUTCString() : undefined,
+      }));
+  } catch {
+    // DB 연결 실패 시 정보공유 없이 내보낸다.
+  }
+
   const items: FeedItem[] = [
+    ...postItems,
     {
       title: "홈페이지 제작 전문 웹에이전시 HS WEB",
       link: SITE_URL,

@@ -10,6 +10,7 @@ const NAV: { label: string; href: string }[] = [
   { label: "가격", href: "/pricing" },
   { label: "진행 절차", href: "/process" },
   { label: "정보", href: "/domain-hosting" },
+  { label: "정보공유", href: "/insights" },
   { label: "후기", href: "/testimonials" },
   { label: "문의", href: "/contact" },
 ];
@@ -51,6 +52,7 @@ const PANEL_GROUPS: { key: string; items: { href: string; label: string; icon: s
   {
     key: "정보",
     items: [
+      { href: "/insights", label: "정보공유", icon: I.folder },
       { href: "/process", label: "진행 절차", icon: I.route },
       { href: "/custom-development", label: "자체 개발 vs 플랫폼", icon: I.code },
       { href: "/domain-hosting", label: "도메인·호스팅", icon: I.server },
