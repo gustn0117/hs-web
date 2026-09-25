@@ -95,6 +95,7 @@ export default function DashboardCalendar() {
   const [showUnscheduled, setShowUnscheduled] = useState(false);
   const [showUnscheduledDone, setShowUnscheduledDone] = useState(false);
   const [openMemoId, setOpenMemoId] = useState<string | null>(null);
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [memoDraft, setMemoDraft] = useState("");
   const [memoSaving, setMemoSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -231,6 +232,16 @@ export default function DashboardCalendar() {
     setMemoDraft(t.memo ?? "");
   };
 
+  const toggleExpand = (t: Todo) => {
+    // 상세내용이 없으면 바로 입력칸을 연다.
+    if (!t.memo) {
+      openMemo(t);
+      return;
+    }
+    setOpenMemoId(null);
+    setExpandedIds((prev) => (prev.includes(t.id) ? prev.filter((id) => id !== t.id) : [...prev, t.id]));
+  };
+
   const saveMemo = async (id: string) => {
     if (memoSaving) return;
     setMemoSaving(true);
@@ -238,6 +249,7 @@ export default function DashboardCalendar() {
     await patchTodo(id, { memo: value || null });
     setMemoSaving(false);
     setOpenMemoId(null);
+    setExpandedIds((prev) => (value ? [...new Set([...prev, id])] : prev.filter((x) => x !== id)));
   };
 
   const removeTodo = async (id: string) => {
@@ -448,17 +460,23 @@ export default function DashboardCalendar() {
                       />
                       <button
                         type="button"
-                        onClick={() => openMemo(t)}
-                        aria-expanded={openMemoId === t.id}
+                        onClick={() => toggleExpand(t)}
+                        aria-expanded={expandedIds.includes(t.id) || openMemoId === t.id}
                         className={`flex-1 min-w-0 text-left text-[12px] leading-snug break-words cursor-pointer bg-transparent border-0 p-0 ${
                           t.done ? "text-slate-400 line-through" : "text-slate-800"
                         }`}
                       >
                         {t.text}
                         {t.memo && (
-                          <span className="ml-1.5 inline-flex items-center align-middle text-slate-400" title="상세내용 있음">
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5M4.5 4.5h15v15h-15z" />
+                          <span className="ml-1.5 inline-flex items-center align-middle text-slate-400" title="상세내용 펼치기/접기">
+                            <svg
+                              className={`w-3 h-3 transition-transform ${expandedIds.includes(t.id) ? "rotate-180" : ""}`}
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
                           </span>
                         )}
@@ -508,14 +526,18 @@ export default function DashboardCalendar() {
                         </div>
                       </div>
                     ) : (
-                      t.memo && (
-                        <button
-                          type="button"
-                          onClick={() => openMemo(t)}
-                          className="block w-full text-left px-4 pb-2.5 pl-[34px] text-[11.5px] text-slate-500 leading-[1.6] whitespace-pre-line cursor-pointer bg-transparent border-0 hover:text-slate-700 transition-colors"
-                        >
-                          {t.memo}
-                        </button>
+                      t.memo &&
+                      expandedIds.includes(t.id) && (
+                        <div className="px-4 pb-2.5 pl-[34px]">
+                          <p className="text-[11.5px] text-slate-500 leading-[1.6] whitespace-pre-line m-0">{t.memo}</p>
+                          <button
+                            type="button"
+                            onClick={() => openMemo(t)}
+                            className="mt-1.5 text-[11px] text-slate-400 hover:text-slate-700 underline underline-offset-2 cursor-pointer bg-transparent border-0 transition-colors"
+                          >
+                            수정
+                          </button>
+                        </div>
                       )
                     )}
                   </li>
