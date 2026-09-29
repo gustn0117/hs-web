@@ -15,7 +15,12 @@ type Slide = {
   image: string;
   /** 사진을 어느 지점 기준으로 자를지 */
   position?: string;
+  /** 글자가 읽히도록 사진 위에 덮는 어둡기. 사진이 밝을수록 진하게. */
+  overlay: string;
 };
+
+const DIM = (...stops: string[]) => `linear-gradient(90deg, ${stops.join(", ")})`;
+const ink = (a: number, at: number) => `rgba(11,18,32,${a}) ${at}%`;
 
 const SLIDES: Slide[] = [
   {
@@ -26,6 +31,7 @@ const SLIDES: Slide[] = [
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
     image: "/home-hero-studio-v2.webp",
     position: "object-[68%_center] md:object-center",
+    overlay: DIM(ink(0.95, 0), ink(0.7, 50), ink(0.4, 100)),
   },
   {
     key: "ateez",
@@ -34,7 +40,10 @@ const SLIDES: Slide[] = [
     description: "공연 중 관객이 직접 참여하는 실시간 프로그램을 만들었습니다.",
     primary: { href: "/portfolio", text: "사례 보기" },
     secondary: { href: "/contact", text: "비슷한 제작 문의" },
-    image: "",
+    image: "/hero-ateez.webp",
+    // 무대가 오른쪽에 오도록 잡고, 글자가 놓이는 왼쪽은 더 진하게 덮는다.
+    position: "object-[62%_center]",
+    overlay: DIM(ink(0.96, 0), ink(0.9, 36), ink(0.62, 54), ink(0.3, 74), ink(0.22, 100)),
   },
 ];
 
@@ -101,7 +110,9 @@ export default function HeroBanner() {
                   }}
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0b1220]/95 via-[#0b1220]/70 to-[#0b1220]/40" />
+              <div className="absolute inset-0" style={{ backgroundImage: slide.overlay }} />
+              {/* 좁은 화면에서는 글이 사진 전체를 덮으므로 한 겹 더 어둡게 */}
+              <div className="absolute inset-0 bg-[#0b1220]/50 md:hidden" />
 
               <div className="relative w-full max-w-[1280px] mx-auto px-5 pt-16 pb-32 md:pt-24 md:pb-44">
                 <div className="max-w-[820px]">
