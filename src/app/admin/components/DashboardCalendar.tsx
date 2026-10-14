@@ -42,6 +42,12 @@ const PAYMENT_STATUS: Record<string, { label: string; text: string }> = {
   overdue: { label: "미납", text: "text-red-700" },
 };
 
+/** 결제가 끝난 건은 아직 받을 돈과 한눈에 구분되도록 초록 점으로 찍는다. */
+function dotFor(e: CalendarEvent) {
+  if (e.type === "payment" && e.status === "paid") return "bg-emerald-500";
+  return EVENT_STYLE[e.type].dot;
+}
+
 /** 로컬 시간 기준 YYYY-MM-DD. toISOString()은 UTC로 밀려서 쓰지 않는다. */
 function ymd(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
@@ -344,7 +350,7 @@ export default function DashboardCalendar() {
               const dayEvents = eventsByDate.get(iso) ?? [];
               const marks = [
                 ...dayTodos.map((t) => ({ key: t.id, cls: t.done ? "bg-slate-200" : "bg-slate-800" })),
-                ...dayEvents.map((e) => ({ key: e.id, cls: EVENT_STYLE[e.type].dot })),
+                ...dayEvents.map((e) => ({ key: e.id, cls: dotFor(e) })),
               ];
 
               return (
@@ -400,6 +406,9 @@ export default function DashboardCalendar() {
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />결제
             </span>
             <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />결제 완료
+            </span>
+            <span className="inline-flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />만료
             </span>
           </div>
@@ -428,7 +437,7 @@ export default function DashboardCalendar() {
                         href={href}
                         className="flex items-start gap-2 px-4 py-2.5 no-underline hover:bg-slate-50 transition-colors"
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full mt-[6px] shrink-0 ${style.dot}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full mt-[6px] shrink-0 ${dotFor(e)}`} />
                         <span className="min-w-0 flex-1">
                           <span className="block text-[12px] text-slate-800 truncate">{e.title}</span>
                           <span className="block text-[11px] text-slate-500 mt-0.5 truncate">
