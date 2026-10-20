@@ -6,6 +6,8 @@ export type ServiceSite = {
   slug: string;
   /** 브라우저 탭과 검색 결과에 나오는 사이트 이름 */
   siteName: string;
+  /** 제목 앞머리. 사람들이 실제로 검색하는 말로 쓴다. */
+  titleLead: string;
   heroTitle: string;
   heroLead: string;
   keywords: string[];
@@ -22,6 +24,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "responsive-web",
     siteName: "HS WEB 반응형 홈페이지",
+    titleLead: "반응형 홈페이지 제작",
     heroTitle: "어느 화면에서 봐도 제대로 보이는 홈페이지",
     heroLead:
       "방문자의 절반 이상은 휴대폰으로 들어옵니다. PC에서만 멀쩡한 홈페이지는 그 절반을 그냥 놓칩니다.",
@@ -73,6 +76,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "ecommerce",
     siteName: "HS WEB 쇼핑몰 구축",
+    titleLead: "쇼핑몰 제작",
     heroTitle: "수수료 없이 내 이름으로 파는 쇼핑몰",
     heroLead:
       "오픈마켓은 팔릴수록 수수료가 나갑니다. 자체 쇼핑몰은 고객 정보와 매출이 모두 내 쪽에 남습니다.",
@@ -125,6 +129,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "landing-page",
     siteName: "HS WEB 랜딩페이지",
+    titleLead: "랜딩페이지 제작",
     heroTitle: "광고비가 문의로 이어지는 한 장짜리 페이지",
     heroLead:
       "광고를 눌러 들어온 사람은 3초 안에 떠날지 말지 정합니다. 그 3초를 설계하는 것이 랜딩페이지입니다.",
@@ -176,6 +181,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "web-app",
     siteName: "HS WEB 웹 애플리케이션",
+    titleLead: "웹 애플리케이션 개발",
     heroTitle: "설치 없이 주소만 알면 쓰는 업무용 프로그램",
     heroLead:
       "엑셀로 돌려막던 일을 화면으로 옮기면, 누가 언제 무엇을 바꿨는지가 남고 여러 명이 동시에 쓸 수 있습니다.",
@@ -228,6 +234,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "cms",
     siteName: "HS WEB CMS 시스템",
+    titleLead: "맞춤 CMS 구축",
     heroTitle: "업체를 거치지 않고 직접 고치는 홈페이지",
     heroLead:
       "글자 하나 바꾸려고 연락하고 기다리는 일이 반복되면, 결국 홈페이지를 방치하게 됩니다.",
@@ -280,6 +287,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "enterprise",
     siteName: "HS WEB 기업 관리 시스템",
+    titleLead: "기업 관리 시스템 개발",
     heroTitle: "우리 회사 방식 그대로 돌아가는 관리 시스템",
     heroLead:
       "시중 ERP에 회사를 맞추는 대신, 지금 일하는 방식을 그대로 화면으로 옮기는 쪽을 만듭니다.",
@@ -332,6 +340,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "marketing",
     siteName: "HS WEB 기술 마케팅",
+    titleLead: "검색엔진 최적화(SEO) 대행",
     heroTitle: "만든 홈페이지가 검색에 나오게 하는 일",
     heroLead:
       "홈페이지를 잘 만들어도 검색에 걸리지 않으면 아무도 찾아오지 않습니다. 그 사이를 메우는 작업입니다.",

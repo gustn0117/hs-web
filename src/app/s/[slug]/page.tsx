@@ -22,7 +22,7 @@ export async function generateMetadata({
   if (!site || !service) return {};
 
   const url = serviceSiteUrl(slug);
-  const title = `${service.title} 제작 — ${site.heroTitle}`;
+  const title = `${site.titleLead} — ${site.heroTitle}`;
   const description = `${site.heroLead} ${service.description}`.slice(0, 155);
 
   return {
@@ -88,7 +88,7 @@ export default async function ServiceSitePage({
       {
         "@type": "Service",
         "@id": `${url}/#service`,
-        name: `${service.title} 제작`,
+        name: site.titleLead,
         serviceType: service.title,
         description: service.description,
         url,
