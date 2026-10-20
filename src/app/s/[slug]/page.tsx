@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug } from "@/lib/services";
 import { SERVICE_SITES, getServiceSite, serviceSiteUrl } from "@/lib/service-sites";
+import { getPortfolioItems } from "@/lib/portfolio";
 import ContactForm from "@/app/(main)/contact/ContactForm";
 import { ServiceHeader, ServiceFooter } from "./SiteChrome";
+import { Hatch, DeviceFrames } from "./Placeholders";
 
 export const revalidate = 3600;
 
@@ -82,6 +84,13 @@ export default async function ServiceSitePage({
   const url = serviceSiteUrl(slug);
   const faqs = [...service.faqs, ...site.extraFaqs];
 
+  // 보여줄 분류가 지정된 사이트만 실제 제작 사례를 가져온다.
+  const showcase = site.showcaseCategories
+    ? (await getPortfolioItems())
+        .filter((it) => site.showcaseCategories!.includes(it.category))
+        .slice(0, 6)
+    : [];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -159,8 +168,33 @@ export default async function ServiceSitePage({
               </li>
             ))}
           </ul>
+
+          {site.concept && (
+            <div className="mt-14">
+              <DeviceFrames tone="dark" />
+            </div>
+          )}
         </div>
       </section>
+
+      {site.concept && (
+        <Section overline="먼저 알아두기" title={`${site.concept.plain}`}>
+          <p className="text-[13px] font-semibold text-[var(--c-main)]">
+            이걸 업계에서는 {site.concept.term}이라고 부릅니다
+          </p>
+          <p className="mt-3 text-[15px] md:text-[16px] text-[var(--c-text-2)] leading-[1.9] max-w-[720px]">
+            {site.concept.detail}
+          </p>
+          <ul className="list-none m-0 p-0 mt-8 grid gap-px bg-[var(--c-line)] border border-[var(--c-line)] md:grid-cols-3">
+            {site.concept.points.map((pt) => (
+              <li key={pt.label} className="bg-white px-5 py-5">
+                <p className="text-[14.5px] font-bold text-[var(--c-text)]">{pt.label}</p>
+                <p className="mt-2 text-[13px] text-[var(--c-sub)] leading-[1.8]">{pt.desc}</p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       <Section overline="이런 경우에" title="이럴 때 필요한 작업입니다">
         <ul className="list-none m-0 p-0 grid gap-4 md:grid-cols-3">
@@ -183,6 +217,22 @@ export default async function ServiceSitePage({
           ))}
         </ul>
       </Section>
+
+      {site.steps && (
+        <Section overline="진행 순서" title="이런 순서로 진행합니다">
+          <ol className="list-none m-0 p-0 grid gap-px bg-[var(--c-line)] border border-[var(--c-line)] md:grid-cols-2 lg:grid-cols-3">
+            {site.steps.map((st, i) => (
+              <li key={st.title} className="bg-white px-5 py-6">
+                <span className="block text-[12px] font-bold text-[var(--c-main)] tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p className="mt-2 text-[15px] font-bold text-[var(--c-text)]">{st.title}</p>
+                <p className="mt-2 text-[13px] text-[var(--c-sub)] leading-[1.8]">{st.desc}</p>
+              </li>
+            ))}
+          </ol>
+        </Section>
+      )}
 
       <Section overline="포함 사항" title="기본으로 들어가는 것들">
         <ul className="list-none m-0 p-0 grid gap-px bg-[var(--c-line)] border border-[var(--c-line)] md:grid-cols-2">
@@ -222,6 +272,64 @@ export default async function ServiceSitePage({
           </ul>
         </div>
       </Section>
+
+      {showcase.length > 0 && (
+        <Section overline="제작 사례" title="이렇게 만들어 드렸습니다">
+          <ul className="list-none m-0 p-0 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {showcase.map((it) => (
+              <li key={it.id}>
+                <a
+                  href={`https://hsweb.pics/portfolio/${it.seq}`}
+                  className="flex flex-col h-full border border-[var(--c-line)] bg-white no-underline group hover:border-[var(--c-main)] transition-colors"
+                >
+                  <Hatch className="aspect-[16/10] border-b border-[var(--c-line)]" />
+                  <span className="flex-1 px-5 py-4">
+                    <span className="block text-[12px] font-semibold text-[var(--c-main)]">
+                      {it.category}
+                    </span>
+                    <span className="block mt-1.5 text-[15px] font-bold text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
+                      {it.title}
+                    </span>
+                    {it.client && it.client !== it.title && (
+                      <span className="block mt-1 text-[12.5px] text-[var(--c-sub)]">{it.client}</span>
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 text-[13.5px] text-[var(--c-sub)]">
+            <a
+              href="https://hsweb.pics/portfolio"
+              className="text-[var(--c-main)] font-semibold underline underline-offset-2"
+            >
+              전체 제작 사례 보기
+            </a>
+          </p>
+        </Section>
+      )}
+
+      {site.glossary && (
+        <Section overline="용어 풀이" title="상담하면서 자주 나오는 말들">
+          <p className="text-[14px] text-[var(--c-sub)] leading-[1.8] mb-6">
+            몰라도 진행에는 문제없습니다. 다만 알고 계시면 견적서를 읽기가 훨씬 수월합니다.
+          </p>
+          <dl className="m-0 border-t border-[var(--c-line)]">
+            {site.glossary.map((g) => (
+              <div
+                key={g.term}
+                className="grid gap-1 md:grid-cols-[220px_1fr] md:gap-6 border-b border-[var(--c-line)] py-4"
+              >
+                <dt className="text-[14.5px] font-bold text-[var(--c-text)]">
+                  {g.term}
+                  <span className="ml-2 text-[12px] font-semibold text-[var(--c-sub-2)]">{g.en}</span>
+                </dt>
+                <dd className="m-0 text-[13.5px] text-[var(--c-sub)] leading-[1.85]">{g.desc}</dd>
+              </div>
+            ))}
+          </dl>
+        </Section>
+      )}
 
       <Section overline="비용" title="금액은 이렇게 정해집니다">
         <div className="border-l-4 border-[var(--c-main)] bg-[var(--c-main-bg)] px-5 py-5 md:px-7">
