@@ -18,12 +18,15 @@ const TIMELINES = ["지금 바로", "1개월 이내", "3개월 이내", "여유 
 
 const MESSAGE_MAX = 1000;
 
-export default function ContactForm() {
+export default function ContactForm({ defaultCategory = "" }: { defaultCategory?: string }) {
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [category, setCategory] = useState("");
+  // 서비스 전용 사이트에서 들어오면 해당 항목을 미리 골라둔다.
+  const [category, setCategory] = useState(
+    CATEGORIES.some((c) => c.value === defaultCategory) ? defaultCategory : ""
+  );
   const [budget, setBudget] = useState("");
   const [timeline, setTimeline] = useState("");
   const [message, setMessage] = useState("");

@@ -111,6 +111,27 @@ export default function ServiceDetailClient({ service, prevService, nextService 
         </Section>
       )}
 
+      {/* 서비스 전용 사이트 안내 */}
+      <Section overline="전용 사이트" title={`${service.title}만 따로 모아둔 사이트가 있습니다`}>
+        <a
+          href={`https://${service.slug}.hsweb.pics`}
+          className="p-card flex flex-wrap items-center justify-between gap-4 px-6 py-6 no-underline hover:border-[var(--c-main)] transition-colors"
+        >
+          <span>
+            <span className="block text-[15px] font-bold text-[var(--c-text)]">
+              {service.slug}.hsweb.pics
+            </span>
+            <span className="block mt-1.5 text-[13.5px] text-[var(--c-sub)] leading-[1.8]">
+              어떤 경우에 필요한지, 무엇을 받게 되는지, 금액이 어떻게 정해지는지를 이 작업 하나만 두고
+              자세히 정리했습니다.
+            </span>
+          </span>
+          <span className="inline-flex items-center h-11 px-5 bg-[var(--c-main)] text-white text-[13.5px] font-bold shrink-0">
+            전용 사이트 보기
+          </span>
+        </a>
+      </Section>
+
       {/* FAQ */}
       {service.faqs && service.faqs.length > 0 && (
         <Section overline="FAQ" title="자주 묻는 질문">
