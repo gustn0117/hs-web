@@ -6,16 +6,38 @@ const PHONE = "010-3319-2509";
 export function ServiceHeader({ siteName }: { siteName: string }) {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[var(--c-line)]">
-      <div className="max-w-[1100px] mx-auto px-5 h-[68px] flex items-center justify-between gap-4">
-        <Link href="/" className="no-underline">
-          <span className="block text-[15px] md:text-[17px] font-extrabold tracking-[-0.03em] text-[var(--c-text)]">
+      <div className="max-w-[1100px] mx-auto px-5 h-[68px] flex items-center justify-between gap-3">
+        <Link href="/" className="no-underline min-w-0">
+          <span className="block text-[15px] md:text-[17px] font-extrabold tracking-[-0.03em] text-[var(--c-text)] truncate">
             {siteName}
           </span>
         </Link>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 shrink-0">
+          {/* 다른 서비스도 보고 싶은 사람을 위해 본 사이트로 가는 길을 열어둔다. */}
+          <a
+            href="https://hsweb.pics"
+            className="inline-flex items-center gap-1.5 h-10 px-3 border border-[var(--c-line)] text-[13px] font-bold text-[var(--c-text-2)] no-underline hover:border-[var(--c-main)] hover:text-[var(--c-main)] transition-colors"
+          >
+            <svg
+              className="w-4 h-4 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.8}
+              stroke="currentColor"
+              aria-hidden
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"
+              />
+            </svg>
+            <span className="hidden md:inline">HS WEB 본 사이트</span>
+            <span className="md:hidden">HS WEB</span>
+          </a>
           <a
             href={`tel:${PHONE}`}
-            className="hidden sm:inline-flex items-center h-10 px-3 text-[14px] font-bold text-[var(--c-text)] no-underline hover:text-[var(--c-main)] transition-colors tnum"
+            className="hidden lg:inline-flex items-center h-10 px-3 text-[14px] font-bold text-[var(--c-text)] no-underline hover:text-[var(--c-main)] transition-colors tnum"
           >
             {PHONE}
           </a>
