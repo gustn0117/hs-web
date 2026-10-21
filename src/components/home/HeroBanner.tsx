@@ -25,8 +25,8 @@ const ink = (a: number, at: number) => `rgba(11,18,32,${a}) ${at}%`;
 const SLIDES: Slide[] = [
   {
     key: "intro",
-    title: "홈페이지, 프로그램 제작",
-    description: "기획부터 디자인, 개발, 배포까지 한 곳에서.",
+    title: "귀사에 맞는 웹 솔루션",
+    description: "홈페이지, 쇼핑몰, 업무용 프로그램, CRM까지 필요한 것만 맞춰 만듭니다.",
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
     image: "/home-hero-studio-v2.webp",
