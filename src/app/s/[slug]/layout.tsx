@@ -5,6 +5,7 @@ import ServiceNav from "./ServiceNav";
 import { buildNav, buildPanelGroups } from "./siteNav";
 import { ServiceFooter } from "./SiteChrome";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import HaramAnalytics from "@/components/HaramAnalytics";
 
 export function generateStaticParams() {
   return SERVICE_SITES.map((s) => ({ slug: s.slug }));
@@ -60,6 +61,7 @@ export default async function ServiceSiteLayout({
       <main>{children}</main>
       <ServiceFooter siteName={site.siteName} nav={buildNav(site)} />
       <GoogleAnalytics />
+      <HaramAnalytics />
     </>
   );
 }
