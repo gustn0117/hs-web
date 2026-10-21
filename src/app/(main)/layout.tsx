@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import ScrollToTop from "@/components/ScrollToTop";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 /** hsweb.pics 본 사이트의 공통 틀. 서비스 전용 사이트(/s/*)는 자기 틀을 따로 쓴다. */
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -99,6 +100,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main>{children}</main>
       <Footer />
       <ScrollToTop />
+      <GoogleAnalytics />
     </>
   );
 }

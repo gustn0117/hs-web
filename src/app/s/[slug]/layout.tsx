@@ -4,6 +4,7 @@ import { getServiceBySlug } from "@/lib/services";
 import ServiceNav from "./ServiceNav";
 import { buildNav, buildPanelGroups } from "./siteNav";
 import { ServiceFooter } from "./SiteChrome";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export function generateStaticParams() {
   return SERVICE_SITES.map((s) => ({ slug: s.slug }));
@@ -58,6 +59,7 @@ export default async function ServiceSiteLayout({
       <ServiceNav siteName={site.siteName} nav={buildNav(site)} groups={buildPanelGroups(site)} />
       <main>{children}</main>
       <ServiceFooter siteName={site.siteName} nav={buildNav(site)} />
+      <GoogleAnalytics />
     </>
   );
 }
