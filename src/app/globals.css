@@ -1241,3 +1241,60 @@ kbd.p-kbd {
     animation: none !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────
+   스크롤 등장 효과
+
+   자바스크립트 없이 스크롤 타임라인만 쓴다. 지원하지 않는
+   브라우저에서는 내용이 처음부터 그냥 보인다. 숨겨둔 채
+   스크립트를 기다리지 않으므로 검색엔진도 그대로 읽는다.
+   ────────────────────────────────────────────────────────── */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 26%;
+    }
+    /* 한 줄씩 차례로 올라오게 한다. 간격은 짧게 둔다. */
+    .reveal-stagger > * {
+      animation: reveal-up 1ms linear both;
+      animation-timeline: view();
+    }
+    .reveal-stagger > *:nth-child(1) { animation-range: entry 8% cover 24%; }
+    .reveal-stagger > *:nth-child(2) { animation-range: entry 12% cover 28%; }
+    .reveal-stagger > *:nth-child(3) { animation-range: entry 16% cover 32%; }
+    .reveal-stagger > *:nth-child(4) { animation-range: entry 20% cover 36%; }
+    .reveal-stagger > *:nth-child(n + 5) { animation-range: entry 24% cover 40%; }
+  }
+}
+
+/* ── 첫 화면은 스크롤이 아니라 열릴 때 한 번 올라온다 ── */
+@keyframes hero-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-enter > * {
+    animation: hero-enter 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hero-enter > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-enter > *:nth-child(2) { animation-delay: 0.16s; }
+  .hero-enter > *:nth-child(3) { animation-delay: 0.27s; }
+  .hero-enter > *:nth-child(4) { animation-delay: 0.38s; }
+  .hero-enter > *:nth-child(n + 5) { animation-delay: 0.48s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger > *, .hero-enter > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

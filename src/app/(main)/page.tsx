@@ -50,7 +50,7 @@ export default async function Home() {
       {/* 히어로에 겹쳐 올라오는 카드 */}
       <section className="relative z-20 -mt-24 md:-mt-28">
         <div className="max-w-[1280px] mx-auto px-5">
-          <div className="bg-white shadow-[0_20px_60px_-25px_rgba(10,42,94,0.35)] grid grid-cols-1 md:grid-cols-3">
+          <div className="reveal-stagger bg-white shadow-[0_20px_60px_-25px_rgba(10,42,94,0.35)] grid grid-cols-1 md:grid-cols-3">
             {OVERLAP_CARDS.map((c, i) => (
               <Link
                 key={c.title}
@@ -78,7 +78,7 @@ export default async function Home() {
 
       {/* 가운데 정렬 한 줄 문구 */}
       <section className="py-20 md:py-28">
-        <div className="max-w-[860px] mx-auto px-5 text-center">
+        <div className="reveal max-w-[860px] mx-auto px-5 text-center">
           <h2 className="text-[26px] md:text-[40px] font-extrabold tracking-[-0.035em] leading-[1.3] text-[var(--c-text)]">
             웹사이트는 비용이 아니라 매출입니다.
           </h2>
@@ -96,7 +96,7 @@ export default async function Home() {
       {/* 원형 아이콘 바로가기 */}
       <section className="pb-20 md:pb-28">
         <div className="max-w-[1280px] mx-auto px-5">
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-y-8">
+          <div className="reveal-stagger grid grid-cols-4 md:grid-cols-8 gap-y-8">
             {QUICK_LINKS.map((q) => (
               <Link key={q.href} href={q.href} className="group flex flex-col items-center gap-3 no-underline">
                 <span className="w-[68px] h-[68px] md:w-[84px] md:h-[84px] rounded-full bg-[var(--c-bg-2)] text-[var(--c-text-2)] inline-flex items-center justify-center transition-colors group-hover:bg-[var(--c-main)] group-hover:text-white">
@@ -117,7 +117,7 @@ export default async function Home() {
       {lead && (
         <section className="pb-20 md:pb-28">
           <div className="max-w-[1280px] mx-auto px-5">
-            <div className="flex items-end justify-between gap-4 mb-8">
+            <div className="reveal flex items-end justify-between gap-4 mb-8">
               <h2 className="text-[24px] md:text-[34px] font-extrabold tracking-[-0.035em] text-[var(--c-text)]">
                 최근 작업물을 확인해 보세요.
               </h2>

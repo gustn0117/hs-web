@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import styles from "./HeroBanner.module.css";
 
 type Slide = {
   key: string;
@@ -11,11 +12,13 @@ type Slide = {
   description: string;
   primary: { href: string; text: string };
   secondary?: { href: string; text: string };
-  /** 배경 사진. 비어 있으면 빗금 자리표시자가 대신 들어간다. */
+  /** 배경 이미지. 비어 있으면 빗금 자리표시자가 대신 들어간다. */
   image: string;
-  /** 사진을 어느 지점 기준으로 자를지 */
+  /** 밝은 배경에서는 어두운 문구와 버튼을 사용한다. */
+  tone?: "light";
+  /** 이미지를 어느 지점 기준으로 자를지 */
   position?: string;
-  /** 글자가 읽히도록 사진 위에 덮는 어둡기. 사진이 밝을수록 진하게. */
+  /** 배경 위에 덮어 문구의 가독성을 확보하는 그라데이션. */
   overlay: string;
 };
 
@@ -29,9 +32,10 @@ const SLIDES: Slide[] = [
     description: "홈페이지, 쇼핑몰, 업무용 프로그램, CRM까지 필요한 것만 맞춰 만듭니다.",
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
-    image: "/home-hero-studio-v2.webp",
-    position: "object-[68%_center] md:object-center",
-    overlay: DIM(ink(0.95, 0), ink(0.7, 50), ink(0.4, 100)),
+    image: "/home-hero-device-mockup.webp",
+    tone: "light",
+    position: "object-right",
+    overlay: "none",
   },
   {
     key: "ateez",
@@ -85,21 +89,26 @@ export default function HeroBanner() {
       >
         {SLIDES.map((slide, i) => {
           const Heading = i === 0 ? "h1" : "h2";
+          const isLight = slide.tone === "light";
           return (
             <div
               key={slide.key}
               aria-hidden={i !== index}
-              className="relative w-full shrink-0 flex items-center"
+              className={`relative w-full shrink-0 flex items-center ${isLight ? "bg-[#eef1f5] text-[#0a2a5e]" : ""}`}
             >
               {slide.image ? (
-                <Image
-                  src={slide.image}
-                  alt=""
-                  fill
-                  priority={i === 0}
-                  sizes="100vw"
-                  className={`object-cover ${slide.position ?? ""}`}
-                />
+                <div
+                  className={`absolute ${isLight ? `inset-x-0 bottom-0 h-[280px] md:inset-x-auto md:right-0 md:top-1/2 md:bottom-auto md:w-[85%] md:max-w-[1800px] md:h-auto md:aspect-[1942/809] md:-translate-y-1/2 ${styles.mockupBlend}` : "inset-0"}`}
+                >
+                  <Image
+                    src={slide.image}
+                    alt=""
+                    fill
+                    priority={i === 0}
+                    sizes={isLight ? "(max-width: 767px) 800px, (max-width: 1632px) 1632px, 100vw" : "100vw"}
+                    className={`object-cover ${isLight ? "md:object-contain" : ""} ${slide.position ?? ""}`}
+                  />
+                </div>
               ) : (
                 <div
                   aria-hidden
@@ -111,20 +120,27 @@ export default function HeroBanner() {
                 />
               )}
               <div className="absolute inset-0" style={{ backgroundImage: slide.overlay }} />
-              {/* 좁은 화면에서는 글이 사진 전체를 덮으므로 한 겹 더 어둡게 */}
-              <div className="absolute inset-0 bg-[#0b1220]/50 md:hidden" />
+              {/* 어두운 슬라이드는 모바일에서도 흰 문구가 잘 읽히도록 한다. */}
+              {!isLight && <div className="absolute inset-0 bg-[#0b1220]/50 md:hidden" />}
 
-              <div className="relative w-full max-w-[1280px] mx-auto px-5 pt-16 pb-32 md:pt-24 md:pb-44">
-                <div className="max-w-[820px]">
+              <div className={`relative w-full max-w-[1280px] mx-auto px-5 md:pt-24 md:pb-44 ${isLight ? "pt-14 pb-[340px]" : "pt-16 pb-32"}`}>
+                {/* 지금 보이는 슬라이드만 올라오게 한다. 넘어갈 때마다 다시 실행된다. */}
+                <div
+                  className={`${i === index ? "hero-enter" : ""} ${
+                    isLight
+                      ? "max-w-[470px] md:max-w-[300px] lg:max-w-[390px] xl:max-w-[470px]"
+                      : "max-w-[820px]"
+                  }`}
+                >
                   {slide.label && (
                     <span className="inline-flex items-center h-7 px-2.5 mb-5 border border-white/35 text-[12px] font-bold text-white/85">
                       {slide.label}
                     </span>
                   )}
-                  <Heading className="text-[38px] md:text-[64px] font-extrabold leading-[1.15] tracking-[-0.035em]">
+                  <Heading className={`text-[38px] font-extrabold leading-[1.15] tracking-[-0.035em] ${isLight ? "md:text-[54px] lg:text-[64px]" : "md:text-[64px]"}`}>
                     {slide.title}
                   </Heading>
-                  <p className="mt-5 text-[15px] md:text-[18px] text-white/75 leading-[1.7]">
+                  <p className={`mt-5 text-[15px] md:text-[18px] leading-[1.7] ${isLight ? "text-slate-600" : "text-white/75"}`}>
                     {slide.description}
                   </p>
 
@@ -132,7 +148,7 @@ export default function HeroBanner() {
                     <Link
                       href={slide.primary.href}
                       tabIndex={i === index ? undefined : -1}
-                      className="inline-flex items-center justify-center h-[52px] px-7 bg-white text-[#0b1220] text-[15px] font-extrabold no-underline hover:bg-white/90 transition-colors"
+                      className={`inline-flex items-center justify-center h-[52px] px-7 text-[15px] font-extrabold no-underline transition-colors ${isLight ? "bg-[#0a2a5e] text-white hover:bg-[#061e47]" : "bg-white text-[#0b1220] hover:bg-white/90"}`}
                     >
                       {slide.primary.text}
                     </Link>
@@ -140,7 +156,7 @@ export default function HeroBanner() {
                       <Link
                         href={slide.secondary.href}
                         tabIndex={i === index ? undefined : -1}
-                        className="inline-flex items-center justify-center h-[52px] px-7 border border-white/40 text-white text-[15px] font-bold no-underline hover:bg-white/10 transition-colors"
+                        className={`inline-flex items-center justify-center h-[52px] px-7 border text-[15px] font-bold no-underline transition-colors ${isLight ? "border-[#0a2a5e]/25 text-[#0a2a5e] hover:bg-white/50" : "border-white/40 text-white hover:bg-white/10"}`}
                       >
                         {slide.secondary.text}
                       </Link>
@@ -158,7 +174,9 @@ export default function HeroBanner() {
                           aria-label={`${n + 1}번째 소개 보기`}
                           aria-current={n === index}
                           className={`h-[3px] cursor-pointer border-0 p-0 transition-all duration-300 ${
-                            n === index ? "w-10 bg-white" : "w-5 bg-white/35 hover:bg-white/60"
+                            n === index
+                              ? `w-10 ${isLight ? "bg-[#0a2a5e]" : "bg-white"}`
+                              : `w-5 ${isLight ? "bg-[#0a2a5e]/25 hover:bg-[#0a2a5e]/50" : "bg-white/35 hover:bg-white/60"}`
                           }`}
                         />
                       ))}
