@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPortfolioItems } from "@/lib/portfolio";
 import HeroBanner from "@/components/home/HeroBanner";
+import IntroSplash from "@/components/home/IntroSplash";
 
 export const revalidate = 60;
 
@@ -45,7 +46,8 @@ export default async function Home() {
 
   return (
     <>
-      <HeroBanner />
+      <IntroSplash />
+      <HeroBanner startDelayMs={2900} />
 
       {/* 히어로에 겹쳐 올라오는 카드 */}
       <section className="relative z-20 -mt-24 md:-mt-28">

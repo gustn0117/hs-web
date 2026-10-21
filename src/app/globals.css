@@ -1298,3 +1298,92 @@ kbd.p-kbd {
     transform: none !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────
+   들어올 때 한 번 보이는 인트로
+
+   동작 줄이기를 켠 분께는 CSS로 바로 감춘다. 자바스크립트가
+   지우기를 기다리지 않으므로 깜빡임이 없다.
+   ────────────────────────────────────────────────────────── */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0b1220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: intro-wipe 1s cubic-bezier(0.76, 0, 0.24, 1) 1.9s both;
+}
+
+.intro-inner {
+  transform: translateY(-5vh);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.intro-label {
+  font-size: 13px;
+  letter-spacing: 0.34em;
+  color: #a3a3a3;
+  font-weight: 600;
+  margin: 0;
+  animation: intro-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.intro-phrase {
+  margin: 18px 0 0;
+  font-size: clamp(18px, 1.6vw, 26px);
+  font-weight: 600;
+  color: #dedede;
+  animation: intro-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both;
+}
+
+.intro-brand {
+  margin: 14px 0 0;
+  font-size: clamp(54px, 6.4vw, 100px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.intro-brand span {
+  display: inline-block;
+  animation: intro-char 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.intro-line {
+  display: block;
+  width: 140px;
+  height: 1px;
+  margin: 22px auto 0;
+  background: rgba(255, 255, 255, 0.5);
+  transform-origin: center;
+  animation: intro-line 1s cubic-bezier(0.22, 1, 0.36, 1) 0.95s both;
+}
+
+@keyframes intro-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes intro-char {
+  from { transform: translateY(112%); }
+  to   { transform: none; }
+}
+@keyframes intro-line {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes intro-wipe {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-splash { display: none; }
+}
