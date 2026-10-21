@@ -1,0 +1,307 @@
+/* macOS Ventura UI Kit에서 뽑은 값으로 맞춘 화면.
+   실제 토큰: 타이틀바 rgba(252,252,252,0.8) + 블러 13.591px,
+   창 조절 버튼 12px, 창 제목 13px rgba(0,0,0,0.7),
+   본문 13px rgba(0,0,0,0.85) 자간 -0.08px 행간 16px. */
+
+.desk {
+  min-height: 100vh;
+  padding: 0 0 128px;
+  background:
+    radial-gradient(120% 90% at 18% 8%, #2f6ed6 0%, rgba(47, 110, 214, 0) 58%),
+    radial-gradient(100% 80% at 86% 14%, #7b3fd4 0%, rgba(123, 63, 212, 0) 55%),
+    radial-gradient(130% 110% at 50% 100%, #0d2a5e 0%, #081122 70%);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Pretendard Variable",
+    Pretendard, "Apple SD Gothic Neo", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 메뉴 막대 ── */
+.menubar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 14px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  background: rgba(30, 30, 30, 0.42);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+}
+.menubarBrand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.menubarItem {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+}
+.menubarItem:hover {
+  opacity: 0.7;
+}
+.menubarRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 창 ── */
+.window {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fcfcfc;
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.3),
+    0 24px 60px -12px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.titlebar {
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  background: rgba(252, 252, 252, 0.8);
+  backdrop-filter: blur(13.591px);
+  -webkit-backdrop-filter: blur(13.591px);
+  box-shadow:
+    0 0.5px 0 0 rgba(0, 0, 0, 0.1),
+    0 1px 0 0 rgba(0, 0, 0, 0.05);
+}
+.lights {
+  display: flex;
+  gap: 8px;
+  width: 52px;
+}
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+.body {
+  padding: 30px 28px 32px;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* 어두운 창 (히어로용) */
+.windowDark {
+  background: #10131a;
+}
+.windowDark .titlebar {
+  background: rgba(40, 42, 48, 0.8);
+  box-shadow:
+    0 0.5px 0 0 rgba(255, 255, 255, 0.08),
+    0 1px 0 0 rgba(0, 0, 0, 0.3);
+}
+.windowDark .title {
+  color: rgba(255, 255, 255, 0.72);
+}
+.windowDark .body {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── 사이드바가 있는 창 ── */
+.split {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  min-height: 300px;
+}
+.sidebar {
+  padding: 10px 8px;
+  background: rgba(246, 246, 246, 0.72);
+  backdrop-filter: blur(13.591px);
+  -webkit-backdrop-filter: blur(13.591px);
+  border-right: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+.sidebarHeader {
+  padding: 8px 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+}
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: -0.08px;
+  color: rgba(0, 0, 0, 0.85);
+  text-decoration: none;
+}
+.sidebarItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.sidebarItemOn {
+  background: var(--c-main);
+  color: #fff;
+  font-weight: 600;
+}
+.sidebarItemOn:hover {
+  background: var(--c-main);
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  flex: none;
+}
+.sidebarItemOn .dot {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ── 버튼 ── */
+.btnPrimary,
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.btnPrimary {
+  background: linear-gradient(180deg, #1a78f0 0%, #0f63d6 100%);
+  color: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+.btnSecondary {
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.85);
+  box-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.18),
+    0 1px 1px rgba(0, 0, 0, 0.08);
+}
+.windowDark .btnSecondary {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.25);
+}
+
+/* ── 파인더식 격자 ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(188px, 1fr));
+  gap: 22px 18px;
+  padding: 22px;
+}
+.tile {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  border-radius: 8px;
+  padding: 8px;
+}
+.tile:hover {
+  background: rgba(0, 0, 0, 0.045);
+}
+.thumb {
+  aspect-ratio: 16 / 10;
+  border-radius: 6px;
+  background-color: #f1f1f3;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 9px,
+    rgba(15, 23, 42, 0.08) 9px 10px
+  );
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+}
+.tileName {
+  margin: 10px 2px 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.08px;
+  line-height: 1.45;
+}
+.tileMeta {
+  margin: 3px 2px 0;
+  font-size: 11.5px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* ── 독 ── */
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.3),
+    0 18px 40px -10px rgba(0, 0, 0, 0.5);
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+}
+.dockApp {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  text-decoration: none;
+  flex: none;
+  box-shadow: 0 1.25px 1.25px rgba(0, 0, 0, 0.3);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dockApp:hover {
+  transform: translateY(-8px) scale(1.08);
+}
+
+.stack {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 34px 20px 0;
+  display: grid;
+  gap: 30px;
+}
+
+@media (max-width: 760px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  }
+  .body {
+    padding: 24px 18px 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dockApp {
+    transition: none;
+  }
+}
