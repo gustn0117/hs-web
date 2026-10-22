@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 /** 글자 하나씩 솟아오르게 하려고 쪼갠다. 띄어쓰기는 폭만 차지한다. */
 const BRAND = "하온";
@@ -23,7 +24,14 @@ export default function IntroSplash() {
   return (
     <div className="intro-splash" aria-hidden="true">
       <div className="intro-inner">
-        <p className="intro-label">SOFTWARE SOLUTIONS</p>
+        <Image
+          src="/brand/haon-logo-white.png"
+          alt=""
+          width={751}
+          height={240}
+          priority
+          className="intro-logo"
+        />
         <p className="intro-phrase">종합 소프트웨어 솔루션</p>
         <h2 className="intro-brand">
           {BRAND.split("").map((ch, i) => (
