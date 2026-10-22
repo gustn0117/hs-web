@@ -82,13 +82,13 @@ export default async function Home() {
       <section className="py-20 md:py-28">
         <div className="reveal max-w-[860px] mx-auto px-5 text-center">
           <h2 className="text-[26px] md:text-[40px] font-extrabold tracking-[-0.035em] leading-[1.3] text-[var(--c-text)]">
-            웹사이트는 비용이 아니라 매출입니다.
+            필요한 소프트웨어를 한 곳에서.
           </h2>
           <p className="mt-6 text-[12px] md:text-[13px] font-bold tracking-[0.18em] uppercase text-[var(--c-main)]">
-            Our Mission
+            Software Solutions
           </p>
           <p className="mt-5 text-[15px] md:text-[17px] text-[var(--c-sub)] leading-[1.85]">
-            보기 좋은 화면을 넘어, 문의가 들어오고 매출이 오르는 웹사이트를 만듭니다.
+            홈페이지, 쇼핑몰, 업무 시스템, 자동화까지 필요한 만큼 설계하고 만듭니다.
             <br className="hidden md:block" />
             디자이너이자 개발자인 대표가 처음부터 끝까지 직접 맡습니다.
           </p>

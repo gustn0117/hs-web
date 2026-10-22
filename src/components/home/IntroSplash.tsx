@@ -23,8 +23,8 @@ export default function IntroSplash() {
   return (
     <div className="intro-splash" aria-hidden="true">
       <div className="intro-inner">
-        <p className="intro-label">WEB AGENCY</p>
-        <p className="intro-phrase">웹사이트는 비용이 아니라 매출입니다</p>
+        <p className="intro-label">SOFTWARE SOLUTIONS</p>
+        <p className="intro-phrase">종합 소프트웨어 솔루션</p>
         <h2 className="intro-brand">
           {BRAND.split("").map((ch, i) => (
             <span

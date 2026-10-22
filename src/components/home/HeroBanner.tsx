@@ -20,6 +20,8 @@ type Slide = {
   position?: string;
   /** 배경 위에 덮어 문구의 가독성을 확보하는 그라데이션. */
   overlay: string;
+  /** 제목 위에 상호 로고를 올릴지 */
+  logo?: boolean;
 };
 
 const DIM = (...stops: string[]) => `linear-gradient(90deg, ${stops.join(", ")})`;
@@ -34,6 +36,7 @@ const SLIDES: Slide[] = [
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
     image: "/home-hero-device-mockup.webp",
+    logo: true,
     tone: "light",
     position: "object-right",
     overlay: "none",
@@ -138,6 +141,16 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
                       : "max-w-[820px]"
                   }`}
                 >
+                  {slide.logo && (
+                    <Image
+                      src={isLight ? "/brand/haon-logo.png" : "/brand/haon-logo-white.png"}
+                      alt="하온 HAON Software Solutions"
+                      width={751}
+                      height={240}
+                      priority={i === 0}
+                      className="h-[34px] md:h-[42px] w-auto mb-6"
+                    />
+                  )}
                   {slide.label && (
                     <span className="inline-flex items-center h-7 px-2.5 mb-5 border border-white/35 text-[12px] font-bold text-white/85">
                       {slide.label}
