@@ -1,16 +1,21 @@
 {
-  "name": "HS WEB",
-  "short_name": "HS WEB",
-  "description": "웹사이트 제작 전문 에이전시",
+  "name": "하온 HAON",
+  "short_name": "하온",
+  "description": "홈페이지·쇼핑몰·업무 시스템을 만드는 웹 솔루션 회사",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f1a2d",
-  "theme_color": "#0f1a2d",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "any",
-      "type": "image/x-icon"
+      "src": "/icon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
