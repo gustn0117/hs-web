@@ -49,6 +49,7 @@ const SLIDES: Slide[] = [
     primary: { href: "/portfolio", text: "사례 보기" },
     secondary: { href: "/contact", text: "비슷한 제작 문의" },
     image: "/hero-ateez.webp",
+    logo: true,
     // 무대가 오른쪽에 오도록 잡고, 글자가 놓이는 왼쪽은 더 진하게 덮는다.
     position: "object-[62%_center]",
     overlay: DIM(ink(0.96, 0), ink(0.9, 36), ink(0.62, 54), ink(0.3, 74), ink(0.22, 100)),
