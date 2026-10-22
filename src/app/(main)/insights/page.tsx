@@ -13,14 +13,14 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "정보공유 - 홈페이지 제작 정보와 가이드",
   description:
-    "홈페이지 제작 비용, 진행 절차, 도메인·호스팅, 네임서버 변경, 검색엔진 최적화, PG 연동까지 실제로 자주 받는 질문을 정리했습니다. HS WEB이 현장에서 겪은 기준으로 씁니다.",
+    "홈페이지 제작 비용, 진행 절차, 도메인·호스팅, 네임서버 변경, 검색엔진 최적화, PG 연동까지 실제로 자주 받는 질문을 정리했습니다. 하온이 현장에서 겪은 기준으로 씁니다.",
   alternates: { canonical: `${SITE_URL}/insights` },
   openGraph: {
     type: "website",
-    title: "정보공유 | HS WEB",
+    title: "정보공유 | 하온",
     description: "홈페이지 제작에 필요한 정보와 사례를 정리한 글 모음입니다.",
     url: `${SITE_URL}/insights`,
-    siteName: "HS WEB 웹에이전시",
+    siteName: "하온 소프트웨어 솔루션",
     locale: "ko_KR",
   },
 };

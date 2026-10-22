@@ -73,7 +73,7 @@ export default function Hero() {
             <h1 className="text-4xl md:text-[3.2rem] font-black text-[var(--color-dark)] leading-[1.2] mb-4 tracking-tight">
               홈페이지 제작 전문
               <br />
-              <span className="shimmer-text">웹에이전시 HS WEB</span>
+              <span className="shimmer-text">웹에이전시 하온</span>
             </h1>
 
             {/* Sub-tagline */}
@@ -82,7 +82,7 @@ export default function Hero() {
             </p>
 
             <p className="text-lg text-[var(--color-gray)] mb-9 max-w-[480px] leading-relaxed mx-auto lg:mx-0">
-              HS WEB은 감각적인 디자인과 최신 기술력으로 웹사이트 제작부터
+              하온은 감각적인 디자인과 최신 기술력으로 웹사이트 제작부터
               SEO, 백링크 등 기술 마케팅까지 비즈니스 성장에 필요한 모든 웹
               솔루션을 제공합니다.
             </p>

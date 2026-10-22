@@ -133,7 +133,7 @@ export default function Navbar() {
             {/* Desktop brand — lg+ */}
             <Link href="/" className="hidden lg:flex items-baseline gap-1.5 no-underline group">
               <span className="text-[19px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
-                HS WEB
+                하온
               </span>
               <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase">
                 Web Agency
@@ -149,7 +149,7 @@ export default function Navbar() {
             className="lg:hidden flex items-baseline gap-1.5 no-underline group whitespace-nowrap"
           >
             <span className="text-[18px] font-extrabold tracking-[-0.035em] text-[var(--c-text)] group-hover:text-[var(--c-main)] transition-colors">
-              HS WEB
+              하온
             </span>
             <span className="text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.15em] uppercase">
               Web Agency

@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "HS WEB - 홈페이지 제작 전문 웹에이전시";
+export const alt = "하온 HAON - 웹·업무 시스템 제작";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -84,7 +84,7 @@ export default async function Image() {
               lineHeight: 1.4,
             }}
           >
-            홈페이지 제작 전문 웹에이전시
+            웹·업무 시스템 제작
           </div>
           {/* Sub text */}
           <div

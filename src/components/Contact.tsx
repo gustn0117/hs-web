@@ -182,7 +182,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div className="fade-left">
             <h3 className="text-[1.6rem] font-extrabold mb-4">
-              HS WEB에 문의하세요
+              하온에 문의하세요
             </h3>
             <p className="text-[var(--color-gray)] mb-8 leading-relaxed">
               홈페이지 제작, 리뉴얼, 유지보수 등 궁금하신 점이 있으시면 언제든

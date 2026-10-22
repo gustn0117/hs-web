@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 /** 글자 하나씩 솟아오르게 하려고 쪼갠다. 띄어쓰기는 폭만 차지한다. */
-const BRAND = "HS WEB";
+const BRAND = "하온";
 /** 첫 글자가 올라오기 시작하는 시점과 글자 사이 간격 */
 const CHAR_START = 0.4;
 const CHAR_GAP = 0.06;

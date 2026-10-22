@@ -41,11 +41,11 @@ export function buildPanelGroups(site: ServiceSite): PanelGroup[] {
     { key: "서비스", items: service },
     { key: "도움말", items: help },
     {
-      key: "HS WEB",
+      key: "하온",
       items: [
         { href: "https://hsweb.pics", label: "본 사이트", icon: I.home },
         { href: "https://hsweb.pics/portfolio", label: "전체 제작 사례", icon: I.folder },
-        { href: "https://hsweb.pics/why-hs-web", label: "HS WEB을 선택하는 이유", icon: I.star },
+        { href: "https://hsweb.pics/why-hs-web", label: "하온을 선택하는 이유", icon: I.star },
       ],
     },
   ];

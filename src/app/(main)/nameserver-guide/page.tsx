@@ -264,7 +264,7 @@ export default function NameserverGuidePage() {
               Icon: ServerPieceIcon,
               tag: "STEP 3 · 실제 서버",
               t: "호스팅",
-              d: "사이트 파일이 실제로 들어가 있는 건물(서버). HS WEB, Cloudflare 등이 여기 해당합니다.",
+              d: "사이트 파일이 실제로 들어가 있는 건물(서버). 하온, Cloudflare 등이 여기 해당합니다.",
               bullet: "호스팅이 발급한 주소가 필요",
             },
           ].map((c) => (
@@ -580,8 +580,8 @@ export default function NameserverGuidePage() {
               a: "도메인이 잠금(Transfer Lock·clientTransferProhibited) 상태이거나, 만료일이 임박하거나, 분쟁 중인 도메인은 네임서버 변경이 거부됩니다. 도메인 잠금 해제·갱신을 먼저 진행한 뒤 다시 시도하세요.",
             },
             {
-              q: "외부 도메인을 HS WEB에 연결하려면 어떻게 하나요?",
-              a: "HS WEB은 Cloudflare 터널 기반으로 동작하기 때문에 도메인의 네임서버를 Cloudflare가 안내한 두 개의 ns 주소로 변경한 뒤, Cloudflare 대시보드에서 CNAME 레코드를 추가하면 됩니다. 자세한 절차는 개별 상담 시 안내드립니다.",
+              q: "외부 도메인을 하온에 연결하려면 어떻게 하나요?",
+              a: "하온은 Cloudflare 터널 기반으로 동작하기 때문에 도메인의 네임서버를 Cloudflare가 안내한 두 개의 ns 주소로 변경한 뒤, Cloudflare 대시보드에서 CNAME 레코드를 추가하면 됩니다. 자세한 절차는 개별 상담 시 안내드립니다.",
             },
           ].map((item, i) => (
             <details key={i} className="border-b border-[var(--c-line)] group">
@@ -606,7 +606,7 @@ export default function NameserverGuidePage() {
           <p className="text-[11px] font-bold text-white/60 tracking-[0.15em] uppercase mb-3">CONTACT</p>
           <h3 className="text-[24px] md:text-[30px] font-bold tracking-tight mb-3">네임서버 변경, 어렵게 느껴지시나요?</h3>
           <p className="text-[14px] text-white/70 leading-[1.7] mb-7 max-w-[560px] mx-auto">
-            HS WEB과 진행하시는 프로젝트라면 네임서버 변경부터 DNS 레코드 이전까지 함께 도와드립니다.
+            하온과 진행하시는 프로젝트라면 네임서버 변경부터 DNS 레코드 이전까지 함께 도와드립니다.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link

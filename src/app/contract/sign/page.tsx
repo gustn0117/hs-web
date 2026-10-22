@@ -96,7 +96,7 @@ export default function SignPage() {
       <div className="min-h-screen bg-[#f5f3ef] flex items-center justify-center px-4">
         <div className="w-full max-w-[400px]">
           <div className="text-center mb-8">
-            <p className="text-[0.7rem] text-[#8a7e6b] tracking-[0.3em] uppercase font-medium mb-2">HS WEB</p>
+            <p className="text-[0.7rem] text-[#8a7e6b] tracking-[0.3em] uppercase font-medium mb-2">하온</p>
             <h1 className="text-xl font-bold text-[#2c2418]">전자 계약 시스템</h1>
           </div>
           <form onSubmit={handleCodeSubmit} className="bg-white rounded-xl p-8 border border-[#e5ddd0] shadow-sm">
@@ -160,7 +160,7 @@ export default function SignPage() {
           <div className="px-12 pt-12 pb-8 border-b-2 border-[#2c2418]">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[0.65rem] text-[#8a7e6b] tracking-[0.2em] uppercase">HS WEB · Web Agency</p>
+                <p className="text-[0.65rem] text-[#8a7e6b] tracking-[0.2em] uppercase">하온 · HAON Software Solutions</p>
               </div>
               <div className="text-right">
                 <p className="text-[0.65rem] text-[#8a7e6b]">계약번호</p>
@@ -180,7 +180,7 @@ export default function SignPage() {
             <p className="mb-6">
               <strong className="text-[#2c2418]">{contract.client_name}</strong>
               {contract.client_company && <span> ({contract.client_company})</span>}
-              (이하 &ldquo;갑&rdquo;이라 한다)과 <strong className="text-[#2c2418]">{contract.supplier_company || "HS WEB"}</strong> (대표 {contract.supplier_representative || "심현수"}, 이하 &ldquo;을&rdquo;이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
+              (이하 &ldquo;갑&rdquo;이라 한다)과 <strong className="text-[#2c2418]">{contract.supplier_company || "하온"}</strong> (대표 {contract.supplier_representative || "심현수"}, 이하 &ldquo;을&rdquo;이라 한다)은 아래와 같이 웹사이트 제작에 관한 계약을 체결한다.
             </p>
 
             <div className="w-full h-px bg-[#e5ddd0] my-6" />
@@ -289,17 +289,17 @@ export default function SignPage() {
               <div className="text-center">
                 <p className="text-xs text-[#8a7e6b] mb-3 font-semibold tracking-wider">을 (수급인)</p>
                 <div className="border-b-2 border-[#2c2418] pb-2 mb-2 min-h-[60px] flex items-end justify-center">
-                  <p className="text-lg font-bold text-[#2c2418] italic">{contract.supplier_company || "HS WEB"}</p>
+                  <p className="text-lg font-bold text-[#2c2418] italic">{contract.supplier_company || "하온"}</p>
                 </div>
                 <p className="text-sm font-bold text-[#2c2418]">{contract.supplier_representative || "심현수"}</p>
-                <p className="text-xs text-[#8a7e6b]">{contract.supplier_company || "HS WEB"} 대표</p>
+                <p className="text-xs text-[#8a7e6b]">{contract.supplier_company || "하온"} 대표</p>
               </div>
             </div>
           </div>
 
           {/* 하단 */}
           <div className="px-12 py-4 bg-[#f5f3ef] border-t border-[#e5ddd0] text-center">
-            <p className="text-[0.6rem] text-[#b0a694]">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</p>
+            <p className="text-[0.6rem] text-[#b0a694]">하온 | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</p>
           </div>
         </div>
 
@@ -350,7 +350,7 @@ export default function SignPage() {
           </div>
         </div>
 
-        <p className="text-center text-[0.6rem] text-[#b0a694] mt-6 mb-4">HS WEB Electronic Contract System</p>
+        <p className="text-center text-[0.6rem] text-[#b0a694] mt-6 mb-4">하온 Electronic Contract System</p>
       </div>
     </div>
   );

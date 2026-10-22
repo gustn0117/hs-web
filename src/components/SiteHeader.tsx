@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -63,7 +64,7 @@ const PANEL_GROUPS: { key: string; items: { href: string; label: string; icon: s
   {
     key: "회사",
     items: [
-      { href: "/why-hs-web", label: "HS WEB을 선택하는 이유", icon: I.star },
+      { href: "/why-hs-web", label: "하온을 선택하는 이유", icon: I.star },
       { href: "/portfolio", label: "포트폴리오", icon: I.folder },
       { href: "/pricing", label: "가격 안내", icon: I.card },
       { href: "/testimonials", label: "고객 후기", icon: I.chat },
@@ -98,9 +99,15 @@ export default function SiteHeader() {
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-[var(--c-line)]">
         <div className="max-w-[1280px] mx-auto px-5 h-[72px] md:h-[88px] grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
-          <Link href="/" className="flex items-baseline gap-1.5 no-underline">
-            <span className="text-[20px] md:text-[22px] font-extrabold tracking-[-0.04em] text-[var(--c-text)]">HS WEB</span>
-            <span className="hidden sm:inline text-[10px] font-semibold text-[var(--c-sub)] tracking-[0.18em] uppercase">Web Agency</span>
+          <Link href="/" className="inline-flex items-center no-underline" aria-label="하온 홈">
+            <Image
+              src="/brand/haon-wordmark.png"
+              alt="하온 HAON"
+              width={524}
+              height={120}
+              priority
+              className="h-[26px] md:h-[30px] w-auto"
+            />
           </Link>
 
           <nav className="hidden lg:flex items-center justify-center gap-7">
@@ -162,7 +169,7 @@ export default function SiteHeader() {
         >
           {/* 상단 밴드 */}
           <div className="bg-[var(--c-text)] text-white px-5 h-14 flex items-center justify-between shrink-0">
-            <span className="text-[12.5px] font-semibold tracking-[0.28em]">HS WEB</span>
+            <span className="text-[12.5px] font-semibold tracking-[0.28em]">하온</span>
             <button
               type="button"
               onClick={close}

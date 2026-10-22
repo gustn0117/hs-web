@@ -102,7 +102,7 @@ export default function Stats() {
           <h2 className="text-2xl md:text-3xl font-extrabold shimmer-text inline-block mb-3">
             숫자로 증명하는 실력
           </h2>
-          <p className="text-gray-400 text-[0.9rem]">HS WEB의 성과를 확인하세요</p>
+          <p className="text-gray-400 text-[0.9rem]">하온의 성과를 확인하세요</p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

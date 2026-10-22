@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "왜 HS WEB인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
+  title: "왜 하온인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
   description:
-    "왜 HS WEB이 다른 업체보다 저렴한지, 자체 코딩으로 만든 사이트의 장점은 무엇인지, 그리고 어떤 흐름으로 함께 만드는지 한 페이지에 정리했습니다.",
+    "왜 하온이 다른 업체보다 저렴한지, 자체 코딩으로 만든 사이트의 장점은 무엇인지, 그리고 어떤 흐름으로 함께 만드는지 한 페이지에 정리했습니다.",
   alternates: { canonical: "https://hsweb.pics/why-hs-web" },
 };
 
@@ -104,7 +104,7 @@ const FAQS = [
   {
     cat: "자체 코딩",
     q: "소스코드를 정말 다 인도받을 수 있나요?",
-    a: "네, 100% 인도합니다. GitHub 저장소를 통째로 넘겨드리거나, 압축 파일로 전달합니다. 다른 개발사로 옮기시거나 직접 운영하셔도 됩니다. 한 번 받으신 코드는 영구히 소유하시는 자산입니다. HS WEB에 종속될 일이 없습니다.",
+    a: "네, 100% 인도합니다. GitHub 저장소를 통째로 넘겨드리거나, 압축 파일로 전달합니다. 다른 개발사로 옮기시거나 직접 운영하셔도 됩니다. 한 번 받으신 코드는 영구히 소유하시는 자산입니다. 하온에 종속될 일이 없습니다.",
   },
   {
     cat: "워크플로우",
@@ -210,7 +210,7 @@ export default function WhyHsWebPage() {
       <section className="relative min-h-[760px] overflow-hidden bg-slate-950 text-white">
         <Image
           src="/why-hs-web/hero-code-screens.webp"
-          alt="사람 없이 검은 코드 화면이 표시된 모니터, 태블릿, 노트북과 서버 인프라를 보여주는 HS WEB 히어로 이미지"
+          alt="사람 없이 검은 코드 화면이 표시된 모니터, 태블릿, 노트북과 서버 인프라를 보여주는 하온 히어로 이미지"
           fill
           priority
           sizes="100vw"
@@ -232,7 +232,7 @@ export default function WhyHsWebPage() {
               더 가볍고 합리적으로.
             </h1>
             <p className="text-[15px] md:text-[19px] text-white/76 leading-[1.75] max-w-[610px] mb-9">
-              HS WEB은 불필요한 대행 구조를 줄이고, 직접 코딩한 빠른 웹사이트를 만듭니다.
+              하온은 불필요한 대행 구조를 줄이고, 직접 코딩한 빠른 웹사이트를 만듭니다.
               낮은 가격의 이유와 좋은 결과의 이유가 같은 곳에서 시작됩니다.
             </p>
 
@@ -321,7 +321,7 @@ export default function WhyHsWebPage() {
             <figure className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-sm">
               <Image
                 src="/why-hs-web/price-structure.webp"
-                alt="복잡한 일반 웹 에이전시 구조와 HS WEB의 직접 제작 구조를 비교하는 시각 이미지"
+                alt="복잡한 일반 웹 에이전시 구조와 하온의 직접 제작 구조를 비교하는 시각 이미지"
                 width={1672}
                 height={941}
                 loading="eager"
@@ -349,7 +349,7 @@ export default function WhyHsWebPage() {
               </h3>
               <p className="text-[14.5px] text-slate-600 leading-[1.8] mb-6">
                 일반 업체는 팀·사무실·영업·호스팅 마진이 가격에 얹힙니다.
-                HS WEB은 제작자와 클라이언트가 바로 연결되고, 서버도 직접 운영해
+                하온은 제작자와 클라이언트가 바로 연결되고, 서버도 직접 운영해
                 꼭 필요한 비용만 남깁니다.
               </p>
               <div className="space-y-3">
@@ -395,13 +395,13 @@ export default function WhyHsWebPage() {
               </ul>
             </div>
 
-            {/* HS WEB */}
+            {/* 하온 */}
             <div className="p-7 md:p-8 rounded-[16px] border-2 border-slate-900 bg-slate-900 text-white relative overflow-hidden">
               <span className="absolute -top-3 -right-3 inline-flex items-center gap-1 h-7 px-3 rounded-full bg-slate-900 text-white text-[11px] font-bold tracking-wider rotate-3 shadow-lg">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
-                HS WEB
+                하온
               </span>
               <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/60 mb-3">
                 같은 결과 · 더 합리적
@@ -479,7 +479,7 @@ export default function WhyHsWebPage() {
                   },
                   {
                     title: "다른 업체에서도 동일 서비스 가능",
-                    desc: "표준 기술(Next.js · React)로 만들기 때문에 다른 개발자도 이어받아 유지보수할 수 있습니다. HS WEB에 종속될 일이 없어 안심하시고 시작하셔도 됩니다.",
+                    desc: "표준 기술(Next.js · React)로 만들기 때문에 다른 개발자도 이어받아 유지보수할 수 있습니다. 하온에 종속될 일이 없어 안심하시고 시작하셔도 됩니다.",
                   },
                 ].map((t, i) => (
                   <div key={t.title} className="flex items-start gap-4">
@@ -657,7 +657,7 @@ export default function WhyHsWebPage() {
           <figure className="relative overflow-hidden rounded-[18px] border border-slate-200 bg-white shadow-sm mb-12">
             <Image
               src="/why-hs-web/workflow.webp"
-              alt="정보 제공, 초안 제작, 피드백, 런칭으로 이어지는 HS WEB 제작 흐름 이미지"
+              alt="정보 제공, 초안 제작, 피드백, 런칭으로 이어지는 하온 제작 흐름 이미지"
               width={1672}
               height={941}
               loading="eager"

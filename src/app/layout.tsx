@@ -9,17 +9,17 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 const SITE_URL = "https://hsweb.pics";
-const SITE_NAME = "HS WEB";
+const SITE_NAME = "하온";
 /** 검색 결과에 표시되는 사이트 이름. 구글은 WebSite 구조화 데이터와 og:site_name을 본다. */
-const SITE_DISPLAY_NAME = "HS WEB 웹에이전시";
+const SITE_DISPLAY_NAME = "하온 소프트웨어 솔루션";
 const DEFAULT_DESCRIPTION =
-  "홈페이지 제작 전문 웹에이전시 HS WEB. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지. 합리적인 가격과 무료 유지보수로 비즈니스 성장에 필요한 모든 웹 솔루션을 제공합니다.";
+  "웹·업무 시스템을 만드는 하온. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지. 합리적인 가격과 무료 유지보수로 비즈니스 성장에 필요한 모든 웹 솔루션을 제공합니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "홈페이지 제작 전문 웹에이전시 | HS WEB - 반응형 웹사이트, 쇼핑몰 구축",
-    template: "%s | HS WEB",
+    default: "홈페이지·업무 시스템 제작 | 하온 HAON - 쇼핑몰, 랜딩페이지, CRM",
+    template: "%s | 하온",
   },
   description: DEFAULT_DESCRIPTION,
   keywords: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     "모바일 웹사이트",
     "SEO 최적화",
     "기술 마케팅",
-    "HS WEB",
+    "하온",
   ],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "홈페이지 제작 전문 웹에이전시 | HS WEB",
+    title: "홈페이지·업무 시스템 제작 | 하온 HAON",
     description: DEFAULT_DESCRIPTION,
     url: SITE_URL,
     siteName: SITE_DISPLAY_NAME,
@@ -75,13 +75,13 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "HS WEB - 홈페이지 제작 전문 웹에이전시",
+        alt: "하온 HAON - 웹·업무 시스템 제작",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "홈페이지 제작 전문 웹에이전시 | HS WEB",
+    title: "홈페이지·업무 시스템 제작 | 하온 HAON",
     description: DEFAULT_DESCRIPTION,
     images: ["/opengraph-image"],
   },

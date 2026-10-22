@@ -5,7 +5,7 @@ import { PageShell, Section } from "@/components/PageShell";
 export const metadata: Metadata = {
   title: "검색엔진 최적화(SEO) 안내",
   description:
-    "HS WEB의 검색엔진 최적화(SEO) 작업 범위와 비용을 안내합니다. 내부 코드 SEO는 모든 프로젝트에 기본 포함, 플랫폼별 본격 SEO 작업은 플랫폼당 50,000원의 별도 옵션입니다.",
+    "하온의 검색엔진 최적화(SEO) 작업 범위와 비용을 안내합니다. 내부 코드 SEO는 모든 프로젝트에 기본 포함, 플랫폼별 본격 SEO 작업은 플랫폼당 50,000원의 별도 옵션입니다.",
   keywords: [
     "검색엔진 최적화",
     "SEO",
@@ -97,7 +97,7 @@ export default function SeoInfoPage() {
 
         <div className="mt-6 p-5 md:p-6 rounded-[12px] bg-[var(--c-bg-1)] border border-[var(--c-line)]">
           <p className="text-[13.5px] text-[var(--c-text-2)] leading-[1.75]">
-            <strong className="text-[var(--c-text)]">HS WEB은 SEO(기술) 영역까지 진행합니다.</strong>{" "}
+            <strong className="text-[var(--c-text)]">하온은 SEO(기술) 영역까지 진행합니다.</strong>{" "}
             상위 노출이나 특정 키워드 노출은 SEO가 아닌 <strong>마케팅 영역</strong>으로,
             별도 마케팅 업체를 통해 진행하셔야 합니다. SEO 작업이 잘 되어 있어야 마케팅 효율도 올라가기 때문에,
             두 영역은 분리되어 있지만 서로 연결됩니다.
@@ -320,7 +320,7 @@ export default function SeoInfoPage() {
             },
             {
               q: "마케팅 업체 추천도 가능한가요?",
-              a: "직접 운영하지는 않지만 협력하는 마케팅 업체가 있어 연결해드릴 수 있습니다. 단, 마케팅 비용은 별도이며 HS WEB과 무관하게 진행됩니다.",
+              a: "직접 운영하지는 않지만 협력하는 마케팅 업체가 있어 연결해드릴 수 있습니다. 단, 마케팅 비용은 별도이며 하온과 무관하게 진행됩니다.",
             },
             {
               q: "워드프레스 같은 플랫폼도 SEO 작업이 가능한가요?",

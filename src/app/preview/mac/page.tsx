@@ -7,7 +7,7 @@ import styles from "./mac.module.css";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: { absolute: "맥 OS 스타일 시안 | HS WEB" },
+  title: { absolute: "맥 OS 스타일 시안 | 하온" },
   description: "메인 페이지를 macOS 인터페이스로 옮겨본 시안입니다.",
   // 시안이라 검색에 잡히면 안 된다.
   robots: { index: false, follow: false },
@@ -62,7 +62,7 @@ export default async function MacPreviewPage() {
     <div className={styles.desk}>
       {/* 메뉴 막대 */}
       <div className={styles.menubar}>
-        <span className={styles.menubarBrand}>HS WEB</span>
+        <span className={styles.menubarBrand}>하온</span>
         <a className={styles.menubarItem} href="/services">서비스</a>
         <a className={styles.menubarItem} href="/portfolio">포트폴리오</a>
         <a className={styles.menubarItem} href="/pricing">가격</a>

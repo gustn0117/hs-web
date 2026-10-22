@@ -51,7 +51,7 @@ export default function AdminHeader() {
       <div className="max-w-[1280px] mx-auto px-4 md:px-6 h-14 flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center gap-3 lg:gap-4">
         {/* Left: Brand */}
         <Link href="/admin/dashboard" className="flex items-baseline gap-2 no-underline shrink-0">
-          <span className="text-[15px] md:text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
+          <span className="text-[15px] md:text-[16px] font-extrabold tracking-[-0.035em] text-slate-900">하온</span>
           <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
         </Link>
 

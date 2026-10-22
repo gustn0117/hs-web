@@ -53,7 +53,7 @@ export default function WhyUs() {
           </p>
           <div className="section-divider" />
           <h2 className="text-[2.2rem] font-extrabold text-[var(--color-dark)] tracking-tight">
-            왜 <span className="gradient-text">HS WEB</span>인가요?
+            왜 <span className="gradient-text">하온</span>인가요?
           </h2>
         </div>
 

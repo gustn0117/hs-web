@@ -3,7 +3,7 @@ import { PageShell, Section } from "@/components/PageShell";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
-  description: "HS WEB의 개인정보 수집, 이용, 보호에 관한 방침입니다.",
+  description: "하온의 개인정보 수집, 이용, 보호에 관한 방침입니다.",
   alternates: { canonical: "https://hsweb.pics/privacy" },
 };
 
@@ -33,7 +33,7 @@ const sections: PrivacySection[] = [
     items: ["개인정보 열람 요구", "오류 등이 있을 경우 정정 요구", "삭제 요구", "처리 정지 요구"] },
   { title: "제8조 (쿠키의 운용 및 거부)", content: "회사는 이용자에게 맞춤 서비스를 제공하기 위해 쿠키를 사용할 수 있습니다. 이용자는 브라우저 설정을 통해 쿠키를 허용하거나 거부할 수 있습니다." },
   { title: "제9조 (개인정보 보호책임자)", content: "회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.",
-    items: ["개인정보 보호책임자: HS WEB 대표", "연락처: 문의하기 페이지를 통해 연락"] },
+    items: ["개인정보 보호책임자: 하온 대표", "연락처: 문의하기 페이지를 통해 연락"] },
   { title: "제10조 (방침의 변경)", content: "본 개인정보처리방침은 법령, 정책 또는 보안 기술의 변경에 따라 내용이 추가, 삭제 및 수정될 수 있으며, 변경 시 웹사이트를 통해 공지합니다." },
 ];
 

@@ -398,8 +398,8 @@ function GradientText() {
 
 function ShimmerTextDemo() {
   return (
-    <div className="text-[24px] font-black hero-text-shimmer hero-gradient-text" data-text="HS WEB">
-      HS WEB
+    <div className="text-[24px] font-black hero-text-shimmer hero-gradient-text" data-text="하온">
+      하온
     </div>
   );
 }
@@ -430,7 +430,7 @@ function CursorBlinkDemo() {
 }
 
 function TypewriterDemo() {
-  const phrases = ["Hello, world.", "Welcome to HS WEB.", "Custom-built sites."];
+  const phrases = ["Hello, world.", "Welcome to 하온.", "Custom-built sites."];
   const [text, setText] = useState("");
   const [phraseIdx, setPhraseIdx] = useState(0);
   const [deleting, setDeleting] = useState(false);

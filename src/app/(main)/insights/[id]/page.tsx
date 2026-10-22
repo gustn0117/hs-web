@@ -35,14 +35,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title,
     description: post.summary || post.title,
-    keywords: [post.title, post.category, post.region, ...post.tags, "홈페이지 제작", "HS WEB"].filter(Boolean) as string[],
+    keywords: [post.title, post.category, post.region, ...post.tags, "홈페이지 제작", "하온"].filter(Boolean) as string[],
     alternates: { canonical: url },
     openGraph: {
       type: "article",
       title: post.title,
       description: post.summary || post.title,
       url,
-      siteName: "HS WEB 웹에이전시",
+      siteName: "하온 소프트웨어 솔루션",
       locale: "ko_KR",
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post.updatedAt || undefined,
@@ -129,8 +129,8 @@ export default async function InsightDetailPage({ params }: { params: Promise<{ 
       dateModified: post.updatedAt || undefined,
       image: post.coverImage || undefined,
       keywords: [post.category, post.region, ...post.tags].filter(Boolean).join(", ") || undefined,
-      author: { "@type": "Organization", name: "HS WEB", url: SITE_URL },
-      publisher: { "@type": "Organization", name: "HS WEB", url: SITE_URL },
+      author: { "@type": "Organization", name: "하온", url: SITE_URL },
+      publisher: { "@type": "Organization", name: "하온", url: SITE_URL },
       // 지역을 지정한 글은 해당 지역을 대상으로 한다고 알린다.
       ...(post.region
         ? {

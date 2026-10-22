@@ -90,19 +90,19 @@ export async function generateMetadata({
   return {
     title,
     description,
-    keywords: [...keywords, "HS WEB", "웹에이전시"],
+    keywords: [...keywords, "하온", "웹에이전시"],
     alternates: { canonical: url },
     openGraph: {
-      title: `${service.title} | HS WEB`,
+      title: `${service.title} | 하온`,
       description,
       url,
       type: "website",
-      siteName: "HS WEB",
+      siteName: "하온",
       locale: "ko_KR",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${service.title} | HS WEB`,
+      title: `${service.title} | 하온`,
       description,
     },
   };
@@ -132,7 +132,7 @@ export default async function ServiceDetailPage({
         url: `${SITE_URL}/services/${slug}`,
         provider: {
           "@type": "Organization",
-          name: "HS WEB",
+          name: "하온",
           url: SITE_URL,
         },
         areaServed: { "@type": "Country", name: "KR" },

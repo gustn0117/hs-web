@@ -17,11 +17,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               {
                 "@type": "Organization",
                 "@id": "https://hsweb.pics/#organization",
-                name: "HS WEB",
+                name: "하온",
                 url: "https://hsweb.pics",
                 logo: "https://hsweb.pics/icon",
                 description:
-                  "홈페이지 제작 전문 웹에이전시. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발.",
+                  "웹·업무 시스템 제작. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발.",
                 address: {
                   "@type": "PostalAddress",
                   addressLocality: "서울",
@@ -38,15 +38,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 "@type": "WebSite",
                 "@id": "https://hsweb.pics/#website",
                 url: "https://hsweb.pics",
-                name: "HS WEB 웹에이전시",
-                alternateName: ["HS WEB", "HS WEB 홈페이지 제작"],
+                name: "하온 소프트웨어 솔루션",
+                alternateName: ["하온", "하온 홈페이지 제작"],
                 publisher: { "@id": "https://hsweb.pics/#organization" },
                 inLanguage: "ko-KR",
               },
               {
                 "@type": "ProfessionalService",
                 "@id": "https://hsweb.pics/#service",
-                name: "HS WEB 홈페이지 제작",
+                name: "하온 홈페이지 제작",
                 provider: { "@id": "https://hsweb.pics/#organization" },
                 serviceType: "홈페이지 제작",
                 areaServed: { "@type": "Country", name: "KR" },

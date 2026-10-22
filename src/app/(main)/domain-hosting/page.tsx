@@ -208,7 +208,7 @@ export default function DomainHostingPage() {
               Node.js 실행이 가능한 호스팅이 필요해요
             </h3>
             <p className="text-[13.5px] text-[var(--c-sub)] leading-[1.7] mb-4">
-              HS WEB이 만드는 사이트는 Next.js 기반이라 단순 정적 호스팅 외에
+              하온이 만드는 사이트는 Next.js 기반이라 단순 정적 호스팅 외에
               <strong className="text-[var(--c-text)]"> Node.js 런타임</strong>이 동작하는 환경이 필요합니다.
             </p>
             <div className="space-y-1.5 pt-4 border-t border-[var(--c-line)]">
@@ -280,7 +280,7 @@ export default function DomainHostingPage() {
             <div className="flex-1 min-w-0">
               <p className="text-[14px] font-bold text-[var(--c-text)] mb-1.5">제작 방식에 따라 호환 호스팅이 달라집니다</p>
               <ul className="list-none m-0 space-y-1 text-[13px] text-[var(--c-sub)] leading-[1.7]">
-                <li>• <strong className="text-[var(--c-text-2)]">자체 개발 (HS WEB 방식):</strong> Node.js 실행 가능한 호스팅 필요. 성능·SEO·확장성에서 유리</li>
+                <li>• <strong className="text-[var(--c-text-2)]">자체 개발 (하온 방식):</strong> Node.js 실행 가능한 호스팅 필요. 성능·SEO·확장성에서 유리</li>
                 <li>• <strong className="text-[var(--c-text-2)]">정적 사이트:</strong> 일반 웹호스팅에도 올릴 수 있지만 동적 기능에 한계</li>
                 <li>• <strong className="text-[var(--c-text-2)]">워드프레스 등 PHP 기반:</strong> 일반 웹호스팅이면 대부분 호환</li>
               </ul>
@@ -292,14 +292,14 @@ export default function DomainHostingPage() {
         </div>
       </Section>
 
-      {/* HS WEB service highlight — dark card with 3D server stack */}
-      <Section overline="HS WEB" title="대행 관리 서비스">
+      {/* 하온 service highlight — dark card with 3D server stack */}
+      <Section overline="하온" title="대행 관리 서비스">
         <div className="p-8 md:p-10 rounded-[16px] bg-[var(--c-text)] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.06]" />
           <div className="relative grid grid-cols-1 md:grid-cols-[1fr_280px] gap-8 items-center">
             <div>
               <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">
-                도메인·호스팅, HS WEB이 전부 대행합니다.
+                도메인·호스팅, 하온이 전부 대행합니다.
               </h3>
               <p className="text-[14px] text-white/70 leading-[1.75] max-w-[620px]">
                 등록부터 설정, 연간 갱신 알림까지 모두 무료 대행.
@@ -337,8 +337,8 @@ export default function DomainHostingPage() {
           {[
             { q: "도메인과 호스팅 없이 사이트를 운영할 수 있나요?", a: "인터넷에서 접속 가능한 사이트를 운영하려면 도메인과 호스팅은 필수입니다. 제작 비용과 별개로, 사이트가 살아있으려면 매년/매월 유지해야 합니다." },
             { q: "도메인을 갱신하지 않으면 어떻게 되나요?", a: "만료되면 해당 주소로 접속할 수 없게 됩니다. 일정 기간이 지나면 다른 사람이 등록할 수 있으므로 중요한 도메인은 반드시 갱신하세요." },
-            { q: "호스팅을 해지하면 사이트가 삭제되나요?", a: "네, 호스팅 서버에 저장된 파일이 삭제되므로 사이트에 접속할 수 없게 됩니다. HS WEB에서 제작한 사이트는 소스 코드를 별도 보관해 재배포가 가능합니다." },
-            { q: "도메인·호스팅을 직접 관리해야 하나요?", a: "아닙니다. HS WEB에서 등록, 설정, 갱신까지 모두 대행해드립니다. 고객은 사이트 운영에만 집중하시면 됩니다." },
+            { q: "호스팅을 해지하면 사이트가 삭제되나요?", a: "네, 호스팅 서버에 저장된 파일이 삭제되므로 사이트에 접속할 수 없게 됩니다. 하온에서 제작한 사이트는 소스 코드를 별도 보관해 재배포가 가능합니다." },
+            { q: "도메인·호스팅을 직접 관리해야 하나요?", a: "아닙니다. 하온에서 등록, 설정, 갱신까지 모두 대행해드립니다. 고객은 사이트 운영에만 집중하시면 됩니다." },
             { q: "이미 가지고 있는 도메인을 사용할 수 있나요?", a: "물론입니다. 기존 도메인을 그대로 연결해드립니다. DNS 설정만 변경하면 되므로 추가 비용은 없습니다." },
           ].map((faq, i) => (
             <details key={i} className="border-b border-[var(--c-line)] group">

@@ -51,7 +51,7 @@ export default async function CasesPage({ params }: { params: Promise<{ slug: st
             href="https://hsweb.pics/portfolio"
             className="text-[var(--c-main)] font-semibold underline underline-offset-2"
           >
-            HS WEB 전체 제작 사례 보기
+            하온 전체 제작 사례 보기
           </a>
         </p>
       </Band>

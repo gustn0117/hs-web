@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "자체 개발 vs 플랫폼 - 왜 직접 코딩으로 만드는가",
   description:
-    "자체 개발(코딩)과 플랫폼 솔루션(카페24·윅스·식스샵·워드프레스)의 차이와 장단점. HS WEB이 자체 개발을 고집하는 이유와 비즈니스에 미치는 영향을 정리했습니다.",
+    "자체 개발(코딩)과 플랫폼 솔루션(카페24·윅스·식스샵·워드프레스)의 차이와 장단점. 하온이 자체 개발을 고집하는 이유와 비즈니스에 미치는 영향을 정리했습니다.",
   keywords: [
     "자체 개발",
     "코딩 홈페이지 제작",
@@ -63,7 +63,7 @@ export default function CustomDevelopmentPage() {
               <div className="pt-5 border-t border-[var(--c-line)] space-y-2">
                 <div className="flex justify-between text-[13px]">
                   <span className="text-[var(--c-sub)]">예시</span>
-                  <span className="font-semibold">HS WEB · 토스 · 당근마켓</span>
+                  <span className="font-semibold">하온 · 토스 · 당근마켓</span>
                 </div>
                 <div className="flex justify-between text-[13px]">
                   <span className="text-[var(--c-sub)]">초기 비용</span>
@@ -227,8 +227,8 @@ export default function CustomDevelopmentPage() {
         </div>
       </Section>
 
-      {/* Why HS WEB chooses custom */}
-      <Section overline="WHY HS WEB" title="우리는 왜 자체 개발만 하는가" subtitle="플랫폼이 빠르고 저렴해 보이지만, 비즈니스 성장에 핵심이 되는 5가지를 양보할 수 없기 때문입니다.">
+      {/* Why 하온 chooses custom */}
+      <Section overline="WHY 하온" title="우리는 왜 자체 개발만 하는가" subtitle="플랫폼이 빠르고 저렴해 보이지만, 비즈니스 성장에 핵심이 되는 5가지를 양보할 수 없기 때문입니다.">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             {
@@ -318,8 +318,8 @@ export default function CustomDevelopmentPage() {
         </div>
       </Section>
 
-      {/* HS WEB CTA — dark card with key illustration */}
-      <Section overline="HS WEB" title="자체 개발만 합니다.">
+      {/* 하온 CTA — dark card with key illustration */}
+      <Section overline="하온" title="자체 개발만 합니다.">
         <div className="p-8 md:p-10 rounded-[16px] bg-[var(--c-text)] text-white overflow-hidden relative">
           <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.06]" />
           <div className="relative grid grid-cols-1 md:grid-cols-[1fr_280px] gap-8 items-center">
@@ -328,7 +328,7 @@ export default function CustomDevelopmentPage() {
                 플랫폼이 아닌, 코드로.
               </h3>
               <p className="text-[14px] text-white/70 leading-[1.75] max-w-[620px]">
-                HS WEB의 모든 프로젝트는 <strong className="text-white">Next.js · React · TypeScript</strong>로 처음부터 직접 코딩합니다.
+                하온의 모든 프로젝트는 <strong className="text-white">Next.js · React · TypeScript</strong>로 처음부터 직접 코딩합니다.
                 <br />
                 완성 후 <strong className="text-white">소스코드 100% 이전</strong>, 월 구독료 없이 호스팅 실비만으로 운영됩니다.
               </p>
@@ -370,7 +370,7 @@ export default function CustomDevelopmentPage() {
             },
             {
               q: "자체 개발하면 운영도 어렵지 않나요?",
-              a: "HS WEB은 관리자 페이지를 함께 제작해 콘텐츠 수정·이미지 교체·게시물 관리는 비개발자도 직접 할 수 있습니다. 코드 수정이 필요한 작업만 의뢰하시면 됩니다. 간단한 텍스트·이미지 수정은 평생 무료로 지원합니다.",
+              a: "하온은 관리자 페이지를 함께 제작해 콘텐츠 수정·이미지 교체·게시물 관리는 비개발자도 직접 할 수 있습니다. 코드 수정이 필요한 작업만 의뢰하시면 됩니다. 간단한 텍스트·이미지 수정은 평생 무료로 지원합니다.",
             },
             {
               q: "기존 플랫폼 사이트를 자체 개발로 옮길 수 있나요?",

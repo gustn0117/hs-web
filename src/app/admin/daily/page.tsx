@@ -181,7 +181,7 @@ th { font-weight: 700; text-align: center; font-size: 8.5pt; }
 .memo-area p { font-size: 8.5pt; color: #888; }
 </style></head><body>
 <div class="top-line">
-  <span>HS WEB · Daily Worksheet</span>
+  <span>하온 · Daily Worksheet</span>
   <span>${todayShort()}</span>
 </div>
 <div class="title-wrap">
@@ -198,7 +198,7 @@ ${groupHtml}
   <p style="font-size:9pt;font-weight:700;color:#2c2418;margin-bottom:4px">메모</p>
   <div class="memo-area"><p>&nbsp;</p></div>
 </div>
-<div class="footer">HS WEB | ${todayTitle()} 업무 일지</div>
+<div class="footer">하온 | ${todayTitle()} 업무 일지</div>
 <script>window.onload=function(){window.print();}<\/script>
 </body></html>`);
     win.document.close();

@@ -37,7 +37,7 @@ export default async function ServiceSiteLayout({
         areaServed: { "@type": "Country", name: "KR" },
         provider: {
           "@type": "ProfessionalService",
-          name: "HS WEB",
+          name: "하온",
           url: "https://hsweb.pics",
           telephone: "+82-10-3319-2509",
           address: { "@type": "PostalAddress", addressLocality: "서울", addressCountry: "KR" },
@@ -49,7 +49,7 @@ export default async function ServiceSiteLayout({
         name: site.siteName,
         url,
         inLanguage: "ko-KR",
-        publisher: { "@type": "Organization", name: "HS WEB", url: "https://hsweb.pics" },
+        publisher: { "@type": "Organization", name: "하온", url: "https://hsweb.pics" },
       },
     ],
   };

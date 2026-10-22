@@ -67,7 +67,7 @@ export default async function PricingPage({ params }: { params: Promise<{ slug: 
           ))}
         </dl>
         <p className="mt-6 text-[13.5px] text-[var(--c-sub)]">
-          HS WEB 전체 가격 기준은{" "}
+          하온 전체 가격 기준은{" "}
           <a
             href="https://hsweb.pics/pricing"
             className="text-[var(--c-main)] font-semibold underline underline-offset-2"

@@ -75,7 +75,7 @@ export default function QuotationPage() {
 
   const [quoteNumber, setQuoteNumber] = useState(genQuoteNumber);
   const [quoteDate, setQuoteDate] = useState(todayStr);
-  const [manager, setManager] = useState("HS WEB 담당자");
+  const [manager, setManager] = useState("하온 담당자");
   const [validity, setValidity] = useState("견적일로부터 30 일");
   const [includeVat, setIncludeVat] = useState(true);
 
@@ -106,7 +106,7 @@ export default function QuotationPage() {
   const resetForm = () => {
     setQuoteNumber(genQuoteNumber());
     setQuoteDate(todayStr());
-    setManager("HS WEB 담당자");
+    setManager("하온 담당자");
     setValidity("견적일로부터 30 일");
     setIncludeVat(true);
     setItems([{ name: "맞춤형 홈페이지 제작", method: "기획·디자인·퍼블리싱", unitPrice: 1000000 }]);
@@ -252,7 +252,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
 </head>
 <body>
 
-<div class="hdr"><h1>HS WEB</h1><span>Web Agency</span></div>
+<div class="hdr"><h1>하온</h1><span>Web Agency</span></div>
 
 <div class="title">
   <h2>견 적 서</h2>
@@ -313,12 +313,12 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
 <div class="supplier">
   <h3>공 급 자</h3>
   <p>
-    <strong>상 호 :</strong> HS WEB / HARAM<br/>
+    <strong>상 호 :</strong> 하온 / HARAM<br/>
     <strong>대 표 :</strong> 심현수<br/>
     <strong>연락처 :</strong> 010-3319-2509
   </p>
 </div>
-<div class="footer">HS WEB &nbsp;|&nbsp; 본 견적서는 발행일로부터 30 일간 유효합니다.</div>
+<div class="footer">하온 &nbsp;|&nbsp; 본 견적서는 발행일로부터 30 일간 유효합니다.</div>
 
 <script>window.onload=function(){window.print();}<\/script>
 </body>
@@ -577,7 +577,7 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                     {/* Header */}
                     <div className="header-line" style={{ borderTop: "3px solid #1a1a1a", marginBottom: "6px" }} />
                     <div className="company" style={{ fontSize: "16px", fontWeight: 900 }}>
-                      HS WEB <span style={{ fontSize: "8px", fontWeight: 400, color: "#666", marginLeft: "6px" }}>Web Agency</span>
+                      하온 <span style={{ fontSize: "8px", fontWeight: 400, color: "#666", marginLeft: "6px" }}>Web Agency</span>
                     </div>
 
                     {/* Title */}
@@ -685,14 +685,14 @@ hr.div { border: none; border-top: 2px solid #1a1a1a; margin: 20px 0 16px; }
                     <div style={{ textAlign: "center", marginBottom: "20px" }}>
                       <div style={{ fontSize: "11px", fontWeight: 900, letterSpacing: "6px", marginBottom: "12px" }}>공 급 자</div>
                       <p style={{ fontSize: "8px", color: "#333", lineHeight: 2 }}>
-                        <strong>상 호 :</strong> HS WEB / HARAM<br />
+                        <strong>상 호 :</strong> 하온 / HARAM<br />
                         <strong>대 표 :</strong> 심현수<br />
                         <strong>연락처 :</strong> 010-3319-2509
                       </p>
                     </div>
                     <hr style={{ border: "none", borderTop: "1px solid #ddd", margin: "16px 0" }} />
                     <div style={{ textAlign: "center", fontSize: "6.5px", color: "#999" }}>
-                      HS WEB | 본 견적서는 발행일로부터 30 일간 유효합니다.
+                      하온 | 본 견적서는 발행일로부터 30 일간 유효합니다.
                     </div>
                   </div>
                 </div>

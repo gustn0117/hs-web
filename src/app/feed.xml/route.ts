@@ -3,7 +3,7 @@ import { getPortfolioItems } from "@/lib/portfolio";
 import { getPublishedPosts } from "@/lib/posts";
 
 const SITE_URL = "https://hsweb.pics";
-const SITE_NAME = "HS WEB";
+const SITE_NAME = "하온";
 
 interface FeedItem {
   title: string;
@@ -53,10 +53,10 @@ export async function GET() {
   const items: FeedItem[] = [
     ...postItems,
     {
-      title: "홈페이지 제작 전문 웹에이전시 HS WEB",
+      title: "웹·업무 시스템을 만드는 하온",
       link: SITE_URL,
       description:
-        "홈페이지 제작 전문 웹에이전시 HS WEB. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지.",
+        "웹·업무 시스템을 만드는 하온. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지.",
     },
     ...services.map((s) => ({
       title: `${s.title} - ${s.subtitle}`,
@@ -93,9 +93,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${SITE_NAME} - 홈페이지 제작 전문 웹에이전시</title>
+    <title>${SITE_NAME} - 웹·업무 시스템 제작</title>
     <link>${SITE_URL}</link>
-    <description>홈페이지 제작 전문 웹에이전시 HS WEB. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 기술 마케팅.</description>
+    <description>웹·업무 시스템을 만드는 하온. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 기술 마케팅.</description>
     <language>ko</language>
     <lastBuildDate>${now}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>

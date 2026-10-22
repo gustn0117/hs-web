@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "관리자 | HS WEB",
+  title: "관리자 | 하온",
   robots: { index: false, follow: false },
 };
 

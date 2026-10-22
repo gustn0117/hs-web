@@ -136,7 +136,7 @@ export default function AdminLoginPage() {
         {/* Top */}
         <div className="relative px-8 lg:px-12 pt-8 lg:pt-10 flex items-center justify-between gap-4">
           <Link href="/" className="inline-flex items-baseline gap-2 no-underline">
-            <span className="text-[20px] font-extrabold tracking-[-0.035em] text-white">HS WEB</span>
+            <span className="text-[20px] font-extrabold tracking-[-0.035em] text-white">하온</span>
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/50">Admin</span>
           </Link>
           <span className="hidden lg:inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-white/45 uppercase font-mono">
@@ -250,7 +250,7 @@ export default function AdminLoginPage() {
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline">Uptime <span className="text-emerald-300 font-bold tabular-nums">99.97%</span></span>
             <span className="text-white/20">·</span>
-            <span>© HS WEB</span>
+            <span>© 하온</span>
           </div>
         </div>
       </aside>
@@ -260,7 +260,7 @@ export default function AdminLoginPage() {
         <div className="w-full max-w-[420px]">
           <div className="mb-8 lg:hidden">
             <Link href="/" className="inline-flex items-baseline gap-2 no-underline">
-              <span className="text-[18px] font-extrabold tracking-[-0.035em] text-slate-900">HS WEB</span>
+              <span className="text-[18px] font-extrabold tracking-[-0.035em] text-slate-900">하온</span>
               <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-slate-400">Admin</span>
             </Link>
           </div>

@@ -11,7 +11,7 @@ export function ServiceFooter({ siteName, nav }: { siteName: string; nav: NavIte
         <div>
           <p className="text-[16px] font-extrabold tracking-[-0.035em] text-[var(--c-text)]">{siteName}</p>
           <p className="mt-3 text-[13px] text-[var(--c-sub)] leading-[1.9]">
-            HS WEB이 운영하는 서비스 전용 사이트입니다.
+            하온이 운영하는 서비스 전용 사이트입니다.
             <br />
             대표 심현수 · 평일 10:00 — 19:00
           </p>
@@ -40,7 +40,7 @@ export function ServiceFooter({ siteName, nav }: { siteName: string; nav: NavIte
         </div>
 
         <div>
-          <p className="text-[12px] font-bold text-[var(--c-sub-2)] tracking-wider">HS WEB</p>
+          <p className="text-[12px] font-bold text-[var(--c-sub-2)] tracking-wider">하온</p>
           <ul className="list-none m-0 p-0 mt-3">
             {[
               { href: "https://hsweb.pics", label: "본 사이트" },
@@ -63,7 +63,7 @@ export function ServiceFooter({ siteName, nav }: { siteName: string; nav: NavIte
 
       <div className="border-t border-[var(--c-line)]">
         <div className="max-w-[1280px] mx-auto px-5 py-4 flex flex-wrap items-center justify-between gap-3 text-[12px] text-[var(--c-sub-2)]">
-          <span>© {new Date().getFullYear()} HS WEB. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} 하온. All rights reserved.</span>
           <span className="flex items-center gap-4">
             <a
               href="https://hsweb.pics/terms"

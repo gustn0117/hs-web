@@ -4,7 +4,7 @@ import { PageShell, Section } from "@/components/PageShell";
 export const metadata: Metadata = {
   title: "홈페이지 진행 절차 — 정보 수집 · 초안 · 피드백 · 완료",
   description:
-    "HS WEB의 홈페이지 제작 진행 절차를 안내합니다. 필요한 정보를 제공받고, 그 정보를 바탕으로 초안을 제작해 보내드리며, 피드백 과정을 거쳐 최종 결과물로 완성합니다.",
+    "하온의 홈페이지 제작 진행 절차를 안내합니다. 필요한 정보를 제공받고, 그 정보를 바탕으로 초안을 제작해 보내드리며, 피드백 과정을 거쳐 최종 결과물로 완성합니다.",
   keywords: ["홈페이지 제작 절차", "홈페이지 진행 과정", "웹사이트 제작 순서", "홈페이지 피드백"],
   alternates: { canonical: "https://hsweb.pics/process" },
 };
@@ -132,7 +132,7 @@ export default function ProcessPage() {
       </Section>
 
       {/* Principle highlights */}
-      <Section overline="PRINCIPLES" title="프로젝트 운영 원칙" subtitle="HS WEB이 모든 프로젝트에 적용하는 3가지 약속입니다.">
+      <Section overline="PRINCIPLES" title="프로젝트 운영 원칙" subtitle="하온이 모든 프로젝트에 적용하는 3가지 약속입니다.">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             {

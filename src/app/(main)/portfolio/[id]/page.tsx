@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const url = `${SITE_URL}/portfolio/${item.seq}`;
   const description =
     item.description ||
-    `${item.client ? item.client + " · " : ""}${item.category || "홈페이지"} 제작 사례. 기획부터 디자인, 개발, 배포까지 HS WEB이 직접 진행했습니다.`;
+    `${item.client ? item.client + " · " : ""}${item.category || "홈페이지"} 제작 사례. 기획부터 디자인, 개발, 배포까지 하온이 직접 진행했습니다.`;
   // 같은 제목이 겹칠 수 있어(예: 아파트 분양 홈페이지 제작) 고객사명을 함께 넣어 구분한다.
   const client = item.client && item.client !== item.title ? `${item.client} · ` : "";
   const title = `${item.title} | ${client}${item.category || "홈페이지 제작"} 제작 사례`;
@@ -55,23 +55,23 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       "웹사이트 제작",
       "포트폴리오",
       ...(item.tags ?? []),
-      "HS WEB",
+      "하온",
     ].filter(Boolean) as string[],
     alternates: { canonical: url },
     openGraph: {
       type: "article",
-      title: `${item.title} | HS WEB 포트폴리오`,
+      title: `${item.title} | 하온 포트폴리오`,
       description,
       url,
-      siteName: "HS WEB",
+      siteName: "하온",
       locale: "ko_KR",
       images: item.thumbnail
         ? [{ url: item.thumbnail, alt: item.title }]
-        : [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HS WEB 포트폴리오" }],
+        : [{ url: "/opengraph-image", width: 1200, height: 630, alt: "하온 포트폴리오" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${item.title} | HS WEB`,
+      title: `${item.title} | 하온`,
       description,
       images: item.thumbnail ? [item.thumbnail] : ["/opengraph-image"],
     },
@@ -116,8 +116,8 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
         image: item.thumbnail || undefined,
         inLanguage: "ko-KR",
         genre: item.category || undefined,
-        creator: { "@type": "Organization", name: "HS WEB", url: SITE_URL },
-        provider: { "@type": "Organization", name: "HS WEB", url: SITE_URL },
+        creator: { "@type": "Organization", name: "하온", url: SITE_URL },
+        provider: { "@type": "Organization", name: "하온", url: SITE_URL },
         dateCreated: item.createdAt || undefined,
         dateModified: item.updatedAt || undefined,
         keywords: item.tags?.join(", ") || item.category || undefined,

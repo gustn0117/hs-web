@@ -162,7 +162,7 @@ export default function ContractsPage() {
   const [clientCompany, setClientCompany] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
-  const [supplierCompany, setSupplierCompany] = useState("HS WEB");
+  const [supplierCompany, setSupplierCompany] = useState("하온");
   const [supplierRepresentative, setSupplierRepresentative] = useState("심현수");
   const [projectName, setProjectName] = useState("");
   const [projectScope, setProjectScope] = useState("");
@@ -418,7 +418,7 @@ export default function ContractsPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold text-[var(--color-dark)]">수급인 정보 (을)</h3>
                 <button
-                  onClick={() => { setSupplierCompany("HS WEB"); setSupplierRepresentative("심현수"); }}
+                  onClick={() => { setSupplierCompany("하온"); setSupplierRepresentative("심현수"); }}
                   className="text-xs text-[var(--color-gray)] hover:text-[var(--color-dark)] cursor-pointer bg-transparent border-none"
                 >
                   기본값으로 되돌리기
@@ -427,14 +427,14 @@ export default function ContractsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-[var(--color-gray)] mb-1">회사/상호</label>
-                  <input value={supplierCompany} onChange={(e) => setSupplierCompany(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="HS WEB" />
+                  <input value={supplierCompany} onChange={(e) => setSupplierCompany(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="하온" />
                 </div>
                 <div>
                   <label className="block text-xs text-[var(--color-gray)] mb-1">대표</label>
                   <input value={supplierRepresentative} onChange={(e) => setSupplierRepresentative(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="심현수" />
                 </div>
               </div>
-              <p className="text-[11px] text-[var(--color-gray)] mt-2">계약서에 &ldquo;을&rdquo;로 표기됩니다. (기본값: HS WEB · 심현수)</p>
+              <p className="text-[11px] text-[var(--color-gray)] mt-2">계약서에 &ldquo;을&rdquo;로 표기됩니다. (기본값: 하온 · 심현수)</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -700,7 +700,7 @@ function buildContractHtml(c: Contract): string {
   const signedDate = c.signed_at ? new Date(c.signed_at) : new Date();
   const dateStr = `${signedDate.getFullYear()}년 ${signedDate.getMonth() + 1}월 ${signedDate.getDate()}일`;
   const filename = buildContractFilename(c);
-  const supCompany = c.supplier_company || "HS WEB";
+  const supCompany = c.supplier_company || "하온";
   const supRep = c.supplier_representative || "심현수";
 
   const paymentRows = (c.payment_terms || []).map((pt: PaymentTerm) =>
@@ -749,7 +749,7 @@ h2 { font-size: 11pt; margin: 16px 0 6px; }
   </span>
 </div>
 <div class="top-line" style="padding-top:6px;display:flex;justify-content:space-between;margin-bottom:4px">
-  <span style="font-size:8pt;color:#888">HS WEB · Web Agency</span>
+  <span style="font-size:8pt;color:#888">하온 · HAON Software Solutions</span>
   <span style="font-size:8pt;color:#888">${c.contract_number}</span>
 </div>
 <div style="text-align:center;margin:28px 0 20px">
@@ -818,7 +818,7 @@ ${specRows ? `
   <p>무결성 해시 (SHA-256): ${c.content_hash || "-"}</p>
 </div>
 
-<div class="footer">HS WEB | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
+<div class="footer">하온 | 본 계약서는 전자 서명을 통해 법적 효력을 가집니다.</div>
 
 
 </body></html>`;

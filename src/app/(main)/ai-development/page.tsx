@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "홈페이지·프로그램, AI로 만들면 되는 거 아닌가?",
     description: "AI는 개발을 빠르게 하지만, 안정적인 서비스에는 설계·검증·운영 역량이 필요합니다.",
     url: `${SITE_URL}/ai-development`,
-    siteName: "HS WEB 웹에이전시",
+    siteName: "하온 소프트웨어 솔루션",
     locale: "ko_KR",
     images: [{ url: `${SITE_URL}/insights/ai-development.webp`, alt: "AI와 웹 서비스 시스템 설계" }],
   },

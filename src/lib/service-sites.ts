@@ -39,7 +39,7 @@ export type ServiceSite = {
 export const SERVICE_SITES: ServiceSite[] = [
   {
     slug: "responsive-web",
-    siteName: "HS WEB 반응형 홈페이지",
+    siteName: "하온 반응형 홈페이지",
     titleLead: "반응형 홈페이지 제작",
     heroTitle: "어느 화면에서 봐도 제대로 보이는 홈페이지",
     heroLead:
@@ -180,7 +180,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "ecommerce",
-    siteName: "HS WEB 쇼핑몰 구축",
+    siteName: "하온 쇼핑몰 구축",
     titleLead: "쇼핑몰 제작",
     heroTitle: "수수료 없이 내 이름으로 파는 쇼핑몰",
     heroLead:
@@ -233,7 +233,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "landing-page",
-    siteName: "HS WEB 랜딩페이지",
+    siteName: "하온 랜딩페이지",
     titleLead: "랜딩페이지 제작",
     heroTitle: "광고비가 문의로 이어지는 한 장짜리 페이지",
     heroLead:
@@ -285,7 +285,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "web-app",
-    siteName: "HS WEB 웹 애플리케이션",
+    siteName: "하온 웹 애플리케이션",
     titleLead: "웹 애플리케이션 개발",
     heroTitle: "설치 없이 주소만 알면 쓰는 업무용 프로그램",
     heroLead:
@@ -338,7 +338,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "cms",
-    siteName: "HS WEB CMS 시스템",
+    siteName: "하온 CMS 시스템",
     titleLead: "맞춤 CMS 구축",
     heroTitle: "업체를 거치지 않고 직접 고치는 홈페이지",
     heroLead:
@@ -391,7 +391,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "enterprise",
-    siteName: "HS WEB 기업 관리 시스템",
+    siteName: "하온 기업 관리 시스템",
     titleLead: "기업 관리 시스템 개발",
     heroTitle: "우리 회사 방식 그대로 돌아가는 관리 시스템",
     heroLead:
@@ -444,7 +444,7 @@ export const SERVICE_SITES: ServiceSite[] = [
   },
   {
     slug: "marketing",
-    siteName: "HS WEB 기술 마케팅",
+    siteName: "하온 기술 마케팅",
     titleLead: "검색엔진 최적화(SEO) 대행",
     heroTitle: "만든 홈페이지가 검색에 나오게 하는 일",
     heroLead:
@@ -483,7 +483,7 @@ export const SERVICE_SITES: ServiceSite[] = [
       },
     ],
     priceNote:
-      "플랫폼당 50,000원의 별도 옵션으로 진행합니다. HS WEB에서 제작한 홈페이지는 코드 안쪽 작업이 기본으로 들어가 있습니다.",
+      "플랫폼당 50,000원의 별도 옵션으로 진행합니다. 하온에서 제작한 홈페이지는 코드 안쪽 작업이 기본으로 들어가 있습니다.",
     extraFaqs: [
       {
         q: "얼마나 걸리나요?",

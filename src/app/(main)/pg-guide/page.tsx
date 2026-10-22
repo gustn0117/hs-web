@@ -5,7 +5,7 @@ import { PageShell, Section } from "@/components/PageShell";
 export const metadata: Metadata = {
   title: "PG(전자결제) 연동 안내",
   description:
-    "HS WEB의 PG(전자결제) 연동 작업 범위 안내. KG이니시스·토스페이먼츠·나이스페이먼츠·카카오페이·포트원 등 국내 주요 PG 연동은 기술적으로 모두 지원합니다. 사업자 등록·통신판매업 신고·PG 심사 등 법적 요건은 고객이 직접 진행하셔야 합니다.",
+    "하온의 PG(전자결제) 연동 작업 범위 안내. KG이니시스·토스페이먼츠·나이스페이먼츠·카카오페이·포트원 등 국내 주요 PG 연동은 기술적으로 모두 지원합니다. 사업자 등록·통신판매업 신고·PG 심사 등 법적 요건은 고객이 직접 진행하셔야 합니다.",
   keywords: [
     "PG 연동",
     "전자결제",
@@ -53,12 +53,12 @@ const CLIENT_TODOS = [
     n: "04",
     t: "PG사 계약 · 심사 통과",
     d: "각 PG사가 요구하는 서류(사업자등록증·통장사본·대표자 신분증·홈페이지 등)를 제출하고 심사를 통과하셔야 결제 키(MID/키값)가 발급됩니다.",
-    tip: "심사는 PG사 담당자가 직접 진행합니다. HS WEB이 대행하거나 통과를 보장할 수 없습니다.",
+    tip: "심사는 PG사 담당자가 직접 진행합니다. 하온이 대행하거나 통과를 보장할 수 없습니다.",
   },
   {
     n: "05",
     t: "홈페이지 필수 표시",
-    d: "PG 심사와 법적 요건을 위해 반드시 표기되어야 하는 항목들입니다. HS WEB에서 페이지 자체는 만들어 드리지만, 문구·정책 내용은 사업자님이 결정·검토해 주셔야 합니다.",
+    d: "PG 심사와 법적 요건을 위해 반드시 표기되어야 하는 항목들입니다. 하온에서 페이지 자체는 만들어 드리지만, 문구·정책 내용은 사업자님이 결정·검토해 주셔야 합니다.",
     tip: "사업자정보 · 이용약관 · 개인정보처리방침 · 환불/취소 정책 · 통신판매업 신고번호 · 대표자 · 소재지 · 연락처",
   },
 ];
@@ -89,11 +89,11 @@ const FAQS = [
   },
   {
     q: "정기결제(구독)도 지원하나요?",
-    a: "네, 지원합니다. 다만 정기결제는 PG사마다 별도 계약 · 별도 심사가 필요한 경우가 대부분입니다. 일반 결제 심사와 별개로 진행되므로 오픈 일정 산정 시 반영해 주세요. HS WEB에서는 빌링키 발급 · 결제 재시도 · 결제 실패 알림까지 코드로 구현해 드립니다.",
+    a: "네, 지원합니다. 다만 정기결제는 PG사마다 별도 계약 · 별도 심사가 필요한 경우가 대부분입니다. 일반 결제 심사와 별개로 진행되므로 오픈 일정 산정 시 반영해 주세요. 하온에서는 빌링키 발급 · 결제 재시도 · 결제 실패 알림까지 코드로 구현해 드립니다.",
   },
   {
     q: "수수료는 얼마나 되나요?",
-    a: "PG · 카드사 · 사업 유형에 따라 다르지만 카드결제 기준 대략 2.5% ~ 3.5% 사이가 일반적입니다. 매출이 커지면 협상으로 낮출 수 있습니다. HS WEB은 개발사이므로 수수료 자체를 조정해 드릴 수는 없고, 매출 규모와 카테고리 기준으로 어떤 PG가 유리한지 안내드립니다.",
+    a: "PG · 카드사 · 사업 유형에 따라 다르지만 카드결제 기준 대략 2.5% ~ 3.5% 사이가 일반적입니다. 매출이 커지면 협상으로 낮출 수 있습니다. 하온은 개발사이므로 수수료 자체를 조정해 드릴 수는 없고, 매출 규모와 카테고리 기준으로 어떤 PG가 유리한지 안내드립니다.",
   },
   {
     q: "결제 실패나 환불 처리는 어떻게 되나요?",
@@ -126,11 +126,11 @@ export default function PgGuidePage() {
         subtitle="이 구분은 어느 개발사를 가더라도 동일합니다. PG 심사는 사업 실체 확인 절차라서 대행이 불가능합니다."
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* HS WEB — dark card */}
+          {/* 하온 — dark card */}
           <div className="p-6 md:p-8 rounded-[16px] border-2 border-[var(--c-text)] bg-[var(--c-text)] text-white">
             <div className="flex items-baseline justify-between mb-5 gap-3">
               <div>
-                <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/60 mb-2">HS WEB</p>
+                <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/60 mb-2">하온</p>
                 <h3 className="text-[20px] font-bold tracking-tight">기술 연동은 전부 처리</h3>
               </div>
               <span className="inline-flex items-center h-[24px] px-3 rounded-full bg-white/10 text-white/80 text-[11px] font-bold tracking-wider border border-white/15">
