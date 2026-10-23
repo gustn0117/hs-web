@@ -3,6 +3,9 @@ import { services } from "@/lib/services";
 import { getPortfolioItems } from "@/lib/portfolio";
 import { getPublishedPosts } from "@/lib/posts";
 
+// 포트폴리오·글이 늘어나면 다음 갱신 때 사이트맵에 들어간다.
+export const revalidate = 1800;
+
 const SITE_URL = "https://hsweb.pics";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
