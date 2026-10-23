@@ -14,7 +14,7 @@ type Slide = {
   secondary?: { href: string; text: string };
   /** 배경 이미지. 비어 있으면 빗금 자리표시자가 대신 들어간다. */
   image: string;
-  /** 밝은 배경에서는 어두운 문구와 버튼을 사용한다. */
+  /** 밝은 배경에서는 사진의 먹색에 글자를 맞추고, 상담 버튼만 상호 색으로 남긴다. */
   tone?: "light";
   /** 이미지를 어느 지점 기준으로 자를지 */
   position?: string;
@@ -104,7 +104,7 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
             <div
               key={slide.key}
               aria-hidden={i !== index}
-              className={`relative w-full shrink-0 flex items-center ${isLight ? "bg-[#f3f3f1] text-[#0a2a5e]" : ""}`}
+              className={`relative w-full shrink-0 flex items-center ${isLight ? "bg-[#f3f3f1] text-[#0d0d0f]" : ""}`}
             >
               {slide.image ? (
                 <div
@@ -160,7 +160,7 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
                   <Heading className={`text-[38px] font-extrabold leading-[1.15] tracking-[-0.035em] ${isLight ? "md:text-[54px] lg:text-[64px]" : "md:text-[64px]"}`}>
                     {slide.title}
                   </Heading>
-                  <p className={`mt-5 text-[15px] md:text-[18px] leading-[1.7] ${isLight ? "text-slate-600" : "text-white/75"}`}>
+                  <p className={`mt-5 text-[15px] md:text-[18px] leading-[1.7] ${isLight ? "text-[#38383d]" : "text-white/75"}`}>
                     {slide.description}
                   </p>
 
@@ -176,7 +176,7 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
                       <Link
                         href={slide.secondary.href}
                         tabIndex={i === index ? undefined : -1}
-                        className={`inline-flex items-center justify-center h-[52px] px-7 border text-[15px] font-bold no-underline transition-colors ${isLight ? "border-[#0a2a5e]/25 text-[#0a2a5e] hover:bg-white/50" : "border-white/40 text-white hover:bg-white/10"}`}
+                        className={`inline-flex items-center justify-center h-[52px] px-7 border text-[15px] font-bold no-underline transition-colors ${isLight ? "border-[#0d0d0f]/20 text-[#0d0d0f] hover:bg-white/50" : "border-white/40 text-white hover:bg-white/10"}`}
                       >
                         {slide.secondary.text}
                       </Link>
@@ -195,8 +195,8 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
                           aria-current={n === index}
                           className={`h-[3px] cursor-pointer border-0 p-0 transition-all duration-300 ${
                             n === index
-                              ? `w-10 ${isLight ? "bg-[#0a2a5e]" : "bg-white"}`
-                              : `w-5 ${isLight ? "bg-[#0a2a5e]/25 hover:bg-[#0a2a5e]/50" : "bg-white/35 hover:bg-white/60"}`
+                              ? `w-10 ${isLight ? "bg-[#0d0d0f]" : "bg-white"}`
+                              : `w-5 ${isLight ? "bg-[#0d0d0f]/25 hover:bg-[#0d0d0f]/50" : "bg-white/35 hover:bg-white/60"}`
                           }`}
                         />
                       ))}
