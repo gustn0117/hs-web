@@ -15,3 +15,210 @@
     mask-composite: intersect;
   }
 }
+
+.editorialSlide {
+  background: #f5f2ea;
+  color: #1b1b18;
+}
+
+.editorialCopy {
+  padding-top: 3.5rem;
+  padding-bottom: calc(min(100vw - 40px, 580px) + 110px);
+  pointer-events: none;
+}
+
+.editorialCopy a,
+.editorialCopy button {
+  pointer-events: auto;
+}
+
+.editorialArt {
+  position: absolute;
+  right: 20px;
+  bottom: 104px;
+  left: 20px;
+  width: calc(100% - 40px);
+  max-width: 580px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+  isolation: isolate;
+}
+
+.paperGrid {
+  position: absolute;
+  inset: 9% 5% 7% 9%;
+  z-index: -1;
+  border: 1px solid #d4cfc3;
+  background-color: #ebe7dc;
+  background-image:
+    linear-gradient(#d4cfc370 1px, transparent 1px),
+    linear-gradient(90deg, #d4cfc370 1px, transparent 1px);
+  background-size: 36px 36px;
+  transform: rotate(7deg);
+}
+
+.artHeading {
+  position: absolute;
+  inset: 0 1% auto 3%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #1b1b1830;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(6px, 0.8vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #666354;
+}
+
+.workCard {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  border: 1px solid #25251f30;
+  background: #fffefa;
+  color: #1b1b18;
+  text-decoration: none;
+  box-shadow: 0 12px 26px -12px #24231940;
+  transition: translate 200ms ease, box-shadow 200ms ease;
+}
+
+.workCard:hover,
+.workCard:focus-visible {
+  z-index: 6;
+  translate: 0 -6px;
+  box-shadow: 0 18px 34px -10px #24231950;
+}
+
+.workCard:focus-visible {
+  outline: 2px solid #d7502a;
+  outline-offset: 4px;
+}
+
+.brand {
+  top: 9%;
+  left: 3%;
+  z-index: 1;
+  width: 84%;
+  transform: rotate(-6deg);
+}
+
+.system {
+  top: 36%;
+  right: 0;
+  z-index: 2;
+  width: 72%;
+  transform: rotate(5deg);
+}
+
+.commerce {
+  top: 54%;
+  left: 0;
+  z-index: 3;
+  width: 58%;
+  transform: rotate(-5deg);
+}
+
+.browserBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: clamp(17px, 2.3vw, 25px);
+  padding-inline: 10px;
+  border-bottom: 1px solid #25251f20;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(6px, 0.7vw, 9px);
+  color: #817d70;
+}
+
+.browserDots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.browserDots i {
+  width: 4px;
+  height: 4px;
+  border: 1px solid #aba79a;
+  border-radius: 50%;
+}
+
+.captureViewport {
+  position: relative;
+  aspect-ratio: 2.05;
+  overflow: hidden;
+  background: white;
+}
+
+/* 포트폴리오 원본의 모니터 안 화면만 보여준다. 원본 픽셀은 유지한다. */
+.projectCapture {
+  position: absolute;
+  top: -30%;
+  left: -10.5%;
+  width: 120%;
+  max-width: none;
+  height: auto;
+}
+
+.workCaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: clamp(7px, 1vw, 12px) 12px;
+  border-top: 1px solid #25251f18;
+  font-family: ui-monospace, monospace;
+  font-size: clamp(8px, 1vw, 11px);
+  color: #8d8879;
+}
+
+.workCaption strong {
+  margin-left: 8px;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+  font-weight: 600;
+  color: #27271f;
+}
+
+.editorialSeal {
+  position: absolute;
+  top: 4%;
+  right: -1%;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 16%;
+  aspect-ratio: 1;
+  border: 1px solid #b63d20;
+  border-radius: 50%;
+  background: #e3663d;
+  color: #fff9ed;
+  font-family: Arial, sans-serif;
+  font-size: clamp(28px, 4.4vw, 55px);
+  line-height: 1;
+  transform: rotate(8deg);
+}
+
+@media (min-width: 768px) {
+  .editorialCopy {
+    padding-top: 6rem;
+    padding-bottom: 11rem;
+  }
+
+  .editorialArt {
+    top: 50%;
+    right: max(20px, calc((100vw - 1240px) / 2));
+    bottom: auto;
+    left: auto;
+    width: clamp(340px, 44vw, 580px);
+    margin: 0;
+    transform: translateY(-58%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workCard {
+    transition: none;
+  }
+}
