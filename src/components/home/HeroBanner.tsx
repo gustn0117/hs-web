@@ -35,7 +35,7 @@ const SLIDES: Slide[] = [
       "쓰임에 맞는 웹 솔루션을 설계하고 만듭니다. 쇼핑몰, 랜딩페이지, CRM, 관리자 시스템.",
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
-    image: "/home-hero-haon-studio.webp",
+    image: "/home-hero-haon-studio-hq.webp",
     logo: true,
     tone: "light",
     position: "object-right md:object-center",
@@ -115,6 +115,7 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
                     alt=""
                     fill
                     priority={i === 0}
+                    quality={isLight ? 95 : 75}
                     sizes={isLight ? "(max-width: 767px) 680px, 100vw" : "100vw"}
                     className={`object-cover ${slide.position ?? ""}`}
                   />
