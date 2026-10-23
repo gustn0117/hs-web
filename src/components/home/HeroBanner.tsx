@@ -35,10 +35,10 @@ const SLIDES: Slide[] = [
       "쓰임에 맞는 웹 솔루션을 설계하고 만듭니다. 쇼핑몰, 랜딩페이지, CRM, 관리자 시스템.",
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
-    image: "/home-hero-device-mockup.webp",
+    image: "/home-hero-haon-studio.webp",
     logo: true,
     tone: "light",
-    position: "object-right",
+    position: "object-right md:object-center",
     overlay: "none",
   },
   {
@@ -104,19 +104,19 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
             <div
               key={slide.key}
               aria-hidden={i !== index}
-              className={`relative w-full shrink-0 flex items-center ${isLight ? "bg-[#eef1f5] text-[#0a2a5e]" : ""}`}
+              className={`relative w-full shrink-0 flex items-center ${isLight ? "bg-[#f3f3f1] text-[#0a2a5e]" : ""}`}
             >
               {slide.image ? (
                 <div
-                  className={`absolute ${isLight ? `inset-x-0 bottom-0 h-[280px] md:inset-x-auto md:right-0 md:top-1/2 md:bottom-auto md:w-[85%] md:max-w-[1800px] md:h-auto md:aspect-[1942/809] md:-translate-y-1/2 ${styles.mockupBlend}` : "inset-0"}`}
+                  className={`absolute ${isLight ? `inset-x-0 bottom-0 h-[340px] md:top-1/2 md:bottom-auto md:h-auto md:aspect-[2/1] md:-translate-y-1/2 xl:inset-0 xl:aspect-auto xl:translate-y-0 ${styles.brandScene}` : "inset-0"}`}
                 >
                   <Image
                     src={slide.image}
                     alt=""
                     fill
                     priority={i === 0}
-                    sizes={isLight ? "(max-width: 767px) 800px, (max-width: 1632px) 1632px, 100vw" : "100vw"}
-                    className={`object-cover ${isLight ? "md:object-contain" : ""} ${slide.position ?? ""}`}
+                    sizes={isLight ? "(max-width: 767px) 680px, 100vw" : "100vw"}
+                    className={`object-cover ${slide.position ?? ""}`}
                   />
                 </div>
               ) : (
