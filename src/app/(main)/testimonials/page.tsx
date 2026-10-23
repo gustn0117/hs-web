@@ -71,19 +71,6 @@ export default function TestimonialsPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <Section overline="REVIEWS" title="전체 후기">
-        <p className="mb-7 text-[13.5px] text-[var(--c-sub)] leading-[1.8]">
-          크몽 구매 후기를 그대로 가져왔습니다. 작성자 이름은 크몽에서 가린 형태 그대로이고, 내용은
-          한 글자도 고치지 않았습니다.{" "}
-          <a
-            href="https://kmong.com/gig/688507#gig-rate-evaluation"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[var(--c-main)] font-semibold underline underline-offset-2"
-          >
-            크몽에서 원문 보기
-          </a>
-        </p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {REVIEWS.map((r) => (
             <div
