@@ -89,8 +89,6 @@ export default async function Home() {
           </p>
           <p className="mt-5 text-[15px] md:text-[17px] text-[var(--c-sub)] leading-[1.85]">
             홈페이지, 쇼핑몰, 업무 시스템, 자동화까지 필요한 만큼 설계하고 만듭니다.
-            <br className="hidden md:block" />
-            디자이너이자 개발자인 대표가 처음부터 끝까지 직접 맡습니다.
           </p>
         </div>
       </section>
