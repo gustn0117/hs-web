@@ -38,10 +38,11 @@ const SLIDES: Slide[] = [
       "홈페이지 제작부터 쇼핑몰, 랜딩페이지, CRM, 관리자 시스템까지 직접 설계하고 만듭니다.",
     primary: { href: "/contact", text: "상담 신청" },
     secondary: { href: "/portfolio", text: "제작 사례 보기" },
-    image: "",
+    image: "/home-hero-haon-studio-hq.webp",
     logo: true,
     tone: "light",
-    layout: "editorial",
+    layout: "split",
+    position: "object-right md:object-center",
     overlay: "none",
   },
   {
