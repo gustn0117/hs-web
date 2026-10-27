@@ -46,10 +46,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/favicon.ico?v=2", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico?v=3", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/icon.png?v=3", sizes: "32x32", type: "image/png" },
     ],
-    shortcut: "/favicon.ico?v=2",
-    apple: "/apple-icon?v=2",
+    shortcut: "/favicon.ico?v=3",
+    // app/apple-icon.png 은 확장자까지 붙은 주소로 서비스된다. /apple-icon 은 404다.
+    apple: "/apple-icon.png?v=3",
   },
   alternates: {
     canonical: SITE_URL,
