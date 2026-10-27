@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
         destination: "https://hsweb.pics/:path*",
         permanent: true,
       },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.haonlabs.com" }],
+        destination: "https://haonlabs.com/:path*",
+        permanent: true,
+      },
     ];
   },
 };
