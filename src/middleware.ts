@@ -1,36 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/** 서비스별 전용 사이트. 예) marketing.hsweb.pics → /s/marketing */
-const SERVICE_HOSTS = new Set([
-  "responsive-web",
-  "ecommerce",
-  "landing-page",
-  "web-app",
-  "cms",
-  "enterprise",
-  "marketing",
-]);
-
-function serviceSlugOf(request: NextRequest) {
-  const host = (request.headers.get("host") ?? "").split(":")[0].toLowerCase();
-  if (!host.endsWith(".hsweb.pics")) return null;
-  const sub = host.slice(0, -".hsweb.pics".length);
-  return SERVICE_HOSTS.has(sub) ? sub : null;
-}
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  const serviceSlug = serviceSlugOf(request);
-  if (serviceSlug && !pathname.startsWith("/s/")) {
-    // 이미지·폰트 같은 파일은 본 사이트와 같은 경로에서 그대로 내려준다.
-    const isMeta = pathname === "/sitemap.xml" || pathname === "/robots.txt";
-    if (!pathname.includes(".") || isMeta) {
-      const url = request.nextUrl.clone();
-      url.pathname = `/s/${serviceSlug}${pathname === "/" ? "" : pathname}`;
-      return NextResponse.rewrite(url);
-    }
-  }
 
   // Admin routes protection
   if (pathname.startsWith("/admin") && pathname !== "/admin") {

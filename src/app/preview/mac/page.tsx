@@ -45,13 +45,13 @@ function Window({
 }
 
 const DOCK = [
-  { label: "홈페이지", href: "https://responsive-web.hsweb.pics", bg: "linear-gradient(180deg,#19b8f0,#1762e2)" },
-  { label: "쇼핑몰", href: "https://ecommerce.hsweb.pics", bg: "linear-gradient(180deg,#f7b733,#e8890c)" },
-  { label: "랜딩", href: "https://landing-page.hsweb.pics", bg: "linear-gradient(180deg,#f46b6b,#d6294e)" },
-  { label: "웹 앱", href: "https://web-app.hsweb.pics", bg: "linear-gradient(180deg,#8f7bf5,#5b3fd4)" },
-  { label: "CMS", href: "https://cms.hsweb.pics", bg: "linear-gradient(180deg,#4fd08a,#1f9e5e)" },
-  { label: "관리", href: "https://enterprise.hsweb.pics", bg: "linear-gradient(180deg,#6d7a8c,#3d4756)" },
-  { label: "마케팅", href: "https://marketing.hsweb.pics", bg: "linear-gradient(180deg,#f58fc2,#c03b86)" },
+  { label: "홈페이지", href: "/services/responsive-web", bg: "linear-gradient(180deg,#19b8f0,#1762e2)" },
+  { label: "쇼핑몰", href: "/services/ecommerce", bg: "linear-gradient(180deg,#f7b733,#e8890c)" },
+  { label: "랜딩", href: "/services/landing-page", bg: "linear-gradient(180deg,#f46b6b,#d6294e)" },
+  { label: "웹 앱", href: "/services/web-app", bg: "linear-gradient(180deg,#8f7bf5,#5b3fd4)" },
+  { label: "CMS", href: "/services/cms", bg: "linear-gradient(180deg,#4fd08a,#1f9e5e)" },
+  { label: "관리", href: "/services/enterprise", bg: "linear-gradient(180deg,#6d7a8c,#3d4756)" },
+  { label: "마케팅", href: "/services/marketing", bg: "linear-gradient(180deg,#f58fc2,#c03b86)" },
   { label: "문의", href: "/contact", bg: "linear-gradient(180deg,#2b2f38,#12151b)" },
 ];
 
