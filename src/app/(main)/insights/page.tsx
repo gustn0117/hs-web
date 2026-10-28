@@ -5,8 +5,7 @@ import ThumbPlaceholder from "@/components/ThumbPlaceholder";
 import { getPublishedPosts } from "@/lib/posts";
 import { GUIDES } from "@/lib/guides";
 import { PageShell } from "@/components/PageShell";
-
-const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 

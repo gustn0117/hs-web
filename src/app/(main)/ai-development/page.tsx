@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { PageShell, Section } from "@/components/PageShell";
-
-const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "홈페이지·프로그램, AI로 만들면 되는 거 아닌가?",

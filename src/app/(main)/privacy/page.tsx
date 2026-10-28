@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { PageShell, Section } from "@/components/PageShell";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
   description: "하온의 개인정보 수집, 이용, 보호에 관한 방침입니다.",
-  alternates: { canonical: "https://hsweb.pics/privacy" },
+  alternates: { canonical: abs("/privacy") },
 };
 
 interface Subsection { subtitle: string; items: string[]; }

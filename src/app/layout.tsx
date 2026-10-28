@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DISPLAY_NAME,
+  DEFAULT_DESCRIPTION,
+  NAVER_SITE_VERIFICATION,
+} from "@/lib/site";
 
 const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
 });
-
-const SITE_URL = "https://hsweb.pics";
-const SITE_NAME = "하온";
-/** 검색 결과에 표시되는 사이트 이름. 구글은 WebSite 구조화 데이터와 og:site_name을 본다. */
-const SITE_DISPLAY_NAME = "하온 소프트웨어 솔루션";
-const DEFAULT_DESCRIPTION =
-  "웹·업무 시스템을 만드는 하온. 반응형 웹디자인, 쇼핑몰 구축, 랜딩페이지, 웹 애플리케이션 개발까지. 합리적인 가격과 무료 유지보수로 비즈니스 성장에 필요한 모든 웹 솔루션을 제공합니다.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -38,7 +38,14 @@ export const metadata: Metadata = {
     "모바일 웹사이트",
     "SEO 최적화",
     "기술 마케팅",
+    "업무 시스템 개발",
+    "CRM 구축",
+    "ERP 개발",
+    "홈페이지 제작 추천",
+    "소상공인 홈페이지",
     "하온",
+    "하온랩스",
+    "haonlabs",
   ],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
@@ -102,7 +109,8 @@ export const metadata: Metadata = {
   },
   verification: {
     other: {
-      "naver-site-verification": ["9e9ba54205fecadd9d81829473d63ad96fbf0fef"],
+      // 도메인마다 코드가 다르다. 여러 개가 나가도 네이버는 자기 코드만 찾는다.
+      "naver-site-verification": NAVER_SITE_VERIFICATION,
     },
   },
 };

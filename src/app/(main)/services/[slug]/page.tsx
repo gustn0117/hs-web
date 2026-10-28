@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug, getAllServiceSlugs, services } from "@/lib/services";
 import ServiceDetailClient from "./ServiceDetailClient";
-
-const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
 
 // SEO keyword map per service slug
 const SEO_KEYWORDS: Record<string, string[]> = {

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { PageShell, Section } from "@/components/PageShell";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "홈페이지 진행 절차 — 정보 수집 · 초안 · 피드백 · 완료",
   description:
     "하온의 홈페이지 제작 진행 절차를 안내합니다. 필요한 정보를 제공받고, 그 정보를 바탕으로 초안을 제작해 보내드리며, 피드백 과정을 거쳐 최종 결과물로 완성합니다.",
   keywords: ["홈페이지 제작 절차", "홈페이지 진행 과정", "웹사이트 제작 순서", "홈페이지 피드백"],
-  alternates: { canonical: "https://hsweb.pics/process" },
+  alternates: { canonical: abs("/process") },
 };
 
 const steps = [

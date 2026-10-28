@@ -107,7 +107,7 @@ export default async function Image() {
               fontWeight: 600,
             }}
           >
-            hsweb.pics
+            haonlabs.com
           </div>
         </div>
       </div>

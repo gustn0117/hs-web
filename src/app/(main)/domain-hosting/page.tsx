@@ -7,11 +7,31 @@ import {
   NetworkFlow,
   ServerStack3D,
 } from "./Illustrations";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "도메인 & 호스팅이란?",
-  description: "도메인과 호스팅이 무엇인지, 웹사이트 유지에 왜 필요한지 쉽고 자세하게 설명합니다.",
-  alternates: { canonical: "https://hsweb.pics/domain-hosting" },
+  title: "도메인·호스팅이란? 차이와 비용까지 쉽게 정리",
+  description:
+    "도메인과 호스팅이 무엇이고 어떻게 다른지, 홈페이지를 유지하려면 왜 둘 다 필요한지, 연간 비용은 얼마나 드는지 그림으로 쉽게 설명합니다.",
+  keywords: [
+    "도메인이란",
+    "호스팅이란",
+    "도메인 호스팅 차이",
+    "웹호스팅",
+    "도메인 비용",
+    "호스팅 비용",
+    "도메인 구매",
+    "서버 호스팅",
+  ],
+  alternates: { canonical: abs("/domain-hosting") },
+  openGraph: {
+    type: "article",
+    title: "도메인·호스팅이란? 차이와 비용까지 쉽게 정리",
+    description: "도메인과 호스팅의 차이, 홈페이지 유지에 왜 둘 다 필요한지 쉽게 설명합니다.",
+    url: abs("/domain-hosting"),
+    siteName: "하온 소프트웨어 솔루션",
+    locale: "ko_KR",
+  },
 };
 
 export default function DomainHostingPage() {
@@ -41,7 +61,7 @@ export default function DomainHostingPage() {
               <h3 className="text-[24px] md:text-[28px] font-bold tracking-tight mb-3">도메인 = 집 주소</h3>
               <p className="text-[14px] text-[var(--c-text-2)] leading-[1.7] mb-6">
                 사람이 기억할 수 있는 웹사이트 이름. <br />
-                <span className="tnum font-semibold text-[var(--c-text)]">hsweb.pics</span>{" "}
+                <span className="tnum font-semibold text-[var(--c-text)]">haonlabs.com</span>{" "}
                 처럼 브라우저 주소창에 입력하는 문자.
               </p>
 
@@ -134,7 +154,7 @@ export default function DomainHostingPage() {
           {/* Step cards — always visible, 1 col mobile / 4 cols desktop, titles align with SVG icons */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             {[
-              { t: "브라우저", d: "주소창에 hsweb.pics 입력" },
+              { t: "브라우저", d: "주소창에 haonlabs.com 입력" },
               { t: "DNS", d: "도메인을 IP 주소로 변환" },
               { t: "호스팅 서버", d: "사이트 파일 전송" },
               { t: "사이트 표시", d: "브라우저가 화면에 렌더" },

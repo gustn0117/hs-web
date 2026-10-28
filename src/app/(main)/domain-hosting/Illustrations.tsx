@@ -82,7 +82,7 @@ export function DomainIllustration() {
         <rect x="0" y="0" width="200" height="38" rx="9" fill="url(#dom-card)" stroke="#dde2ea" strokeWidth="1" />
         <circle cx="16" cy="19" r="4" fill="#28c840" />
         <text x="30" y="24" fontFamily="ui-monospace, Consolas, monospace" fontSize="14" fontWeight="600" fill="#0a2a5e">
-          https://hsweb.pics
+          https://haonlabs.com
         </text>
       </g>
 

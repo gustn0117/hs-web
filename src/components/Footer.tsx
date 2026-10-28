@@ -56,7 +56,7 @@ export default function Footer() {
               <dt className="text-[var(--c-sub)]">운영</dt>
               <dd className="text-[var(--c-text-2)] font-medium">평일 10:00 — 19:00</dd>
               <dt className="text-[var(--c-sub)]">사이트</dt>
-              <dd className="text-[var(--c-text-2)] font-medium tnum">hsweb.pics</dd>
+              <dd className="text-[var(--c-text-2)] font-medium tnum">haonlabs.com</dd>
             </dl>
 
             {/* Quick badges */}

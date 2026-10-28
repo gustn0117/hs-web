@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getPortfolioItem, getPortfolioItemBySeq, getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 import PortfolioDetailClient from "./PortfolioDetailClient";
-
-const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 

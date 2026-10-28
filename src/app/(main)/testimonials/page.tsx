@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { PageShell, Section } from "@/components/PageShell";
 import { REVIEWS, REVIEW_COUNT, REVIEW_AVERAGE } from "@/lib/reviews";
+import { SITE_URL, abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "고객 후기 - 홈페이지 제작 만족도 후기",
   description: `크몽에 올라온 실제 구매 후기 ${REVIEW_COUNT}건. 평균 별점 ${REVIEW_AVERAGE} / 5.0. 하온에 홈페이지를 맡긴 분들이 남긴 글을 그대로 옮겼습니다.`,
   keywords: ["홈페이지 제작 후기", "웹사이트 제작 후기", "크몽 후기", "하온 후기"],
-  alternates: { canonical: "https://hsweb.pics/testimonials" },
+  alternates: { canonical: abs("/testimonials") },
 };
 
-const SITE_URL = "https://hsweb.pics";
 
 /** 2026-09-29 → 2026.09 */
 function fmtMonth(iso: string) {

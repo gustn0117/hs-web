@@ -3,10 +3,12 @@
  * 네이버는 2023년 7월부터 지원하며, 같은 요청이 빙에도 전달된다.
  * 구글은 IndexNow를 지원하지 않아 사이트맵 방식을 그대로 쓴다.
  *
- * 소유권 증명: https://hsweb.pics/${INDEXNOW_KEY}.txt 에 키와 같은 값이 들어 있어야 한다.
+ * 소유권 증명: ${SITE_URL}/${INDEXNOW_KEY}.txt 에 키와 같은 값이 들어 있어야 한다.
  */
 
-export const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
+
+export { SITE_URL };
 export const INDEXNOW_KEY = process.env.INDEXNOW_KEY || "a4bf141d931bbc0c3ccf2f27200b6601";
 
 const ENDPOINTS = [

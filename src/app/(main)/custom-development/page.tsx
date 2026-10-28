@@ -7,6 +7,7 @@ import {
   ScalesIllustration,
   OwnershipKey,
 } from "./Illustrations";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "자체 개발 vs 플랫폼 - 왜 직접 코딩으로 만드는가",
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     "맞춤형 웹사이트",
     "노코드 vs 코딩",
   ],
-  alternates: { canonical: "https://hsweb.pics/custom-development" },
+  alternates: { canonical: abs("/custom-development") },
 };
 
 export default function CustomDevelopmentPage() {

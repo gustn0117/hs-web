@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell, Section } from "@/components/PageShell";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "PG(전자결제) 연동 안내",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     "통신판매업 신고",
     "정보통신사업자",
   ],
-  alternates: { canonical: "https://hsweb.pics/pg-guide" },
+  alternates: { canonical: abs("/pg-guide") },
 };
 
 const PROVIDERS = [

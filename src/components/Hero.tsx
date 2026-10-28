@@ -125,7 +125,7 @@ export default function Hero() {
                 <div className="w-3 h-3 rounded-full bg-green-400" />
                 <div className="flex-1 ml-3 bg-white px-3 py-1 rounded-md text-[var(--color-gray-light)] text-[0.75rem] font-mono border border-gray-100 flex items-center gap-1.5">
                   <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-                  hsweb.pics
+                  haonlabs.com
                 </div>
               </div>
               {/* Browser content */}

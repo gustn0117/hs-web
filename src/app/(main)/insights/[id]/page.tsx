@@ -3,8 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostBySeq, getPublishedPosts, Post } from "@/lib/posts";
 import { Breadcrumb } from "@/components/PageShell";
-
-const SITE_URL = "https://hsweb.pics";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 

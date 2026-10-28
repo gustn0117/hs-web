@@ -1,15 +1,14 @@
 import { services } from "@/lib/services";
 import { getPortfolioItems } from "@/lib/portfolio";
 import { getPublishedPosts } from "@/lib/posts";
-
-const SITE_URL = "https://hsweb.pics";
-const SITE_NAME = "하온";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 interface FeedItem {
   title: string;
   link: string;
   description: string;
   pubDate?: string;
+  category?: string;
 }
 
 export const revalidate = 600;
@@ -29,6 +28,7 @@ export async function GET() {
         link: `${SITE_URL}/portfolio/${i.seq}`,
         description: i.description || `${i.title} 제작 사례입니다.`,
         pubDate: i.updatedAt ? new Date(i.updatedAt).toUTCString() : undefined,
+        category: i.category || "홈페이지 제작 사례",
       }));
   } catch {
     // DB 연결 실패 시 포트폴리오 없이 내보낸다.
@@ -45,6 +45,7 @@ export async function GET() {
         link: `${SITE_URL}/insights/${p.seq}`,
         description: p.summary || p.title,
         pubDate: p.publishedAt ? new Date(p.publishedAt).toUTCString() : undefined,
+        category: p.category || "홈페이지 제작 정보",
       }));
   } catch {
     // DB 연결 실패 시 정보공유 없이 내보낸다.
@@ -99,14 +100,22 @@ export async function GET() {
     <language>ko</language>
     <lastBuildDate>${now}</lastBuildDate>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
+    <generator>${SITE_NAME}</generator>
+    <copyright>${SITE_NAME}</copyright>
+    <image>
+      <url>${SITE_URL}/brand/haon-logo.png</url>
+      <title>${SITE_NAME} - 웹·업무 시스템 제작</title>
+      <link>${SITE_URL}</link>
+    </image>
 ${items
   .map(
     (item) => `    <item>
       <title>${escapeXml(item.title)}</title>
       <link>${item.link}</link>
       <guid isPermaLink="true">${item.link}</guid>
-      <description>${escapeXml(item.description)}</description>${item.pubDate ? `
-      <pubDate>${item.pubDate}</pubDate>` : ""}
+      <description>${escapeXml(item.description)}</description>${item.category ? `
+      <category>${escapeXml(item.category)}</category>` : ""}
+      <pubDate>${item.pubDate || now}</pubDate>
     </item>`
   )
   .join("\n")}

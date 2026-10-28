@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell, Section } from "@/components/PageShell";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "검색엔진 최적화(SEO) 안내",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     "메타 태그",
     "구조화 데이터",
   ],
-  alternates: { canonical: "https://hsweb.pics/seo" },
+  alternates: { canonical: abs("/seo") },
 };
 
 export default function SeoInfoPage() {

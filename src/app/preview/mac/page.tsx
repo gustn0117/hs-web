@@ -118,7 +118,7 @@ export default async function MacPreviewPage() {
               {services.slice(0, 4).map((s, i) => (
                 <a
                   key={s.slug}
-                  href={`https://${s.slug}.hsweb.pics`}
+                  href={`/services/${s.slug}`}
                   className={`${styles.sidebarItem} ${i === 0 ? styles.sidebarItemOn : ""}`}
                 >
                   <span className={styles.dot} />
@@ -127,7 +127,7 @@ export default async function MacPreviewPage() {
               ))}
               <p className={styles.sidebarHeader} style={{ marginTop: 10 }}>운영</p>
               {services.slice(4).map((s) => (
-                <a key={s.slug} href={`https://${s.slug}.hsweb.pics`} className={styles.sidebarItem}>
+                <a key={s.slug} href={`/services/${s.slug}`} className={styles.sidebarItem}>
                   <span className={styles.dot} />
                   {s.title}
                 </a>
@@ -155,8 +155,8 @@ export default async function MacPreviewPage() {
                 ))}
               </ul>
               <div style={{ marginTop: 24 }}>
-                <a className={styles.btnPrimary} href={`https://${services[0].slug}.hsweb.pics`}>
-                  전용 사이트 열기
+                <a className={styles.btnPrimary} href={`/services/${services[0].slug}`}>
+                  자세히 보기
                 </a>
               </div>
             </div>

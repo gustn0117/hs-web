@@ -10,6 +10,7 @@ import {
   SignpostPieceIcon,
   ServerPieceIcon,
 } from "./Illustrations";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "네임서버 변경 가이드 — 가비아·후이즈·호스팅케이알·카페24",
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     "카페24 네임서버",
     "Cloudflare 네임서버",
   ],
-  alternates: { canonical: "https://hsweb.pics/nameserver-guide" },
+  alternates: { canonical: abs("/nameserver-guide") },
 };
 
 type Step = { n: number; title: string; desc: string };

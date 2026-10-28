@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
   return NextResponse.json({
     invitation: data,
-    url: `https://hsweb.pics/register/${data.token}`,
+    url: `https://haonlabs.com/register/${data.token}`,
     expires_at: data.expires_at,
   });
 }
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const url = `https://hsweb.pics/register/${token}`;
+  const url = `https://haonlabs.com/register/${token}`;
 
   return NextResponse.json({
     invitation: data,

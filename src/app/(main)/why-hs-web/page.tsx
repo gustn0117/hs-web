@@ -1,12 +1,31 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "왜 하온인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
   description:
     "왜 하온이 다른 업체보다 저렴한지, 자체 코딩으로 만든 사이트의 장점은 무엇인지, 그리고 어떤 흐름으로 함께 만드는지 한 페이지에 정리했습니다.",
-  alternates: { canonical: "https://hsweb.pics/why-hs-web" },
+  keywords: [
+    "홈페이지 제작 업체 선택",
+    "홈페이지 제작 저렴한 곳",
+    "홈페이지 제작 추천",
+    "자체 코딩 홈페이지",
+    "홈페이지 제작 비교",
+    "웹에이전시 선택 기준",
+    "하온",
+  ],
+  alternates: { canonical: abs("/why-hs-web") },
+  openGraph: {
+    type: "article",
+    title: "왜 하온인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
+    description:
+      "왜 하온이 다른 업체보다 저렴한지, 자체 코딩으로 만든 사이트의 장점은 무엇인지 한 페이지에 정리했습니다.",
+    url: abs("/why-hs-web"),
+    siteName: "하온 소프트웨어 솔루션",
+    locale: "ko_KR",
+  },
 };
 
 const PRICE_REASONS = [

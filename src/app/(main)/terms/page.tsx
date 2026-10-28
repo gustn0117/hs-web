@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { PageShell, Section } from "@/components/PageShell";
+import { abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "이용약관",
   description: "하온 웹사이트 및 홈페이지 제작 서비스 이용약관입니다.",
-  alternates: { canonical: "https://hsweb.pics/terms" },
+  alternates: { canonical: abs("/terms") },
 };
 
 const sections = [
