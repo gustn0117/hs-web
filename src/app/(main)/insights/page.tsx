@@ -5,7 +5,7 @@ import ThumbPlaceholder from "@/components/ThumbPlaceholder";
 import { getPublishedPosts } from "@/lib/posts";
 import { GUIDES } from "@/lib/guides";
 import { PageShell } from "@/components/PageShell";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 
@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/insights`,
     siteName: "하온 소프트웨어 솔루션",
     locale: "ko_KR",
+    images: [OG_IMAGE],
   },
 };
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { abs } from "@/lib/site";
+import { OG_IMAGE, abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "왜 하온인가 — 더 저렴한 이유 · 자체 코딩 · 워크플로우",
@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     url: abs("/why-hs-web"),
     siteName: "하온 소프트웨어 솔루션",
     locale: "ko_KR",
+    images: [OG_IMAGE],
   },
 };
 

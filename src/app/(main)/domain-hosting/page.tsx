@@ -7,7 +7,7 @@ import {
   NetworkFlow,
   ServerStack3D,
 } from "./Illustrations";
-import { abs } from "@/lib/site";
+import { OG_IMAGE, abs } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "도메인·호스팅이란? 차이와 비용까지 쉽게 정리",
@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     url: abs("/domain-hosting"),
     siteName: "하온 소프트웨어 솔루션",
     locale: "ko_KR",
+    images: [OG_IMAGE],
   },
 };
 

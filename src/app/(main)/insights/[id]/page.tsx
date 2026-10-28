@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostBySeq, getPublishedPosts, Post } from "@/lib/posts";
 import { Breadcrumb } from "@/components/PageShell";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 
@@ -45,13 +45,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       locale: "ko_KR",
       publishedTime: post.publishedAt || undefined,
       modifiedTime: post.updatedAt || undefined,
-      images: post.coverImage ? [{ url: post.coverImage, alt: post.title }] : undefined,
+      images: post.coverImage ? [{ url: post.coverImage, alt: post.title }] : [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.summary || post.title,
-      images: post.coverImage ? [post.coverImage] : undefined,
+      images: post.coverImage ? [post.coverImage] : [OG_IMAGE.url],
     },
   };
 }

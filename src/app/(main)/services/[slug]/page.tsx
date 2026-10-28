@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug, getAllServiceSlugs, services } from "@/lib/services";
 import ServiceDetailClient from "./ServiceDetailClient";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 // SEO keyword map per service slug
 const SEO_KEYWORDS: Record<string, string[]> = {
@@ -98,11 +98,13 @@ export async function generateMetadata({
       type: "website",
       siteName: "하온",
       locale: "ko_KR",
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: `${service.title} | 하온`,
       description,
+      images: [OG_IMAGE.url],
     },
   };
 }
