@@ -55,7 +55,8 @@ export const OG_IMAGE = {
 const NAVER_CODES = [
   // hsweb.pics 용 (기존 등록분)
   "9e9ba54205fecadd9d81829473d63ad96fbf0fef",
-  // haonlabs.com 용 — 서치어드바이저에서 받은 코드를 여기에 넣는다.
+  // haonlabs.com 용 (2026-10-29 등록분)
+  "dcfa6b04f3d6d687d9c153f80127a2a5d3b006b0",
 ];
 
 export const NAVER_SITE_VERIFICATION: string[] = [
