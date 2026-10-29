@@ -75,7 +75,7 @@ export default function TestimonialsPage() {
             </div>
           </section>
 
-          <ReviewWall reviews={REVIEWS} average={REVIEW_AVERAGE} />
+          <ReviewWall reviews={REVIEWS} />
         </main>
       </div>
 

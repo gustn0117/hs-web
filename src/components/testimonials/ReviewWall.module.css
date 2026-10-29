@@ -36,7 +36,6 @@
 .posterTop > span:last-child { margin-top: -5px; font-size: 40px; font-weight: 400; }
 .posterArt { position: absolute; top: 19%; left: -21%; width: 142%; max-width: none; height: auto; mask-image: linear-gradient(90deg, transparent, #000 13%, #000 88%, transparent), linear-gradient(180deg, transparent, #000 13%, #000 80%, transparent); mask-composite: intersect; }
 .posterBottom { position: absolute; inset: auto 28px 28px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; font-family: Arial, sans-serif; font-size: 10px; line-height: 1.6; letter-spacing: .04em; }
-.posterBottom > span:last-child { font-size: 12px; font-weight: 500; letter-spacing: -.02em; text-align: right; }
 
 .reviewSide { min-width: 0; }
 .archiveHeader { display: flex; min-height: 36px; align-items: flex-start; justify-content: space-between; gap: 12px; color: var(--ink); font-family: Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .06em; }
@@ -102,7 +101,6 @@
   .posterTop > span:last-child { font-size: 28px; }
   .posterArt { top: 25%; left: -28%; width: 156%; }
   .posterBottom { inset-inline: 20px; font-size: 8px; }
-  .posterBottom > span:last-child { font-size: 10px; }
   .grid { gap: 12px; }
   .group { gap: 12px; padding-bottom: 12px; }
   .card { padding: 20px 18px 18px; }
@@ -139,7 +137,6 @@
   .posterTop > span:last-child { font-size: 34px; }
   .posterArt { top: 7%; right: -8%; left: auto; width: 90%; }
   .posterBottom { inset: auto 22px 18px; font-size: 8px; }
-  .posterBottom > span:last-child { font-size: 10px; }
   .archiveHeader { min-height: 30px; }
   .pauseButton { display: none; }
   .wall { height: auto; overflow: visible; mask-image: none; }
@@ -161,7 +158,6 @@
   .posterTop { inset: 18px 18px auto; font-size: 29px; }
   .posterArt { top: 7%; }
   .posterBottom { inset-inline: 18px; font-size: 7px; }
-  .posterBottom > span:last-child { font-size: 9px; }
   .card { padding: 22px; }
   .comment { font-size: 17px; }
 }

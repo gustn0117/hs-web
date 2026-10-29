@@ -93,7 +93,7 @@ function ReviewGroup({ entries, column, duplicate = false }: {
   );
 }
 
-export default function ReviewWall({ reviews, average }: { reviews: Review[]; average: number }) {
+export default function ReviewWall({ reviews }: { reviews: Review[] }) {
   const [paused, setPaused] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -126,12 +126,11 @@ export default function ReviewWall({ reviews, average }: { reviews: Review[]; av
       </div>
 
       <div className={styles.stage}>
-        <aside className={styles.poster} aria-label={"고객 평균 평점 " + average.toFixed(1) + "점, 실제 구매 후기 " + reviews.length + "개"}>
+        <aside className={styles.poster} aria-label="하온 고객 후기 아카이브 표지">
           <div className={styles.posterTop}><span>THE WORD<br />IS GOOD.</span><span aria-hidden="true">↗</span></div>
           <Image src="/testimonials/quote-sculpture.webp" alt="" width={1536} height={1536} sizes="(min-width: 1024px) 520px, 90vw" className={styles.posterArt} />
           <div className={styles.posterBottom}>
             <span>HAON<br />CLIENT NOTES / 2026</span>
-            <span>평균 평점 {average.toFixed(1)} / 5<br />실제 구매 후기 {reviews.length}개</span>
           </div>
         </aside>
 
