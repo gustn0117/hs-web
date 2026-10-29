@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageShell } from "@/components/PageShell";
+import { BottomCTA } from "@/components/PageShell";
 import TypingQuote from "@/components/testimonials/TypingQuote";
 import ReviewStars from "@/components/testimonials/ReviewStars";
 import ReviewWall from "@/components/testimonials/ReviewWall";
@@ -53,32 +53,33 @@ export default function TestimonialsPage() {
   };
 
   return (
-    <PageShell
-      breadcrumb={[{ label: "고객 후기" }]}
-      overline="TESTIMONIALS"
-      title="고객이 직접 쓴 말."
-      subtitle="맞춤법도, 오타도, 이모티콘도 그대로입니다. 한 글자도 고치지 않았습니다."
-    >
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="max-w-[860px] mx-auto">
-        <div className="flex items-baseline justify-center gap-3">
-          <ReviewStars score={REVIEW_AVERAGE} size={20} />
-          <span className="p-stat text-[26px] md:text-[30px] leading-none">
-            {REVIEW_AVERAGE.toFixed(1)}
-          </span>
-          <span className="text-[13px] text-[var(--c-sub)]">평균 별점</span>
-        </div>
+      <div className="max-w-[1280px] mx-auto px-5 py-12 md:py-16">
+        <main className="space-y-12">
+          <section className="max-w-[860px] mx-auto">
+            <div className="flex items-baseline justify-center gap-3">
+              <ReviewStars score={REVIEW_AVERAGE} size={20} />
+              <span className="p-stat text-[26px] md:text-[30px] leading-none">
+                {REVIEW_AVERAGE.toFixed(1)}
+              </span>
+              <span className="text-[13px] text-[var(--c-sub)]">평균 별점</span>
+            </div>
 
-        <div className="mt-8">
-          <TypingQuote reviews={typingReviews} />
-        </div>
-      </section>
+            <div className="mt-8">
+              <TypingQuote reviews={typingReviews} />
+            </div>
+          </section>
 
-      <ReviewWall reviews={REVIEWS} average={REVIEW_AVERAGE} />
-    </PageShell>
+          <ReviewWall reviews={REVIEWS} average={REVIEW_AVERAGE} />
+        </main>
+      </div>
+
+      <BottomCTA />
+    </>
   );
 }

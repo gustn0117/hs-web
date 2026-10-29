@@ -107,6 +107,32 @@ export function PageHero({
   );
 }
 
+/** 모든 하위 페이지 맨 아래에 붙는 상담 띠. */
+export function BottomCTA() {
+  return (
+    <section className="p-section-dark py-20 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.08]" />
+      <div className="relative max-w-[900px] mx-auto px-5 text-center">
+        <h2 className="p-h1-xl text-white mb-4">
+          프로젝트 상담 받아보세요.
+        </h2>
+        <p className="text-[16px] text-white/60 mb-8">첫 상담은 무료입니다. 24시간 이내 회신해드립니다.</p>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-center">
+          <Link href="/contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-7 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[15px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
+            상담 신청
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
+          <a href="tel:010-3319-2509" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-6 rounded-[10px] text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/5 transition-colors tnum">
+            010-3319-2509
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function PageShell({
   breadcrumb,
   title,
@@ -150,27 +176,7 @@ export function PageShell({
         )}
       </div>
 
-      {/* Bottom CTA band */}
-      <section className="p-section-dark py-20 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none p-bg-grid-dots opacity-[0.08]" />
-        <div className="relative max-w-[900px] mx-auto px-5 text-center">
-          <h2 className="p-h1-xl text-white mb-4">
-            프로젝트 상담 받아보세요.
-          </h2>
-          <p className="text-[16px] text-white/60 mb-8">첫 상담은 무료입니다. 24시간 이내 회신해드립니다.</p>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-center">
-            <Link href="/contact" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-7 rounded-[10px] bg-white text-[var(--c-text)] font-bold text-[15px] no-underline hover:bg-[var(--c-bg-2)] transition-colors">
-              상담 신청
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <a href="tel:010-3319-2509" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 h-[52px] px-6 rounded-[10px] text-white font-semibold text-[15px] no-underline border border-white/20 hover:bg-white/5 transition-colors tnum">
-              010-3319-2509
-            </a>
-          </div>
-        </div>
-      </section>
+      <BottomCTA />
     </div>
   );
 }

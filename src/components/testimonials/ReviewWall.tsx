@@ -118,7 +118,7 @@ export default function ReviewWall({ reviews, average }: { reviews: Review[]; av
       </div>
 
       <div className={styles.intro}>
-        <h2 id="review-stories-title" className={styles.title}>Good work.<br /><em>Great words.</em><span className={styles.titleDot} aria-hidden="true">✳</span></h2>
+        <h1 id="review-stories-title" className={styles.title}>Good work.<br /><em>Great words.</em><span className={styles.titleDot} aria-hidden="true">✳</span></h1>
         <div className={styles.introCopy}>
           <p>좋은 결과물 뒤에는,<br />좋은 이야기가 남습니다.</p>
           <span>함께 만들고, 다시 찾아주신 고객들의 기록.<br />꾸미지 않은 진짜 후기를 모았습니다.</span>
