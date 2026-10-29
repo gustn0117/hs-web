@@ -62,8 +62,7 @@ const SLIDES: Slide[] = [
 
 const INTERVAL = 6000;
 
-/** 인트로가 걷히기 전에는 슬라이드를 넘기지 않는다. */
-export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number }) {
+export default function HeroBanner() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -77,15 +76,12 @@ export default function HeroBanner({ startDelayMs = 0 }: { startDelayMs?: number
     // 모션을 줄이도록 설정한 사람에게는 자동으로 넘기지 않는다.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const start = setTimeout(() => {
-      timer.current = setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), INTERVAL);
-    }, startDelayMs);
+    timer.current = setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), INTERVAL);
 
     return () => {
-      clearTimeout(start);
       if (timer.current) clearInterval(timer.current);
     };
-  }, [paused, startDelayMs]);
+  }, [paused]);
 
   return (
     <section

@@ -58,14 +58,6 @@ export default function Footer() {
               <dt className="text-[var(--c-sub)]">사이트</dt>
               <dd className="text-[var(--c-text-2)] font-medium tnum">haonlabs.com</dd>
             </dl>
-
-            {/* Quick badges */}
-            <div className="mt-6 flex flex-wrap gap-1.5">
-              <span className="p-chip">SSL 보안</span>
-              <span className="p-chip">반응형</span>
-              <span className="p-chip">전자 계약</span>
-              <span className="p-chip">평생 수정 무료</span>
-            </div>
           </div>
 
           <FooterCol
