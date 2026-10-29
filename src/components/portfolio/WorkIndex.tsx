@@ -20,9 +20,14 @@ export default function WorkIndex({ items }: { items: PortfolioItem[] }) {
   return (
     <section className={styles.index} id="all-works" aria-labelledby="all-works-title">
       <div className={styles.wrap}>
-        <h2 className={styles.indexTitle} id="all-works-title">전부 보기</h2>
+        <div className={styles.indexHeading}>
+          <h2 className={styles.indexTitle} id="all-works-title">전부 보기</h2>
+          <p className={styles.indexCount} aria-live="polite" aria-atomic="true">
+            {picked === ALL ? "전체" : picked} <span>{shown.length}</span>개 프로젝트
+          </p>
+        </div>
 
-        <div className={styles.filters}>
+        <div className={styles.filters} role="group" aria-label="프로젝트 분야 선택">
           {categories.map((c) => (
             <button
               key={c}

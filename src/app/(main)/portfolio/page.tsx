@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BottomCTA } from "@/components/PageShell";
-import Hatch from "@/components/portfolio/Hatch";
 import Reveal from "@/components/portfolio/Reveal";
 import TypeLine from "@/components/portfolio/TypeLine";
 import WorkIndex from "@/components/portfolio/WorkIndex";
+import {
+  FieldArtwork,
+  HeroArtwork,
+  PanoramaArtwork,
+  SpotlightArtwork,
+  selectVisualWorks,
+} from "@/components/portfolio/WorkVisuals";
 import styles from "@/components/portfolio/Stage.module.css";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 import { abs } from "@/lib/site";
@@ -40,6 +46,7 @@ export default async function PortfolioPage() {
   } catch { /* 목록을 못 가져와도 페이지는 열려야 한다 */ }
 
   const fields = groupByField(items);
+  const visualWorks = selectVisualWorks(items);
   const lead = items.find((i) => i.featured) || items[0];
   const leadBlurb = lead && lead.description.trim() !== lead.title.trim() ? lead.description.trim() : "";
 
@@ -61,36 +68,35 @@ export default async function PortfolioPage() {
     <>
       <div className={styles.stage}>
         <section className={styles.hero}>
+          <p className={styles.heroEyebrow}>HAON — SELECTED WORKS</p>
           <h1 className={styles.heroTitle}>
             <TypeLine text={HERO_LINE} />
           </h1>
           <p className={styles.heroSub}>
-            기업 홈페이지, 쇼핑몰, 랜딩페이지, 업무 시스템.
+            기업 홈페이지, 쇼핑몰, 랜딩페이지, 업무 시스템.<br />
             하온이 직접 만들어 넘긴 작업들입니다.
           </p>
           <div className={styles.heroArt}>
-            <div className={styles.growBox}>
-              <Hatch
-                label="작업물을 한 화면에 모아 놓은 들머리 이미지"
-                spec="2400 × 1200 px · webp · 검정 배경"
-                ratio="2 / 1"
-              />
-            </div>
+            <HeroArtwork works={visualWorks} />
           </div>
-          <p className={styles.cue}>아래로 내리면 전부 나옵니다</p>
+          <a href="#all-works" className={styles.cue}>
+            전체 {items.length}개 프로젝트 살펴보기 <span aria-hidden="true">↓</span>
+          </a>
         </section>
 
-        <section className={styles.wide} aria-hidden="true">
-          <div className={styles.wideInner}>
-            <div className={styles.wideBox}>
-              <Hatch
-                label="스크롤하면 양옆으로 열리는 넓은 한 장"
-                spec="2800 × 1200 px · webp"
-                ratio="21 / 9"
-              />
+        {visualWorks.length > 0 && (
+          <section className={styles.wide} aria-label="다양한 분야의 실제 제작 화면">
+            <div className={styles.wideInner}>
+              <div className={styles.visualCaption}>
+                <span>서로 다른 이야기. 같은 기준의 완성도.</span>
+                <span>WEB · COMMERCE · SYSTEM</span>
+              </div>
+              <div className={styles.wideBox}>
+                <PanoramaArtwork works={visualWorks} />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <section className={styles.chapter} aria-labelledby="fields-claim">
           <div className={styles.wrap}>
@@ -98,11 +104,7 @@ export default async function PortfolioPage() {
               <div className={styles.chapterMedia}>
                 <Reveal>
                   <div className={styles.growBox}>
-                    <Hatch
-                      label="분야별 대표 화면을 겹쳐 놓은 이미지"
-                      spec="1200 × 1500 px · webp"
-                      ratio="4 / 5"
-                    />
+                    <FieldArtwork works={visualWorks} />
                   </div>
                 </Reveal>
               </div>
@@ -116,10 +118,13 @@ export default async function PortfolioPage() {
                 </Reveal>
 
                 <div className={styles.fields}>
-                  {fields.map(([name, { sample }], i) => (
+                  {fields.map(([name, { sample, count }], i) => (
                     <Reveal key={name} delay={i * 70}>
                       <div className={styles.field}>
-                        <h2 className={styles.fieldName}>{name}</h2>
+                        <h2 className={styles.fieldName}>
+                          {name}
+                          <span className={styles.fieldCount}>{String(count).padStart(2, "0")}</span>
+                        </h2>
                         <p className={styles.fieldSample}>{sample}</p>
                       </div>
                     </Reveal>
@@ -155,11 +160,7 @@ export default async function PortfolioPage() {
                 <div className={styles.chapterMedia}>
                   <Reveal>
                     <div className={styles.growBox}>
-                      <Hatch
-                        label="대표 작업 전체 화면 이미지"
-                        spec="1600 × 1000 px · webp"
-                        ratio="16 / 10"
-                      />
+                      <SpotlightArtwork work={lead} />
                     </div>
                   </Reveal>
                 </div>
