@@ -1341,3 +1341,45 @@ kbd.p-kbd {
   .review-track { animation: none; }
   .review-dup { display: none; }
 }
+
+/* ──────────────────────────────────────────────────────────
+   타이핑되는 후기
+
+   한 건을 글자 단위로 찍고, 다 쓰면 왼쪽으로 밀어낸 뒤
+   다음 건이 오른쪽에서 들어온다. 무한히 돈다.
+
+   동작 줄이기를 켠 분께는 자바스크립트 쪽에서 타이핑을 끄고
+   글 전체를 바로 보여준다. 여기서는 미끄러짐과 커서만 끈다.
+   ────────────────────────────────────────────────────────── */
+@keyframes quote-leave {
+  to { opacity: 0; transform: translateX(-48px); }
+}
+
+@keyframes quote-enter {
+  from { opacity: 0; transform: translateX(48px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes quote-caret {
+  0%, 45%   { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+
+.quote-leave { animation: quote-leave 400ms cubic-bezier(0.4, 0, 1, 1) both; }
+.quote-enter { animation: quote-enter 400ms cubic-bezier(0, 0, 0.2, 1) both; }
+
+.quote-caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 4px;
+  vertical-align: -0.06em;
+  background: var(--c-main);
+  animation: quote-caret 1s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-leave,
+  .quote-enter { animation: none; }
+  .quote-caret { display: none; }
+}
