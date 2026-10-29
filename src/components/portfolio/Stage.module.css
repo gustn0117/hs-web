@@ -113,13 +113,6 @@
 .fieldCount { color: #9999a3; font-size: 12px; font-weight: 450; letter-spacing: .03em; font-variant-numeric: tabular-nums; }
 .fieldSample { margin: 7px 0 0; color: var(--haze); font-size: 13px; font-weight: 450; letter-spacing: -0.015em; line-height: 1.7; }
 
-/* ── 흰 화면: 드물게 써야 힘이 생긴다 ───────────────────── */
-
-.breakSection { padding: clamp(96px, 15vw, 200px) 0; background: var(--paper); color: #0d0d0f; text-align: center; }
-.breakTitle { max-width: 19ch; margin: 0 auto; font-size: clamp(28px, 5vw, 64px); font-weight: 750; letter-spacing: -0.05em; line-height: 1.22; }
-.breakBody { max-width: 46ch; margin: 26px auto 0; color: #6b6b72; font-size: clamp(15px, 1.8vw, 18px); font-weight: 450; letter-spacing: -0.015em; line-height: 1.75; }
-.breakLink { display: inline-flex; min-height: 50px; align-items: center; margin-top: 34px; padding: 0 28px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 15px; font-weight: 650; letter-spacing: -0.02em; text-decoration: none; transition: background .2s, transform .2s var(--ease); }
-.breakLink:hover { background: #061e47; transform: translateY(-2px); }
 
 /* ── 한 건 자세히 ──────────────────────────────────────── */
 
@@ -199,6 +192,6 @@
 @media (prefers-reduced-motion: reduce) {
   .stage [data-reveal] { transition: none; }
   .stage [data-reveal="armed"] { opacity: 1; transform: none; filter: none; }
-  .cardShot img, .breakLink { transition: none; }
+  .cardShot img { transition: none; }
   .caret { display: none; }
 }

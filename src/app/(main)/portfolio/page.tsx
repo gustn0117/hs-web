@@ -169,19 +169,6 @@ export default async function PortfolioPage() {
           </section>
         )}
 
-        <section className={styles.breakSection}>
-          <div className={styles.wrap}>
-            <Reveal>
-              <h2 className={styles.breakTitle}>여기까지가 남의 회사 이야기입니다.</h2>
-              <p className={styles.breakBody}>
-                어떤 걸 만들고 싶은지 한 줄만 적어 주시면, 비슷하게 작업했던 것부터 찾아서 보여드립니다.
-                첫 상담은 무료입니다.
-              </p>
-              <Link href="/contact" className={styles.breakLink}>상담 신청하기</Link>
-            </Reveal>
-          </div>
-        </section>
-
         <WorkIndex items={items} />
       </div>
 
