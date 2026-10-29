@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { PageShell } from "@/components/PageShell";
 import TypingQuote from "@/components/testimonials/TypingQuote";
-import { REVIEWS, REVIEW_COUNT, REVIEW_AVERAGE, type Review } from "@/lib/reviews";
+import ReviewStars from "@/components/testimonials/ReviewStars";
+import ReviewWall from "@/components/testimonials/ReviewWall";
+import { REVIEWS, REVIEW_COUNT, REVIEW_AVERAGE } from "@/lib/reviews";
 import { SITE_URL, abs } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -25,81 +27,7 @@ const typingReviews = REVIEWS.filter(
   (r) => r.score === 5 && r.comment.length >= TYPING_MIN && r.comment.length <= TYPING_MAX
 ).slice(0, TYPING_COUNT);
 
-function Stars({ score, size = 16 }: { score: number; size?: number }) {
-  return (
-    <span
-      className="flex items-center gap-0.5 text-[var(--c-event)]"
-      aria-label={`별 ${score}점`}
-    >
-      {Array.from({ length: Math.round(score) }).map((_, i) => (
-        <svg
-          key={i}
-          style={{ width: size, height: size }}
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          aria-hidden
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </span>
-  );
-}
-
-/** 금액대. 장식이 아니라 "내 예산대 사람도 만족했나"를 알려주는 정보다. */
-function PriceTag({ range }: { range: string }) {
-  return (
-    <span className="shrink-0 inline-flex items-center h-[22px] px-2 bg-white border border-[var(--c-line)] text-[11px] font-medium text-[var(--c-sub)] tnum">
-      {range}
-    </span>
-  );
-}
-
-function ReviewBlock({ review }: { review: Review }) {
-  return (
-    <article className="bg-[var(--c-bg-1)] border-l-2 border-[var(--c-main)] px-5 py-5">
-      <Stars score={review.score} size={14} />
-      <p className="mt-3.5 text-[15px] text-[var(--c-text-2)] leading-[1.85] whitespace-pre-line">
-        {review.comment}
-      </p>
-      <div className="mt-4 flex items-center justify-between gap-3 text-[12px] text-[var(--c-sub)]">
-        <span className="truncate">{review.nickname}</span>
-        {review.priceRange && <PriceTag range={review.priceRange} />}
-      </div>
-    </article>
-  );
-}
-
-/**
- * 끊김 없이 돌려면 같은 목록을 한 벌 더 깔아야 한다. 뒷벌은 읽히지 않게 숨긴다.
- *
- * 두 벌의 높이가 정확히 반반이어야 -50% 지점이 뒷벌 첫 칸과 맞물린다.
- * 그래서 각 벌에 칸 간격만큼의 아래 여백(pb-4)을 똑같이 준다. 이게 어긋나면
- * 한 바퀴 돌 때마다 그 차이만큼 툭 튄다.
- */
-function Column({ reviews, speed }: { reviews: Review[]; speed: string }) {
-  return (
-    <div className="review-col">
-      <div className="review-track" style={{ "--speed": speed } as React.CSSProperties}>
-        <div className="flex flex-col gap-4 pb-4">
-          {reviews.map((r) => (
-            <ReviewBlock key={r.id} review={r} />
-          ))}
-        </div>
-        <div className="review-dup flex flex-col gap-4 pb-4" aria-hidden="true">
-          {reviews.map((r) => (
-            <ReviewBlock key={`dup-${r.id}`} review={r} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function TestimonialsPage() {
-  const columns = [0, 1, 2].map((c) => REVIEWS.filter((_, i) => i % 3 === c));
-  const speeds = ["188s", "232s", "206s"];
-
   // 검색 결과에 별점이 뜨도록 실제 집계를 그대로 싣는다.
   const jsonLd = {
     "@context": "https://schema.org",
@@ -138,7 +66,7 @@ export default function TestimonialsPage() {
 
       <section className="max-w-[860px] mx-auto">
         <div className="flex items-baseline justify-center gap-3">
-          <Stars score={5} size={20} />
+          <ReviewStars score={REVIEW_AVERAGE} size={20} />
           <span className="p-stat text-[26px] md:text-[30px] leading-none">
             {REVIEW_AVERAGE.toFixed(1)}
           </span>
@@ -150,13 +78,7 @@ export default function TestimonialsPage() {
         </div>
       </section>
 
-      <div className="review-wall">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-          {columns.map((reviews, i) => (
-            <Column key={i} reviews={reviews} speed={speeds[i]} />
-          ))}
-        </div>
-      </div>
+      <ReviewWall reviews={REVIEWS} average={REVIEW_AVERAGE} />
     </PageShell>
   );
 }
