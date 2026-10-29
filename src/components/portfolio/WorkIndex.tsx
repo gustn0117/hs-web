@@ -20,10 +20,7 @@ export default function WorkIndex({ items }: { items: PortfolioItem[] }) {
   return (
     <section className={styles.index} id="all-works" aria-labelledby="all-works-title">
       <div className={styles.wrap}>
-        <div className={styles.indexHead}>
-          <h2 className={styles.indexTitle} id="all-works-title">전부 보기</h2>
-          <span className={styles.indexTotal}>{shown.length} / {items.length}</span>
-        </div>
+        <h2 className={styles.indexTitle} id="all-works-title">전부 보기</h2>
 
         <div className={styles.filters}>
           {categories.map((c) => (

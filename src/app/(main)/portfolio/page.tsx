@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BottomCTA } from "@/components/PageShell";
 import Hatch from "@/components/portfolio/Hatch";
+import Reveal from "@/components/portfolio/Reveal";
+import TypeLine from "@/components/portfolio/TypeLine";
 import WorkIndex from "@/components/portfolio/WorkIndex";
 import styles from "@/components/portfolio/Stage.module.css";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
-import { REVIEW_AVERAGE } from "@/lib/reviews";
 import { abs } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
   alternates: { canonical: abs("/portfolio") },
 };
 
-/** 분야마다 몇 건인지, 그리고 그 분야가 어떤 일인지 보여 줄 제목 하나. */
+const HERO_LINE = "만든 것으로 말합니다.";
+
+/** 분야마다 그 분야가 어떤 일인지 보여 줄 제목 하나씩. 많이 한 분야가 앞에 온다. */
 function groupByField(items: PortfolioItem[]) {
   const map = new Map<string, { count: number; sample: string }>();
   for (const item of items) {
@@ -36,11 +39,10 @@ export default async function PortfolioPage() {
     items = await getPortfolioItems();
   } catch { /* 목록을 못 가져와도 페이지는 열려야 한다 */ }
 
-  const total = items.length;
   const fields = groupByField(items);
   const lead = items.find((i) => i.featured) || items[0];
 
-  if (total === 0) {
+  if (items.length === 0) {
     return (
       <>
         <div className={styles.stage}>
@@ -59,34 +61,33 @@ export default async function PortfolioPage() {
       <div className={styles.stage}>
         <section className={styles.hero}>
           <h1 className={styles.heroTitle}>
-            홈페이지,<br /><b>{total}</b>번 만들었습니다.
+            <TypeLine text={HERO_LINE} />
           </h1>
           <p className={styles.heroSub}>
-            소개 한 장짜리부터 매일 쓰는 업무 시스템까지.
-            전부 의뢰받아 만들어 넘긴 것들입니다.
+            기업 홈페이지, 쇼핑몰, 랜딩페이지, 업무 시스템.
+            하온이 직접 만들어 넘긴 작업들입니다.
           </p>
           <div className={styles.heroArt}>
-            <Hatch
-              label="작업물을 한 화면에 모아 놓은 들머리 이미지"
-              spec="2400 × 1200 px · webp · 검정 배경"
-              ratio="2 / 1"
-            />
+            <div className={styles.growBox}>
+              <Hatch
+                label="작업물을 한 화면에 모아 놓은 들머리 이미지"
+                spec="2400 × 1200 px · webp · 검정 배경"
+                ratio="2 / 1"
+              />
+            </div>
           </div>
           <p className={styles.cue}>아래로 내리면 전부 나옵니다</p>
         </section>
 
-        <section className={styles.numbers} aria-label="요약">
-          <div className={styles.number}>
-            <span className={styles.numberValue}>{total}</span>
-            <span className={styles.numberLabel}>공개한 작업</span>
-          </div>
-          <div className={styles.number}>
-            <span className={styles.numberValue}>{fields.length}</span>
-            <span className={styles.numberLabel}>다루는 분야</span>
-          </div>
-          <div className={styles.number}>
-            <span className={styles.numberValue}>{REVIEW_AVERAGE.toFixed(1)}</span>
-            <span className={styles.numberLabel}>고객 평균 별점</span>
+        <section className={styles.wide} aria-hidden="true">
+          <div className={styles.wideInner}>
+            <div className={styles.wideBox}>
+              <Hatch
+                label="스크롤하면 양옆으로 열리는 넓은 한 장"
+                spec="2800 × 1200 px · webp"
+                ratio="21 / 9"
+              />
+            </div>
           </div>
         </section>
 
@@ -94,36 +95,41 @@ export default async function PortfolioPage() {
           <div className={styles.wrap}>
             <div className={styles.chapterGrid}>
               <div className={styles.chapterMedia}>
-                <Hatch
-                  label="분야별 대표 화면을 겹쳐 놓은 이미지"
-                  spec="1200 × 1500 px · webp"
-                  ratio="4 / 5"
-                />
+                <Reveal>
+                  <div className={styles.growBox}>
+                    <Hatch
+                      label="분야별 대표 화면을 겹쳐 놓은 이미지"
+                      spec="1200 × 1500 px · webp"
+                      ratio="4 / 5"
+                    />
+                  </div>
+                </Reveal>
               </div>
 
               <div className={styles.chapterText}>
-                <div>
+                <Reveal>
                   <p className={styles.lede}>하온이 다루는 분야</p>
                   <p className={styles.claim} id="fields-claim">
                     한 가지만 만들어 본 곳이 아닙니다.
                   </p>
-                </div>
+                </Reveal>
 
                 <div className={styles.fields}>
-                  {fields.map(([name, { count, sample }]) => (
-                    <div className={styles.field} key={name}>
-                      <span className={styles.fieldCount}>{count}</span>
-                      <div>
+                  {fields.map(([name, { sample }], i) => (
+                    <Reveal key={name} delay={i * 70}>
+                      <div className={styles.field}>
                         <h2 className={styles.fieldName}>{name}</h2>
                         <p className={styles.fieldSample}>{sample}</p>
                       </div>
-                    </div>
+                    </Reveal>
                   ))}
                 </div>
 
-                <p className={styles.claim}>
-                  업종이 달라도 막히는 지점은 대개 비슷합니다.
-                </p>
+                <Reveal>
+                  <p className={styles.claim}>
+                    업종이 달라도 막히는 지점은 대개 비슷합니다.
+                  </p>
+                </Reveal>
               </div>
             </div>
           </div>
@@ -134,22 +140,26 @@ export default async function PortfolioPage() {
             <div className={styles.wrap}>
               <div className={styles.chapterGrid}>
                 <div className={styles.chapterText}>
-                  <div>
+                  <Reveal>
                     <p className={styles.spotlightTag}>{lead.category || "프로젝트"}</p>
                     <h2 className={styles.spotlightTitle} id="lead-title">{lead.title}</h2>
                     {lead.description && <p className={styles.spotlightBody}>{lead.description}</p>}
                     <Link href={`/portfolio/${lead.seq}`} className={styles.spotlightLink}>
                       이 작업 자세히 보기
                     </Link>
-                  </div>
+                  </Reveal>
                 </div>
 
                 <div className={styles.chapterMedia}>
-                  <Hatch
-                    label={`${lead.title} 전체 화면 이미지`}
-                    spec="1600 × 1000 px · webp"
-                    ratio="16 / 10"
-                  />
+                  <Reveal>
+                    <div className={styles.growBox}>
+                      <Hatch
+                        label={`${lead.title} 전체 화면 이미지`}
+                        spec="1600 × 1000 px · webp"
+                        ratio="16 / 10"
+                      />
+                    </div>
+                  </Reveal>
                 </div>
               </div>
             </div>
@@ -158,12 +168,14 @@ export default async function PortfolioPage() {
 
         <section className={styles.breakSection}>
           <div className={styles.wrap}>
-            <h2 className={styles.breakTitle}>여기까지가 남의 회사 이야기입니다.</h2>
-            <p className={styles.breakBody}>
-              어떤 걸 만들고 싶은지 한 줄만 적어 주시면, 비슷하게 작업했던 것부터 찾아서 보여드립니다.
-              첫 상담은 무료입니다.
-            </p>
-            <Link href="/contact" className={styles.breakLink}>상담 신청하기</Link>
+            <Reveal>
+              <h2 className={styles.breakTitle}>여기까지가 남의 회사 이야기입니다.</h2>
+              <p className={styles.breakBody}>
+                어떤 걸 만들고 싶은지 한 줄만 적어 주시면, 비슷하게 작업했던 것부터 찾아서 보여드립니다.
+                첫 상담은 무료입니다.
+              </p>
+              <Link href="/contact" className={styles.breakLink}>상담 신청하기</Link>
+            </Reveal>
           </div>
         </section>
 

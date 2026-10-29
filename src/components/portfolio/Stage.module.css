@@ -1,9 +1,12 @@
 /* ──────────────────────────────────────────────────────────
    포트폴리오 무대
 
-   90건을 목록으로 쏟아내면 '많다'가 아니라 '잡다하다'로 읽힌다.
+   작업을 격자에 쏟아내면 '많다' 가 아니라 '잡다하다' 로 읽힌다.
    그래서 한 화면에 하나씩만 두고 스크롤로 넘긴다. 검정이 기본이고
    흰 화면은 두 번만 쓴다 — 드물게 써야 끊어주는 힘이 생긴다.
+
+   움직임은 세 가지만 쓴다. 글자가 찍히고, 들어올 때 떠오르고,
+   그림이 커진다. 전부 '동작 줄이기' 를 켠 사람에게는 꺼진다.
    ────────────────────────────────────────────────────────── */
 
 .stage {
@@ -14,6 +17,7 @@
   --seam: #1d1d1f;
   --navy: #0a2a5e;
   --ember: #e8590c;
+  --ease: cubic-bezier(.16, 1, .3, 1);
 
   background: var(--stage);
   color: var(--paper);
@@ -22,27 +26,56 @@
 
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 
+/* ── 떠오르며 나타나기 ─────────────────────────────────────
+   그리기 전(idle)에는 아무 규칙도 걸지 않는다. 자바스크립트가
+   늦거나 꺼져 있어도 글이 사라진 채 남지 않게 하려는 것이다.
+   ────────────────────────────────────────────────────────── */
+
+.stage [data-reveal] {
+  transition: opacity 950ms var(--ease), transform 950ms var(--ease), filter 700ms ease-out;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.stage [data-reveal="armed"] { opacity: 0; transform: translateY(36px); filter: blur(10px); }
+.stage [data-reveal="in"] { opacity: 1; transform: none; filter: none; }
+
 /* ── 들머리 ────────────────────────────────────────────── */
 
 /* 헤더(모바일 72px · 데스크톱 88px)를 뺀 만큼이 '한 화면'이다. */
 .hero { display: flex; min-height: 100vh; min-height: calc(100svh - 72px); flex-direction: column; align-items: center; justify-content: center; padding: 72px 24px 40px; text-align: center; }
 @media (min-width: 768px) { .hero { min-height: calc(100svh - 88px); } }
 
-.heroTitle { margin: 0; font-size: clamp(40px, 9vw, 116px); font-weight: 800; letter-spacing: -0.048em; line-height: 1.02; }
-.heroTitle b { font-weight: 800; font-feature-settings: "tnum"; }
-.heroSub { max-width: 30ch; margin: 28px auto 0; color: var(--haze); font-size: clamp(16px, 2.1vw, 21px); font-weight: 450; letter-spacing: -0.02em; line-height: 1.65; }
+.heroTitle { margin: 0; min-height: 1.04em; font-size: clamp(38px, 8.6vw, 110px); font-weight: 800; letter-spacing: -0.05em; line-height: 1.04; }
+
+.caret { display: inline-block; width: 0.055em; height: 0.82em; margin-left: 0.08em; background: var(--ember); translate: 0 0.04em; animation: caretBlink 1s steps(1, end) infinite; }
+@keyframes caretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+.heroSub { max-width: 34ch; margin: 30px auto 0; color: var(--haze); font-size: clamp(15px, 2vw, 20px); font-weight: 450; letter-spacing: -0.02em; line-height: 1.7; }
 
 .heroArt { width: min(900px, 100%); margin-top: clamp(40px, 7vw, 76px); }
 
 .cue { margin-top: clamp(28px, 5vw, 52px); color: var(--dim); font-size: 12px; letter-spacing: 0.04em; }
 
-/* ── 숫자 띠 ───────────────────────────────────────────── */
+/* ── 그림이 커진다 ────────────────────────────────────────
+   스크롤에 물린 움직임은 받는 브라우저에서만 돈다.
+   안 받는 쪽은 처음부터 제 크기로 보이니 깨질 일이 없다.
+   ────────────────────────────────────────────────────────── */
 
-.numbers { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--seam); border-bottom: 1px solid var(--seam); }
-.number { padding: clamp(36px, 6vw, 72px) 24px; text-align: center; }
-.number + .number { border-left: 1px solid var(--seam); }
-.numberValue { display: block; font-size: clamp(40px, 8vw, 104px); font-weight: 800; font-feature-settings: "tnum"; letter-spacing: -0.055em; line-height: 1; }
-.numberLabel { display: block; margin-top: 14px; color: var(--haze); font-size: clamp(12px, 1.5vw, 15px); font-weight: 500; letter-spacing: -0.01em; }
+@keyframes grow { from { transform: scale(.8); } to { transform: scale(1); } }
+@keyframes openUp { from { clip-path: inset(0 17% round 34px); } to { clip-path: inset(0 0 round 10px); } }
+@keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: none; } }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .growBox { animation: grow linear both; animation-timeline: view(); animation-range: entry 0% cover 48%; will-change: transform; }
+    .wideBox { animation: openUp linear both; animation-timeline: view(); animation-range: entry 8% cover 58%; }
+    .card { animation: cardIn linear both; animation-timeline: view(); animation-range: entry 0% entry 62%; }
+  }
+}
+
+/* ── 가로로 열리는 한 장 ───────────────────────────────── */
+
+.wide { padding: clamp(28px, 6vw, 72px) 0; }
+.wideInner { max-width: 1480px; margin: 0 auto; padding: 0 16px; }
 
 /* ── 챕터: 그림은 서 있고 글이 지나간다 ───────────────────── */
 
@@ -67,19 +100,18 @@
 /* ── 분야 목록 ─────────────────────────────────────────── */
 
 .fields { display: flex; flex-direction: column; }
-.field { display: grid; grid-template-columns: 4.5ch minmax(0, 1fr); gap: 20px; align-items: baseline; padding: clamp(18px, 2.6vw, 28px) 0; border-top: 1px solid var(--seam); }
-.field:last-child { border-bottom: 1px solid var(--seam); }
-.fieldCount { color: var(--ember); font-size: clamp(16px, 2vw, 22px); font-weight: 700; font-feature-settings: "tnum"; letter-spacing: -0.03em; }
+.field { padding: clamp(18px, 2.6vw, 28px) 0; border-top: 1px solid var(--seam); }
+.fields > div:last-child .field { border-bottom: 1px solid var(--seam); }
 .fieldName { margin: 0; font-size: clamp(18px, 2.4vw, 28px); font-weight: 650; letter-spacing: -0.04em; }
 .fieldSample { margin: 7px 0 0; color: var(--haze); font-size: 13px; font-weight: 450; letter-spacing: -0.015em; line-height: 1.7; }
 
-/* ── 흰 화면: 두 번만 쓴다 ──────────────────────────────── */
+/* ── 흰 화면: 드물게 써야 힘이 생긴다 ───────────────────── */
 
 .breakSection { padding: clamp(96px, 15vw, 200px) 0; background: var(--paper); color: #0d0d0f; text-align: center; }
 .breakTitle { max-width: 19ch; margin: 0 auto; font-size: clamp(28px, 5vw, 64px); font-weight: 750; letter-spacing: -0.05em; line-height: 1.22; }
 .breakBody { max-width: 46ch; margin: 26px auto 0; color: #6b6b72; font-size: clamp(15px, 1.8vw, 18px); font-weight: 450; letter-spacing: -0.015em; line-height: 1.75; }
-.breakLink { display: inline-flex; min-height: 50px; align-items: center; margin-top: 34px; padding: 0 28px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 15px; font-weight: 650; letter-spacing: -0.02em; text-decoration: none; }
-.breakLink:hover { background: #061e47; }
+.breakLink { display: inline-flex; min-height: 50px; align-items: center; margin-top: 34px; padding: 0 28px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 15px; font-weight: 650; letter-spacing: -0.02em; text-decoration: none; transition: background .2s, transform .2s var(--ease); }
+.breakLink:hover { background: #061e47; transform: translateY(-2px); }
 
 /* ── 한 건 자세히 ──────────────────────────────────────── */
 
@@ -87,18 +119,16 @@
 .spotlightTag { margin: 0; color: var(--ember); font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
 .spotlightTitle { max-width: 15ch; margin: 18px 0 0; font-size: clamp(28px, 5.2vw, 68px); font-weight: 750; letter-spacing: -0.05em; line-height: 1.16; }
 .spotlightBody { max-width: 44ch; margin: 24px 0 0; color: var(--haze); font-size: clamp(15px, 1.8vw, 18px); font-weight: 450; letter-spacing: -0.015em; line-height: 1.75; }
-.spotlightLink { display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; color: var(--paper); font-size: 15px; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; border-bottom: 1px solid #ffffff4d; padding-bottom: 3px; }
+.spotlightLink { display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; padding-bottom: 3px; border-bottom: 1px solid #ffffff4d; color: var(--paper); font-size: 15px; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
 .spotlightLink:hover { border-bottom-color: var(--paper); }
 
 /* ── 전체 색인 ─────────────────────────────────────────── */
 
 .index { padding: clamp(72px, 11vw, 140px) 0 clamp(80px, 12vw, 160px); background: var(--paper); color: #0d0d0f; }
-.indexHead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
 .indexTitle { margin: 0; font-size: clamp(24px, 3.6vw, 44px); font-weight: 750; letter-spacing: -0.045em; }
-.indexTotal { color: #9c9ca3; font-size: 13px; font-weight: 500; font-feature-settings: "tnum"; }
 
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 32px; }
-.filter { min-height: 38px; padding: 0 16px; border: 1px solid #e6e6e9; border-radius: 999px; background: #fff; color: #38383d; font-family: inherit; font-size: 13px; font-weight: 550; letter-spacing: -0.02em; cursor: pointer; }
+.filter { min-height: 38px; padding: 0 16px; border: 1px solid #e6e6e9; border-radius: 999px; background: #fff; color: #38383d; font-family: inherit; font-size: 13px; font-weight: 550; letter-spacing: -0.02em; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
 .filter:hover { border-color: #b5b5bb; }
 .filter[aria-pressed="true"] { border-color: #0d0d0f; background: #0d0d0f; color: #fff; }
 
@@ -106,8 +136,8 @@
 
 .card { display: block; color: inherit; text-decoration: none; }
 .cardShot { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border: 1px solid #e6e6e9; border-radius: 8px; background: #f5f5f6; }
-.cardShot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
-.card:hover .cardShot img, .card:focus-visible .cardShot img { transform: scale(1.04); }
+.cardShot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .6s var(--ease); }
+.card:hover .cardShot img, .card:focus-visible .cardShot img { transform: scale(1.06); }
 .cardMeta { display: flex; align-items: center; gap: 7px; margin-top: 13px; color: #9c9ca3; font-size: 11px; font-weight: 500; font-feature-settings: "tnum"; }
 .cardName { margin: 5px 0 0; font-size: 15px; font-weight: 650; letter-spacing: -0.03em; line-height: 1.45; }
 .cardClient { margin: 4px 0 0; overflow: hidden; color: #6b6b72; font-size: 13px; font-weight: 450; letter-spacing: -0.015em; text-overflow: ellipsis; white-space: nowrap; }
@@ -138,8 +168,6 @@
   .chapterMedia { position: static; }
   .chapterText { min-height: 0; gap: 44px; padding: 0; }
   .claim, .lede { max-width: none; }
-  .numbers { grid-template-columns: 1fr; }
-  .number + .number { border-top: 1px solid var(--seam); border-left: 0; }
 }
 
 @media (max-width: 599px) {
@@ -147,6 +175,11 @@
   .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }
 
+/* ── 동작 줄이기: 전부 끈다 ─────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce) {
-  .cardShot img { transition: none; }
+  .stage [data-reveal] { transition: none; }
+  .stage [data-reveal="armed"] { opacity: 1; transform: none; filter: none; }
+  .cardShot img, .breakLink { transition: none; }
+  .caret { display: none; }
 }
