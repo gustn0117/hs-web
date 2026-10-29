@@ -26,6 +26,7 @@
 }
 
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.artworkImage { display: block; width: 100%; height: auto; background: #000; }
 
 /* ── 떠오르며 나타나기 ─────────────────────────────────────
    그리기 전(idle)에는 아무 규칙도 걸지 않는다. 자바스크립트가

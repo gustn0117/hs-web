@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BottomCTA } from "@/components/PageShell";
+import PortfolioArtwork from "@/components/portfolio/PortfolioArtwork";
 import Reveal from "@/components/portfolio/Reveal";
 import TypeLine from "@/components/portfolio/TypeLine";
 import WorkIndex from "@/components/portfolio/WorkIndex";
-import {
-  FieldArtwork,
-  HeroArtwork,
-  PanoramaArtwork,
-  SpotlightArtwork,
-  selectVisualWorks,
-} from "@/components/portfolio/WorkVisuals";
 import styles from "@/components/portfolio/Stage.module.css";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
 import { abs } from "@/lib/site";
@@ -46,7 +40,6 @@ export default async function PortfolioPage() {
   } catch { /* 목록을 못 가져와도 페이지는 열려야 한다 */ }
 
   const fields = groupByField(items);
-  const visualWorks = selectVisualWorks(items);
   const lead = items.find((i) => i.featured) || items[0];
   const leadBlurb = lead && lead.description.trim() !== lead.title.trim() ? lead.description.trim() : "";
 
@@ -77,26 +70,25 @@ export default async function PortfolioPage() {
             하온이 직접 만들어 넘긴 작업들입니다.
           </p>
           <div className={styles.heroArt}>
-            <HeroArtwork works={visualWorks} />
+            <PortfolioArtwork kind="hero" />
           </div>
           <a href="#all-works" className={styles.cue}>
             전체 {items.length}개 프로젝트 살펴보기 <span aria-hidden="true">↓</span>
           </a>
         </section>
 
-        {visualWorks.length > 0 && (
-          <section className={styles.wide} aria-label="다양한 분야의 실제 제작 화면">
-            <div className={styles.wideInner}>
-              <div className={styles.visualCaption}>
-                <span>서로 다른 이야기. 같은 기준의 완성도.</span>
-                <span>WEB · COMMERCE · SYSTEM</span>
-              </div>
-              <div className={styles.wideBox}>
-                <PanoramaArtwork works={visualWorks} />
-              </div>
+        {/* 빗금 자리였을 때는 통째로 숨겼지만, 이제 읽을 글과 설명 붙은 그림이 들어 있다. */}
+        <section className={styles.wide} aria-label="하온이 다루는 분야">
+          <div className={styles.wideInner}>
+            <div className={styles.visualCaption}>
+              <span>서로 다른 이야기. 같은 기준의 완성도.</span>
+              <span>WEB · COMMERCE · SYSTEM</span>
             </div>
-          </section>
-        )}
+            <div className={styles.wideBox}>
+              <PortfolioArtwork kind="panorama" />
+            </div>
+          </div>
+        </section>
 
         <section className={styles.chapter} aria-labelledby="fields-claim">
           <div className={styles.wrap}>
@@ -104,7 +96,7 @@ export default async function PortfolioPage() {
               <div className={styles.chapterMedia}>
                 <Reveal>
                   <div className={styles.growBox}>
-                    <FieldArtwork works={visualWorks} />
+                    <PortfolioArtwork kind="fields" />
                   </div>
                 </Reveal>
               </div>
@@ -160,7 +152,7 @@ export default async function PortfolioPage() {
                 <div className={styles.chapterMedia}>
                   <Reveal>
                     <div className={styles.growBox}>
-                      <SpotlightArtwork work={lead} />
+                      <PortfolioArtwork kind="focus" />
                     </div>
                   </Reveal>
                 </div>
