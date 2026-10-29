@@ -89,7 +89,14 @@ export default function SiteHeader() {
   }, []);
 
   const active = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(href));
-  const close = () => setOpen(false);
+  const close = () => {
+    // 메뉴를 열면 body 에 스크롤 잠금이 걸린다. 잠긴 동안에는 브라우저가
+    // 스크롤 이동을 무시해서, 링크를 눌러 페이지를 옮겨도 Next 가 맨 위로
+    // 올리지 못하고 직전 페이지에서 내려가 있던 자리가 그대로 남는다.
+    // 아래 effect 는 그리기가 끝난 뒤에야 도니 여기서 먼저 풀어 준다.
+    document.body.style.overflow = "";
+    setOpen(false);
+  };
   const scrollToGroup = (key: string) => {
     setGroup(key);
     document.getElementById(`pg-${key}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
