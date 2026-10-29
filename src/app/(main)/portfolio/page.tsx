@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageShell, Section } from "@/components/PageShell";
+import { BottomCTA } from "@/components/PageShell";
+import Hatch from "@/components/portfolio/Hatch";
+import WorkIndex from "@/components/portfolio/WorkIndex";
+import styles from "@/components/portfolio/Stage.module.css";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
+import { REVIEW_AVERAGE } from "@/lib/reviews";
 import { abs } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -14,134 +18,159 @@ export const metadata: Metadata = {
   alternates: { canonical: abs("/portfolio") },
 };
 
-function fmtDate(iso: string) {
-  if (!iso) return "-";
-  const d = new Date(iso);
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+/** 분야마다 몇 건인지, 그리고 그 분야가 어떤 일인지 보여 줄 제목 하나. */
+function groupByField(items: PortfolioItem[]) {
+  const map = new Map<string, { count: number; sample: string }>();
+  for (const item of items) {
+    const key = item.category || "기타";
+    const hit = map.get(key);
+    if (hit) hit.count += 1;
+    else map.set(key, { count: 1, sample: item.title });
+  }
+  return [...map.entries()].sort((a, b) => b[1].count - a[1].count);
 }
 
 export default async function PortfolioPage() {
   let items: PortfolioItem[] = [];
   try {
     items = await getPortfolioItems();
-  } catch { /* noop */ }
+  } catch { /* 목록을 못 가져와도 페이지는 열려야 한다 */ }
 
-  const categories = Array.from(new Set(items.map((i) => i.category).filter(Boolean)));
-  const featured = items.find((i) => i.featured) || items[0];
-  const rest = featured ? items.filter((i) => i.id !== featured.id) : items;
+  const total = items.length;
+  const fields = groupByField(items);
+  const lead = items.find((i) => i.featured) || items[0];
+
+  if (total === 0) {
+    return (
+      <>
+        <div className={styles.stage}>
+          <section className={styles.hero}>
+            <h1 className={styles.heroTitle}>작업물을 정리하는 중입니다.</h1>
+            <p className={styles.heroSub}>곧 공개합니다. 먼저 어떤 걸 만들고 싶은지 들려주셔도 좋습니다.</p>
+          </section>
+        </div>
+        <BottomCTA />
+      </>
+    );
+  }
 
   return (
-    <PageShell
-      breadcrumb={[{ label: "포트폴리오" }]}
-      overline="PORTFOLIO"
-      title="숫자로 증명하는 작업물."
-      subtitle="실제 클라이언트와 함께한 프로젝트를 확인하세요. 각 프로젝트의 배경과 결과를 투명하게 공개합니다."
-      stats={[
-        { label: "평균 만족도", value: "5.0", suffix: "/ 5.0" },
-        { label: "재의뢰율", value: "95", suffix: "%" },
-        { label: "소스코드", value: "100", suffix: "% 제공" },
-        { label: "반응형 적용", value: "100", suffix: "%" },
-      ]}
-    >
-      {items.length === 0 ? (
-        <div className="p-card p-12 text-center">
-          <p className="text-[15px] text-[var(--c-sub)] mb-4">포트폴리오가 곧 업데이트됩니다.</p>
-          <Link href="/contact" className="p-btn p-btn-dark">첫 프로젝트 상담 신청</Link>
-        </div>
-      ) : (
-        <>
-          {/* Featured work — magazine hero */}
-          {featured && (
-            <Section>
-              <Link href={`/portfolio/${featured.seq}`} className="no-underline block group">
-                <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-6 items-stretch">
-                  <div className="p-showcase !rounded-[16px] relative md:min-h-[320px]">
-                    {featured.thumbnail ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={featured.thumbnail} alt={featured.title} />
-                    ) : (
-                      <div className="w-full h-full bg-[var(--c-bg-2)]" />
-                    )}
-                    <span className="absolute top-5 left-5 b-hot">FEATURED</span>
-                  </div>
-                  <div className="flex flex-col justify-center py-4">
-                    <div className="flex items-center gap-2 mb-5">
-                      <span className="p-chip p-chip-point">{featured.category || "프로젝트"}</span>
-                      <span className="text-[12px] text-[var(--c-sub)] tnum">{fmtDate(featured.createdAt)}</span>
-                    </div>
-                    <h2 className="text-[30px] md:text-[38px] font-bold tracking-[-0.035em] leading-[1.2] mb-4">
-                      {featured.title}
-                    </h2>
-                    <p className="text-[15px] text-[var(--c-text-2)] leading-[1.7] mb-6 max-w-[520px]">
-                      {featured.description || featured.client || "프로젝트 상세 페이지에서 자세한 내용을 확인하세요."}
-                    </p>
-                    {featured.tags && featured.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-6">
-                        {featured.tags.slice(0, 5).map((t) => (
-                          <span key={t} className="p-chip">{t}</span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="inline-flex items-center gap-2 text-[14px] font-semibold text-[var(--c-text)] p-anim-link">
-                      프로젝트 자세히 보기
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </Section>
-          )}
+    <>
+      <div className={styles.stage}>
+        <section className={styles.hero}>
+          <h1 className={styles.heroTitle}>
+            홈페이지,<br /><b>{total}</b>번 만들었습니다.
+          </h1>
+          <p className={styles.heroSub}>
+            소개 한 장짜리부터 매일 쓰는 업무 시스템까지.
+            전부 의뢰받아 만들어 넘긴 것들입니다.
+          </p>
+          <div className={styles.heroArt}>
+            <Hatch
+              label="작업물을 한 화면에 모아 놓은 들머리 이미지"
+              spec="2400 × 1200 px · webp · 검정 배경"
+              ratio="2 / 1"
+            />
+          </div>
+          <p className={styles.cue}>아래로 내리면 전부 나옵니다</p>
+        </section>
 
-          {/* Category filter + list */}
-          {rest.length > 0 && (
-            <Section overline="ALL WORKS" title="전체 프로젝트">
-              {categories.length > 0 && (
-                <div className="flex items-center gap-0 overflow-x-auto border-b border-[var(--c-line)] mb-6">
-                  <button className="p-tab active">전체</button>
-                  {categories.map((cat) => (
-                    <button key={cat} className="p-tab">
-                      {cat}
-                    </button>
+        <section className={styles.numbers} aria-label="요약">
+          <div className={styles.number}>
+            <span className={styles.numberValue}>{total}</span>
+            <span className={styles.numberLabel}>공개한 작업</span>
+          </div>
+          <div className={styles.number}>
+            <span className={styles.numberValue}>{fields.length}</span>
+            <span className={styles.numberLabel}>다루는 분야</span>
+          </div>
+          <div className={styles.number}>
+            <span className={styles.numberValue}>{REVIEW_AVERAGE.toFixed(1)}</span>
+            <span className={styles.numberLabel}>고객 평균 별점</span>
+          </div>
+        </section>
+
+        <section className={styles.chapter} aria-labelledby="fields-claim">
+          <div className={styles.wrap}>
+            <div className={styles.chapterGrid}>
+              <div className={styles.chapterMedia}>
+                <Hatch
+                  label="분야별 대표 화면을 겹쳐 놓은 이미지"
+                  spec="1200 × 1500 px · webp"
+                  ratio="4 / 5"
+                />
+              </div>
+
+              <div className={styles.chapterText}>
+                <div>
+                  <p className={styles.lede}>하온이 다루는 분야</p>
+                  <p className={styles.claim} id="fields-claim">
+                    한 가지만 만들어 본 곳이 아닙니다.
+                  </p>
+                </div>
+
+                <div className={styles.fields}>
+                  {fields.map(([name, { count, sample }]) => (
+                    <div className={styles.field} key={name}>
+                      <span className={styles.fieldCount}>{count}</span>
+                      <div>
+                        <h2 className={styles.fieldName}>{name}</h2>
+                        <p className={styles.fieldSample}>{sample}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
-              )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {rest.map((p, i) => (
-                  <Link
-                    key={p.id}
-                    href={`/portfolio/${p.seq}`}
-                    className="group no-underline block"
-                  >
-                    <div className="p-showcase sm:!aspect-square !rounded-[12px] mb-3 relative">
-                      {p.thumbnail ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.thumbnail} alt={p.title} />
-                      ) : (
-                        <div className="w-full h-full bg-[var(--c-bg-2)]" />
-                      )}
-                      <span className="absolute top-3 left-3 p-chip !bg-white/95 !border-white/95">
-                        {p.category || "기타"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[11px] text-[var(--c-sub)] mb-1">
-                      <span className="tnum">{String(rest.length - i).padStart(3, "0")}</span>
-                      <span>·</span>
-                      <span className="tnum">{fmtDate(p.createdAt)}</span>
-                    </div>
-                    <h3 className="text-[17px] font-bold tracking-tight text-[var(--c-text)] line-clamp-1 group-hover:underline underline-offset-2 mb-0.5">
-                      {p.title}
-                    </h3>
-                    <p className="text-[13px] text-[var(--c-sub)] line-clamp-1">{p.client || p.description || "-"}</p>
-                  </Link>
-                ))}
+                <p className={styles.claim}>
+                  업종이 달라도 막히는 지점은 대개 비슷합니다.
+                </p>
               </div>
-            </Section>
-          )}
-        </>
-      )}
-    </PageShell>
+            </div>
+          </div>
+        </section>
+
+        {lead && (
+          <section className={styles.spotlight} aria-labelledby="lead-title">
+            <div className={styles.wrap}>
+              <div className={styles.chapterGrid}>
+                <div className={styles.chapterText}>
+                  <div>
+                    <p className={styles.spotlightTag}>{lead.category || "프로젝트"}</p>
+                    <h2 className={styles.spotlightTitle} id="lead-title">{lead.title}</h2>
+                    {lead.description && <p className={styles.spotlightBody}>{lead.description}</p>}
+                    <Link href={`/portfolio/${lead.seq}`} className={styles.spotlightLink}>
+                      이 작업 자세히 보기
+                    </Link>
+                  </div>
+                </div>
+
+                <div className={styles.chapterMedia}>
+                  <Hatch
+                    label={`${lead.title} 전체 화면 이미지`}
+                    spec="1600 × 1000 px · webp"
+                    ratio="16 / 10"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className={styles.breakSection}>
+          <div className={styles.wrap}>
+            <h2 className={styles.breakTitle}>여기까지가 남의 회사 이야기입니다.</h2>
+            <p className={styles.breakBody}>
+              어떤 걸 만들고 싶은지 한 줄만 적어 주시면, 비슷하게 작업했던 것부터 찾아서 보여드립니다.
+              첫 상담은 무료입니다.
+            </p>
+            <Link href="/contact" className={styles.breakLink}>상담 신청하기</Link>
+          </div>
+        </section>
+
+        <WorkIndex items={items} />
+      </div>
+
+      <BottomCTA />
+    </>
   );
 }
