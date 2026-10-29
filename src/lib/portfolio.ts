@@ -48,11 +48,19 @@ function rowToItem(row: Record<string, unknown>): PortfolioItem {
   };
 }
 
+/**
+ * order 는 현재 90건이 전부 999 라 정렬에 쓸 수 없다. 그것만 걸어 두면
+ * DB 가 돌려주는 대로 나오고, 새로고침마다 순서가 바뀐다. 그래서
+ * 등록 시각(최신 먼저) 과 seq 를 뒤에 붙여 순서를 못 박는다.
+ * seq 는 90건이 전부 다르니 마지막 동점은 여기서 끊긴다.
+ */
 export async function getPortfolioItems(): Promise<PortfolioItem[]> {
   const { data, error } = await supabase
     .from("portfolio")
     .select("*")
-    .order("order", { ascending: true });
+    .order("order", { ascending: true })
+    .order("created_at", { ascending: false })
+    .order("seq", { ascending: false });
 
   if (error) throw new Error(`포트폴리오 조회 실패: ${error.message}`);
   return (data || []).map(rowToItem);

@@ -41,6 +41,7 @@ export default async function PortfolioPage() {
 
   const fields = groupByField(items);
   const lead = items.find((i) => i.featured) || items[0];
+  const leadBlurb = lead && lead.description.trim() !== lead.title.trim() ? lead.description.trim() : "";
 
   if (items.length === 0) {
     return (
@@ -143,7 +144,8 @@ export default async function PortfolioPage() {
                   <Reveal>
                     <p className={styles.spotlightTag}>{lead.category || "프로젝트"}</p>
                     <h2 className={styles.spotlightTitle} id="lead-title">{lead.title}</h2>
-                    {lead.description && <p className={styles.spotlightBody}>{lead.description}</p>}
+                    {/* 설명을 제목과 똑같이 적어 둔 건이 있다. 그대로 찍으면 제목이 두 번 나온다. */}
+                    {leadBlurb && <p className={styles.spotlightBody}>{leadBlurb}</p>}
                     <Link href={`/portfolio/${lead.seq}`} className={styles.spotlightLink}>
                       이 작업 자세히 보기
                     </Link>
@@ -154,7 +156,7 @@ export default async function PortfolioPage() {
                   <Reveal>
                     <div className={styles.growBox}>
                       <Hatch
-                        label={`${lead.title} 전체 화면 이미지`}
+                        label="대표 작업 전체 화면 이미지"
                         spec="1600 × 1000 px · webp"
                         ratio="16 / 10"
                       />
