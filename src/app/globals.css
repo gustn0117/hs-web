@@ -1298,3 +1298,46 @@ kbd.p-kbd {
     transform: none !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────
+   후기 벽
+
+   세 줄이 서로 다른 속도로 위로 흐른다. 건수를 적지 않아도
+   많다는 것이 체감되게 하는 장치다. 한 줄에 마우스를 올리면
+   그 줄만 멈춘다 — 읽으려는 사람을 붙잡아 두지 않는다.
+
+   모바일과 동작 줄이기에서는 흐름을 끄고 전부 펼친다.
+   배터리를 갉아먹지 않으면서 후기는 하나도 빠지지 않는다.
+   ────────────────────────────────────────────────────────── */
+@keyframes review-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+.review-wall {
+  height: 760px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+}
+
+.review-track {
+  animation: review-drift var(--speed, 180s) linear infinite;
+  will-change: transform;
+}
+
+.review-col:hover .review-track,
+.review-col:focus-within .review-track {
+  animation-play-state: paused;
+}
+
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .review-wall {
+    height: auto;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .review-track { animation: none; }
+  .review-dup { display: none; }
+}
