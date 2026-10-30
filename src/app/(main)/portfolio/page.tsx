@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { BottomCTA } from "@/components/PageShell";
 import PortfolioArtwork from "@/components/portfolio/PortfolioArtwork";
 import Reveal from "@/components/portfolio/Reveal";
@@ -40,8 +39,6 @@ export default async function PortfolioPage() {
   } catch { /* 목록을 못 가져와도 페이지는 열려야 한다 */ }
 
   const fields = groupByField(items);
-  const lead = items.find((i) => i.featured) || items[0];
-  const leadBlurb = lead && lead.description.trim() !== lead.title.trim() ? lead.description.trim() : "";
 
   if (items.length === 0) {
     return (
@@ -132,34 +129,6 @@ export default async function PortfolioPage() {
             </div>
           </div>
         </section>
-
-        {lead && (
-          <section className={styles.spotlight} aria-labelledby="lead-title">
-            <div className={styles.wrap}>
-              <div className={styles.chapterGrid}>
-                <div className={styles.chapterText}>
-                  <Reveal>
-                    <p className={styles.spotlightTag}>{lead.category || "프로젝트"}</p>
-                    <h2 className={styles.spotlightTitle} id="lead-title">{lead.title}</h2>
-                    {/* 설명을 제목과 똑같이 적어 둔 건이 있다. 그대로 찍으면 제목이 두 번 나온다. */}
-                    {leadBlurb && <p className={styles.spotlightBody}>{leadBlurb}</p>}
-                    <Link href={`/portfolio/${lead.seq}`} className={styles.spotlightLink}>
-                      이 작업 자세히 보기
-                    </Link>
-                  </Reveal>
-                </div>
-
-                <div className={styles.chapterMedia}>
-                  <Reveal>
-                    <div className={styles.growBox}>
-                      <PortfolioArtwork kind="focus" />
-                    </div>
-                  </Reveal>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
 
         <WorkIndex items={items} />
       </div>

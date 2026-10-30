@@ -3,7 +3,7 @@
 
    작업을 격자에 쏟아내면 '많다' 가 아니라 '잡다하다' 로 읽힌다.
    그래서 한 화면에 하나씩만 두고 스크롤로 넘긴다. 검정이 기본이고
-   흰 화면은 두 번만 쓴다 — 드물게 써야 끊어주는 힘이 생긴다.
+   흰 화면은 맨 끝 색인에서 한 번만 쓴다 — 드물게 써야 끊어주는 힘이 생긴다.
 
    움직임은 세 가지만 쓴다. 글자가 찍히고, 들어올 때 떠오르고,
    그림이 커진다. 전부 '동작 줄이기' 를 켠 사람에게는 꺼진다.
@@ -114,16 +114,6 @@
 .fieldCount { color: #9999a3; font-size: 12px; font-weight: 450; letter-spacing: .03em; font-variant-numeric: tabular-nums; }
 .fieldSample { margin: 7px 0 0; color: var(--haze); font-size: 13px; font-weight: 450; letter-spacing: -0.015em; line-height: 1.7; }
 
-
-/* ── 한 건 자세히 ──────────────────────────────────────── */
-
-.spotlight { padding: clamp(80px, 13vw, 180px) 0; }
-.spotlightTag { margin: 0; color: var(--ember); font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
-.spotlightTitle { max-width: 15ch; margin: 18px 0 0; font-size: clamp(28px, 5.2vw, 68px); font-weight: 750; letter-spacing: -0.05em; line-height: 1.16; }
-.spotlightBody { max-width: 44ch; margin: 24px 0 0; color: var(--haze); font-size: clamp(15px, 1.8vw, 18px); font-weight: 450; letter-spacing: -0.015em; line-height: 1.75; }
-.spotlightLink { display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; padding-bottom: 3px; border-bottom: 1px solid #ffffff4d; color: var(--paper); font-size: 15px; font-weight: 600; letter-spacing: -0.02em; text-decoration: none; }
-.spotlightLink:hover { border-bottom-color: var(--paper); }
-
 /* ── 전체 색인 ─────────────────────────────────────────── */
 
 .index { padding: clamp(72px, 11vw, 140px) 0 clamp(80px, 12vw, 160px); background: var(--paper); color: #0d0d0f; }
@@ -137,7 +127,7 @@
 .filter { min-height: 44px; padding: 0 16px; border: 1px solid #e6e6e9; border-radius: 999px; background: #fff; color: #38383d; font-family: inherit; font-size: 13px; font-weight: 550; letter-spacing: -0.02em; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
 .filter:hover { border-color: #b5b5bb; }
 .filter[aria-pressed="true"] { border-color: #0d0d0f; background: #0d0d0f; color: #fff; }
-.filter:focus-visible, .card:focus-visible, .spotlightLink:focus-visible { outline: 2px solid #d86a2c; outline-offset: 5px; }
+.filter:focus-visible, .card:focus-visible { outline: 2px solid #d86a2c; outline-offset: 5px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: clamp(20px, 2.6vw, 34px) clamp(16px, 2vw, 24px); }
 

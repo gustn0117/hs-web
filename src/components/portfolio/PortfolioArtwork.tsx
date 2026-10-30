@@ -20,15 +20,9 @@ const ARTWORKS = {
     alt: "유리, 금속, 그라파이트가 하나로 연결된 조형물과 호박색 유리 구체",
     sizes: "(max-width: 899px) calc(100vw - 40px), 530px",
   },
-  focus: {
-    width: 1600,
-    height: 1000,
-    alt: "푸른 바다의 질감을 담은 티타늄 프레임과 은은한 호박색 빛",
-    sizes: "(max-width: 899px) calc(100vw - 40px), 530px",
-  },
 } as const;
 
-/** Newly generated raster artwork, sized to the four original image slots. */
+/** 그림이 들어가는 자리마다 그 자리에 맞춰 그린 한 장씩. */
 export default function PortfolioArtwork({ kind }: { kind: keyof typeof ARTWORKS }) {
   const artwork = ARTWORKS[kind];
 
