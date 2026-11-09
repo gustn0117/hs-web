@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import styles from "./Stage.module.css";
+import styles from "./TypeLine.module.css";
 
 /** 글자 하나 찍는 간격 */
 const TYPE_MS = 58;

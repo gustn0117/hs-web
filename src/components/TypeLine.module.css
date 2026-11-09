@@ -1,0 +1,21 @@
+/* 글자를 찍는 동안 깜박이는 커서.
+   색은 글자색을 따라가고, 따로 주고 싶으면 --caret 을 쓴다. */
+
+.caret {
+  display: inline-block;
+  width: 0.055em;
+  height: 0.82em;
+  margin-left: 0.08em;
+  background: var(--caret, currentColor);
+  translate: 0 0.04em;
+  animation: caretBlink 1s steps(1, end) infinite;
+}
+
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret { display: none; }
+}

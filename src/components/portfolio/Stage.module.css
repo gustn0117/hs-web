@@ -47,10 +47,7 @@
 @media (min-width: 768px) { .hero { min-height: calc(100svh - 88px); } }
 
 .heroEyebrow { margin: 0 0 26px; color: #a8a8b0; font-size: 11px; font-weight: 500; letter-spacing: .16em; }
-.heroTitle { margin: 0; min-height: 1.2em; font-size: clamp(38px, 7.4vw, 104px); font-weight: 800; letter-spacing: -0.06em; line-height: 1.2; word-break: keep-all; }
-
-.caret { display: inline-block; width: 0.055em; height: 0.82em; margin-left: 0.08em; background: var(--ember); translate: 0 0.04em; animation: caretBlink 1s steps(1, end) infinite; }
-@keyframes caretBlink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+.heroTitle { --caret: var(--ember); margin: 0; min-height: 1.2em; font-size: clamp(38px, 7.4vw, 104px); font-weight: 800; letter-spacing: -0.06em; line-height: 1.2; word-break: keep-all; }
 
 .heroSub { max-width: 52ch; margin: 24px auto 0; color: #a1a1a8; font-size: clamp(14px, 1.5vw, 18px); font-weight: 450; letter-spacing: -0.02em; line-height: 1.8; word-break: keep-all; }
 
@@ -184,5 +181,4 @@
   .stage [data-reveal] { transition: none; }
   .stage [data-reveal="armed"] { opacity: 1; transform: none; filter: none; }
   .cardShot img { transition: none; }
-  .caret { display: none; }
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BottomCTA } from "@/components/PageShell";
 import PortfolioArtwork from "@/components/portfolio/PortfolioArtwork";
 import Reveal from "@/components/portfolio/Reveal";
-import TypeLine from "@/components/portfolio/TypeLine";
+import TypeLine from "@/components/TypeLine";
 import WorkIndex from "@/components/portfolio/WorkIndex";
 import styles from "@/components/portfolio/Stage.module.css";
 import { getPortfolioItems, PortfolioItem } from "@/lib/portfolio";
