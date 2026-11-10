@@ -15,6 +15,15 @@ function remember() {
   }
 }
 
+function wasDismissed() {
+  try {
+    return localStorage.getItem(DISMISS_KEY) === "1";
+  } catch {
+    // 못 읽으면 안 닫은 것으로 본다
+    return false;
+  }
+}
+
 /**
  * 「홈 화면에 추가」 안내.
  *
@@ -30,8 +39,12 @@ export default function InstallPrompt() {
   useEffect(() => {
     const onBeforeInstall = (e: Event) => {
       if (isNativeApp()) return;
+      // 브라우저가 제 설치 창을 띄우지 않게 먼저 막는다.
       e.preventDefault();
       setInstallEvent(e as InstallEvent);
+      // 한 번 닫은 사람에게는 다시 보이지 않는다. 아래 setTimeout 쪽에만
+      // 이 확인이 있고 여기엔 없어서, 크롬에서는 닫아도 또 떴다.
+      if (wasDismissed()) return;
       setHidden(false);
     };
     const onInstalled = () => setHidden(true);
@@ -47,14 +60,7 @@ export default function InstallPrompt() {
         window.matchMedia("(display-mode: standalone)").matches ||
         (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
 
-      let dismissed = false;
-      try {
-        dismissed = localStorage.getItem(DISMISS_KEY) === "1";
-      } catch {
-        // 못 읽으면 안 닫은 것으로 본다
-      }
-
-      if (standalone || dismissed) return;
+      if (standalone || wasDismissed()) return;
 
       if (/iphone|ipad|ipod/i.test(window.navigator.userAgent)) {
         setIosGuide(true);
