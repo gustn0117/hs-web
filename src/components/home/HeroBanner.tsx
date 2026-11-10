@@ -3,7 +3,7 @@ import Link from "next/link";
 import TypeLine from "@/components/TypeLine";
 import styles from "./HeroBanner.module.css";
 
-const HEADLINE = "올겨울, 브랜드를\n더 빛나게.";
+const HEADLINE = "올겨울, 브랜드를 더 빛나게.";
 
 /** 크리스마스 배경. 아래 카드가 겹치는 만큼 하단 여백을 확보한다. */
 export default function HeroBanner() {
@@ -11,7 +11,7 @@ export default function HeroBanner() {
     <section className={styles.hero} aria-label="하온 소개">
       <div className={styles.scenery} aria-hidden="true">
         <Image
-          src="/home-hero-christmas-street.webp"
+          src="/home-hero-christmas-wonderland.webp"
           alt=""
           fill
           priority
@@ -25,22 +25,18 @@ export default function HeroBanner() {
 
       <div className={styles.content}>
         <div className={`hero-enter ${styles.copy}`}>
-          <Image
-            src="/brand/haon-logo-white.png"
-            alt="하온 HAON Software Solutions"
-            width={751}
-            height={240}
-            priority
-            className={styles.logo}
-          />
-
           <p className={styles.greeting} lang="en">
             <span aria-hidden="true">✦</span>
             CHRISTMAS WITH HAON
             <span aria-hidden="true">✦</span>
           </p>
 
-          {/* 두 줄 높이를 미리 잡아 둔다. 안 그러면 찍히는 동안 아래 글이 밀린다. */}
+          <p className={styles.seasonalTitle} lang="en">
+            <span>Christmas</span>
+            <em>Wonderland</em>
+          </p>
+
+          {/* 타이핑 중에도 본문과 버튼의 위치를 유지한다. */}
           <h1 className={styles.headline}>
             <TypeLine text={HEADLINE} />
           </h1>

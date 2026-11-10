@@ -3,7 +3,7 @@
   isolation: isolate;
   overflow: hidden;
   color: #fff;
-  background: #851b2b;
+  background: #710e1f;
 }
 
 .scenery,
@@ -20,38 +20,58 @@
 
 .background {
   object-fit: cover;
-  object-position: center 48%;
+  object-position: center;
 }
 
 .veil {
   z-index: -2;
   background:
-    linear-gradient(90deg, rgb(112 17 33 / 96%) 0%, rgb(112 17 33 / 86%) 27%, rgb(112 17 33 / 42%) 49%, transparent 72%),
-    linear-gradient(0deg, rgb(79 12 23 / 50%), transparent 35%);
+    radial-gradient(ellipse at 50% 44%, rgb(63 5 16 / 36%) 0%, rgb(63 5 16 / 12%) 32%, transparent 64%),
+    linear-gradient(0deg, rgb(73 8 20 / 46%), transparent 28%);
 }
 
 .content {
   position: relative;
   max-width: 1280px;
   margin-inline: auto;
-  padding: 78px 20px 168px;
+  padding: 82px 20px 164px;
+  text-align: center;
 }
 
 .copy {
-  max-width: 660px;
+  max-width: 620px;
+  margin-inline: auto;
 }
 
-.logo {
-  width: auto;
-  height: 34px;
+.seasonalTitle {
+  margin-top: 26px;
+  color: #fff0cb;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(68px, 6.4vw, 92px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-shadow: 0 2px 26px rgb(67 10 14 / 28%);
+  text-wrap: nowrap;
+}
+
+.seasonalTitle span,
+.seasonalTitle em {
+  display: block;
+}
+
+.seasonalTitle em {
+  margin-top: -2px;
+  font-weight: 400;
+  letter-spacing: -0.065em;
 }
 
 .greeting {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 14px;
-  margin-top: 32px;
+  margin-top: 0;
   color: #ffe1a5;
   font-size: 11px;
   font-weight: 500;
@@ -65,21 +85,19 @@
 }
 
 .headline {
-  min-height: 2.3em;
-  margin-top: 20px;
+  min-height: 1.3em;
+  margin-top: 30px;
   color: #fff7e8;
-  font-size: clamp(52px, 4.6vw, 68px);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  white-space: pre-line;
-  text-shadow: 0 2px 30px rgb(0 0 0 / 12%);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 .description {
-  max-width: 520px;
-  margin: 24px 0 0;
-  color: #f3dfd8;
-  font-size: 17px;
+  max-width: 500px;
+  margin: 16px auto 0;
+  color: #f6e7db;
+  font-size: 14px;
   line-height: 1.8;
 }
 
@@ -87,9 +105,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 28px;
 }
 
 .button {
@@ -97,9 +115,9 @@
   align-items: center;
   justify-content: center;
   min-height: 52px;
-  padding: 12px 28px;
+  padding: 12px 26px;
   border: 1px solid transparent;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
   transition: background-color 180ms, border-color 180ms, color 180ms;
@@ -126,7 +144,7 @@
 .secondary {
   color: #fffaf0;
   border-color: rgb(231 216 186 / 45%);
-  background: rgb(112 17 33 / 20%);
+  background: rgb(90 9 26 / 34%);
 }
 
 .secondary:hover {
@@ -184,44 +202,50 @@
 }
 
 @media (max-width: 1023px) {
-  .background {
-    object-position: right center;
+  .scenery {
+    bottom: auto;
+    height: 480px;
   }
 
   .content {
-    padding-top: 72px;
+    padding-top: 254px;
   }
 
   .copy {
-    max-width: 560px;
+    max-width: 620px;
   }
 
   .headline {
-    font-size: 52px;
+    font-size: 24px;
   }
 
   .veil {
-    background: linear-gradient(90deg, rgb(112 17 33 / 94%), rgb(112 17 33 / 76%) 35%, rgb(112 17 33 / 16%) 80%);
+    background: linear-gradient(180deg, transparent 90px, rgb(113 14 31 / 26%) 220px, #710e1f 440px);
   }
 }
 
 @media (max-width: 767px) {
-  /* Show the Christmas street above the copy, keeping the tree in the crop. */
+  /* The illuminated tree leads into the campaign title on narrow screens. */
   .scenery {
     bottom: auto;
-    height: 410px;
+    height: 370px;
+  }
+
+  .background {
+    object-position: right center;
   }
 
   .veil {
-    background: linear-gradient(180deg, transparent 130px, rgb(133 27 43 / 18%) 190px, #851b2b 345px);
+    background: linear-gradient(180deg, transparent 100px, rgb(113 14 31 / 34%) 190px, #710e1f 355px);
   }
 
   .content {
-    padding: 274px 24px 144px;
+    padding: 224px 20px 144px;
   }
 
-  .logo {
-    display: none;
+  .seasonalTitle {
+    margin-top: 22px;
+    font-size: clamp(52px, 15vw, 78px);
   }
 
   .greeting {
@@ -232,20 +256,20 @@
   }
 
   .headline {
-    margin-top: 18px;
-    font-size: clamp(34px, 9.75vw, 52px);
+    margin-top: 26px;
+    font-size: clamp(17px, 4.6vw, 22px);
   }
 
   .description {
     max-width: 420px;
-    margin-top: 20px;
-    font-size: 14px;
+    margin-top: 16px;
+    font-size: 12px;
     line-height: 1.85;
   }
 
   .actions {
     gap: 10px;
-    margin-top: 28px;
+    margin-top: 24px;
   }
 
   .button {
