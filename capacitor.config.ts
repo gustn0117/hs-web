@@ -33,7 +33,9 @@ const config: CapacitorConfig = {
       // 저절로 사라지게 둔다 — 안 그러면 시작 화면에서 영영 멈춘다.
       launchAutoHide: true,
       launchShowDuration: 3000,
-      backgroundColor: "#ffffffff",
+      // 시작 화면 그림이 검정 바탕이라 여기도 맞춘다. 안 맞추면 그림이
+      // 뜨기 전에 흰 화면이 한 번 번쩍인다.
+      backgroundColor: "#000000ff",
       showSpinner: false,
     },
     PushNotifications: {
