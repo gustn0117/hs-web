@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductsPanel from "@/components/client/ProductsPanel";
@@ -124,11 +124,6 @@ const PAYMENT_STATUS: Record<string, { label: string; mark: string }> = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "-";
-  return new Date(dateStr).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
-}
-
 function formatShortDate(dateStr: string | null): string {
   if (!dateStr) return "-";
   return new Date(dateStr).toLocaleDateString("ko-KR", { year: "2-digit", month: "numeric", day: "numeric" });
@@ -222,21 +217,18 @@ function getRenewalBadge(d: number): { text: string; cls: string } {
 // Sub-components
 // ---------------------------------------------------------------------------
 
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+/**
+ * 섹션 제목.
+ *
+ * 전에는 제목마다 아이콘이 붙어 있었는데, 그 아이콘들은 아무것도
+ * 알려주지 않았다. 글자와 여백만으로 충분하다.
+ */
+function SectionHead({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
-    <button
-      onClick={handleCopy}
-      className="ml-1.5 px-1.5 py-0.5 text-xs bg-[var(--p-fill)] hover:bg-[var(--p-fill)] border border-[var(--p-line)] rounded text-[var(--color-gray)] cursor-pointer transition-all"
-      title="복사"
-    >
-      {copied ? "복사됨" : "복사"}
-    </button>
+    <div className="flex items-baseline justify-between mb-1">
+      <h3 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">{title}</h3>
+      {action}
+    </div>
   );
 }
 
@@ -345,10 +337,8 @@ export default function ClientDashboardPage() {
     if (p.status === "overdue") alerts.push({ type: "danger", message: `미납 결제: ${p.description || p.type} (${formatAmount(p.amount)})` });
   });
 
-  const totalPaid = data.payments.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
   const totalPending = data.payments.filter((p) => p.status === "pending" || p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
   const activeProjects = data.projects.filter((p) => p.status === "진행중" || p.status === "상담중").length;
-  const hostingPayments = data.payments.filter((p) => p.type === "호스팅");
 
   const tabConfig: { key: TabKey; label: string; short: string; icon: string }[] = [
     { key: "overview", short: "개요", label: "개요", icon: "M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" },
@@ -362,493 +352,284 @@ export default function ClientDashboardPage() {
   // Tab renderers
   // =========================================================================
 
-  const renderOverview = () => (
-    <div className="space-y-8">
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="tileIn bg-white border border-[var(--p-line)] rounded-2xl p-5" style={{ "--i": 0 } as CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-11 h-11 rounded-xl bg-[var(--p-bg-sunk)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
-              </svg>
-            </div>
-            <span className="text-[var(--color-gray)] text-xs font-medium">프로젝트</span>
-          </div>
-          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.projects.length}</p>
-          {activeProjects > 0 && <p className="text-xs text-[var(--p-ink-2)] mt-1 font-medium">{activeProjects}건 진행중</p>}
-        </div>
+  const renderOverview = () => {
+    // 고객이 이 앱을 여는 이유는 거의 하나다 — 「내가 할 일이 있나」.
+    // 그래서 할 일부터 세우고, 나머지는 그 아래로 민다.
+    const soon: { kind: string; name: string; days: number; date: string }[] = [];
 
-        <div className="tileIn bg-white border border-[var(--p-line)] rounded-2xl p-5" style={{ "--i": 1 } as CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-11 h-11 rounded-xl bg-[var(--p-bg-sunk)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
-              </svg>
-            </div>
-            <span className="text-[var(--color-gray)] text-xs font-medium">호스팅</span>
-          </div>
-          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.hosting.length}</p>
-          {data.hosting.some((h) => { const r = getNextRenewalDate(h.end_date, h.billing_cycle); return r && daysUntil(r)! <= 30; }) && (
-            <p className="text-xs text-[var(--p-ink-2)] mt-1 font-medium">갱신 임박</p>
-          )}
-        </div>
+    data.hosting.forEach((h) => {
+      const date = getNextRenewalDate(h.end_date, h.billing_cycle);
+      const d = date ? daysUntil(date) : null;
+      if (date && d !== null && d <= 60) soon.push({ kind: "호스팅", name: h.provider || "호스팅", days: d, date });
+    });
+    data.domains.forEach((x) => {
+      const d = daysUntil(x.expires_date);
+      if (x.expires_date && d !== null && d <= 60) soon.push({ kind: "도메인", name: x.domain_name, days: d, date: x.expires_date });
+    });
+    soon.sort((a, b) => a.days - b.days);
 
-        <div className="tileIn bg-white border border-[var(--p-line)] rounded-2xl p-5" style={{ "--i": 2 } as CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-11 h-11 rounded-xl bg-[var(--p-bg-sunk)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
-              </svg>
-            </div>
-            <span className="text-[var(--color-gray)] text-xs font-medium">도메인</span>
-          </div>
-          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.domains.length}</p>
-          {data.domains.some((d) => isExpiringSoon(d.expires_date)) && <p className="text-xs text-[var(--p-ink-2)] mt-1 font-medium">만료 임박</p>}
-        </div>
-
-        <div className="tileIn bg-white border border-[var(--p-line)] rounded-2xl p-5" style={{ "--i": 3 } as CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-11 h-11 rounded-xl bg-[var(--p-bg-sunk)] flex items-center justify-center">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <span className="text-[var(--color-gray)] text-xs font-medium">총 결제액</span>
-          </div>
-          <p className="numIn text-xl font-bold tracking-[-0.02em] whitespace-nowrap text-[var(--color-dark)]">
-            <CountUpAmount value={totalPaid} />
-          </p>
-          {totalPending > 0 && <p className="text-xs text-[var(--p-ink-2)] mt-1 font-medium">{formatAmount(totalPending)} 미결제</p>}
-        </div>
-      </div>
-
-      {/* Active projects */}
-      {data.projects.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
-              </svg>
-              프로젝트
-            </h3>
-            {data.projects.length > 2 && (
-              <button onClick={() => setActiveTab("projects")} className="pressText text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
-                전체 보기
-              </button>
-            )}
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {data.projects.slice(0, 2).map((p) => {
-              const sc = STATUS_MARK[p.status] || "markDone";
-              return (
-                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="pressCard no-underline block bg-white border border-[var(--p-line)] rounded-2xl p-5 hover:border-[var(--p-line-firm)] hover:border-[var(--p-line-firm)] transition-all">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-[var(--color-dark)] truncate">{p.name}</h4>
-                      {p.website_url && <p className="text-[var(--color-accent)] text-sm truncate mt-0.5">{p.website_url}</p>}
-                    </div>
-                    <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border shrink-0 ml-3 ${sc}`}>
-                      {p.status}
-                    </span>
-                  </div>
-                  {p.tech_stack && (
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {p.tech_stack.split(",").map((t, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-md text-xs text-[var(--color-gray)]">
-                          {t.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Unpaid payment banner */}
-      {totalPending > 0 && (
-        <div className="bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-xl px-4 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 bg-[var(--p-fill)] rounded-lg flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-[var(--p-ink)]">미결제 {formatAmount(totalPending)}</p>
-              <p className="text-xs text-[var(--p-ink-2)]">우리은행 1002-163-026503 (심현수)</p>
-            </div>
-          </div>
-          <button onClick={() => setActiveTab("payments")} className="px-3 py-1.5 bg-[var(--p-ink)] text-white text-xs font-semibold rounded-lg border-none cursor-pointer hover:bg-[var(--p-ink-2)] transition-colors shrink-0">
-            상세 보기
-          </button>
-        </div>
-      )}
-
-      {/* Recent payments */}
-      {data.payments.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2">
-              <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              최근 결제
-            </h3>
-            {data.payments.length > 3 && (
-              <button onClick={() => setActiveTab("payments")} className="pressText text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
-                전체 보기
-              </button>
-            )}
-          </div>
-          <div className="bg-white border border-[var(--p-line)] rounded-2xl overflow-hidden">
-            {data.payments.slice(0, 3).map((p, i) => {
-              const st = PAYMENT_STATUS[p.status] || { label: p.status, mark: "markDone" };
-              return (
-                <div key={p.id} className={`flex items-center justify-between px-5 py-4 ${i > 0 ? "border-t border-[var(--p-line)]" : ""}`}>
-                  <div className="flex items-center gap-4 min-w-0 flex-1">
-                    <div className={`w-9 h-9 rounded-lg border ${st.mark} flex items-center justify-center shrink-0`}>
-                      <span className="text-[10px] font-bold leading-none">{st.label}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-[var(--color-dark)] truncate">{p.description || p.type}</p>
-                      <p className="text-xs text-[var(--color-gray)]">{formatShortDate(p.payment_date)}</p>
-                    </div>
-                  </div>
-                  <span className={`text-sm shrink-0 ml-3 ${p.status === "paid" ? "amountDone" : "amountUrgent"}`}>
-                    {formatAmount(p.amount)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Hosting & Domain with renewal dates */}
-      {(data.hosting.length > 0 || data.domains.length > 0) && (
-        <div className="grid gap-6 md:grid-cols-2">
-          {data.hosting.length > 0 && (
-            <div>
-              <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
-                </svg>
-                호스팅
-              </h3>
-              <div className="space-y-3">
-                {data.hosting.map((h) => {
-                  const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
-                  const renewalDays = renewalDate ? daysUntil(renewalDate) : null;
-                  const badge = renewalDays !== null ? getRenewalBadge(renewalDays) : null;
-                  return (
-                    <div key={h.id} className="bg-white border border-[var(--p-line)] rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-[var(--color-dark)] text-sm">{h.provider}</span>
-                        <div className="flex items-center gap-1.5">
-                          {h.auto_renew && <span className="px-2 py-0.5 text-xs bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] rounded-full border border-[var(--p-line)] font-medium">자동갱신</span>}
-                          {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
-                        </div>
-                      </div>
-                      <div className="text-xs text-[var(--color-gray)] space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span>{h.plan || "-"} · {formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
-                        </div>
-                        {renewalDate && (
-                          <div className="flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5 text-[var(--p-sub)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
-                            <span className="font-medium text-[var(--color-dark-2)]">다음 갱신: {formatDate(renewalDate)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {data.domains.length > 0 && (
-            <div>
-              <h3 className="text-[var(--color-dark)] font-bold flex items-center gap-2 mb-4">
-                <svg className="w-5 h-5 text-[var(--p-ink-2)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
-                </svg>
-                도메인
-              </h3>
-              <div className="space-y-3">
-                {data.domains.map((d) => {
-                  const days = daysUntil(d.expires_date);
-                  const expired = isExpired(d.expires_date);
-                  const badge = days !== null ? getRenewalBadge(days) : null;
-                  return (
-                    <div key={d.id} className="bg-white border border-[var(--p-line)] rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-[var(--color-dark)] text-sm">{d.domain_name}</span>
-                        <div className="flex items-center gap-1.5">
-                          {d.auto_renew && <span className="px-2 py-0.5 text-xs bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] rounded-full border border-[var(--p-line)] font-medium">자동갱신</span>}
-                          {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-[var(--color-gray)]">
-                        <span>{d.registrar || "-"}</span>
-                        {d.expires_date && (
-                          <span className={expired ? "text-[var(--p-ink-2)] font-medium" : ""}>
-                            만료: {formatShortDate(d.expires_date)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  const renderProjects = () => {
-    const getProjectHostings = (projectId: string) => data.hosting.filter((h) => h.project_id === projectId);
-    const getProjectDomains = (projectId: string) => data.domains.filter((d) => d.project_id === projectId);
-    const getProjectMarketings = (projectId: string) => (data.marketing ?? []).filter((m) => m.project_id === projectId);
+    const nothingYet =
+      data.projects.length === 0 && data.payments.length === 0 &&
+      data.hosting.length === 0 && data.domains.length === 0;
 
     return (
-      <div className="space-y-5">
-        {data.projects.length === 0 ? (
-          <EmptyState icon="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" message="등록된 프로젝트가 없습니다." />
+      <div className="space-y-10">
+        {/* ── 할 일 ─────────────────────────────────────────────
+            화면에서 가장 먼저, 가장 크게. 돈이 걸린 것이 있으면
+            검정으로 채운 한 덩어리가 되고, 없으면 조용한 테두리가
+            된다. 이 대비가 색을 대신한다. */}
+        {totalPending > 0 ? (
+          <section className="tileIn rounded-2xl bg-[var(--p-ink)] text-white px-6 py-7">
+            <p className="text-[12px] text-white/55">내셔야 할 금액</p>
+            <p className="mt-1.5 text-[34px] font-bold leading-none tracking-[-0.03em] tabular-nums">
+              <CountUpAmount value={totalPending} />
+            </p>
+            <p className="mt-4 text-[13px] text-white/60 leading-[1.6]">
+              우리은행 1002-163-026503
+              <br />
+              예금주 심현수
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                onClick={copyAccount}
+                className="pressWide flex-1 min-h-[46px] rounded-xl bg-white text-[var(--p-ink)] text-[14px] font-bold border-none cursor-pointer"
+              >
+                {accountCopied ? "복사했어요" : "계좌 복사"}
+              </button>
+              <button
+                onClick={() => setActiveTab("payments")}
+                className="pressWide flex-1 min-h-[46px] rounded-xl bg-transparent text-white text-[14px] font-bold border border-white/35 cursor-pointer"
+              >
+                입금했어요
+              </button>
+            </div>
+          </section>
         ) : (
-          data.projects.map((p) => {
-            const sc = STATUS_MARK[p.status] || "markDone";
-            const projectHostings = getProjectHostings(p.id);
-            const projectDomains = getProjectDomains(p.id);
-            const projectMarketings = getProjectMarketings(p.id);
+          <section className="tileIn rounded-2xl border border-[var(--p-line)] px-6 py-7">
+            {soon.length > 0 ? (
+              <>
+                <p className="text-[12px] text-[var(--p-sub)]">다음 할 일</p>
+                <p className="mt-1.5 text-[22px] font-bold leading-tight tracking-[-0.02em] text-[var(--p-ink)]">
+                  {formatShortDate(soon[0].date)} {soon[0].kind} 갱신
+                </p>
+                <p className="mt-2 text-[13px] text-[var(--p-sub)]">
+                  {soon[0].name} · {soon[0].days}일 남음
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[12px] text-[var(--p-sub)]">지금은</p>
+                <p className="mt-1.5 text-[22px] font-bold leading-tight tracking-[-0.02em] text-[var(--p-ink)]">
+                  하실 일이 없습니다
+                </p>
+                <p className="mt-2 text-[13px] text-[var(--p-sub)]">낼 돈도, 곧 만료되는 것도 없습니다.</p>
+              </>
+            )}
+          </section>
+        )}
 
-            return (
-              <div key={p.id} className="bg-white border border-[var(--p-line)] rounded-2xl p-6">
-                <Link href={`/client/dashboard/projects/${p.id}`} className="no-underline block mb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                        <h3 className="font-bold text-lg text-[var(--color-dark)]">{p.name}</h3>
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${sc}`}>
-                          {p.status}
-                        </span>
-                        {p.platform && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full border bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] border-[var(--p-line)]">
-                            {p.platform}
-                          </span>
-                        )}
-                      </div>
-                      {p.website_url && (
-                        <p className="text-[var(--color-accent)] text-sm break-all inline-flex items-center gap-1">
-                          <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                          </svg>
-                          {p.website_url}
-                        </p>
-                      )}
-                    </div>
-                    <svg className="w-5 h-5 text-[var(--p-faint)] shrink-0 ml-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </div>
-                </Link>
+        {nothingYet && (
+          <p className="py-10 text-center text-[13px] text-[var(--p-sub)] leading-[1.8]">
+            아직 등록된 내용이 없습니다.
+            <br />
+            하온에 문의하시면 바로 올려 드립니다.
+          </p>
+        )}
 
-                {p.tech_stack && (
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {p.tech_stack.split(",").map((t, i) => (
-                      <span key={i} className="px-2.5 py-1 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-lg text-xs text-[var(--p-ink)] font-medium">
-                        {t.trim()}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                  {p.admin_url && (
-                    <div className="bg-[var(--p-bg-sunk)] rounded-xl px-4 py-3">
-                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 페이지</span>
-                      <a href={p.admin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline truncate block text-sm">
-                        {p.admin_url}
-                      </a>
-                    </div>
-                  )}
-                  {p.admin_id && (
-                    <div className="bg-[var(--p-bg-sunk)] rounded-xl px-4 py-3">
-                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 아이디</span>
-                      <div className="flex items-center">
-                        <span className="text-[var(--color-dark)] text-sm font-medium">{p.admin_id}</span>
-                        <CopyButton text={p.admin_id} />
-                      </div>
-                    </div>
-                  )}
-                  {p.admin_pw && (
-                    <div className="bg-[var(--p-bg-sunk)] rounded-xl px-4 py-3">
-                      <span className="text-[var(--color-gray)] text-xs block mb-1">관리자 비밀번호</span>
-                      <div className="flex items-center">
-                        <span className="text-[var(--color-dark)] text-sm font-medium">{p.admin_pw}</span>
-                        <CopyButton text={p.admin_pw} />
-                      </div>
-                    </div>
-                  )}
-                  {p.started_at && (
-                    <div className="bg-[var(--p-bg-sunk)] rounded-xl px-4 py-3">
-                      <span className="text-[var(--color-gray)] text-xs block mb-1">시작일</span>
-                      <span className="text-[var(--color-dark)] text-sm">{formatDate(p.started_at)}</span>
-                    </div>
-                  )}
-                  {p.completed_at && (
-                    <div className="bg-[var(--p-bg-sunk)] rounded-xl px-4 py-3">
-                      <span className="text-[var(--color-gray)] text-xs block mb-1">완료일</span>
-                      <span className="text-[var(--color-dark)] text-sm">{formatDate(p.completed_at)}</span>
-                    </div>
-                  )}
-                </div>
-
-                {p.description && (
-                  <div className="mt-4 pt-4 border-t border-[var(--p-line)]">
-                    <p className="text-sm text-[var(--color-gray)] leading-relaxed">{p.description}</p>
-                  </div>
-                )}
-
-                {/* Hosting inline with renewal dates */}
-                {projectHostings.length > 0 && (
-                  <div className="mt-5 pt-5 border-t border-[var(--p-line)]">
-                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
-                      <svg className="w-4 h-4 text-[var(--p-sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6" />
-                      </svg>
-                      호스팅
-                    </h4>
-                    <div className="space-y-2">
-                      {projectHostings.map((h) => {
-                        const renewalDate = getNextRenewalDate(h.end_date, h.billing_cycle);
-                        const renewalDays = renewalDate ? daysUntil(renewalDate) : null;
-                        const badge = renewalDays !== null ? getRenewalBadge(renewalDays) : null;
-                        const expired = isExpired(h.end_date) && !h.auto_renew;
-                        return (
-                          <div key={h.id} className={`border rounded-xl p-3.5 ${expired ? "border-[var(--p-line)] bg-[var(--p-bg-sunk)]" : badge && renewalDays! <= 30 ? "border-[var(--p-line)] bg-[var(--p-bg-sunk)]" : "border-[var(--p-line)] bg-[var(--p-bg-sunk)]"}`}>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-[var(--color-dark)] text-sm">{h.provider}</span>
-                                {h.plan && <span className="text-[var(--color-gray)] text-xs">· {h.plan}</span>}
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                {h.auto_renew && <span className="px-2 py-0.5 text-xs bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] rounded-full border border-[var(--p-line)] font-medium">자동갱신</span>}
-                                {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
-                              </div>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
-                              <span className="font-medium text-[var(--color-dark)]">{formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}</span>
-                              <span>시작: {formatShortDate(h.start_date)}</span>
-                              {h.end_date && <span>만료: {formatShortDate(h.end_date)}</span>}
-                            </div>
-                            {renewalDate && (
-                              <div className="flex items-center gap-1.5 mt-1.5">
-                                <svg className="w-3.5 h-3.5 text-[var(--p-sub)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
-                                <span className="text-xs font-medium text-[var(--color-dark-2)]">다음 갱신: {formatDate(renewalDate)}</span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Domains inline */}
-                {projectDomains.length > 0 && (
-                  <div className={`mt-4 ${projectHostings.length === 0 ? "pt-4 border-t border-[var(--p-line)]" : "pt-3"}`}>
-                    <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
-                      <svg className="w-4 h-4 text-[var(--p-sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3" />
-                      </svg>
-                      도메인
-                    </h4>
-                    <div className="space-y-2">
-                      {projectDomains.map((d) => {
-                        const days = daysUntil(d.expires_date);
-                        const expired = isExpired(d.expires_date);
-                        const badge = days !== null ? getRenewalBadge(days) : null;
-                        return (
-                          <div key={d.id} className={`border rounded-xl p-3.5 ${expired ? "border-[var(--p-line)] bg-[var(--p-bg-sunk)]" : days !== null && days <= 30 ? "border-[var(--p-line)] bg-[var(--p-bg-sunk)]" : "border-[var(--p-line)] bg-[var(--p-bg-sunk)]"}`}>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-[var(--color-dark)] text-sm">{d.domain_name}</span>
-                                {d.registrar && <span className="text-[var(--color-gray)] text-xs">· {d.registrar}</span>}
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                {d.auto_renew && <span className="px-2 py-0.5 text-xs bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] rounded-full border border-[var(--p-line)] font-medium">자동갱신</span>}
-                                {badge && <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${badge.cls}`}>{badge.text}</span>}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 text-xs text-[var(--color-gray)]">
-                              {d.registered_date && <span>등록: {formatShortDate(d.registered_date)}</span>}
-                              {d.expires_date && <span className={expired ? "text-[var(--p-ink-2)] font-medium" : ""}>만료: {formatShortDate(d.expires_date)}</span>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Marketing inline */}
-                <div className="mt-4 pt-4 border-t border-[var(--p-line)]">
-                  <h4 className="text-sm font-bold text-[var(--color-dark)] flex items-center gap-2 mb-3">
-                    <svg className="w-4 h-4 text-[var(--p-sub)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                    </svg>
-                    마케팅
-                  </h4>
-                  {projectMarketings.length === 0 ? (
-                    <p className="text-[var(--color-gray)] text-xs py-2">아직 신청 전입니다.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {projectMarketings.map((m) => {
-                        const mTypeCls: Record<string, string> = {
-                          "SEO": "bg-[var(--p-bg-sunk)] text-[var(--p-ink)] border-[var(--p-line)]",
-                          "트래픽": "bg-[var(--p-bg-sunk)] text-[var(--p-ink)] border-[var(--p-line)]",
-                          "백링크": "bg-[var(--p-bg-sunk)] text-[var(--p-ink)] border-[var(--p-line)]",
-                          "기타": "bg-[var(--p-fill)] text-[var(--p-ink-2)] border-[var(--p-line)]",
-                        };
-                        const mStatusCls: Record<string, { label: string; cls: string }> = {
-                          planned: { label: "예정", cls: "bg-[var(--p-fill)] text-[var(--p-ink-2)] border-[var(--p-line)]" },
-                          in_progress: { label: "진행중", cls: "bg-[var(--p-bg-sunk)] text-[var(--p-ink)] border-[var(--p-line)]" },
-                          completed: { label: "완료", cls: "bg-[var(--p-bg-sunk)] text-[var(--p-ink)] border-[var(--p-line)]" },
-                        };
-                        const si = mStatusCls[m.status] ?? { label: m.status, cls: "bg-[var(--p-fill)] text-[var(--p-ink-2)] border-[var(--p-line)]" };
-                        return (
-                          <div key={m.id} className="border border-[var(--p-line)] bg-[var(--p-bg-sunk)] rounded-xl p-3.5">
-                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                              <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${mTypeCls[m.type] ?? mTypeCls["기타"]}`}>{m.type}</span>
-                              <span className="font-semibold text-sm text-[var(--color-dark)]">{m.title}</span>
-                              <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${si.cls}`}>{si.label}</span>
-                            </div>
-                            {m.description && <p className="text-xs text-[var(--color-dark-2)] mb-1.5 line-clamp-2">{m.description}</p>}
-                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--color-gray)]">
-                              {m.started_at && <span>시작: {formatShortDate(m.started_at)}</span>}
-                              {m.completed_at && <span>완료: {formatShortDate(m.completed_at)}</span>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+        {/* ── 맡긴 것 한 줄 ──────────────────────────────────── */}
+        {!nothingYet && (
+          <section className="grid grid-cols-3 border-y border-[var(--p-line)]">
+            {[
+              { label: "프로젝트", value: data.projects.length, note: activeProjects > 0 ? `${activeProjects}건 진행중` : null },
+              { label: "호스팅", value: data.hosting.length, note: null },
+              { label: "도메인", value: data.domains.length, note: null },
+            ].map((x, i) => (
+              <div
+                key={x.label}
+                className={`py-5 text-center ${i > 0 ? "border-l border-[var(--p-line)]" : ""}`}
+              >
+                <p className="text-[26px] font-bold leading-none tabular-nums text-[var(--p-ink)]">{x.value}</p>
+                <p className="mt-1.5 text-[12px] text-[var(--p-sub)]">{x.label}</p>
+                {x.note && <p className="mt-0.5 text-[11px] text-[var(--p-ink-2)]">{x.note}</p>}
               </div>
-            );
-          })
+            ))}
+          </section>
+        )}
+
+        {/* ── 프로젝트 ───────────────────────────────────────── */}
+        {data.projects.length > 0 && (
+          <section>
+            <SectionHead
+              title="프로젝트"
+              action={
+                data.projects.length > 3 ? (
+                  <button onClick={() => setActiveTab("projects")} className="pressText text-[12px] font-semibold text-[var(--p-sub)] bg-transparent border-none cursor-pointer">
+                    전체 보기
+                  </button>
+                ) : null
+              }
+            />
+            <div>
+              {data.projects.slice(0, 3).map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/client/dashboard/projects/${p.id}`}
+                  className="pressRow no-underline flex items-center gap-3 py-4 border-b border-[var(--p-line)] last:border-b-0"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-semibold text-[var(--p-ink)] truncate">{p.name}</p>
+                    <p className="mt-0.5 text-[12px] text-[var(--p-sub)] truncate">
+                      {p.website_url || p.tech_stack || "준비 중"}
+                    </p>
+                  </div>
+                  <span className={`shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-bold ${STATUS_MARK[p.status] || "markDone"}`}>
+                    {p.status}
+                  </span>
+                  <svg className="w-4 h-4 shrink-0 text-[var(--p-faint)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── 결제 ───────────────────────────────────────────── */}
+        {data.payments.length > 0 && (
+          <section>
+            <SectionHead
+              title="결제"
+              action={
+                <button onClick={() => setActiveTab("payments")} className="pressText text-[12px] font-semibold text-[var(--p-sub)] bg-transparent border-none cursor-pointer">
+                  전체 보기
+                </button>
+              }
+            />
+            <div>
+              {data.payments.slice(0, 4).map((p) => {
+                const st = PAYMENT_STATUS[p.status] || { label: p.status, mark: "markDone" };
+                const unpaid = p.status === "pending" || p.status === "overdue";
+                return (
+                  <div
+                    key={p.id}
+                    className={`flex items-center gap-3 py-4 border-b border-[var(--p-line)] last:border-b-0 ${unpaid ? "rowUrgent pl-3" : ""}`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-medium text-[var(--p-ink)] truncate">{p.description || p.type}</p>
+                      <p className="mt-0.5 text-[12px] text-[var(--p-sub)]">
+                        {formatShortDate(p.payment_date)} · {st.label}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 text-[15px] tabular-nums ${p.status === "paid" ? "amountDone" : "amountUrgent"}`}>
+                      {formatAmount(p.amount)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ── 운영 ───────────────────────────────────────────
+            호스팅과 도메인은 고객에게 「알아서 돌아가는 것」 하나다.
+            따로 칸을 나누면 둘 다 반쯤 비어 보인다. */}
+        {(data.hosting.length > 0 || data.domains.length > 0) && (
+          <section>
+            <SectionHead title="운영" />
+            <div>
+              {data.hosting.map((h) => {
+                const date = getNextRenewalDate(h.end_date, h.billing_cycle);
+                const d = date ? daysUntil(date) : null;
+                const badge = d !== null ? getRenewalBadge(d) : null;
+                return (
+                  <div key={h.id} className="flex items-center gap-3 py-4 border-b border-[var(--p-line)] last:border-b-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-semibold text-[var(--p-ink)] truncate">
+                        호스팅 · {h.provider || "-"}
+                      </p>
+                      <p className="mt-0.5 text-[12px] text-[var(--p-sub)] truncate">
+                        {h.plan ? `${h.plan} · ` : ""}
+                        {formatAmount(h.amount)}/{h.billing_cycle === "monthly" ? "월" : "연"}
+                        {date ? ` · ${formatShortDate(date)} 갱신` : ""}
+                      </p>
+                    </div>
+                    {badge && (
+                      <span className={`shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-bold tabular-nums ${badge.cls}`}>
+                        {badge.text}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+              {data.domains.map((x) => {
+                const d = daysUntil(x.expires_date);
+                const badge = d !== null ? getRenewalBadge(d) : null;
+                return (
+                  <div key={x.id} className="flex items-center gap-3 py-4 border-b border-[var(--p-line)] last:border-b-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-semibold text-[var(--p-ink)] truncate">{x.domain_name}</p>
+                      <p className="mt-0.5 text-[12px] text-[var(--p-sub)] truncate">
+                        {x.registrar || "도메인"}
+                        {x.expires_date ? ` · ${formatShortDate(x.expires_date)} 만료` : ""}
+                      </p>
+                    </div>
+                    {badge && (
+                      <span className={`shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-bold tabular-nums ${badge.cls}`}>
+                        {badge.text}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         )}
       </div>
     );
   };
+
+  const renderProjects = () => (
+    <div>
+      {data.projects.length === 0 ? (
+        <EmptyState icon="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" message="등록된 프로젝트가 없습니다." />
+      ) : (
+        <section>
+          <SectionHead title={`프로젝트 ${data.projects.length}`} />
+          {data.projects.map((p) => {
+            // 기간·기술·운영 현황은 눌러서 들어가면 다 있다. 목록에서까지
+            // 다 보여주려다 카드 안에 카드가 겹쳐 있었다. 목록은 목록답게 둔다.
+            const span = p.completed_at
+              ? `${formatShortDate(p.started_at)} ~ ${formatShortDate(p.completed_at)}`
+              : p.started_at
+                ? `${formatShortDate(p.started_at)} 시작`
+                : null;
+            const sub = [span, p.platform].filter(Boolean).join(" · ");
+            return (
+              <Link
+                key={p.id}
+                href={`/client/dashboard/projects/${p.id}`}
+                className="pressRow no-underline flex items-start gap-3 py-5 border-b border-[var(--p-line)] last:border-b-0"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[16px] font-bold text-[var(--p-ink)] truncate">{p.name}</p>
+                  {p.website_url && (
+                    <p className="mt-1 text-[13px] text-[var(--p-ink-2)] truncate">{p.website_url}</p>
+                  )}
+                  {sub && <p className="mt-1 text-[12px] text-[var(--p-sub)] truncate">{sub}</p>}
+                </div>
+                <span className={`shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-bold ${STATUS_MARK[p.status] || "markDone"}`}>
+                  {p.status}
+                </span>
+                <svg className="w-4 h-4 shrink-0 mt-0.5 text-[var(--p-faint)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </Link>
+            );
+          })}
+        </section>
+      )}
+    </div>
+  );
 
   const copyAccount = () => {
     navigator.clipboard.writeText("1002163026503");
@@ -889,67 +670,50 @@ export default function ClientDashboardPage() {
     });
 
     return (
-      <div className="space-y-5">
-        {/* Bank account card */}
-        <div className="bg-white border border-[var(--p-line)] rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <p className="text-xs text-[var(--color-gray)] mb-1">입금 계좌</p>
-              <p className="text-sm font-bold text-[var(--color-dark)]">우리은행 1002-163-026503</p>
-              <p className="text-xs text-[var(--color-gray)] mt-0.5">예금주: 심현수</p>
-            </div>
-            <button
-              onClick={copyAccount}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold border cursor-pointer transition-all shrink-0 ${
-                accountCopied
-                  ? "bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] border-[var(--p-line)]"
-                  : "bg-[var(--color-primary)] text-white border-transparent hover:opacity-90"
-              }`}
-            >
-              {accountCopied ? "복사 완료" : "계좌 복사"}
-            </button>
+      <div className="space-y-9">
+        {/* 입금 계좌. 개요에도 검정 덩어리가 있어서 여기서 또 채우면
+            같은 것이 두 번 나온다. 여기서는 선으로만 둘러 둔다. */}
+        <section className="rounded-2xl border border-[var(--p-line)] px-5 py-4 flex items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-[12px] text-[var(--p-sub)]">입금 계좌</p>
+            <p className="mt-1 text-[15px] font-bold text-[var(--p-ink)] tabular-nums">우리은행 1002-163-026503</p>
+            <p className="mt-0.5 text-[12px] text-[var(--p-sub)]">예금주 심현수</p>
           </div>
-          {unpaid > 0 && (
-            <div className="px-5 py-3 bg-[var(--p-bg-sunk)] border-t border-[var(--p-line)] flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-[var(--p-faint)] rounded-full shrink-0" />
-              <p className="text-xs font-medium text-[var(--p-ink)]">미결제 금액 {formatAmount(unpaid)}</p>
-            </div>
-          )}
-          {unpaid === 0 && confirming === 0 && data.payments.length > 0 && (
-            <div className="px-5 py-3 bg-[var(--p-bg-sunk)] border-t border-[var(--p-line)] flex items-center gap-2">
-              <svg className="w-3.5 h-3.5 text-[var(--p-sub)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-              </svg>
-              <p className="text-xs font-medium text-[var(--p-ink)]">모든 결제가 완료되었습니다</p>
-            </div>
-          )}
-        </div>
+          <button
+            onClick={copyAccount}
+            className={`shrink-0 min-h-[40px] px-4 rounded-xl text-[13px] font-bold border cursor-pointer ${
+              accountCopied
+                ? "bg-[var(--p-fill)] text-[var(--p-sub)] border-transparent"
+                : "bg-[var(--p-ink)] text-white border-transparent"
+            }`}
+          >
+            {accountCopied ? "복사함" : "복사"}
+          </button>
+        </section>
 
         {data.payments.length === 0 ? (
           <EmptyState icon="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75" message="등록된 결제 내역이 없습니다." />
         ) : (
           <>
-            {/* Summary row */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* 개요의 석 줄 요약과 같은 생김새로 둔다. 탭마다 모양이
+                다르면 같은 앱으로 안 보인다. */}
+            <section className="grid grid-cols-3 border-y border-[var(--p-line)]">
               {[
-                { label: "완료", amount: paid, mark: "markDone", active: paid > 0 },
-                { label: "확인 중", amount: confirming, mark: "markActive", active: confirming > 0 },
-                { label: "미결제", amount: unpaid, mark: "markUrgent", active: unpaid > 0 },
-              ].map(({ label, amount, mark, active }) => (
-                <div
-                  key={label}
-                  className={`rounded-xl p-3 text-center border ${
-                    active ? mark : "bg-[var(--p-bg-sunk)] border-[var(--p-line)] text-[var(--p-faint)]"
-                  }`}
-                >
-                  <p className="text-xs font-medium mb-0.5 opacity-70">{label}</p>
-                  <p className="font-bold text-sm sm:text-base">{formatAmount(amount)}</p>
+                { label: "완료", amount: paid, urgent: false },
+                { label: "확인 중", amount: confirming, urgent: false },
+                { label: "미결제", amount: unpaid, urgent: unpaid > 0 },
+              ].map((x, i) => (
+                <div key={x.label} className={`py-5 px-2 text-center ${i > 0 ? "border-l border-[var(--p-line)]" : ""}`}>
+                  <p className={`text-[15px] font-bold leading-none tabular-nums tracking-[-0.02em] ${x.urgent ? "text-[var(--p-ink)]" : "text-[var(--p-sub)]"}`}>
+                    {formatAmount(x.amount)}
+                  </p>
+                  <p className="mt-1.5 text-[12px] text-[var(--p-sub)]">{x.label}</p>
                 </div>
               ))}
-            </div>
+            </section>
 
-            {/* Payment list */}
-            <div className="bg-white border border-[var(--p-line)] rounded-2xl overflow-hidden divide-y divide-[var(--p-line)]">
+            <section>
+              <SectionHead title="결제 내역" />
               {sorted.map((p) => {
                 const st = PAYMENT_STATUS[p.status] || { label: p.status, mark: "markDone" };
                 const isUnpaid = p.status === "pending" || p.status === "overdue";
@@ -957,47 +721,37 @@ export default function ClientDashboardPage() {
                 return (
                   <div
                     key={p.id}
-                    className={`pressRow px-5 py-4 hover:bg-[var(--p-bg-sunk)] transition-colors ${
-                      isUnpaid ? "rowUrgent" : ""
-                    }`}
+                    className={`flex items-center gap-3 py-4 border-b border-[var(--p-line)] last:border-b-0 ${isUnpaid ? "rowUrgent pl-3" : ""}`}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-semibold text-[var(--color-dark)]">{p.type}</span>
-                          <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full border ${st.mark}`}>
-                            {st.label}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-xs text-[var(--color-gray)]">
-                          <span>{formatShortDate(p.payment_date)}</span>
-                          {p.description && <><span className="text-[var(--p-faint)]">|</span><span className="truncate">{p.description}</span></>}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <span className={`text-sm ${p.status === "paid" ? "amountDone" : "amountUrgent"}`}>
-                          {formatAmount(p.amount)}
-                        </span>
-                        {isUnpaid && (
-                          <button
-                            onClick={() => handleConfirmPayment(p.id)}
-                            disabled={confirmingId === p.id}
-                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white text-xs font-semibold rounded-lg border-none cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
-                          >
-                            {confirmingId === p.id ? "처리 중" : "입금 완료"}
-                          </button>
-                        )}
-                        {isConfirming && (
-                          <span className="statePop px-3 py-1.5 bg-[var(--p-bg-sunk)] text-[var(--p-ink-2)] text-xs font-semibold rounded-lg border border-[var(--p-line)]">
-                            확인 중
-                          </span>
-                        )}
-                      </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-medium text-[var(--p-ink)] truncate">
+                        {p.description || p.type}
+                      </p>
+                      <p className="mt-0.5 text-[12px] text-[var(--p-sub)]">
+                        {formatShortDate(p.payment_date)} · {p.type} · {st.label}
+                      </p>
                     </div>
+                    <span className={`shrink-0 text-[15px] tabular-nums ${p.status === "paid" ? "amountDone" : "amountUrgent"}`}>
+                      {formatAmount(p.amount)}
+                    </span>
+                    {isUnpaid && (
+                      <button
+                        onClick={() => handleConfirmPayment(p.id)}
+                        disabled={confirmingId === p.id}
+                        className="shrink-0 min-h-[34px] px-3 rounded-lg bg-[var(--p-ink)] text-white text-[12px] font-bold border-none cursor-pointer disabled:opacity-50"
+                      >
+                        {confirmingId === p.id ? "보내는 중" : "입금했어요"}
+                      </button>
+                    )}
+                    {isConfirming && (
+                      <span className="statePop shrink-0 px-2.5 py-1 rounded-full border text-[11px] font-bold markActive">
+                        확인 중
+                      </span>
+                    )}
                   </div>
                 );
               })}
-            </div>
+            </section>
           </>
         )}
       </div>
@@ -1028,22 +782,15 @@ export default function ClientDashboardPage() {
       {/* Header */}
       <header className="bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="min-w-0">
             <Link href="/client/dashboard" className="no-underline">
-              <h1 className="text-lg font-extrabold text-[var(--color-dark)] tracking-[-0.03em]">
+              <h1 className="text-[17px] font-extrabold text-[var(--p-ink)] tracking-[-0.03em] leading-none">
                 하온
               </h1>
             </Link>
-            <div className="hidden sm:block w-px h-5 bg-[var(--p-fill)]" />
-            <span className="hidden sm:block text-[var(--color-gray)] text-sm">고객센터</span>
+            <p className="mt-1 text-[11px] text-[var(--p-sub)] truncate">{data.client.name}님</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[var(--p-ink)] flex items-center justify-center text-white text-sm font-bold">
-                {data.client.name.charAt(0)}
-              </div>
-              <span className="text-sm text-[var(--color-dark)] font-medium">{data.client.name}</span>
-            </div>
             {!inApp && (
               <Link
                 href="/"
@@ -1063,40 +810,6 @@ export default function ClientDashboardPage() {
       </header>
 
       <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-[calc(84px+env(safe-area-inset-bottom))] md:pb-8">
-        {/* Welcome */}
-        <div className="mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-[var(--color-dark)] mb-1">
-            안녕하세요, {data.client.name}님
-          </h2>
-          <p className="text-[var(--color-gray)] text-sm">
-            홈페이지 관리 현황을 확인하세요.
-          </p>
-        </div>
-
-        {/* Alerts */}
-        {alerts.length > 0 && (
-          <div className="space-y-2 mb-6">
-            {alerts.map((alert, i) => (
-              <div
-                key={i}
-                style={{ "--i": i } as CSSProperties}
-                className={`alertIn flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
-                  alert.type === "danger"
-                    ? // 이미 지났거나 돈이 걸린 것. 흰 바탕에 검정 테두리를
-                      // 세워 화면에서 혼자 튀어나오게 한다.
-                      "bg-[var(--p-bg)] border-[var(--p-ink)] border-2 text-[var(--p-ink)] font-semibold"
-                    : // 다가오는 것. 알려는 주되 차분하게.
-                      "bg-[var(--p-fill)] border-transparent text-[var(--p-ink-2)]"
-                }`}
-              >
-                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
-                <span className="font-medium">{alert.message}</span>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Tab bar */}
         <div className="hidden md:flex gap-1 border-b border-[var(--p-line)] mb-8 overflow-x-auto">
@@ -1280,10 +993,7 @@ function SettingsTab({ username }: { username: string }) {
         {/* Current password - verification */}
         <div className="bg-white border border-[var(--p-line)] rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-4 h-4 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-            </svg>
-            <h4 className="text-sm font-semibold text-[var(--color-dark)]">본인 확인</h4>
+            <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">본인 확인</h4>
           </div>
           <div>
             <label className={labelClass}>현재 비밀번호</label>
@@ -1303,10 +1013,7 @@ function SettingsTab({ username }: { username: string }) {
         {/* Change fields */}
         <div className="bg-white border border-[var(--p-line)] rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-4 h-4 text-[var(--color-gray)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-            </svg>
-            <h4 className="text-sm font-semibold text-[var(--color-dark)]">변경 정보</h4>
+            <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">변경 정보</h4>
             <span className="text-[var(--color-gray)] text-xs ml-auto">변경할 항목만 수정</span>
           </div>
 

@@ -96,7 +96,7 @@ export default function ProductsPanel() {
 
       {requests.length > 0 && (
         <section>
-          <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-3">내 신청</h3>
+          <h3 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)] mb-3">내 신청</h3>
           <div className="bg-white border border-[var(--p-line)] rounded-2xl divide-y divide-[var(--p-line)]">
             {requests.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3.5">
@@ -129,7 +129,7 @@ export default function ProductsPanel() {
       ) : (
         categories.map((category) => (
           <section key={category}>
-            <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-3">{category}</h3>
+            <h3 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)] mb-3">{category}</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {products
                 .filter((p) => p.category === category)
@@ -229,7 +229,7 @@ export default function ProductsPanel() {
                             setNotice("");
                           }}
                           disabled={already}
-                          className="mt-4 w-full min-h-[44px] rounded-xl text-sm font-semibold cursor-pointer transition-colors disabled:cursor-default bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-dark)] hover:bg-[var(--p-fill)] disabled:bg-[var(--p-bg-sunk)] disabled:text-[var(--color-gray)]"
+                          className="pressWide mt-4 w-full min-h-[46px] rounded-xl text-[14px] font-bold cursor-pointer transition-colors disabled:cursor-default bg-white border border-[var(--p-ink)] text-[var(--p-ink)] hover:bg-[var(--p-bg-sunk)] disabled:bg-[var(--p-fill)] disabled:border-transparent disabled:text-[var(--p-sub)]"
                         >
                           {already ? "신청 접수됨" : "이거 해주세요"}
                         </button>

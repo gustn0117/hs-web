@@ -136,7 +136,7 @@ export default function AppSettings({ username }: { username: string }) {
 
       {native && (
         <div className={cardClass}>
-          <h4 className="text-sm font-semibold text-[var(--color-dark)]">앱 설정</h4>
+          <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">앱 설정</h4>
 
           <div className="mt-4 flex items-center justify-between gap-3">
             <div className="min-w-0">
@@ -207,7 +207,7 @@ export default function AppSettings({ username }: { username: string }) {
       )}
 
       <div className={cardClass}>
-        <h4 className="text-sm font-semibold text-[var(--color-dark)]">계정 지우기</h4>
+        <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">계정 지우기</h4>
         <p className="mt-2 text-[13px] text-[var(--color-gray)] leading-[1.7]">
           계정을 지우면 바로 로그인할 수 없고, 연락처(전화·메일)도 함께 지워집니다.
           다만 계약·결제 기록은 전자상거래법에 따라 5년간 보관한 뒤 지웁니다.
