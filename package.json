@@ -3,12 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "next dev",
+    "ios": "cap sync ios && cap open ios",
+    "ios:archive": "cd ios/App && xcodebuild -scheme App -sdk iphoneos -configuration Release -destination 'generic/platform=iOS' -archivePath build/App.xcarchive -allowProvisioningUpdates archive",
+    "ios:export": "cd ios/App && xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/export -allowProvisioningUpdates",
+    "ios:sync": "cap sync ios",
+    "lint": "eslint",
+    "start": "next start"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/push-notifications": "^8.1.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "@capgo/capacitor-native-biometric": "^8.9.1",
     "@supabase/supabase-js": "^2.97.0",
     "bcryptjs": "^3.0.3",
     "next": "16.1.6",
@@ -16,6 +27,8 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

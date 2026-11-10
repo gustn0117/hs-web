@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import {
@@ -14,6 +14,10 @@ const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
 });
+
+export const viewport: Viewport = {
+  themeColor: "#0f1a2d",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -67,7 +71,6 @@ export const metadata: Metadata = {
     },
   },
   other: {
-    "theme-color": "#0f1a2d",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-title": SITE_NAME,

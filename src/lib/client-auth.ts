@@ -4,6 +4,25 @@ import crypto from "crypto";
 const CLIENT_AUTH_SECRET = process.env.CLIENT_AUTH_SECRET || "hs-web-client-secret-key-2024";
 const CLIENT_COOKIE_NAME = "hs-client-token";
 
+/**
+ * 고객 포털 로그인이 유지되는 기간.
+ *
+ * 포털은 고객이 홈 화면에 깔아 두고 쓰는 앱이다. 하루마다 로그인이 풀리면
+ * 아이디·비밀번호를 기억하는 사람이 없어서 결국 카톡으로 돌아간다. 그래서
+ * 길게 두고, 열 때마다 다시 30일로 늘려 준다(/api/client-auth/me).
+ */
+export const CLIENT_SESSION_MS = 30 * 24 * 60 * 60 * 1000;
+export const CLIENT_SESSION_SECONDS = CLIENT_SESSION_MS / 1000;
+
+/** 로그인 쿠키를 심을 때 쓰는 공통 설정. 여러 곳에서 똑같이 써야 한다. */
+export const clientCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: CLIENT_SESSION_SECONDS,
+  path: "/",
+} as const;
+
 export function generateClientToken(clientId: string): string {
   const timestamp = Date.now().toString();
   const payload = `${clientId}:${timestamp}`;
@@ -26,7 +45,7 @@ export function verifyClientToken(token: string): { valid: boolean; clientId?: s
   const [clientId, timestamp] = parts;
 
   const age = Date.now() - parseInt(timestamp, 10);
-  if (isNaN(age) || age > 24 * 60 * 60 * 1000) return { valid: false };
+  if (isNaN(age) || age > CLIENT_SESSION_MS) return { valid: false };
 
   const hmac = crypto.createHmac("sha256", CLIENT_AUTH_SECRET);
   hmac.update(payload);

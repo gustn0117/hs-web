@@ -42,3 +42,14 @@ next-env.d.ts
 
 # QA screenshots
 tmp/
+
+# iOS 앱 (Capacitor)
+/ios/App/build
+/ios/App/output
+/ios/App/App/public
+/ios/App/DerivedData
+/ios/App/Pods
+/ios/App/App.xcworkspace/xcuserdata
+/ios/App/App.xcodeproj/xcuserdata
+/ios/App/App/capacitor.config.json
+/ios/capacitor-cordova-ios-plugins

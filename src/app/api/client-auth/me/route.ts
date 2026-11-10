@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { getAuthenticatedClientId } from "@/lib/client-auth";
+import {
+  getAuthenticatedClientId,
+  generateClientToken,
+  CLIENT_COOKIE_NAME,
+  clientCookieOptions,
+} from "@/lib/client-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +60,7 @@ export async function GET() {
     );
   }
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     client: clientResult.data,
     projects: projectsResult.data ?? [],
     hosting: hostingResult.data ?? [],
@@ -63,4 +68,10 @@ export async function GET() {
     payments: paymentsResult.data ?? [],
     marketing: marketingResult.data ?? [],
   });
+
+  // 포털을 열 때마다 기한을 다시 30일로 늘린다. 계속 쓰는 사람은
+  // 다시 로그인할 일이 없고, 한 달 넘게 안 들어온 사람만 풀린다.
+  response.cookies.set(CLIENT_COOKIE_NAME, generateClientToken(clientId), clientCookieOptions);
+
+  return response;
 }

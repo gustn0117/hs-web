@@ -182,8 +182,8 @@ export default function ClientProjectDetailPage() {
         <header className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 sticky top-0 z-20 shadow-sm shadow-gray-100/50">
           <div className="max-w-[1100px] mx-auto flex items-center justify-between">
             <Link href="/client/dashboard" className="flex items-center gap-3 no-underline">
-              <h1 className="text-lg font-extrabold text-[var(--color-dark)]">
-                HS <span className="gradient-text">WEB</span>
+              <h1 className="text-lg font-extrabold text-[var(--color-dark)] tracking-[-0.03em]">
+                하온
               </h1>
             </Link>
           </div>
@@ -207,12 +207,12 @@ export default function ClientProjectDetailPage() {
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/client/dashboard" className="no-underline">
-              <h1 className="text-lg font-extrabold text-[var(--color-dark)]">
-                HS <span className="gradient-text">WEB</span>
+              <h1 className="text-lg font-extrabold text-[var(--color-dark)] tracking-[-0.03em]">
+                하온
               </h1>
             </Link>
             <div className="hidden sm:block w-px h-5 bg-gray-200" />
-            <span className="hidden sm:block text-[var(--color-gray)] text-sm">고객 포털</span>
+            <span className="hidden sm:block text-[var(--color-gray)] text-sm">고객센터</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">

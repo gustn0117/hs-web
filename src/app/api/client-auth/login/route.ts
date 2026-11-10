@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { generateClientToken, CLIENT_COOKIE_NAME } from "@/lib/client-auth";
+import { generateClientToken, CLIENT_COOKIE_NAME, clientCookieOptions } from "@/lib/client-auth";
 import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
@@ -46,13 +46,7 @@ export async function POST(request: Request) {
   const token = generateClientToken(client.id);
   const response = NextResponse.json({ success: true, name: client.name });
 
-  response.cookies.set(CLIENT_COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24, // 24 hours
-    path: "/",
-  });
+  response.cookies.set(CLIENT_COOKIE_NAME, token, clientCookieOptions);
 
   return response;
 }

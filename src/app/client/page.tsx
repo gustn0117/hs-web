@@ -1,15 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { canUseBiometrics, isNativeApp, loginWithBiometrics } from "@/lib/native";
 
 export default function ClientLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [faceIdReady, setFaceIdReady] = useState(false);
+  const [inApp, setInApp] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // 앱으로 열었고 이 기기가 지문·Face ID 를 쓸 수 있을 때만 버튼을 낸다.
+    const check = setTimeout(async () => {
+      if (!isNativeApp()) return;
+      setInApp(true);
+      setFaceIdReady(await canUseBiometrics());
+    }, 0);
+    return () => clearTimeout(check);
+  }, []);
+
+  const signIn = async (id: string, pw: string) => {
+    const res = await fetch("/api/client-auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: id, password: pw }),
+    });
+    return { ok: res.ok, data: await res.json() };
+  };
+
+  const handleBiometric = async () => {
+    setError("");
+    const saved = await loginWithBiometrics();
+    if (!saved) return;
+
+    setLoading(true);
+    try {
+      const { ok, data } = await signIn(saved.username, saved.password);
+      if (!ok) {
+        setError(data.error || "저장해 둔 정보로 열지 못했습니다. 비밀번호로 로그인해 주세요.");
+        return;
+      }
+      router.push("/client/dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,10 +82,10 @@ export default function ClientLoginPage() {
     <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4">
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-extrabold text-[var(--color-dark)] mb-1 no-underline inline-block hover:opacity-80 transition-opacity">
-            HS <span className="gradient-text">WEB</span>
-          </a>
-          <p className="text-[var(--color-gray)] text-sm">고객 포털</p>
+          <Link href="/" className="text-2xl font-extrabold text-[var(--color-dark)] mb-1 no-underline inline-block tracking-[-0.03em] hover:opacity-80 transition-opacity">
+            하온
+          </Link>
+          <p className="text-[var(--color-gray)] text-sm">고객센터</p>
         </div>
 
         <form
@@ -93,18 +133,31 @@ export default function ClientLoginPage() {
           >
             {loading ? "로그인 중..." : "로그인"}
           </button>
+
+          {faceIdReady && (
+            <button
+              type="button"
+              onClick={handleBiometric}
+              disabled={loading}
+              className="w-full py-3 bg-white border border-gray-200 text-[var(--color-dark)] rounded-xl font-semibold cursor-pointer transition-colors hover:bg-gray-50 disabled:opacity-50"
+            >
+              지문 · Face ID로 로그인
+            </button>
+          )}
         </form>
 
         <div className="text-center mt-6 space-y-2">
           <p className="text-[var(--color-gray-light)] text-xs">
             계정 정보를 모르시면 관리자에게 문의하세요.
           </p>
-          <Link href="/" className="inline-flex items-center gap-1 text-[var(--color-gray)] text-xs no-underline hover:text-[var(--color-dark)] transition-colors">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            메인 사이트로 돌아가기
-          </Link>
+          {!inApp && (
+            <Link href="/" className="inline-flex items-center gap-1 text-[var(--color-gray)] text-xs no-underline hover:text-[var(--color-dark)] transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              메인 사이트로 돌아가기
+            </Link>
+          )}
         </div>
       </div>
     </div>
