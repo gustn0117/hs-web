@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import ProductsPanel from "@/components/client/ProductsPanel";
 import { onAppResume, tapFeedback } from "@/lib/native";
 import AppSettings from "@/components/client/AppSettings";
@@ -783,10 +784,15 @@ export default function ClientDashboardPage() {
       <header className="bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="min-w-0">
-            <Link href="/client/dashboard" className="no-underline">
-              <h1 className="text-[17px] font-extrabold text-[var(--p-ink)] tracking-[-0.03em] leading-none">
-                하온
-              </h1>
+            <Link href="/client/dashboard" className="no-underline inline-block" aria-label="하온 고객센터">
+              <Image
+                src="/brand/haon-logo.png"
+                alt="하온 HAON Software Solutions"
+                width={751}
+                height={240}
+                priority
+                className="h-[26px] w-auto"
+              />
             </Link>
             <p className="mt-1 text-[11px] text-[var(--p-sub)] truncate">{data.client.name}님</p>
           </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { canUseBiometrics, isNativeApp, loginWithBiometrics } from "@/lib/native";
 
 export default function ClientLoginPage() {
@@ -82,10 +83,17 @@ export default function ClientLoginPage() {
     <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4">
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-extrabold text-[var(--color-dark)] mb-1 no-underline inline-block tracking-[-0.03em] hover:opacity-80 transition-opacity">
-            하온
+          <Link href="/" className="no-underline inline-block hover:opacity-80 transition-opacity" aria-label="하온 홈">
+            <Image
+              src="/brand/haon-logo.png"
+              alt="하온 HAON Software Solutions"
+              width={751}
+              height={240}
+              priority
+              className="h-[34px] w-auto mx-auto"
+            />
           </Link>
-          <p className="text-[var(--color-gray)] text-sm">고객센터</p>
+          <p className="mt-3 text-[13px] text-[var(--p-sub)]">고객센터</p>
         </div>
 
         <form
