@@ -203,7 +203,7 @@ export default function ProductsPanel() {
                               type="button"
                               onClick={() => submit(product)}
                               disabled={sending}
-                              className="flex-1 min-h-[44px] bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:opacity-90 disabled:opacity-50"
+                              className="pressWide flex-1 min-h-[44px] bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:opacity-90 disabled:opacity-50"
                             >
                               {sending ? "보내는 중..." : "신청 보내기"}
                             </button>

@@ -235,7 +235,7 @@ export default function AppSettings({ username }: { username: string }) {
                 type="button"
                 onClick={removeAccount}
                 disabled={deleting || !deletePassword}
-                className="flex-1 min-h-[44px] bg-red-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:bg-red-700 disabled:opacity-50"
+                className="pressWide flex-1 min-h-[44px] bg-red-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:bg-red-700 disabled:opacity-50"
               >
                 {deleting ? "지우는 중..." : "계정을 지웁니다"}
               </button>

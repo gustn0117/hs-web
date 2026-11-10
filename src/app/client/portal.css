@@ -40,32 +40,229 @@
   user-select: none;
 }
 
-/* 누르는 동안 살짝 줄어든다. 네이티브 버튼이 눌리는 느낌에 가깝다. */
-@media (hover: none) {
-  .portal button:active,
-  .portal a:active {
-    transform: scale(0.97);
-  }
 
-  .portal button,
-  .portal a {
-    transition: transform 120ms ease-out;
+/* ══════════════════════════════════════════════════════════
+   손맛 — 누를 때
+   ══════════════════════════════════════════════════════════ */
+
+/* 들어갈 때는 빠르게, 돌아올 때는 천천히. 네이티브 버튼의 손맛은
+   거의 전부 이 비대칭에서 온다. 양쪽을 같은 속도로 두면 고무처럼
+   물컹해진다. */
+.portal button,
+.portal a,
+.portal [role="button"] {
+  transition:
+    transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 240ms ease-out,
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    opacity 160ms ease-out;
+}
+
+.portal button:active,
+.portal a:active,
+.portal [role="button"]:active {
+  transition-duration: 80ms;
+}
+
+/* 크기에 따라 눌리는 정도를 달리 둔다. 작은 단추는 또렷하게 들어가야
+   눌린 줄 알고, 큰 칸은 조금만 줄어야 출렁여 보이지 않는다. */
+.portal button:active,
+.portal [role="button"]:active {
+  transform: scale(0.94);
+}
+
+.portal a:active {
+  transform: scale(0.97);
+}
+
+/* 화면 너비를 다 쓰는 단추. 0.94 로 줄이면 화면이 흔들린다. */
+.portal .pressWide:active {
+  transform: scale(0.975);
+}
+
+/* 카드. 안을 눌렀을 때 카드째로 살짝 가라앉는다. */
+.portal .pressCard:active {
+  transform: scale(0.985);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+/* 목록의 한 줄. 줄어들면 목록이 들썩이니 바탕색만 어두워진다.
+   한 줄은 div 라서 위의 transition 이 걸리지 않는다. 따로 준다. */
+.portal .pressRow {
+  transition: background-color 240ms ease-out;
+}
+
+.portal .pressRow:active {
+  background-color: rgb(15 23 42 / 0.04);
+  transition-duration: 60ms;
+}
+
+/* 글자만 있는 단추(「전체 보기」 같은 것). 줄어들면 어색해서
+   흐려지게만 한다. */
+.portal .pressText:active {
+  transform: none;
+  opacity: 0.45;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   손맛 — 화면이 바뀔 때
+   ══════════════════════════════════════════════════════════ */
+
+/* 탭을 누르면 내용이 뚝 바뀌는 대신 살짝 올라오며 들어온다.
+   앱과 웹의 차이가 가장 크게 느껴지는 곳이다. */
+.portal .tabPanel {
+  animation: portalPanelIn 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes portalPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .portal button,
-  .portal a {
-    transition: none;
+/* 아래 탭 바. 고른 칸의 그림이 톡 튀어오른다. 되돌아올 때 살짝
+   넘어가는 곡선(1.56)이라 손가락을 뗀 뒤에도 잔상이 남는다. */
+.portal nav[aria-label="고객센터 메뉴"] button svg {
+  transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.portal nav[aria-label="고객센터 메뉴"] button[aria-current="page"] svg {
+  animation: portalTabPop 440ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes portalTabPop {
+  0% {
+    transform: scale(1) translateY(0);
   }
-  .portal button:active,
-  .portal a:active {
-    transform: none;
+  30% {
+    transform: scale(1.2) translateY(-3px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
   }
 }
+
+/* 누르는 동안에는 그림만 들어간다. 칸 전체가 줄면 탭 바가 흔들린다. */
+.portal nav[aria-label="고객센터 메뉴"] button:active {
+  transform: none;
+}
+
+.portal nav[aria-label="고객센터 메뉴"] button:active svg {
+  transform: scale(0.86);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   손맛 — 내용이 들어올 때
+   ══════════════════════════════════════════════════════════ */
+
+/* 요약 칸이 왼쪽부터 차례로 들어온다. --i 로 순서를 받는다.
+   탭을 열 때마다 돈다. 길게 두면 탭이 느리게 느껴지므로 전부
+   합쳐 0.6초 안에 끝낸다. */
+.portal .tileIn {
+  animation: portalTileIn 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@keyframes portalTileIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* 칸 안의 숫자는 칸보다 조금 늦게 자리를 잡는다. */
+.portal .numIn {
+  animation: portalNumIn 520ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms + 90ms);
+}
+
+@keyframes portalNumIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* 알림띠는 위에서 눌러 내려온다. */
+.portal .alertIn {
+  animation: portalAlertIn 360ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@keyframes portalAlertIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   손맛 — 눌린 게 전달됐을 때
+   ══════════════════════════════════════════════════════════ */
+
+/* 「입금 완료」를 누르면 「확인 중」이 톡 나타난다. 눌린 것이
+   서버까지 갔다는 걸 알려주는 유일한 신호라서, 여기만은 조금
+   과하게 튀도록 뒀다. */
+.portal .statePop {
+  animation: portalStatePop 460ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes portalStatePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 
 /* 키보드가 올라오면 아래 탭 바를 숨긴다. 안 그러면 탭 바가 키보드
    위에 떠서 입력칸을 가린다. 자바스크립트가 body 에 표시를 붙인다. */
 body.keyboard-open .portal nav[aria-label="고객센터 메뉴"] {
   display: none;
+}
+
+
+/* 움직임을 꺼 둔 사람에게는 전부 끈다. 어지럼증 때문에 끄는
+   사람들이 있어서, 하나라도 남으면 의미가 없다. */
+@media (prefers-reduced-motion: reduce) {
+  .portal button,
+  .portal a,
+  .portal [role="button"],
+  .portal nav[aria-label="고객센터 메뉴"] button svg {
+    transition: none;
+  }
+
+  .portal button:active,
+  .portal a:active,
+  .portal [role="button"]:active,
+  .portal .pressWide:active,
+  .portal .pressCard:active,
+  .portal .pressText:active,
+  .portal nav[aria-label="고객센터 메뉴"] button:active svg {
+    transform: none;
+    opacity: 1;
+    box-shadow: none;
+  }
+
+  .portal .tabPanel,
+  .portal .tileIn,
+  .portal .numIn,
+  .portal .alertIn,
+  .portal .statePop,
+  .portal nav[aria-label="고객센터 메뉴"] button[aria-current="page"] svg {
+    animation: none;
+  }
 }

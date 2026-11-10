@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductsPanel from "@/components/client/ProductsPanel";
@@ -128,6 +128,44 @@ function formatShortDate(dateStr: string | null): string {
 
 function formatAmount(amount: number): string {
   return Number(amount).toLocaleString() + "원";
+}
+
+/**
+ * 숫자를 0 에서부터 세어 올린다.
+ *
+ * 총 결제액처럼 큰 수에만 쓴다. 프로젝트 2건 같은 작은 수는 올라가는
+ * 것이 보이지도 않고 산만하다. 움직임을 꺼 둔 사람에게는 세지 않고
+ * 결과만 바로 보여준다.
+ */
+function CountUpAmount({ value }: { value: number }) {
+  const [shown, setShown] = useState(0);
+
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduce || value <= 0) {
+      const id = window.setTimeout(() => setShown(value), 0);
+      return () => window.clearTimeout(id);
+    }
+
+    const DURATION = 900;
+    let raf = 0;
+    let start = 0;
+
+    const step = (now: number) => {
+      if (!start) start = now;
+      const p = Math.min(1, (now - start) / DURATION);
+      // 끝에서 천천히 멈춘다. 일정한 속도로 올라가면 기계 같다.
+      const eased = 1 - Math.pow(1 - p, 3);
+      setShown(Math.round(value * eased));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+
+  return <>{formatAmount(shown)}</>;
 }
 
 function isExpiringSoon(dateStr: string | null): boolean {
@@ -314,7 +352,7 @@ export default function ClientDashboardPage() {
     <div className="space-y-8">
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="tileIn bg-white border border-gray-200 rounded-2xl p-5 shadow-sm" style={{ "--i": 0 } as CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -323,11 +361,11 @@ export default function ClientDashboardPage() {
             </div>
             <span className="text-[var(--color-gray)] text-xs font-medium">프로젝트</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--color-dark)]">{data.projects.length}</p>
+          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.projects.length}</p>
           {activeProjects > 0 && <p className="text-xs text-blue-600 mt-1 font-medium">{activeProjects}건 진행중</p>}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="tileIn bg-white border border-gray-200 rounded-2xl p-5 shadow-sm" style={{ "--i": 1 } as CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -336,13 +374,13 @@ export default function ClientDashboardPage() {
             </div>
             <span className="text-[var(--color-gray)] text-xs font-medium">호스팅</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--color-dark)]">{data.hosting.length}</p>
+          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.hosting.length}</p>
           {data.hosting.some((h) => { const r = getNextRenewalDate(h.end_date, h.billing_cycle); return r && daysUntil(r)! <= 30; }) && (
             <p className="text-xs text-amber-600 mt-1 font-medium">갱신 임박</p>
           )}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="tileIn bg-white border border-gray-200 rounded-2xl p-5 shadow-sm" style={{ "--i": 2 } as CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -351,11 +389,11 @@ export default function ClientDashboardPage() {
             </div>
             <span className="text-[var(--color-gray)] text-xs font-medium">도메인</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--color-dark)]">{data.domains.length}</p>
+          <p className="numIn text-2xl font-bold text-[var(--color-dark)]">{data.domains.length}</p>
           {data.domains.some((d) => isExpiringSoon(d.expires_date)) && <p className="text-xs text-amber-600 mt-1 font-medium">만료 임박</p>}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+        <div className="tileIn bg-white border border-gray-200 rounded-2xl p-5 shadow-sm" style={{ "--i": 3 } as CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center">
               <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -364,7 +402,7 @@ export default function ClientDashboardPage() {
             </div>
             <span className="text-[var(--color-gray)] text-xs font-medium">총 결제액</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--color-dark)]">{formatAmount(totalPaid)}</p>
+          <p className="numIn text-2xl font-bold text-[var(--color-dark)]"><CountUpAmount value={totalPaid} /></p>
           {totalPending > 0 && <p className="text-xs text-amber-600 mt-1 font-medium">{formatAmount(totalPending)} 미결제</p>}
         </div>
       </div>
@@ -380,7 +418,7 @@ export default function ClientDashboardPage() {
               프로젝트
             </h3>
             {data.projects.length > 2 && (
-              <button onClick={() => setActiveTab("projects")} className="text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
+              <button onClick={() => setActiveTab("projects")} className="pressText text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
                 전체 보기
               </button>
             )}
@@ -389,7 +427,7 @@ export default function ClientDashboardPage() {
             {data.projects.slice(0, 2).map((p) => {
               const sc = STATUS_COLORS[p.status] || { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200" };
               return (
-                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="no-underline block bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+                <Link key={p.id} href={`/client/dashboard/projects/${p.id}`} className="pressCard no-underline block bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
                   <div className="flex items-start justify-between mb-3">
                     <div className="min-w-0 flex-1">
                       <h4 className="font-bold text-[var(--color-dark)] truncate">{p.name}</h4>
@@ -446,7 +484,7 @@ export default function ClientDashboardPage() {
               최근 결제
             </h3>
             {data.payments.length > 3 && (
-              <button onClick={() => setActiveTab("payments")} className="text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
+              <button onClick={() => setActiveTab("payments")} className="pressText text-[var(--color-accent)] text-sm font-medium cursor-pointer bg-transparent border-none hover:underline">
                 전체 보기
               </button>
             )}
@@ -894,7 +932,7 @@ export default function ClientDashboardPage() {
                 const isUnpaid = p.status === "pending" || p.status === "overdue";
                 const isConfirming = p.status === "confirming";
                 return (
-                  <div key={p.id} className="px-5 py-4 hover:bg-gray-50/50 transition-colors">
+                  <div key={p.id} className="pressRow px-5 py-4 hover:bg-gray-50/50 transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -922,7 +960,7 @@ export default function ClientDashboardPage() {
                           </button>
                         )}
                         {isConfirming && (
-                          <span className="px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg border border-blue-200">
+                          <span className="statePop px-3 py-1.5 bg-blue-50 text-blue-600 text-xs font-semibold rounded-lg border border-blue-200">
                             확인 중
                           </span>
                         )}
@@ -1013,7 +1051,8 @@ export default function ClientDashboardPage() {
             {alerts.map((alert, i) => (
               <div
                 key={i}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
+                style={{ "--i": i } as CSSProperties}
+                className={`alertIn flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
                   alert.type === "danger"
                     ? "bg-red-50 border-red-200 text-red-700"
                     : "bg-amber-50 border-amber-200 text-amber-700"
@@ -1048,8 +1087,10 @@ export default function ClientDashboardPage() {
           ))}
         </div>
 
-        {/* Tab content */}
-        {renderActiveTab()}
+        {/* Tab content — key 가 바뀌면 다시 그려지면서 들어오는 모션이 돈다 */}
+        <div key={activeTab} className="tabPanel">
+          {renderActiveTab()}
+        </div>
 
         {/* Footer */}
         <div className="mt-12 pb-8 text-center">
@@ -1287,7 +1328,7 @@ function SettingsTab({ username }: { username: string }) {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3 bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold cursor-pointer border-none hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="pressWide w-full py-3 bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold cursor-pointer border-none hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {saving ? "저장 중..." : "변경사항 저장"}
         </button>
