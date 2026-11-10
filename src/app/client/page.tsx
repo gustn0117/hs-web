@@ -80,7 +80,7 @@ export default function ClientLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--color-light)] flex items-center justify-center px-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
           <Link href="/" className="no-underline inline-block hover:opacity-80 transition-opacity" aria-label="하온 홈">

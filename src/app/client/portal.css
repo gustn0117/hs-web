@@ -53,6 +53,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* 앱에서는 웹뷰가 화면 맨 위까지 그린다(capacitor.config.ts 의
+   contentInset: "never"). 그래서 머리띠가 시계·배터리 자리를 직접
+   비워야 글자가 안 가린다. 브라우저에서는 env() 가 0 이라 평소
+   py-3.5 그대로다. */
+.portal .appHeader {
+  padding-top: calc(0.875rem + env(safe-area-inset-top));
+}
+
 /* iOS 는 글자가 16px 보다 작은 입력칸을 누르면 화면을 확대한다. 그러고
    나면 확대가 풀리지 않아 좌우로 밀린 채 남는다. 그래서 입력칸만 16px
    로 올린다 — 확대를 막는 유일한 방법이다. */

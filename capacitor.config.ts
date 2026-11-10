@@ -15,9 +15,16 @@ const config: CapacitorConfig = {
   appName: "하온 고객센터",
   webDir: "app-shell",
   ios: {
-    // 상태바(시계·배터리) 아래부터 그리게 한다. never 로 두면 맨 위 내용이
-    // 시계에 가린다.
-    contentInset: "always",
+    // 웹뷰가 화면 끝까지 그린다. 시계와 홈 인디케이터는 CSS 의
+    // env(safe-area-inset-*) 로 피한다 — portal.css 의 .appHeader 와
+    // 아래 탭 바가 그 일을 한다.
+    //
+    // always 로 두면 웹뷰를 안전 영역 밖으로 한 번 밀어내는데, CSS 가 그걸
+    // 모르고 또 밀어서 아래쪽 여백이 두 배(68pt)가 된다. 시뮬레이터에서
+    // 재 보고 never 로 바꿨다.
+    contentInset: "never",
+    // 위 설정이면 웹뷰가 화면을 다 덮어서 이 색은 거의 안 보인다.
+    // 당겨서 튕길 때만 잠깐 드러난다.
     backgroundColor: "#ffffffff",
   },
   server: {

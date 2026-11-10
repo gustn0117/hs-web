@@ -186,7 +186,7 @@ export default function ClientProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="min-h-screen bg-[var(--color-light)]">
-        <header className="bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
+        <header className="appHeader bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
           <div className="max-w-[1100px] mx-auto flex items-center justify-between">
             <Link href="/client/dashboard" className="flex items-center gap-3 no-underline">
               <h1 className="text-lg font-extrabold text-[var(--color-dark)] tracking-[-0.03em]">
@@ -210,7 +210,7 @@ export default function ClientProjectDetailPage() {
   return (
     <div className="min-h-screen bg-[var(--color-light)]">
       {/* Header */}
-      <header className="bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
+      <header className="appHeader bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/client/dashboard" className="no-underline">

@@ -781,7 +781,7 @@ export default function ClientDashboardPage() {
       <NativeBridge onNative={() => setInApp(true)} />
 
       {/* Header */}
-      <header className="bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
+      <header className="appHeader bg-white border-b border-[var(--p-line)] px-4 sm:px-6 py-3.5 sticky top-0 z-20">
         <div className="max-w-[1100px] mx-auto flex items-center justify-between">
           <div className="min-w-0">
             <Link href="/client/dashboard" className="no-underline inline-block" aria-label="하온 고객센터">
