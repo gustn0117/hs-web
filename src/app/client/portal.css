@@ -6,6 +6,39 @@
    ────────────────────────────────────────────────────────── */
 
 .portal {
+  /* ── 흑백 토큰 ───────────────────────────────────────────
+     고객센터만 흰색과 검정으로 간다. 회사 홈페이지는 네이비를
+     그대로 쓰므로, :root 의 색을 여기서만 덮어쓴다.
+
+     색이 없으면 위계를 만들 수단이 글자 굵기·여백·선 셋뿐이다.
+     그래서 회색 단계를 좁게 여러 개 두고, 진짜 중요한 것에만
+     검정을 쓴다. 검정이 흔해지면 아무것도 눈에 안 띈다. */
+  --p-bg: #ffffff;        /* 바탕 */
+  --p-bg-sunk: #f7f7f8;   /* 한 칸 가라앉은 바탕 — 화면 바닥, 입력칸 */
+  --p-fill: #f2f2f3;      /* 채움 — 뱃지 바탕, 아이콘 자리 */
+  --p-line: #e4e4e6;      /* 선 */
+  --p-line-firm: #c9c9cd; /* 진한 선 — 눌러야 하는 것의 테두리 */
+  --p-ink: #000000;       /* 검정 — 제목, 금액, 꼭 봐야 하는 것 */
+  --p-ink-2: #3a3a3c;     /* 버금 글자 */
+  --p-sub: #76767b;       /* 설명 글자 */
+  --p-faint: #a8a8ad;     /* 흐린 글자 — 지난 것, 꺼진 것 */
+
+  /* 홈페이지 쪽 색 이름을 흑백으로 바꿔 끼운다. var(--color-*) 를
+     쓰는 화면이 많아서, 이 열 줄로 대부분이 함께 넘어간다. */
+  --color-primary: #000000;
+  --color-accent: #000000;
+  --color-point: #000000;
+  --color-point-dark: #000000;
+  --color-point-light: #3a3a3c;
+  --color-point-soft: #f2f2f3;
+  --color-point-bg: #f7f7f8;
+  --color-point-line: #e4e4e6;
+  --color-dark: #000000;
+  --color-dark-2: #3a3a3c;
+  --color-gray: #76767b;
+  --color-gray-light: #a8a8ad;
+  --color-light: #f7f7f8;
+
   /* 가로로 비어져 나가는 것이 있어도 화면이 옆으로 밀리지 않게 자른다.
      clip 은 hidden 과 달리 스크롤 상자를 만들지 않아서, 머리띠의
      position: sticky 가 그대로 산다. */
@@ -265,4 +298,52 @@ body.keyboard-open .portal nav[aria-label="고객센터 메뉴"] {
   .portal nav[aria-label="고객센터 메뉴"] button[aria-current="page"] svg {
     animation: none;
   }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   흑백에서 상태를 알아보게 하는 세 단계
+
+   색을 빼면 「미납」과 「완료」가 똑같이 보인다. 그래서 중요도를
+   칠하는 방식으로 나눈다. 화면에 검정 덩어리가 하나뿐이면 거기로
+   눈이 먼저 간다.
+   ══════════════════════════════════════════════════════════ */
+
+/* 1단 — 지금 손써야 하는 것(미납, 연체, 만료 임박).
+   화면에서 유일하게 검정으로 채워진 덩어리다. */
+.portal .markUrgent {
+  background: var(--p-ink);
+  color: var(--p-bg);
+  border-color: var(--p-ink);
+}
+
+/* 2단 — 돌아가는 중인 것(진행중, 확인 중). 테두리로만 말한다. */
+.portal .markActive {
+  background: var(--p-bg);
+  color: var(--p-ink);
+  border-color: var(--p-ink);
+}
+
+/* 3단 — 끝났거나 가만히 있는 것(완료, 유지보수). 뒤로 물러난다. */
+.portal .markDone {
+  background: var(--p-fill);
+  color: var(--p-sub);
+  border-color: transparent;
+}
+
+/* 금액처럼 숫자가 중요한 자리. 색이 없으니 굵기와 자간으로 세운다. */
+.portal .amountUrgent {
+  color: var(--p-ink);
+  font-weight: 700;
+}
+
+.portal .amountDone {
+  color: var(--p-sub);
+  font-weight: 500;
+}
+
+/* 손써야 할 줄은 왼쪽에 굵은 선을 세운다. 목록을 훑을 때 색 없이도
+   걸리는 유일한 장치다. */
+.portal .rowUrgent {
+  box-shadow: inset 2px 0 0 0 var(--p-ink);
 }

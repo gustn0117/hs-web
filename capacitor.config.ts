@@ -18,7 +18,7 @@ const config: CapacitorConfig = {
     // 상태바(시계·배터리) 아래부터 그리게 한다. never 로 두면 맨 위 내용이
     // 시계에 가린다.
     contentInset: "always",
-    backgroundColor: "#0a2a5eff",
+    backgroundColor: "#ffffffff",
   },
   server: {
     url: "https://haonlabs.com/client/dashboard",
@@ -33,7 +33,7 @@ const config: CapacitorConfig = {
       // 저절로 사라지게 둔다 — 안 그러면 시작 화면에서 영영 멈춘다.
       launchAutoHide: true,
       launchShowDuration: 3000,
-      backgroundColor: "#0a2a5eff",
+      backgroundColor: "#ffffffff",
       showSpinner: false,
     },
     PushNotifications: {

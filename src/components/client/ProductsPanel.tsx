@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import type { Product, ProductRequest } from "@/lib/types/product";
 import { REQUEST_STATUS_LABEL } from "@/lib/types/product";
 
+/** 신청 상태. 칠하기 규칙은 portal.css 의 세 단계를 따른다. */
 const STATUS_STYLE: Record<string, string> = {
-  new: "bg-blue-50 text-blue-700 border-blue-200",
-  contacted: "bg-amber-50 text-amber-700 border-amber-200",
-  done: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  cancelled: "bg-gray-100 text-gray-500 border-gray-200",
+  new: "markActive",
+  contacted: "markActive",
+  done: "markDone",
+  cancelled: "markDone opacity-60",
 };
 
 function priceText(p: Product) {
@@ -87,7 +88,7 @@ export default function ProductsPanel() {
       {notice && (
         <div
           role="status"
-          className="px-4 py-3 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 text-sm"
+          className="px-4 py-3 rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] text-[var(--p-ink)] text-sm"
         >
           {notice}
         </div>
@@ -96,7 +97,7 @@ export default function ProductsPanel() {
       {requests.length > 0 && (
         <section>
           <h3 className="text-sm font-semibold text-[var(--color-dark)] mb-3">내 신청</h3>
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm divide-y divide-gray-100">
+          <div className="bg-white border border-[var(--p-line)] rounded-2xl divide-y divide-[var(--p-line)]">
             {requests.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3.5">
                 <div className="min-w-0 flex-1">
@@ -138,7 +139,7 @@ export default function ProductsPanel() {
                   return (
                     <div
                       key={product.id}
-                      className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5"
+                      className="bg-white border border-[var(--p-line)] rounded-2xl p-5"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -168,7 +169,7 @@ export default function ProductsPanel() {
                               className="flex items-start gap-2 text-[13px] text-[var(--color-dark-2)]"
                             >
                               <svg
-                                className="w-4 h-4 mt-0.5 shrink-0 text-emerald-500"
+                                className="w-4 h-4 mt-0.5 shrink-0 text-[var(--p-sub)]"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -196,7 +197,7 @@ export default function ProductsPanel() {
                             onChange={(e) => setMessage(e.target.value)}
                             rows={3}
                             placeholder="예: 다음 달에 시작하고 싶어요"
-                            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)]"
+                            className="w-full px-3.5 py-2.5 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)]"
                           />
                           <div className="flex gap-2">
                             <button
@@ -213,7 +214,7 @@ export default function ProductsPanel() {
                                 setOpenId(null);
                                 setMessage("");
                               }}
-                              className="min-h-[44px] px-4 bg-gray-50 border border-gray-200 text-[var(--color-gray)] rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-100"
+                              className="min-h-[44px] px-4 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-gray)] rounded-xl text-sm font-medium cursor-pointer hover:bg-[var(--p-fill)]"
                             >
                               취소
                             </button>
@@ -228,7 +229,7 @@ export default function ProductsPanel() {
                             setNotice("");
                           }}
                           disabled={already}
-                          className="mt-4 w-full min-h-[44px] rounded-xl text-sm font-semibold cursor-pointer transition-colors disabled:cursor-default bg-gray-50 border border-gray-200 text-[var(--color-dark)] hover:bg-gray-100 disabled:bg-gray-50 disabled:text-[var(--color-gray)]"
+                          className="mt-4 w-full min-h-[44px] rounded-xl text-sm font-semibold cursor-pointer transition-colors disabled:cursor-default bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-dark)] hover:bg-[var(--p-fill)] disabled:bg-[var(--p-bg-sunk)] disabled:text-[var(--color-gray)]"
                         >
                           {already ? "신청 접수됨" : "이거 해주세요"}
                         </button>

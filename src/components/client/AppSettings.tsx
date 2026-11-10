@@ -12,9 +12,9 @@ import {
 
 const BIOMETRIC_FLAG = "haon-client-biometric-on";
 
-const cardClass = "bg-white border border-gray-200 rounded-2xl shadow-sm p-5";
+const cardClass = "bg-white border border-[var(--p-line)] rounded-2xl p-5";
 const inputClass =
-  "w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)]";
+  "w-full px-3.5 py-2.5 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)]";
 
 /**
  * 앱에서만 뜨는 설정과, 어디서든 떠야 하는 계정 삭제.
@@ -129,7 +129,7 @@ export default function AppSettings({ username }: { username: string }) {
   return (
     <div className="space-y-4">
       {notice && (
-        <div role="status" className="px-4 py-3 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 text-sm">
+        <div role="status" className="px-4 py-3 rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] text-[var(--p-ink)] text-sm">
           {notice}
         </div>
       )}
@@ -155,14 +155,14 @@ export default function AppSettings({ username }: { username: string }) {
                     : "휴대폰 설정 → 하온 고객센터 → 알림에서 켜주세요."
                 );
               }}
-              className="shrink-0 min-h-[40px] px-4 bg-gray-50 border border-gray-200 text-[var(--color-dark)] rounded-xl text-xs font-semibold cursor-pointer hover:bg-gray-100"
+              className="shrink-0 min-h-[40px] px-4 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-dark)] rounded-xl text-xs font-semibold cursor-pointer hover:bg-[var(--p-fill)]"
             >
               켜기
             </button>
           </div>
 
           {biometricReady && (
-            <div className="mt-5 pt-5 border-t border-gray-100">
+            <div className="mt-5 pt-5 border-t border-[var(--p-line)]">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-[var(--color-dark)]">지문 · Face ID 로그인</p>
@@ -174,7 +174,7 @@ export default function AppSettings({ username }: { username: string }) {
                   <button
                     type="button"
                     onClick={turnOffBiometric}
-                    className="shrink-0 min-h-[40px] px-4 bg-gray-50 border border-gray-200 text-[var(--color-gray)] rounded-xl text-xs font-semibold cursor-pointer hover:bg-gray-100"
+                    className="shrink-0 min-h-[40px] px-4 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-gray)] rounded-xl text-xs font-semibold cursor-pointer hover:bg-[var(--p-fill)]"
                   >
                     끄기
                   </button>
@@ -215,7 +215,7 @@ export default function AppSettings({ username }: { username: string }) {
         </p>
 
         {deleteError && (
-          <div className="mt-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+          <div className="mt-3 px-4 py-3 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-xl text-[var(--p-ink-2)] text-sm">
             {deleteError}
           </div>
         )}
@@ -235,7 +235,7 @@ export default function AppSettings({ username }: { username: string }) {
                 type="button"
                 onClick={removeAccount}
                 disabled={deleting || !deletePassword}
-                className="pressWide flex-1 min-h-[44px] bg-red-600 text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:bg-red-700 disabled:opacity-50"
+                className="pressWide flex-1 min-h-[44px] bg-[var(--p-ink)] text-white rounded-xl text-sm font-semibold border-none cursor-pointer hover:bg-[var(--p-ink-2)] disabled:opacity-50"
               >
                 {deleting ? "지우는 중..." : "계정을 지웁니다"}
               </button>
@@ -246,7 +246,7 @@ export default function AppSettings({ username }: { username: string }) {
                   setDeletePassword("");
                   setDeleteError("");
                 }}
-                className="min-h-[44px] px-5 bg-gray-50 border border-gray-200 text-[var(--color-gray)] rounded-xl text-sm font-medium cursor-pointer hover:bg-gray-100"
+                className="min-h-[44px] px-5 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-gray)] rounded-xl text-sm font-medium cursor-pointer hover:bg-[var(--p-fill)]"
               >
                 취소
               </button>
@@ -256,7 +256,7 @@ export default function AppSettings({ username }: { username: string }) {
           <button
             type="button"
             onClick={() => setDeleteOpen(true)}
-            className="mt-4 min-h-[44px] px-5 bg-white border border-red-200 text-red-600 rounded-xl text-sm font-semibold cursor-pointer hover:bg-red-50"
+            className="mt-4 min-h-[44px] px-5 bg-white border border-[var(--p-line)] text-[var(--p-ink-2)] rounded-xl text-sm font-semibold cursor-pointer hover:bg-[var(--p-bg-sunk)]"
           >
             계정 지우기
           </button>

@@ -27,7 +27,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   // 노치 있는 화면에서도 끝까지 쓰고, 안전 영역은 CSS 로 피한다.
   viewportFit: "cover",
-  themeColor: "#0a2a5e",
+  // 머리띠가 흰색이라 상태바도 흰색이어야 이어져 보인다.
+  themeColor: "#ffffff",
 };
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {

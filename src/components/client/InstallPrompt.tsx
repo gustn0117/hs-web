@@ -84,7 +84,7 @@ export default function InstallPrompt() {
   };
 
   return (
-    <div className="bg-[#0a2a5e] text-white">
+    <div className="bg-[var(--p-ink)] text-white">
       <div className="max-w-[560px] mx-auto flex items-center gap-3 px-4 py-3">
         <div className="min-w-0 flex-1">
           <p className="text-[14px] font-bold tracking-[-0.02em]">
@@ -101,7 +101,7 @@ export default function InstallPrompt() {
           <button
             type="button"
             onClick={install}
-            className="shrink-0 min-h-[40px] px-4 rounded-lg border-0 bg-white text-[#0a2a5e] text-[13px] font-extrabold cursor-pointer"
+            className="shrink-0 min-h-[40px] px-4 rounded-lg border-0 bg-white text-[var(--p-ink)] text-[13px] font-extrabold cursor-pointer"
           >
             추가
           </button>
