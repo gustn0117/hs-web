@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from "@capacitor/cli";
+import { KeyboardResize } from "@capacitor/keyboard";
 
 /**
  * 고객센터 iOS 앱.
@@ -37,6 +38,11 @@ const config: CapacitorConfig = {
     },
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
+    },
+    Keyboard: {
+      // 키보드가 뜨면 화면(웹뷰)을 그만큼 줄인다. body 만 줄이면 아래
+      // 탭 바처럼 화면에 고정된 것이 키보드 뒤로 숨는다.
+      resize: KeyboardResize.Native,
     },
   },
 };

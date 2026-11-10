@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { enablePushNotifications, hideSplashScreen, isNativeApp } from "@/lib/native";
+import { enablePushNotifications, hideSplashScreen, isNativeApp, watchKeyboard } from "@/lib/native";
 
 /**
  * 앱으로 열렸을 때만 하는 준비.
@@ -16,12 +16,21 @@ export default function NativeBridge({ onNative }: { onNative?: () => void }) {
     // 화면이 그려졌으니 시작 화면을 걷는다.
     void hideSplashScreen();
 
+    // 키보드가 오르내리는 걸 지켜본다. 정리 함수는 나중에 쓴다.
+    let stopKeyboard = () => {};
+    void watchKeyboard().then((stop) => {
+      stopKeyboard = stop;
+    });
+
     // 알림 허락은 조금 뒤에 묻는다. 열자마자 허락 창이 뜨면 대부분 거절한다.
     const id = setTimeout(() => {
       void enablePushNotifications();
     }, 2500);
 
-    return () => clearTimeout(id);
+    return () => {
+      clearTimeout(id);
+      stopKeyboard();
+    };
   }, [onNative]);
 
   return null;

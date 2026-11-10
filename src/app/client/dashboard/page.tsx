@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductsPanel from "@/components/client/ProductsPanel";
+import { onAppResume, tapFeedback } from "@/lib/native";
 import AppSettings from "@/components/client/AppSettings";
 import NativeBridge from "@/components/client/NativeBridge";
 
@@ -202,14 +203,30 @@ export default function ClientDashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/client-auth/me")
-      .then((res) => {
-        if (!res.ok) throw new Error("인증 실패");
-        return res.json();
-      })
-      .then(setData)
-      .catch(() => setError("데이터를 불러올 수 없습니다."))
-      .finally(() => setLoading(false));
+    const pull = (first: boolean) =>
+      fetch("/api/client-auth/me")
+        .then((res) => {
+          if (!res.ok) throw new Error("인증 실패");
+          return res.json();
+        })
+        .then(setData)
+        .catch(() => {
+          // 돌아왔을 때 한 번 실패한 거라면 보던 화면을 지우지 않는다.
+          if (first) setError("데이터를 불러올 수 없습니다.");
+        })
+        .finally(() => {
+          if (first) setLoading(false);
+        });
+
+    void pull(true);
+
+    // 앱을 다시 열면 그때그때 새로 받는다.
+    let stop = () => {};
+    void onAppResume(() => void pull(false)).then((s) => {
+      stop = s;
+    });
+
+    return () => stop();
   }, []);
 
   const handleLogout = async () => {
@@ -1052,7 +1069,10 @@ export default function ClientDashboardPage() {
             <button
               key={tab.key}
               type="button"
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => {
+                void tapFeedback();
+                setActiveTab(tab.key);
+              }}
               aria-current={activeTab === tab.key ? "page" : undefined}
               className={`flex flex-col items-center justify-center gap-1 min-h-[64px] border-none bg-transparent cursor-pointer transition-colors ${
                 activeTab === tab.key ? "text-[var(--color-primary)]" : "text-[var(--color-gray)]"

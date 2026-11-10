@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import InstallPrompt from "@/components/client/InstallPrompt";
 import PwaSetup from "@/components/client/PwaSetup";
+import "./portal.css";
 
 /**
  * 고객센터는 회사 홈페이지와 다른 앱으로 취급한다.
@@ -31,10 +32,10 @@ export const viewport: Viewport = {
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="portal">
       <InstallPrompt />
       {children}
       <PwaSetup />
-    </>
+    </div>
   );
 }

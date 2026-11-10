@@ -15,6 +15,63 @@ export function isNativeApp(): boolean {
   }
 }
 
+/**
+ * 키보드가 오르내릴 때 body 에 표시를 붙인다.
+ *
+ * 아래 탭 바가 키보드 위에 떠서 입력칸을 가리는 걸 막으려는 것이다.
+ * 숨기는 건 CSS 가 한다(portal.css). 정리 함수를 돌려준다.
+ */
+export async function watchKeyboard(): Promise<() => void> {
+  if (!isNativeApp()) return () => {};
+  try {
+    const { Keyboard } = await import("@capacitor/keyboard");
+    const on = await Keyboard.addListener("keyboardWillShow", () => {
+      document.body.classList.add("keyboard-open");
+    });
+    const off = await Keyboard.addListener("keyboardWillHide", () => {
+      document.body.classList.remove("keyboard-open");
+    });
+    return () => {
+      void on.remove();
+      void off.remove();
+      document.body.classList.remove("keyboard-open");
+    };
+  } catch {
+    return () => {};
+  }
+}
+
+/**
+ * 앱이 다시 앞으로 올 때 알려준다.
+ *
+ * 앱은 닫아도 메모리에 남아 있어서, 며칠 뒤에 열어도 그때 받아 둔 내용이
+ * 그대로 보인다. 결제 상태가 바뀌었는데 옛 화면을 보고 있으면 안 되니
+ * 돌아올 때마다 다시 받는다. 정리 함수를 돌려준다.
+ */
+export async function onAppResume(run: () => void): Promise<() => void> {
+  if (!isNativeApp()) return () => {};
+  try {
+    const { App } = await import("@capacitor/app");
+    const sub = await App.addListener("appStateChange", ({ isActive }) => {
+      if (isActive) run();
+    });
+    return () => void sub.remove();
+  } catch {
+    return () => {};
+  }
+}
+
+/** 탭을 옮길 때 손끝에 주는 짧은 진동. 안 되면 그냥 넘어간다. */
+export async function tapFeedback(): Promise<void> {
+  if (!isNativeApp()) return;
+  try {
+    const { Haptics, ImpactStyle } = await import("@capacitor/haptics");
+    await Haptics.impact({ style: ImpactStyle.Light });
+  } catch {
+    // 진동이 없는 기기이거나 꺼 둔 것뿐이다
+  }
+}
+
 /** 시작 화면을 걷는다. 포털이 그려진 뒤에 부른다. */
 export async function hideSplashScreen(): Promise<void> {
   if (!isNativeApp()) return;
