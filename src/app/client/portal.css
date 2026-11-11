@@ -355,3 +355,19 @@ body.keyboard-open .portal nav[aria-label="고객센터 메뉴"] {
 .portal .rowUrgent {
   box-shadow: inset 2px 0 0 0 var(--p-ink);
 }
+
+
+/* ══════════════════════════════════════════════════════════
+   상품 탭 — 옆으로 넘기는 카드 줄
+   ══════════════════════════════════════════════════════════ */
+
+/* 손가락으로 넘기는 줄이라 스크롤 막대는 숨긴다. 줄 끝에서 더 밀어도
+   화면 전체가 따라 밀리지 않게 넘김을 줄 안에 가둔다. */
+.portal .snapRow {
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.portal .snapRow::-webkit-scrollbar {
+  display: none;
+}

@@ -255,6 +255,9 @@ export default function AdminProductsPage() {
                     placeholder="기업 홈페이지 Basic"
                     className={inputClass}
                   />
+                  <p className="mt-1.5 text-xs text-[var(--color-gray)] leading-relaxed">
+                    「홈페이지 제작 · STANDARD」처럼 뒤에 「 · STANDARD / DELUXE / PREMIUM」을 붙이면 고객센터에서 한 서비스의 패키지로 묶여 나란히 보입니다.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -330,9 +333,12 @@ export default function AdminProductsPage() {
                     value={draft.features}
                     onChange={(e) => setDraft({ ...draft, features: e.target.value })}
                     rows={5}
-                    placeholder={"반응형 웹 디자인 (5P)\n메타 태그 · sitemap 기본"}
+                    placeholder={"작업 기간: 3일\n반응형 웹 디자인 (5P)\n메타 태그 · sitemap 기본"}
                     className={inputClass}
                   />
+                  <p className="mt-1.5 text-xs text-[var(--color-gray)] leading-relaxed">
+                    「작업 기간: 3일」처럼 「이름: 값」으로 쓴 줄은 카드에 표로, 나머지 줄은 체크 목록으로 나옵니다.
+                  </p>
                 </div>
 
                 <label className="flex items-center gap-2 text-sm text-[var(--color-dark-2)] cursor-pointer">
