@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { Product, ProductRequest } from "@/lib/types/product";
 import { REQUEST_STATUS_LABEL } from "@/lib/types/product";
-import { groupProducts, shortestWorkDays, splitProductName, startingPrice } from "@/lib/product-groups";
+import {
+  groupProducts,
+  shortestWorkDays,
+  splitProductName,
+  startingPrice,
+} from "@/lib/product-groups";
+import { PortalLoading } from "@/components/client/PortalState";
+import PortalIllustration from "@/components/client/PortalIllustration";
 import { PlanCard, PlanRow, priceText } from "@/components/client/PlanCards";
 
 /** 신청 상태. 칠하기 규칙은 portal.css 의 세 단계를 따른다. */
@@ -14,16 +21,18 @@ const STATUS_STYLE: Record<string, string> = {
   cancelled: "markDone opacity-60",
 };
 
-/** 회사 홈페이지 「서비스」 화면의 배너와 같은 사진이다. 고객센터는 흑백이라 흑백으로 깐다. */
-const BANNER_IMAGE =
-  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1600&q=80&auto=format&fit=crop";
-
 /** 신청한 뒤의 순서. 둘째와 넷째는 「내 신청」의 상태 이름과 같다. */
 const STEPS = [
   { title: "신청", desc: "패키지를 고르고 하실 말씀을 남겨 주세요." },
-  { title: "연락", desc: `확인하고 연락드립니다. 내 신청이 「${REQUEST_STATUS_LABEL.contacted}」으로 바뀝니다.` },
+  {
+    title: "연락",
+    desc: `확인하고 연락드립니다. 내 신청이 「${REQUEST_STATUS_LABEL.contacted}」으로 바뀝니다.`,
+  },
   { title: "작업", desc: "범위와 일정을 정한 뒤 작업을 시작합니다." },
-  { title: "완료", desc: `결과물을 확인하고 마무리합니다. 내 신청이 「${REQUEST_STATUS_LABEL.done}」로 바뀝니다.` },
+  {
+    title: "완료",
+    desc: `결과물을 확인하고 마무리합니다. 내 신청이 「${REQUEST_STATUS_LABEL.done}」로 바뀝니다.`,
+  },
 ];
 
 /**
@@ -39,13 +48,23 @@ function toBlocks(products: Product[]): Block[] {
   const byCategory = new Map<string, Block>();
   for (const group of groupProducts(products)) {
     if (group.items.length > 1) {
-      blocks.push({ kind: "packages", key: group.key, title: group.service, items: group.items });
+      blocks.push({
+        kind: "packages",
+        key: group.key,
+        title: group.service,
+        items: group.items,
+      });
       continue;
     }
     const product = group.items[0];
     let block = byCategory.get(product.category);
     if (!block) {
-      block = { kind: "singles", key: `category:${product.category}`, title: product.category, items: [] };
+      block = {
+        kind: "singles",
+        key: `category:${product.category}`,
+        title: product.category,
+        items: [],
+      };
       byCategory.set(product.category, block);
       blocks.push(block);
     }
@@ -54,38 +73,22 @@ function toBlocks(products: Product[]): Block[] {
   return blocks;
 }
 
-/**
- * 덩어리의 머리.
- *
- * 전에는 제목 위에 「01 SERVICE」 같은 번호가 붙었다. 번호는 순서가
- * 있는 것에만 뜻이 있는데 서비스 목록은 순서가 아니다. 먼저 해야 하는
- * 일도, 더 중요한 일도 아니다. 그래서 번호를 빼고 남색 짧은 선으로
- * 덩어리의 시작만 표시한다. 진행 단계(STEPS)는 진짜 순서라 거기엔 남겼다.
- */
-function SectionHead({ title, aside }: { title: string; aside?: string | null }) {
+function SectionHead({
+  title,
+  aside,
+}: {
+  title: string;
+  aside?: string | null;
+}) {
   return (
-    <div className="mb-4 flex items-end justify-between gap-3">
-      <div className="min-w-0">
-        <div className="h-[3px] w-7 rounded-full bg-[var(--p-brand)]" />
-        <h3 className="mt-3 text-[22px] font-bold leading-tight tracking-[-0.025em] text-[var(--p-ink)] md:text-[26px]">
-          {title}
-        </h3>
-      </div>
-      {aside && <p className="tnum shrink-0 pb-0.5 text-[13px] font-semibold text-[var(--p-sub)]">{aside}</p>}
+    <div className="portal-product-section-head">
+      <h3>{title}</h3>
+      {aside && <p>{aside}</p>}
     </div>
   );
 }
 
-/**
- * 하온이 하는 일을 보고 그 자리에서 신청하는 칸.
- *
- * 카톡으로 「이것도 해주실 수 있어요?」 하고 묻던 걸 여기서 받는다. 그래서
- * 신청한 뒤에 어떻게 되고 있는지(새 신청 · 연락함 · 완료)까지 같이 보여준다.
- *
- * 모양은 회사 홈페이지의 가격 안내(/pricing)·서비스(/services) 화면을 따른다.
- * 「홈페이지 제작 · STANDARD」처럼 한 서비스를 패키지로 나눈 상품은 서비스마다 카드 줄 하나로 묶고,
- * 가운데 패키지는 홈페이지의 가운데 플랜처럼 검정 카드로 둔다.
- */
+/** Browse service packages and submit a request without leaving the customer app. */
 export default function ProductsPanel() {
   const [products, setProducts] = useState<Product[]>([]);
   const [requests, setRequests] = useState<ProductRequest[]>([]);
@@ -96,7 +99,9 @@ export default function ProductsPanel() {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
   // 방금 신청한 상품과 알림. 그 상품이 있는 덩어리 바로 아래에 띄운다.
-  const [sent, setSent] = useState<{ productId: string; text: string } | null>(null);
+  const [sent, setSent] = useState<{ productId: string; text: string } | null>(
+    null,
+  );
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,7 +113,9 @@ export default function ProductsPanel() {
         setProducts(a.products ?? []);
         setRequests(b.requests ?? []);
       })
-      .catch(() => setLoadError("상품을 불러오지 못했습니다. 잠시 뒤 다시 열어 주세요."))
+      .catch(() =>
+        setLoadError("상품을 불러오지 못했습니다. 잠시 뒤 다시 열어 주세요."),
+      )
       .finally(() => setLoading(false));
   }, []);
 
@@ -116,11 +123,16 @@ export default function ProductsPanel() {
   useEffect(() => {
     if (!openId) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    formRef.current?.scrollIntoView({ block: "nearest", behavior: still ? "auto" : "smooth" });
+    formRef.current?.scrollIntoView({
+      block: "nearest",
+      behavior: still ? "auto" : "smooth",
+    });
   }, [openId]);
 
   const pendingIds = new Set(
-    requests.filter((r) => r.status === "new" || r.status === "contacted").map((r) => r.product_id)
+    requests
+      .filter((r) => r.status === "new" || r.status === "contacted")
+      .map((r) => r.product_id),
   );
 
   const openForm = (product: Product) => {
@@ -152,7 +164,10 @@ export default function ProductsPanel() {
       }
       setRequests((prev) => [data.request, ...prev]);
       closeForm();
-      setSent({ productId: product.id, text: `「${product.name}」 신청이 접수됐습니다. 곧 연락드리겠습니다.` });
+      setSent({
+        productId: product.id,
+        text: `「${product.name}」 신청이 접수됐습니다. 곧 연락드리겠습니다.`,
+      });
     } catch {
       setSendError("신청 중 문제가 생겼습니다. 잠시 뒤 다시 시도해 주세요.");
     } finally {
@@ -160,30 +175,52 @@ export default function ProductsPanel() {
     }
   };
 
-  if (loading) {
-    return <div className="py-16 text-center text-sm text-[var(--color-gray)]">불러오는 중...</div>;
-  }
+  if (loading) return <PortalLoading compact />;
 
   const blocks = toBlocks(products);
   const from = startingPrice(products);
   const days = shortestWorkDays(products);
   const stats = [
-    from != null ? { label: "최저가", value: from.toLocaleString("ko-KR"), suffix: "원~" } : null,
-    days != null ? { label: "최단 작업", value: String(days), suffix: "일" } : null,
-    blocks.length > 0 ? { label: "서비스", value: String(groupProducts(products).length), suffix: "종" } : null,
-  ].filter((s): s is { label: string; value: string; suffix: string } => s != null);
+    from != null
+      ? { label: "최저가", value: from.toLocaleString("ko-KR"), suffix: "원~" }
+      : null,
+    days != null
+      ? { label: "최단 작업", value: String(days), suffix: "일" }
+      : null,
+    blocks.length > 0
+      ? {
+          label: "서비스",
+          value: String(groupProducts(products).length),
+          suffix: "종",
+        }
+      : null,
+  ].filter(
+    (s): s is { label: string; value: string; suffix: string } => s != null,
+  );
 
   /** 카드 줄 아래 신청 칸. 어느 상품으로 신청하는지 이름과 값을 다시 보여준다. */
   const requestForm = (product: Product) => (
-    <div ref={formRef} className="mt-3 scroll-mb-28 rounded-[16px] border-2 border-[var(--p-brand)] bg-white p-5">
+    <div
+      ref={formRef}
+      className="mt-3 scroll-mb-28 rounded-[16px] border-2 border-[var(--p-brand)] bg-white p-5"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-bold tracking-[0.04em] text-[var(--p-sub)]">신청할 상품</p>
-          <p className="mt-1 text-[15px] font-bold leading-snug text-[var(--p-ink)]">{product.name}</p>
+          <p className="text-[11px] font-bold tracking-[0.04em] text-[var(--p-sub)]">
+            신청할 상품
+          </p>
+          <p className="mt-1 text-[15px] font-bold leading-snug text-[var(--p-ink)]">
+            {product.name}
+          </p>
         </div>
-        <p className="tnum shrink-0 text-[15px] font-extrabold text-[var(--p-ink)]">{priceText(product)}</p>
+        <p className="tnum shrink-0 text-[15px] font-extrabold text-[var(--p-ink)]">
+          {priceText(product)}
+        </p>
       </div>
-      <label htmlFor={`msg-${product.id}`} className="mt-4 block text-xs font-medium text-[var(--p-ink-2)]">
+      <label
+        htmlFor={`msg-${product.id}`}
+        className="mt-4 block text-xs font-medium text-[var(--p-ink-2)]"
+      >
         하실 말씀 (안 적어도 됩니다)
       </label>
       <textarea
@@ -195,7 +232,10 @@ export default function ProductsPanel() {
         className="mt-2 w-full rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] px-3.5 py-2.5 text-sm text-[var(--p-ink)] focus:border-[var(--p-brand)] focus:outline-none"
       />
       {sendError && (
-        <p role="alert" className="mt-2 text-[12.5px] font-semibold text-[var(--p-ink)]">
+        <p
+          role="alert"
+          className="mt-2 text-[12.5px] font-semibold text-[var(--p-ink)]"
+        >
           {sendError}
         </p>
       )}
@@ -224,66 +264,57 @@ export default function ProductsPanel() {
       role="status"
       className="mt-3 flex items-start gap-2.5 rounded-[14px] border border-[var(--p-brand)] bg-[var(--p-brand-tint)] px-4 py-3.5 text-[13.5px] leading-[1.55] text-[var(--p-brand)]"
     >
-      <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      <svg
+        className="mt-0.5 h-4 w-4 shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2.5}
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4.5 12.75l6 6 9-13.5"
+        />
       </svg>
       {text}
     </div>
   );
 
   return (
-    <div className="space-y-12 md:space-y-16">
-      {/*
-        머리.
-
-        전에는 제목 · 수치 띠 · 사진 배너가 따로 세 덩어리였다. 셋 다
-        비슷한 무게여서 어디를 먼저 봐야 하는지가 없었다. 남색 패널
-        하나로 합치고, 화면에서 과감한 자리는 여기 한 곳만 둔다.
-
-        숫자는 크게 키우지 않는다. 이 화면을 여는 사람은 이미 하온과
-        일하고 있는 고객이라 설득할 대상이 아니다. 알아야 할 것은
-        얼마부터인지와 며칠 걸리는지뿐이라 한 줄로 충분하다.
-      */}
-      <header className="relative -mx-4 overflow-hidden bg-[var(--p-brand)] sm:-mx-6 md:mx-0 md:rounded-[20px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={BANNER_IMAGE}
-          alt=""
-          loading="lazy"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.22] mix-blend-luminosity"
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(118deg, var(--p-brand-deep) 0%, rgba(10,42,94,0.92) 46%, rgba(10,42,94,0.55) 100%)",
-          }}
-        />
-        <div className="relative px-5 py-9 sm:px-7 md:px-10 md:py-14">
-          <h2 className="max-w-[18ch] text-[29px] font-extrabold leading-[1.22] tracking-[-0.035em] text-white md:text-[42px]">
-            필요한 작업, 여기서 바로 신청.
+    <div className="portal-products">
+      <header className="portal-products-hero">
+        <div>
+          <span className="portal-eyebrow">GROW WITH HAON</span>
+          <h2>
+            다음 시작도,
+            <br />
+            하온과 함께해요.
           </h2>
-          <p className="mt-3.5 max-w-[34ch] text-[14.5px] leading-[1.7] text-white/75 md:text-[16px]">
-            패키지를 고르고 신청하시면 확인 후 연락드립니다.
-          </p>
+          <p>필요한 서비스를 고르면 담당자가 자세히 안내해 드려요.</p>
           {stats.length > 0 && (
-            <dl className="mt-7 flex flex-wrap items-baseline gap-x-6 gap-y-2.5 border-t border-white/20 pt-5">
-              {stats.map((s) => (
-                <div key={s.label} className="flex items-baseline gap-2">
-                  <dt className="text-[12px] font-medium text-white/55">{s.label}</dt>
-                  <dd className="tnum whitespace-nowrap text-[16px] font-bold text-white md:text-[18px]">
-                    {s.value}
-                    <span className="ml-0.5 text-[12.5px] font-semibold text-white/70">{s.suffix}</span>
+            <dl className="portal-product-stats">
+              {stats.map((stat) => (
+                <div key={stat.label}>
+                  <dt>{stat.label}</dt>
+                  <dd>
+                    {stat.value}
+                    <span>{stat.suffix}</span>
                   </dd>
                 </div>
               ))}
             </dl>
           )}
         </div>
+        <PortalIllustration kind="services" />
       </header>
 
       {loadError && (
-        <div role="status" className="rounded-xl border border-[var(--p-line)] bg-white px-4 py-3 text-sm text-[var(--p-ink)]">
+        <div
+          role="status"
+          className="rounded-xl border border-[var(--p-line)] bg-white px-4 py-3 text-sm text-[var(--p-ink)]"
+        >
           {loadError}
         </div>
       )}
@@ -295,7 +326,9 @@ export default function ProductsPanel() {
             {requests.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3.5">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-[var(--p-ink)]">{r.product_name}</p>
+                  <p className="truncate text-sm font-semibold text-[var(--p-ink)]">
+                    {r.product_name}
+                  </p>
                   <p className="mt-0.5 text-xs text-[var(--p-sub)]">
                     {new Date(r.created_at).toLocaleDateString("ko-KR")}
                     {r.message ? ` · ${r.message}` : ""}
@@ -314,59 +347,96 @@ export default function ProductsPanel() {
         </section>
       )}
 
-      {blocks.length === 0 ? (
-        !loadError && <div className="py-16 text-center text-sm text-[var(--p-sub)]">준비된 상품이 아직 없습니다.</div>
-      ) : (
-        blocks.map((block) => {
-          const isPackages = block.kind === "packages";
-          const lowest = isPackages ? startingPrice(block.items) : null;
-          const formProduct = block.items.find((item) => item.id === openId);
-          const notice = sent && block.items.some((item) => item.id === sent.productId) ? sent.text : null;
-          return (
-            <section key={block.key}>
-              <SectionHead
-                title={block.title}
-                aside={lowest != null ? `${lowest.toLocaleString("ko-KR")}원부터` : null}
-              />
-              <PlanRow
-                ariaLabel={isPackages ? `${block.title} 패키지` : `${block.title} 상품`}
-                labels={isPackages ? block.items.map((item) => splitProductName(item.name).tier ?? item.name) : undefined}
-              >
-                {block.items.map((item, i) => {
-                  const tier = splitProductName(item.name).tier;
-                  return (
-                    <PlanCard
-                      key={item.id}
-                      product={item}
-                      overline={isPackages && tier ? tier : undefined}
-                      title={isPackages ? item.tagline || tier || item.name : item.name}
-                      lead={isPackages ? null : item.tagline}
-                      dark={isPackages && block.items.length === 3 && i === 1}
-                      pending={pendingIds.has(item.id)}
-                      open={openId === item.id}
-                      onRequest={() => (openId === item.id ? formRef.current?.scrollIntoView({ block: "nearest" }) : openForm(item))}
-                    />
-                  );
-                })}
-              </PlanRow>
-              {formProduct && requestForm(formProduct)}
-              {notice && sentNotice(notice)}
-            </section>
-          );
-        })
-      )}
+      {blocks.length === 0
+        ? !loadError && (
+            <div className="py-16 text-center text-sm text-[var(--p-sub)]">
+              준비된 상품이 아직 없습니다.
+            </div>
+          )
+        : blocks.map((block) => {
+            const isPackages = block.kind === "packages";
+            const lowest = isPackages ? startingPrice(block.items) : null;
+            const formProduct = block.items.find((item) => item.id === openId);
+            const notice =
+              sent && block.items.some((item) => item.id === sent.productId)
+                ? sent.text
+                : null;
+            return (
+              <section key={block.key}>
+                <SectionHead
+                  title={block.title}
+                  aside={
+                    lowest != null
+                      ? `${lowest.toLocaleString("ko-KR")}원부터`
+                      : null
+                  }
+                />
+                <PlanRow
+                  ariaLabel={
+                    isPackages ? `${block.title} 패키지` : `${block.title} 상품`
+                  }
+                  labels={
+                    isPackages
+                      ? block.items.map(
+                          (item) =>
+                            splitProductName(item.name).tier ?? item.name,
+                        )
+                      : undefined
+                  }
+                >
+                  {block.items.map((item, i) => {
+                    const tier = splitProductName(item.name).tier;
+                    return (
+                      <PlanCard
+                        key={item.id}
+                        product={item}
+                        overline={isPackages && tier ? tier : undefined}
+                        title={
+                          isPackages
+                            ? item.tagline || tier || item.name
+                            : item.name
+                        }
+                        lead={isPackages ? null : item.tagline}
+                        featured={
+                          isPackages && block.items.length === 3 && i === 1
+                        }
+                        pending={pendingIds.has(item.id)}
+                        open={openId === item.id}
+                        onRequest={() =>
+                          openId === item.id
+                            ? formRef.current?.scrollIntoView({
+                                block: "nearest",
+                              })
+                            : openForm(item)
+                        }
+                      />
+                    );
+                  })}
+                </PlanRow>
+                {formProduct && requestForm(formProduct)}
+                {notice && sentNotice(notice)}
+              </section>
+            );
+          })}
 
       {blocks.length > 0 && (
         <section>
           <SectionHead title="신청하면 이렇게 진행돼요" />
           <ol className="m-0 grid list-none grid-cols-2 gap-3 p-0 lg:grid-cols-4">
             {STEPS.map((step, i) => (
-              <li key={step.title} className="rounded-[14px] border border-[var(--p-line)] bg-white p-5">
+              <li
+                key={step.title}
+                className="rounded-[14px] border border-[var(--p-line)] bg-white p-5"
+              >
                 <p className="tnum text-[12px] font-bold tracking-[0.12em] text-[var(--p-brand)]">
                   {String(i + 1).padStart(2, "0")}
                 </p>
-                <p className="mt-3 text-[15px] font-bold text-[var(--p-ink)]">{step.title}</p>
-                <p className="mt-1 text-[12.5px] leading-[1.6] text-[var(--p-sub)]">{step.desc}</p>
+                <p className="mt-3 text-[15px] font-bold text-[var(--p-ink)]">
+                  {step.title}
+                </p>
+                <p className="mt-1 text-[12.5px] leading-[1.6] text-[var(--p-sub)]">
+                  {step.desc}
+                </p>
               </li>
             ))}
           </ol>

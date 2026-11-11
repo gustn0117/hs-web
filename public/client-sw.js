@@ -8,7 +8,7 @@
  * 캐시가 남으면 다른 사람 휴대폰에서 지난 자료가 보일 수 있다.
  */
 
-const VERSION = "haon-client-v1";
+const VERSION = "haon-client-v2";
 const SHELL = `${VERSION}-shell`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "/client-offline.html";

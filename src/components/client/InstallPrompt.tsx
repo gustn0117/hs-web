@@ -58,7 +58,8 @@ export default function InstallPrompt() {
       const standalone =
         isNativeApp() ||
         window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+        (window.navigator as Navigator & { standalone?: boolean })
+          .standalone === true;
 
       if (standalone || wasDismissed()) return;
 
@@ -90,13 +91,13 @@ export default function InstallPrompt() {
   };
 
   return (
-    <div className="bg-[var(--p-ink)] text-white">
+    <div className="portal-install-prompt">
       <div className="max-w-[560px] mx-auto flex items-center gap-3 px-4 py-3">
         <div className="min-w-0 flex-1">
           <p className="text-[14px] font-bold tracking-[-0.02em]">
-            휴대폰에 고객센터를 깔아두세요
+            홈 화면에서 더 편하게 만나요
           </p>
-          <p className="mt-0.5 text-[12.5px] leading-[1.6] text-white/70">
+          <p className="mt-0.5 text-[12.5px] leading-[1.6] text-[var(--p-sub)]">
             {iosGuide
               ? "아래 공유 버튼을 누르고 「홈 화면에 추가」를 고르세요."
               : "아이콘을 눌러 바로 열 수 있습니다."}
@@ -107,7 +108,7 @@ export default function InstallPrompt() {
           <button
             type="button"
             onClick={install}
-            className="shrink-0 min-h-[40px] px-4 rounded-lg border-0 bg-white text-[var(--p-ink)] text-[13px] font-extrabold cursor-pointer"
+            className="shrink-0 min-h-[40px] px-4 rounded-lg border-0 bg-[var(--p-brand)] text-white text-[13px] font-extrabold cursor-pointer"
           >
             추가
           </button>
@@ -117,10 +118,20 @@ export default function InstallPrompt() {
           type="button"
           onClick={close}
           aria-label="안내 닫기"
-          className="shrink-0 grid place-items-center w-10 h-10 rounded-lg border-0 bg-transparent text-white/60 cursor-pointer hover:text-white transition-colors"
+          className="shrink-0 grid place-items-center w-10 h-10 rounded-lg border-0 bg-transparent text-[var(--p-sub)] cursor-pointer hover:text-[var(--p-ink)] transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>

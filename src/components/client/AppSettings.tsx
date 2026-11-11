@@ -12,7 +12,7 @@ import {
 
 const BIOMETRIC_FLAG = "haon-client-biometric-on";
 
-const cardClass = "bg-white border border-[var(--p-line)] rounded-2xl p-5";
+const cardClass = "portal-card";
 const inputClass =
   "w-full px-3.5 py-2.5 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] rounded-xl text-sm text-[var(--color-dark)] focus:outline-none focus:border-[var(--color-primary)]";
 
@@ -129,18 +129,23 @@ export default function AppSettings({ username }: { username: string }) {
   return (
     <div className="space-y-4">
       {notice && (
-        <div role="status" className="px-4 py-3 rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] text-[var(--p-ink)] text-sm">
+        <div
+          role="status"
+          className="px-4 py-3 rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] text-[var(--p-ink)] text-sm"
+        >
           {notice}
         </div>
       )}
 
       {native && (
         <div className={cardClass}>
-          <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">앱 설정</h4>
+          <h4 className="portal-settings-title">앱 설정</h4>
 
           <div className="mt-4 flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-sm font-medium text-[var(--color-dark)]">알림 받기</p>
+              <p className="text-sm font-medium text-[var(--color-dark)]">
+                알림 받기
+              </p>
               <p className="mt-0.5 text-xs text-[var(--color-gray)]">
                 결제 확인, 도메인 만료, 신청 처리 소식을 알려드립니다.
               </p>
@@ -152,7 +157,7 @@ export default function AppSettings({ username }: { username: string }) {
                 setNotice(
                   ok
                     ? "알림을 켰습니다."
-                    : "휴대폰 설정 → 하온 고객센터 → 알림에서 켜주세요."
+                    : "휴대폰 설정 → 하온 고객센터 → 알림에서 켜주세요.",
                 );
               }}
               className="shrink-0 min-h-[40px] px-4 bg-[var(--p-bg-sunk)] border border-[var(--p-line)] text-[var(--color-dark)] rounded-xl text-xs font-semibold cursor-pointer hover:bg-[var(--p-fill)]"
@@ -165,7 +170,9 @@ export default function AppSettings({ username }: { username: string }) {
             <div className="mt-5 pt-5 border-t border-[var(--p-line)]">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--color-dark)]">지문 · Face ID 로그인</p>
+                  <p className="text-sm font-medium text-[var(--color-dark)]">
+                    지문 · Face ID 로그인
+                  </p>
                   <p className="mt-0.5 text-xs text-[var(--color-gray)]">
                     비밀번호를 매번 입력하지 않아도 됩니다.
                   </p>
@@ -207,11 +214,11 @@ export default function AppSettings({ username }: { username: string }) {
       )}
 
       <div className={cardClass}>
-        <h4 className="text-[13px] font-bold tracking-[-0.01em] text-[var(--p-ink)]">계정 지우기</h4>
+        <h4 className="portal-settings-title">회원 탈퇴</h4>
         <p className="mt-2 text-[13px] text-[var(--color-gray)] leading-[1.7]">
-          계정을 지우면 바로 로그인할 수 없고, 연락처(전화·메일)도 함께 지워집니다.
-          다만 계약·결제 기록은 전자상거래법에 따라 5년간 보관한 뒤 지웁니다.
-          다시 쓰시려면 하온에 연락해 새로 만드셔야 합니다.
+          계정을 지우면 바로 로그인할 수 없고, 연락처(전화·메일)도 함께
+          지워집니다. 다만 계약·결제 기록은 전자상거래법에 따라 5년간 보관한 뒤
+          지웁니다. 다시 쓰시려면 하온에 연락해 새로 만드셔야 합니다.
         </p>
 
         {deleteError && (

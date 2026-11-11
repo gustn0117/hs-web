@@ -17,10 +17,24 @@ export function priceText(p: Product) {
 }
 
 /** 카드의 큰 금액. 숫자는 크게, 뒤에 붙는 말(원, 원~)은 작게 쓴다. */
-function priceParts(p: Product): { value: string; suffix: string; numeric: boolean } {
-  if (p.price == null) return { value: p.price_note || "상담 후 안내", suffix: "", numeric: false };
-  if (p.price === 0) return { value: p.price_note || "무료", suffix: "", numeric: false };
-  return { value: p.price.toLocaleString("ko-KR"), suffix: p.price_note || "원", numeric: true };
+function priceParts(p: Product): {
+  value: string;
+  suffix: string;
+  numeric: boolean;
+} {
+  if (p.price == null)
+    return {
+      value: p.price_note || "상담 후 안내",
+      suffix: "",
+      numeric: false,
+    };
+  if (p.price === 0)
+    return { value: p.price_note || "무료", suffix: "", numeric: false };
+  return {
+    value: p.price.toLocaleString("ko-KR"),
+    suffix: p.price_note || "원",
+    numeric: true,
+  };
 }
 
 const CHECK = "M4.5 12.75l6 6 9-13.5";
@@ -30,7 +44,7 @@ export function PlanCard({
   overline,
   title,
   lead,
-  dark = false,
+  featured = false,
   pending,
   open,
   onRequest,
@@ -41,8 +55,8 @@ export function PlanCard({
   title: string;
   /** 제목 아래 한 줄. 단독 상품의 한 줄 설명을 여기 둔다. */
   lead?: string | null;
-  /** 가운데 패키지. 하온 남색으로 칠해 줄의 가운데가 비어 보이지 않게 한다. */
-  dark?: boolean;
+  /** 가운데 패키지는 연한 블루 배경으로 강조한다. */
+  featured?: boolean;
   /** 이미 신청해서 처리를 기다리는 중이다. */
   pending: boolean;
   /** 이 상품의 신청 칸이 열려 있다. */
@@ -51,35 +65,51 @@ export function PlanCard({
 }) {
   const { rows, checks } = splitFeatures(product.features);
   const price = priceParts(product);
-  const sub = dark ? "text-white/60" : "text-[var(--p-sub)]";
+  const sub = "portal-plan-sub text-[var(--p-sub)]";
 
   return (
     <article
       aria-label={product.name}
-      className={`row-span-5 grid grid-rows-subgrid rounded-[18px] border p-6 ${
-        dark
-          ? "border-[var(--p-brand)] bg-[var(--p-brand)] text-white"
+      className={`portal-plan-card row-span-5 grid grid-rows-subgrid border p-6 ${
+        featured
+          ? "is-featured"
           : "border-[var(--p-line)] bg-white text-[var(--p-ink)]"
       }`}
     >
       <div>
-        {overline && <p className={`mb-1.5 text-[11px] font-bold uppercase tracking-[0.15em] ${sub}`}>{overline}</p>}
-        <h4 className="text-[19px] font-bold leading-snug tracking-[-0.02em]">{title}</h4>
-        {lead && <p className={`mt-1 text-[13px] font-semibold ${dark ? "text-white/80" : "text-[var(--p-ink-2)]"}`}>{lead}</p>}
-        {product.description && <p className={`mt-2 text-[13px] leading-[1.65] ${sub}`}>{product.description}</p>}
+        {overline && (
+          <p
+            className={`mb-1.5 text-[11px] font-bold uppercase tracking-[0.15em] ${sub}`}
+          >
+            {overline}
+          </p>
+        )}
+        <h4 className="text-[19px] font-bold leading-snug tracking-[-0.02em]">
+          {title}
+        </h4>
+        {lead && (
+          <p className="mt-1 text-[13px] font-semibold portal-plan-detail text-[var(--p-ink-2)]">
+            {lead}
+          </p>
+        )}
+        {product.description && (
+          <p className={`mt-2 text-[13px] leading-[1.65] ${sub}`}>
+            {product.description}
+          </p>
+        )}
       </div>
 
-      <div
-        className={`mt-5 flex items-baseline gap-1 border-b border-dashed pb-5 ${
-          dark ? "border-white/25" : "border-[var(--p-line-firm)]"
-        }`}
-      >
+      <div className="portal-plan-divider mt-5 flex items-baseline gap-1 border-b border-[var(--p-line)] pb-5">
         <span
-          className={`p-stat leading-none ${price.numeric ? "text-[36px]" : "text-[26px]"} ${dark ? "!text-white" : "!text-[var(--p-ink)]"}`}
+          className={`p-stat leading-none ${price.numeric ? "text-[36px]" : "text-[26px]"} portal-plan-price`}
         >
           {price.value}
         </span>
-        {price.suffix && <span className={`text-[14px] font-semibold ${sub}`}>{price.suffix}</span>}
+        {price.suffix && (
+          <span className={`text-[14px] font-semibold ${sub}`}>
+            {price.suffix}
+          </span>
+        )}
       </div>
 
       {/* 표와 체크 목록은 비어도 자리를 둔다. 카드마다 다섯 칸이어야 옆 카드와 줄이 맞는다. */}
@@ -90,7 +120,9 @@ export function PlanCard({
           {rows.map((row) => (
             <div key={row.label} className="flex justify-between gap-3">
               <dt className={sub}>{row.label}</dt>
-              <dd className={`text-right font-semibold ${dark ? "text-white" : "text-[var(--p-ink)]"}`}>{row.value}</dd>
+              <dd className="text-right font-semibold portal-plan-detail text-[var(--p-ink)]">
+                {row.value}
+              </dd>
             </div>
           ))}
         </dl>
@@ -103,10 +135,10 @@ export function PlanCard({
           {checks.map((check) => (
             <li
               key={check}
-              className={`flex items-start gap-2 text-[13.5px] leading-[1.5] ${dark ? "text-white/85" : "text-[var(--p-ink-2)]"}`}
+              className="flex items-start gap-2 text-[13.5px] leading-[1.5] portal-plan-detail text-[var(--p-ink-2)]"
             >
               <svg
-                className={`mt-0.5 h-4 w-4 shrink-0 ${dark ? "text-white" : "text-[var(--p-brand)]"}`}
+                className="mt-0.5 h-4 w-4 shrink-0 portal-plan-check text-[var(--p-brand)]"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -127,13 +159,9 @@ export function PlanCard({
           onClick={onRequest}
           disabled={pending}
           aria-expanded={open}
-          className={`pressWide h-12 w-full cursor-pointer rounded-[10px] border-none text-[14px] font-bold transition-colors disabled:cursor-default ${
-            dark
-              ? "bg-white text-[var(--p-brand)] disabled:bg-white/15 disabled:text-white/60"
-              : "bg-[var(--p-brand)] text-white disabled:bg-[var(--p-fill)] disabled:text-[var(--p-sub)]"
-          }`}
+          className="portal-button portal-button-primary h-12 w-full disabled:cursor-default disabled:bg-[var(--p-fill)] disabled:text-[var(--p-sub)]"
         >
-          {pending ? "신청 접수됨" : "이거 해주세요"}
+          {pending ? "신청 접수됨" : "서비스 신청하기"}
         </button>
       </div>
     </article>
@@ -144,7 +172,15 @@ export function PlanCard({
  * 카드 줄. 좁은 화면에서는 옆으로 넘기고(다음 카드가 살짝 보인다), 넓은 화면에서는 세 칸에 나란히 놓는다.
  * 패키지 이름을 주면 위에 이름 단추가 생긴다. 누르면 그 카드로 넘어가고, 손으로 넘기면 단추가 따라온다.
  */
-export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ariaLabel: string; children: ReactNode }) {
+export function PlanRow({
+  labels,
+  ariaLabel,
+  children,
+}: {
+  labels?: string[];
+  ariaLabel: string;
+  children: ReactNode;
+}) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const cards = Children.toArray(children);
@@ -165,7 +201,11 @@ export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ar
     const list = stops();
     let nearest = 0;
     list.forEach((stop, i) => {
-      if (Math.abs(stop - row.scrollLeft) < Math.abs(list[nearest] - row.scrollLeft)) nearest = i;
+      if (
+        Math.abs(stop - row.scrollLeft) <
+        Math.abs(list[nearest] - row.scrollLeft)
+      )
+        nearest = i;
     });
     setIndex(nearest);
   };
@@ -174,7 +214,10 @@ export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ar
     const row = rowRef.current;
     if (!row) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    row.scrollTo({ left: stops()[i] ?? 0, behavior: still ? "auto" : "smooth" });
+    row.scrollTo({
+      left: stops()[i] ?? 0,
+      behavior: still ? "auto" : "smooth",
+    });
     setIndex(i);
   };
 
@@ -188,9 +231,9 @@ export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ar
               type="button"
               onClick={() => go(i)}
               aria-current={i === index ? "true" : undefined}
-              className={`h-8 cursor-pointer rounded-full border px-3.5 text-[11.5px] font-bold tracking-[0.06em] transition-colors ${
+              className={`portal-package-choice h-8 cursor-pointer rounded-full border px-3.5 text-[11.5px] font-bold tracking-[0.06em] transition-colors ${
                 i === index
-                  ? "border-[var(--p-brand)] bg-[var(--p-brand)] text-white"
+                  ? "is-selected"
                   : "border-[var(--p-line)] bg-white text-[var(--p-sub)]"
               }`}
             >
@@ -209,7 +252,9 @@ export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ar
         role="group"
         aria-label={ariaLabel}
         className={`snapRow -mx-4 grid snap-x snap-mandatory scroll-px-4 grid-flow-col grid-rows-[auto_auto_auto_1fr_auto] gap-x-3 gap-y-0 overflow-x-auto px-4 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:grid-flow-row lg:auto-cols-auto lg:grid-cols-3 lg:gap-x-4 lg:overflow-visible lg:px-0 ${
-          cards.length > 1 ? "auto-cols-[82%] sm:auto-cols-[46%]" : "auto-cols-[100%]"
+          cards.length > 1
+            ? "auto-cols-[82%] sm:auto-cols-[46%]"
+            : "auto-cols-[100%]"
         }`}
       >
         {cards.map((card, i) => (
