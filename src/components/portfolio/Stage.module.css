@@ -65,13 +65,16 @@
 
 @keyframes grow { from { transform: scale(.8); } to { transform: scale(1); } }
 @keyframes openUp { from { clip-path: inset(0 17% round 34px); } to { clip-path: inset(0 0 round 10px); } }
-@keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(.95); } to { opacity: 1; transform: none; } }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .growBox { animation: grow linear both; animation-timeline: view(); animation-range: entry 0% cover 48%; will-change: transform; }
     .wideBox { animation: openUp linear both; animation-timeline: view(); animation-range: entry 8% cover 58%; }
-    .card { animation: cardIn linear both; animation-timeline: view(); animation-range: entry 0% entry 62%; }
+    /* 카드에는 스크롤에 물린 움직임을 걸지 않는다.
+       목록에 99장이 있어서 스크롤 내내 전부를 다시 계산해야 하는데,
+       브라우저가 따라가지 못하면 다시 칠해진 카드만 제 투명도를 갖고
+       나머지는 흐린 채로 남는다. 위 두 개는 한 화면에 하나씩이라
+       괜찮지만 카드는 아니다. */
   }
 }
 
