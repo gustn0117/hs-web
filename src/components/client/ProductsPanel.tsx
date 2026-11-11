@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Product, ProductRequest } from "@/lib/types/product";
 import { REQUEST_STATUS_LABEL } from "@/lib/types/product";
 import { groupProducts, shortestWorkDays, splitProductName, startingPrice } from "@/lib/product-groups";
@@ -54,15 +54,20 @@ function toBlocks(products: Product[]): Block[] {
   return blocks;
 }
 
-/** 작은 영어 이름 + 제목. 회사 홈페이지의 섹션 머리와 같은 짜임이다. */
-function SectionHead({ overline, title, aside }: { overline: ReactNode; title: string; aside?: string | null }) {
+/**
+ * 덩어리의 머리.
+ *
+ * 전에는 제목 위에 「01 SERVICE」 같은 번호가 붙었다. 번호는 순서가
+ * 있는 것에만 뜻이 있는데 서비스 목록은 순서가 아니다. 먼저 해야 하는
+ * 일도, 더 중요한 일도 아니다. 그래서 번호를 빼고 남색 짧은 선으로
+ * 덩어리의 시작만 표시한다. 진행 단계(STEPS)는 진짜 순서라 거기엔 남겼다.
+ */
+function SectionHead({ title, aside }: { title: string; aside?: string | null }) {
   return (
     <div className="mb-4 flex items-end justify-between gap-3">
       <div className="min-w-0">
-        <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--p-sub)]">
-          {overline}
-        </p>
-        <h3 className="mt-2 text-[22px] font-bold leading-tight tracking-[-0.025em] text-[var(--p-ink)] md:text-[26px]">
+        <div className="h-[3px] w-7 rounded-full bg-[var(--p-brand)]" />
+        <h3 className="mt-3 text-[22px] font-bold leading-tight tracking-[-0.025em] text-[var(--p-ink)] md:text-[26px]">
           {title}
         </h3>
       </div>
@@ -170,7 +175,7 @@ export default function ProductsPanel() {
 
   /** 카드 줄 아래 신청 칸. 어느 상품으로 신청하는지 이름과 값을 다시 보여준다. */
   const requestForm = (product: Product) => (
-    <div ref={formRef} className="mt-3 scroll-mb-28 rounded-[16px] border border-[var(--p-ink)] bg-white p-5">
+    <div ref={formRef} className="mt-3 scroll-mb-28 rounded-[16px] border-2 border-[var(--p-brand)] bg-white p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[11px] font-bold tracking-[0.04em] text-[var(--p-sub)]">신청할 상품</p>
@@ -187,7 +192,7 @@ export default function ProductsPanel() {
         onChange={(e) => setMessage(e.target.value)}
         rows={3}
         placeholder="예: 다음 달에 시작하고 싶어요"
-        className="mt-2 w-full rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] px-3.5 py-2.5 text-sm text-[var(--p-ink)] focus:border-[var(--p-ink)] focus:outline-none"
+        className="mt-2 w-full rounded-xl border border-[var(--p-line)] bg-[var(--p-bg-sunk)] px-3.5 py-2.5 text-sm text-[var(--p-ink)] focus:border-[var(--p-brand)] focus:outline-none"
       />
       {sendError && (
         <p role="alert" className="mt-2 text-[12.5px] font-semibold text-[var(--p-ink)]">
@@ -199,7 +204,7 @@ export default function ProductsPanel() {
           type="button"
           onClick={() => submit(product)}
           disabled={sending}
-          className="pressWide min-h-[46px] flex-1 cursor-pointer rounded-[10px] border-none bg-[var(--p-ink)] text-sm font-bold text-white disabled:opacity-50"
+          className="pressWide min-h-[46px] flex-1 cursor-pointer rounded-[10px] border-none bg-[var(--p-brand)] text-sm font-bold text-white disabled:opacity-50"
         >
           {sending ? "보내는 중..." : "신청 보내기"}
         </button>
@@ -217,7 +222,7 @@ export default function ProductsPanel() {
   const sentNotice = (text: string) => (
     <div
       role="status"
-      className="mt-3 flex items-start gap-2.5 rounded-[14px] border border-[var(--p-ink)] bg-white px-4 py-3.5 text-[13.5px] leading-[1.55] text-[var(--p-ink)]"
+      className="mt-3 flex items-start gap-2.5 rounded-[14px] border border-[var(--p-brand)] bg-[var(--p-brand-tint)] px-4 py-3.5 text-[13.5px] leading-[1.55] text-[var(--p-brand)]"
     >
       <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -228,32 +233,53 @@ export default function ProductsPanel() {
 
   return (
     <div className="space-y-12 md:space-y-16">
-      {/* 머리 — 홈페이지 하위 화면의 머리와 같은 짜임(작은 이름, 큰 제목, 굵은 선, 숫자 띠) */}
-      <header>
-        <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--p-sub)]">PRODUCTS</p>
-        <h2 className="mt-2.5 text-[28px] font-extrabold leading-[1.2] tracking-[-0.035em] text-[var(--p-ink)] md:text-[40px]">
-          필요한 작업, 여기서 바로 신청.
-        </h2>
-        <div className="mt-5 border-t-2 border-[var(--p-ink)]" />
-        <p className="mt-4 text-[14.5px] leading-[1.7] text-[var(--p-sub)] md:text-[16px]">
-          패키지를 고르고 신청하시면 확인 후 연락드립니다.
-        </p>
-        {stats.length > 0 && (
-          <dl
-            className="mt-6 grid border-t border-[var(--p-line)]"
-            style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
-          >
-            {stats.map((s, i) => (
-              <div key={s.label} className={`px-3 py-4 md:px-5 md:py-5 ${i > 0 ? "border-l border-[var(--p-line)]" : ""}`}>
-                <dt className="text-[11px] font-semibold text-[var(--p-sub)]">{s.label}</dt>
-                <dd className="p-stat mt-2 whitespace-nowrap text-[20px] leading-none !text-[var(--p-ink)] md:text-[28px]">
-                  {s.value}
-                  <span className="ml-0.5 text-[12px] font-semibold text-[var(--p-sub)] md:text-[14px]">{s.suffix}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
+      {/*
+        머리.
+
+        전에는 제목 · 수치 띠 · 사진 배너가 따로 세 덩어리였다. 셋 다
+        비슷한 무게여서 어디를 먼저 봐야 하는지가 없었다. 남색 패널
+        하나로 합치고, 화면에서 과감한 자리는 여기 한 곳만 둔다.
+
+        숫자는 크게 키우지 않는다. 이 화면을 여는 사람은 이미 하온과
+        일하고 있는 고객이라 설득할 대상이 아니다. 알아야 할 것은
+        얼마부터인지와 며칠 걸리는지뿐이라 한 줄로 충분하다.
+      */}
+      <header className="relative -mx-4 overflow-hidden bg-[var(--p-brand)] sm:-mx-6 md:mx-0 md:rounded-[20px]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={BANNER_IMAGE}
+          alt=""
+          loading="lazy"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.22] mix-blend-luminosity"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(118deg, var(--p-brand-deep) 0%, rgba(10,42,94,0.92) 46%, rgba(10,42,94,0.55) 100%)",
+          }}
+        />
+        <div className="relative px-5 py-9 sm:px-7 md:px-10 md:py-14">
+          <h2 className="max-w-[18ch] text-[29px] font-extrabold leading-[1.22] tracking-[-0.035em] text-white md:text-[42px]">
+            필요한 작업, 여기서 바로 신청.
+          </h2>
+          <p className="mt-3.5 max-w-[34ch] text-[14.5px] leading-[1.7] text-white/75 md:text-[16px]">
+            패키지를 고르고 신청하시면 확인 후 연락드립니다.
+          </p>
+          {stats.length > 0 && (
+            <dl className="mt-7 flex flex-wrap items-baseline gap-x-6 gap-y-2.5 border-t border-white/20 pt-5">
+              {stats.map((s) => (
+                <div key={s.label} className="flex items-baseline gap-2">
+                  <dt className="text-[12px] font-medium text-white/55">{s.label}</dt>
+                  <dd className="tnum whitespace-nowrap text-[16px] font-bold text-white md:text-[18px]">
+                    {s.value}
+                    <span className="ml-0.5 text-[12.5px] font-semibold text-white/70">{s.suffix}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
       </header>
 
       {loadError && (
@@ -264,7 +290,7 @@ export default function ProductsPanel() {
 
       {requests.length > 0 && (
         <section>
-          <SectionHead overline="MY REQUESTS" title="내 신청" aside={`${requests.length}건`} />
+          <SectionHead title="내 신청" aside={`${requests.length}건`} />
           <div className="divide-y divide-[var(--p-line)] rounded-[16px] border border-[var(--p-line)] bg-white">
             {requests.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3.5">
@@ -288,30 +314,10 @@ export default function ProductsPanel() {
         </section>
       )}
 
-      {blocks.length > 0 && (
-        // 홈페이지 「서비스」 화면의 배너. 글도 그 화면의 글 그대로다.
-        <div className="relative overflow-hidden rounded-[16px] bg-[var(--p-ink)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={BANNER_IMAGE} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-70 grayscale" />
-          <div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(115deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.62) 55%, rgba(0,0,0,0.28) 100%)" }}
-          />
-          <div className="relative flex min-h-[176px] flex-col justify-center p-6 md:min-h-[230px] md:p-10">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.15em] text-white/70">ONE-STOP WEB SOLUTION</p>
-            <p className="text-[20px] font-black leading-[1.3] tracking-[-0.03em] text-white md:text-[30px]">
-              기획부터 개발, 운영까지.
-              <br />
-              브랜드 성장에 필요한 전반을 한 곳에서.
-            </p>
-          </div>
-        </div>
-      )}
-
       {blocks.length === 0 ? (
         !loadError && <div className="py-16 text-center text-sm text-[var(--p-sub)]">준비된 상품이 아직 없습니다.</div>
       ) : (
-        blocks.map((block, n) => {
+        blocks.map((block) => {
           const isPackages = block.kind === "packages";
           const lowest = isPackages ? startingPrice(block.items) : null;
           const formProduct = block.items.find((item) => item.id === openId);
@@ -319,12 +325,6 @@ export default function ProductsPanel() {
           return (
             <section key={block.key}>
               <SectionHead
-                overline={
-                  <>
-                    <span className="tnum">{String(n + 1).padStart(2, "0")}</span>
-                    <span>SERVICE</span>
-                  </>
-                }
                 title={block.title}
                 aside={lowest != null ? `${lowest.toLocaleString("ko-KR")}원부터` : null}
               />
@@ -358,11 +358,11 @@ export default function ProductsPanel() {
 
       {blocks.length > 0 && (
         <section>
-          <SectionHead overline="PROCESS" title="신청하면 이렇게 진행돼요" />
+          <SectionHead title="신청하면 이렇게 진행돼요" />
           <ol className="m-0 grid list-none grid-cols-2 gap-3 p-0 lg:grid-cols-4">
             {STEPS.map((step, i) => (
               <li key={step.title} className="rounded-[14px] border border-[var(--p-line)] bg-white p-5">
-                <p className="tnum text-[12px] font-bold tracking-[0.12em] text-[var(--p-sub)]">
+                <p className="tnum text-[12px] font-bold tracking-[0.12em] text-[var(--p-brand)]">
                   {String(i + 1).padStart(2, "0")}
                 </p>
                 <p className="mt-3 text-[15px] font-bold text-[var(--p-ink)]">{step.title}</p>

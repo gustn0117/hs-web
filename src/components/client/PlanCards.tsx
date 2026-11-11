@@ -41,7 +41,7 @@ export function PlanCard({
   title: string;
   /** 제목 아래 한 줄. 단독 상품의 한 줄 설명을 여기 둔다. */
   lead?: string | null;
-  /** 홈페이지 가격 안내의 가운데 카드처럼 검정으로 칠한다. */
+  /** 가운데 패키지. 하온 남색으로 칠해 줄의 가운데가 비어 보이지 않게 한다. */
   dark?: boolean;
   /** 이미 신청해서 처리를 기다리는 중이다. */
   pending: boolean;
@@ -57,7 +57,9 @@ export function PlanCard({
     <article
       aria-label={product.name}
       className={`row-span-5 grid grid-rows-subgrid rounded-[18px] border p-6 ${
-        dark ? "border-[var(--p-ink)] bg-[var(--p-ink)] text-white" : "border-[var(--p-line)] bg-white text-[var(--p-ink)]"
+        dark
+          ? "border-[var(--p-brand)] bg-[var(--p-brand)] text-white"
+          : "border-[var(--p-line)] bg-white text-[var(--p-ink)]"
       }`}
     >
       <div>
@@ -104,7 +106,7 @@ export function PlanCard({
               className={`flex items-start gap-2 text-[13.5px] leading-[1.5] ${dark ? "text-white/85" : "text-[var(--p-ink-2)]"}`}
             >
               <svg
-                className={`mt-0.5 h-4 w-4 shrink-0 ${dark ? "text-white" : "text-[var(--p-ink)]"}`}
+                className={`mt-0.5 h-4 w-4 shrink-0 ${dark ? "text-white" : "text-[var(--p-brand)]"}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -127,8 +129,8 @@ export function PlanCard({
           aria-expanded={open}
           className={`pressWide h-12 w-full cursor-pointer rounded-[10px] border-none text-[14px] font-bold transition-colors disabled:cursor-default ${
             dark
-              ? "bg-white text-[var(--p-ink)] disabled:bg-white/15 disabled:text-white/60"
-              : "bg-[var(--p-ink)] text-white disabled:bg-[var(--p-fill)] disabled:text-[var(--p-sub)]"
+              ? "bg-white text-[var(--p-brand)] disabled:bg-white/15 disabled:text-white/60"
+              : "bg-[var(--p-brand)] text-white disabled:bg-[var(--p-fill)] disabled:text-[var(--p-sub)]"
           }`}
         >
           {pending ? "신청 접수됨" : "이거 해주세요"}
@@ -188,7 +190,7 @@ export function PlanRow({ labels, ariaLabel, children }: { labels?: string[]; ar
               aria-current={i === index ? "true" : undefined}
               className={`h-8 cursor-pointer rounded-full border px-3.5 text-[11.5px] font-bold tracking-[0.06em] transition-colors ${
                 i === index
-                  ? "border-[var(--p-ink)] bg-[var(--p-ink)] text-white"
+                  ? "border-[var(--p-brand)] bg-[var(--p-brand)] text-white"
                   : "border-[var(--p-line)] bg-white text-[var(--p-sub)]"
               }`}
             >
