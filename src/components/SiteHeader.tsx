@@ -6,13 +6,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // 상단은 처음 온 사람이 바로 찾는 것만 둔다. 나머지는 전체메뉴에 있다.
+//
+// 「문의」는 여기 없다. 오른쪽 「상담 신청」 단추가 같은 곳으로 가기 때문이다.
+// 둘 다 두면 같은 길이 두 개로 보여 어느 쪽이 진짜인지 헷갈린다.
 const NAV: { label: string; href: string }[] = [
   { label: "서비스", href: "/services" },
   { label: "포트폴리오", href: "/portfolio" },
   { label: "가격", href: "/pricing" },
   { label: "정보공유", href: "/insights" },
   { label: "후기", href: "/testimonials" },
-  { label: "문의", href: "/contact" },
 ];
 
 const I = {
@@ -77,6 +79,17 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [group, setGroup] = useState(PANEL_GROUPS[0].key);
+  // 맨 위에 있을 때는 띠가 페이지의 일부처럼 보이고, 내려가면 내용 위에
+  // 떠 있는 것이 된다. 그 차이를 그림자로 보여 준다. 저절로 움직이는 게
+  // 아니라 사람이 스크롤한 것에 답하는 것이라 넣는다.
+  const [stuck, setStuck] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -104,7 +117,13 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white border-b border-[var(--c-line)]">
+      <header
+        className={`sticky top-0 z-50 bg-white border-b transition-[border-color,box-shadow] duration-200 ${
+          stuck
+            ? "border-[var(--c-line-2)] shadow-[0_1px_16px_-6px_rgba(13,13,15,0.22)]"
+            : "border-[var(--c-line)]"
+        }`}
+      >
         {/* 띠 안에서 가장 큰 것은 44px 짜리 메뉴 단추다. 손으로 누르는 것이라
             그보다 작게 만들 수 없다. 그래서 높이는 그 44 에 위아래 여백을
             더한 값으로 잡는다 — 모바일 60, 넓은 화면 72. 전에는 73/89 였는데
@@ -140,16 +159,31 @@ export default function SiteHeader() {
             ))}
           </nav>
 
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex items-center justify-end gap-2 sm:gap-3">
+            {/* 전화번호는 한 발 물러선다. 눈이 먼저 가야 하는 건 옆의 단추다. */}
             <a
               href="tel:010-3319-2509"
-              className="hidden md:inline-flex items-center gap-1.5 text-[14px] font-bold text-[var(--c-text)] no-underline hover:text-[var(--c-main)] transition-colors tnum"
+              className="hidden md:inline-flex items-center gap-1.5 text-[14px] font-semibold text-[var(--c-sub)] no-underline hover:text-[var(--c-main)] transition-colors tnum"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
               </svg>
               010-3319-2509
             </a>
+
+            {/* 이 사이트가 있는 이유는 문의를 받는 것이다. 그 행동 하나에만
+                색을 쓴다.
+
+                320px 에서도 글자를 줄이지 않는다. 재 보니 로고 114 + 단추
+                77 + 메뉴 44 + 여백이 320 안에 들어간다. 「상담」만 남기면
+                무엇을 상담하는지가 흐려져서, 자리가 되는 한 다 적는다. */}
+            <Link
+              href="/contact"
+              className="inline-flex items-center h-9 md:h-10 px-3.5 md:px-5 rounded-lg bg-[var(--c-main)] text-white text-[13.5px] md:text-[14.5px] font-bold no-underline whitespace-nowrap hover:bg-[var(--c-main-d)] transition-colors"
+            >
+              상담 신청
+            </Link>
+
             <button
               type="button"
               onClick={() => setOpen(true)}
