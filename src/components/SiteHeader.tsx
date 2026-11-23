@@ -243,46 +243,79 @@ export default function SiteHeader() {
           aria-hidden={!mega}
         >
           <div
-            className="border-b border-black/10 shadow-[0_18px_40px_-20px_rgba(6,30,71,0.55)]"
+            className="relative border-b border-black/10 shadow-[0_18px_40px_-20px_rgba(6,30,71,0.55)]"
             style={{
               background:
                 "linear-gradient(135deg, var(--c-main) 0%, var(--c-main-d) 55%, #04142f 100%)",
             }}
           >
-            <div className="max-w-[1280px] mx-auto px-5 py-9 grid grid-cols-3 gap-10">
+            {/* 평평한 남색 한 장은 인쇄물처럼 죽어 보인다. 왼쪽 위에서 빛이
+                드는 결을 아주 옅게 얹어 면에 깊이를 준다. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(120% 150% at 8% -20%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 55%)",
+              }}
+            />
+
+            <div className="relative max-w-[1280px] mx-auto px-5 py-10 grid grid-cols-[1fr_1fr_1fr_minmax(250px,0.95fr)] gap-x-10 gap-y-0">
               {PANEL_GROUPS.map((g) => (
                 <section key={g.key}>
-                  <p className="m-0 pb-2.5 mb-2 border-b border-white/20 text-[13px] font-bold text-white/60">
-                    {g.key}
-                  </p>
+                  {/* 묶음 이름은 길잡이일 뿐이라 작고 조용하게 둔다.
+                      눈이 머물러야 하는 것은 아래 항목들이다. */}
+                  <p className="m-0 mb-3.5 text-[12px] font-semibold text-white/45">{g.key}</p>
                   <ul className="list-none m-0 p-0">
                     {g.items.map((it) => (
                       <li key={it.href}>
+                        {/* 아이콘은 뺐다. 열아홉 개가 전부 같은 모양의 선
+                            그림이라 글자를 읽는 것을 방해하기만 했다.
+                            지금 자리를 찾는 표식은 왼쪽 세로 선 하나다. */}
                         <Link
                           href={it.href}
                           onClick={() => setMega(false)}
-                          className={`flex items-center gap-2.5 h-9 no-underline transition-colors ${
+                          className={`flex items-center h-[38px] pl-3 -ml-3 border-l-2 no-underline transition-colors ${
                             active(it.href)
-                              ? "text-white font-bold"
-                              : "text-white/75 hover:text-white"
+                              ? "border-white text-white font-bold"
+                              : "border-transparent text-white/70 hover:border-white/50 hover:text-white"
                           }`}
                         >
-                          <svg
-                            className="w-[17px] h-[17px] shrink-0 opacity-70"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d={it.icon} />
-                          </svg>
-                          <span className="text-[14px]">{it.label}</span>
+                          <span className="text-[15px] tracking-[-0.01em]">{it.label}</span>
                         </Link>
                       </li>
                     ))}
                   </ul>
                 </section>
               ))}
+
+              {/* 메뉴가 링크만 늘어놓고 끝나면 그 큰 자리가 아깝다. 여기까지
+                  내려온 사람은 무엇을 맡길지 고르는 중이고, 그 다음에 할 일은
+                  정해져 있다. 그래서 판의 마지막 칸은 길이 아니라 제안이다. */}
+              <aside className="rounded-xl border border-white/15 bg-white/[0.06] p-6 flex flex-col">
+                <p className="m-0 text-[17px] font-bold leading-[1.5] text-white">
+                  무엇을 만들지
+                  <br />
+                  아직 안 정하셨다면
+                </p>
+                <p className="m-0 mt-2.5 text-[13.5px] leading-[1.65] text-white/60">
+                  하시려는 일을 들어보고 어떤 방식이 맞는지 알려 드립니다. 견적도 같이
+                  보내 드립니다.
+                </p>
+                <Link
+                  href="/contact"
+                  onClick={() => setMega(false)}
+                  className="mt-5 inline-flex items-center justify-center h-11 rounded-lg bg-white text-[var(--c-main)] text-[14.5px] font-bold no-underline hover:bg-white/90 transition-colors"
+                >
+                  상담 신청
+                </Link>
+                <a
+                  href="tel:010-3319-2509"
+                  className="mt-3 text-center text-[13.5px] font-semibold text-white/55 no-underline hover:text-white transition-colors tnum"
+                >
+                  010-3319-2509
+                </a>
+              </aside>
             </div>
           </div>
         </div>
