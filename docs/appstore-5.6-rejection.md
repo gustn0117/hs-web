@@ -1,4 +1,7 @@
-# 하온 iOS 1.0 — Guideline 5.6 거부 기록
+# 하온 iOS 1.0 — 심사 기록
+
+거부와 회신을 시간순으로 모아 둔다. 처음은 Guideline 5.6,
+두 번째는 5.1.2(i) + 2.1(b).
 
 App Store Connect Resolution Center 대화 사본. 항목을 떼어내기 전(2026-11-21)에
 남겨 둔다. ASC 쪽에서 사라져도 내용은 여기 있다.
@@ -91,3 +94,222 @@ App Store Connect Resolution Center 대화 사본. 항목을 떼어내기 전(20
 홍콩·마카오·대만은 별개 지역이라 그대로 둔다.
 
 나중에 중국 본토가 필요해지면 그 두 신고를 갖춘 뒤 지역을 다시 넣으면 된다.
+
+---
+---
+
+# 2차 — Guideline 5.1.2(i) + 2.1(b)
+
+- 심사건: `443c5d4a-c643-4043-bcd6-af4190d10251` → `UNRESOLVED_ISSUES`
+- 버전 1.0 → `REJECTED`
+- 심사일: 2026-11-23 / iPhone 17 Pro Max / 1.0 (5)
+
+거부가 아니라 **정보 요청** 두 건이다. 앱을 고칠 일은 없고,
+ASC 설정 하나와 회신 하나로 끝난다.
+
+## Apple — 2026-11-23
+
+### 5.1.2(i) 개인정보 — 추적 동의
+
+ASC 「앱 개인정보 보호」에 사용자 ID·기기 ID 가 **추적 목적**으로
+수집된다고 적혀 있는데, 앱이 App Tracking Transparency 로 동의를
+받지 않는다는 지적.
+
+애플이 준 길 세 가지 중 우리에게 맞는 것은 첫 번째다 —
+**추적하지 않으니 라벨을 고친다.**
+
+### 2.1(b) 정보 필요 — 사업 구조
+
+앱에서 유료 디지털 콘텐츠에 접근하는 것처럼 보인다며 다섯 가지를 물었다.
+
+## 확인한 사실 (2026-11-23)
+
+회신 전에 코드로 직접 확인한 것들.
+
+| 확인한 것 | 결과 | 어떻게 확인했나 |
+|---|---|---|
+| 추적·광고 SDK | **없음** | `ios/` 전체에 `AppTrackingTransparency`·`AdSupport`·`IDFA`·`advertisingIdentifier` 0건 |
+| 분석 SDK | **없음** | Firebase·AppsFlyer·Adjust·Amplitude·Mixpanel·GA 0건 |
+| CocoaPods | **없음** | `ios/App/Podfile` 비어 있음 |
+| 서드파티 코드 전체 | Capacitor 8개 + Capgo 생체인증 1개 | `package.json` 의존성 |
+| 인앱결제 | **없음** | ASC API `inAppPurchasesV2`·`subscriptionGroups`·`promotedPurchases` 전부 0건 |
+| StoreKit | **없음** | `ios/`·`src/` 에 0건 |
+| 포털에 가격 표시 | **없음** | 「서비스」탭에 금액·단가 문구 0건 |
+| 결제 경로 | 앱 밖 | 계좌번호 복사 → 은행 앱에서 이체 → 「입금했어요」로 알림 → 담당자가 확인 |
+
+즉 애플이 본 「추적」은 앱 동작이 아니라 **우리가 라벨을 잘못 체크한 것**이다.
+
+## 할 일 순서 (순서가 중요하다)
+
+1. **ASC 에서 개인정보 라벨을 먼저 고친다.** 공개 API 로는 불가능 —
+   `appDataUsages`·`appPrivacyDetails` 등 7개 경로 전부 404,
+   앱 리소스에 개인정보 관계 자체가 없다. 웹에서 손으로 해야 한다.
+2. 그 다음 Resolution Center 에 회신한다. 라벨을 안 고치고 회신하면
+   애플이 같은 지적을 되풀이한다.
+3. 애플이 심사를 이어받는다. 버전이 `REJECTED` 라 재제출을 요구할 수도 있다.
+
+### ASC 라벨 고치는 길
+
+App Store Connect → 앱 → 왼쪽 「**앱 개인정보 보호**」(App Privacy)
+→ 「데이터 유형」 편집.
+
+**사용자 ID**와 **기기 ID** 각각에서 「이 데이터를 **추적** 목적으로
+사용합니까」를 **아니요**로. 「제3자 광고」·「개발자의 광고 또는 마케팅」
+용도도 체크돼 있으면 함께 해제한다 — 이 둘은 추적을 뜻한다.
+
+남겨야 하는 답: **앱 기능**(App Functionality) 용도, 「사용자에게 연결된
+데이터」. 수집 자체는 사실이니 끄지 않는다.
+
+애플이 "including User ID and Device ID" 라고 썼으므로 **다른 유형도
+전부** 추적 체크가 있는지 훑는다. 이름·구매 내역·앱 상호작용도 확인.
+
+편집 후 「**게시**」를 눌러야 반영된다.
+
+## 심현수 → Apple (회신문)
+
+아래를 Resolution Center 에 붙인다. 라벨을 고친 **뒤**에 보낸다.
+
+```
+Hello,
+
+Thank you for the detailed questions. Answers to both items are below.
+
+
+=== Guideline 5.1.2(i) — the app does not track users ===
+
+The app does not track users, on this platform or any other, and never has.
+Our App Privacy information was filled in incorrectly. That was our error in
+answering the questionnaire, not a description of what the app does.
+
+What we got wrong: we marked "used for tracking purposes" for User ID and
+Device ID because we read "tracking" as meaning "we can tell which account a
+record belongs to". We now understand that tracking means linking the data
+with third-party data for advertising, or sharing it with a data broker. The
+app does neither.
+
+We have corrected the App Privacy information in App Store Connect. User ID
+and Device ID are now declared as Data Linked to You, collected for App
+Functionality only, and are no longer declared as used for tracking. We
+changed no other answer.
+
+What those two identifiers actually are:
+
+- User ID: the identifier of the client's own portal account on our own
+  server. It is used to show that client their own project and invoice
+  records, and nothing else. It is never sent to a third party.
+
+- Device ID: the Apple Push Notification service device token. It is used
+  only to send that client reminders about a renewal date or an unpaid
+  invoice. It is stored on our own server and is never sent to a third party.
+
+There is no advertising framework and no analytics framework in the binary.
+The complete list of third-party code in the app is:
+
+  @capacitor/core, @capacitor/app, @capacitor/haptics, @capacitor/keyboard,
+  @capacitor/preferences, @capacitor/push-notifications,
+  @capacitor/splash-screen, @capacitor/status-bar   (Capacitor, by Ionic)
+  @capgo/capacitor-native-biometric    (Face ID / Touch ID unlock only)
+
+The app does not link AdSupport or AppTrackingTransparency and never reads the
+advertising identifier. Because the app does not track, there is no App
+Tracking Transparency permission request to point you to. The app behaves
+identically in every country and region where it is available.
+
+
+=== Guideline 2.1(b) — our business model ===
+
+Haon is a web development studio in South Korea. We design and build websites
+for business clients and maintain them afterwards. This app is a portal where
+an existing client can look up the status of the work we are doing for them.
+It is not a store. Nothing can be bought in it.
+
+1. Who are the users that will use the paid content, subscriptions, features,
+   and services in the app?
+
+   Only existing clients of Haon. Our staff creates each account for a client
+   who has already signed a contract with us for website design, development,
+   or ongoing maintenance. There is no public sign-up: someone who downloads
+   the app cannot create an account and cannot see any content.
+
+2. Where can users purchase the content, subscriptions, features, and services
+   that can be accessed in the app?
+
+   Nowhere in the app, and nowhere on our website. Our services are agreed
+   offline, before the account exists, by phone, email, or a meeting in
+   person. We then invoice the client and they pay by bank transfer to our
+   business account. No purchase can be started or completed inside the app.
+   The app has no payment form, no card entry, and no checkout.
+
+3. What specific types of previously purchased content, subscriptions,
+   features, and services can a user access in the app?
+
+   No digital content of any kind. The app shows the client their own business
+   records with us:
+
+   - how far along the website we are building for them is, and its address
+   - their invoice history: what is paid, what is outstanding, and our bank
+     account number, which they can copy and paste into their banking app
+   - how many days are left on their domain registration and their hosting
+
+   Nothing is unlocked, downloaded, streamed, or consumed in the app. What the
+   client paid for is a website, which runs on the public internet and is used
+   outside the app.
+
+   One button may look like a payment action and is not: next to an unpaid
+   invoice there is a button meaning "I have made the transfer". It sends no
+   money. The client has already paid in their own banking app; the button
+   just tells us to go and check our account, and a member of our staff then
+   marks the invoice as paid.
+
+4. What paid content, subscriptions, or features are unlocked within the app
+   that do not use In-App Purchase?
+
+   None. The app has no paid tier, no premium feature, no subscription, and no
+   digital content. Every screen is available to every account from the moment
+   we create it. Whether an invoice is paid or unpaid changes none of it — an
+   unpaid invoice changes the text on the billing screen and nothing else.
+
+   The services we sell — website design and development, domain
+   registration, and hosting — are carried out by us and used outside the
+   app. Under Guideline 3.1.3(e), Goods and Services Outside of the App, these
+   must not use In-App Purchase, and we collect no payment for them in the
+   app.
+
+   The "Services" tab lists the kinds of work we offer, with no prices on it.
+   Tapping one sends an enquiry to the client's account manager, who then
+   contacts them to talk it over. It is a one-way enquiry form, not an order
+   form: no amount is quoted, nothing is charged, and nothing is unlocked.
+
+5. How do users obtain an account? Do users have to pay a fee to create an
+   account?
+
+   Our staff creates it by hand in our internal admin system once a contract
+   is signed, then gives the client the ID and password directly.
+
+   There is no fee to create an account and no fee to keep one. The account is
+   free to our clients and carries no charge of any kind. The client pays only
+   for the web development work itself, which we invoice separately and they
+   pay by bank transfer, outside the app.
+
+
+For your review, please use the demo account. It contains example projects,
+invoices, and domains, so every tab has content:
+
+   ID: test
+   Password: 1234
+
+Please tell us if any of the above needs more detail.
+
+Thank you,
+Haon
+```
+
+## 왜 IAP 가 필요 없는가 (근거)
+
+Guideline **3.1.3(e) Goods and Services Outside of the App** —
+앱 밖에서 소비되는 재화·서비스는 IAP 를 **쓰면 안 된다**.
+우리가 파는 것은 홈페이지 제작·도메인·호스팅이고, 결과물인 홈페이지는
+공개 인터넷에서 돌아간다. 앱은 그 기록을 보여주는 창일 뿐이다.
+
+게다가 앱 안에서 결제가 **일어나지 않는다**. 계좌번호를 복사해
+은행 앱에서 이체한다. 애플이 가져갈 수수료의 대상 자체가 없다.
