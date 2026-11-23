@@ -165,9 +165,113 @@ App Store Connect → 앱 → 왼쪽 「**앱 개인정보 보호**」(App Priva
 
 편집 후 「**게시**」를 눌러야 반영된다.
 
-## 심현수 → Apple (회신문)
+## 처리 결과 — 2026-11-23
 
-아래를 Resolution Center 에 붙인다. 라벨을 고친 **뒤**에 보낸다.
+둘 다 끝났다.
+
+**1. 개인정보 라벨** (오후 5시경 게시)
+Resolution Center 회신란은 **4000자 상한**이다. 아래 원고가 6,135자여서
+못 들어갔다. 줄여서 3,994자로 보냈다 (「실제로 보낸 글」 절 참고).
+
+라벨은 ASC 웹에서 고쳤다 — 공개 API 에 없는 기능이다.
+선언된 데이터 유형은 **기기 ID·사용자 ID 둘뿐**이었고, 둘 다
+「사용 목적 = 앱 기능」에 「추적 목적으로 사용됨」이 켜져 있었다.
+광고 용도(타사 광고, 개발자의 광고 또는 마케팅)는 애초에 하나도 안 켜져 있었다.
+
+두 항목 모두 마지막 단계의 「추적 목적으로 사용합니까」를 **아니요**로 바꾸고
+게시했다. 「신원에 연결됨 = 예」는 사실이라 그대로 뒀다.
+결과: 「사용자를 추적하는 데 사용되는 데이터」 섹션이 사라지고
+「추적 목적으로 사용됨」 문구가 0개가 됐다.
+
+**2. 회신** (오후 5시 06분 전송, 메시지 4개 중 1건, 중복 없음)
+
+## 실제로 보낸 글 (3,994자)
+
+```
+Hello,
+
+Answers to both items are below.
+
+
+GUIDELINE 5.1.2(i) - THE APP DOES NOT TRACK
+
+The app does not track users, on this or any other platform, and never has.
+Our App Privacy information was wrong. We marked "used for tracking purposes"
+for User ID and Device ID because we read "tracking" as "we can tell which
+account a record belongs to". We now understand it means linking data with
+third-party data for advertising, or sharing it with a data broker. The app
+does neither.
+
+We have corrected App Privacy in App Store Connect: User ID and Device ID are
+now Data Linked to You, collected for App Functionality only, and are no
+longer declared as used for tracking. No other answer changed.
+
+- User ID: the identifier of the client's own account on our own server, used
+to show that client their own records. Never sent to a third party.
+- Device ID: the APNs device token, used only to send that client reminders
+about a renewal date or an unpaid invoice. Stored on our server only.
+
+The binary contains no advertising or analytics framework. All third-party
+code in it: @capacitor/core, app, haptics, keyboard, preferences,
+push-notifications, splash-screen, status-bar (Capacitor by Ionic), and
+@capgo/capacitor-native-biometric (Face ID / Touch ID unlock). The app does
+not link AdSupport or AppTrackingTransparency and never reads the advertising
+identifier, so there is no ATT prompt to point you to. Behaviour is identical in
+all regions.
+
+
+GUIDELINE 2.1(b) - OUR BUSINESS MODEL
+
+Haon is a web development studio in South Korea. We build and maintain
+websites for business clients. This app is a portal where an existing client
+looks up the status of the work we are doing for them. It is not a store;
+nothing can be bought in it.
+
+1. Who uses the paid content? Only existing Haon clients. Our staff creates
+each account for a client who has already signed a contract for website
+design, development or maintenance. There is no public sign-up: someone who
+downloads the app cannot create an account.
+
+2. Where can users purchase? Nowhere in the app, and nowhere on our website.
+Services are agreed offline before the account exists, by phone, email or a
+meeting. We then invoice, and the client pays by bank transfer. The app has no
+payment form, no card entry and no checkout.
+
+3. What previously purchased content can be accessed? No digital content. The
+app shows the client their own business records with us: how far along their
+website is and its address; their invoice history and our bank account number,
+which they copy into their own banking app; days left on their domain and
+hosting. Nothing is unlocked, downloaded, streamed or consumed in the app.
+What they paid for is a website, used outside the app. One button may look
+like a payment and is not: beside an unpaid invoice, "I have made the
+transfer" sends no money. The client has already paid in their banking app; it
+only asks us to go and check our account.
+
+4. What is unlocked without In-App Purchase? Nothing. There is no paid tier,
+subscription or digital content. Every screen is available to every account
+from the moment we create it; an unpaid invoice changes the text on the
+billing screen and nothing else. What we sell - website design and
+development, domain registration, hosting - is used outside the app, which
+Guideline 3.1.3(e) says must not use In-App Purchase. The "Services" tab lists
+the kinds of work we offer, with no prices. Tapping one sends an enquiry to
+the client's account manager, who then contacts them. It is a one-way enquiry
+form, not an order form.
+
+5. How do users obtain an account, and is there a fee? Our staff creates it by
+hand once a contract is signed, then gives the client the ID and password.
+There is no fee to create or keep an account; it is free to our clients. The
+client pays only for the development work, invoiced separately and paid by
+bank transfer outside the app.
+
+
+Demo account (every tab has example content):
+ID test / Password 1234
+
+Thank you,
+Haon
+```
+
+## 원고 (6,135자 — 길어서 못 보냄, 근거 기록용)
 
 ```
 Hello,
