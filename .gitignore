@@ -53,3 +53,20 @@ tmp/
 /ios/App/App.xcodeproj/xcuserdata
 /ios/App/App/capacitor.config.json
 /ios/capacitor-cordova-ios-plugins
+
+# 안드로이드 앱 (Capacitor)
+/android/.gradle
+/android/build
+/android/app/build
+/android/app/src/main/assets/public
+/android/app/src/main/assets/capacitor.config.json
+/android/app/src/main/assets/capacitor.plugins.json
+/android/capacitor-cordova-android-plugins
+/android/local.properties
+/android/.idea
+
+# 서명 열쇠. 새어 나가면 남이 우리 이름으로 앱을 낼 수 있고,
+# 잃어버리면 앱을 영영 갱신하지 못한다. 저장소에 절대 넣지 않는다.
+*.keystore
+*.jks
+/android/keystore.properties
