@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -84,6 +84,26 @@ export default function SiteHeader() {
   // 아니라 사람이 스크롤한 것에 답하는 것이라 넣는다.
   const [stuck, setStuck] = useState(false);
 
+  // 넓은 화면에서 메뉴 위에 마우스를 올리면 아래로 펼쳐지는 판.
+  // 좁은 화면에는 호버라는 것이 없으므로 여기서는 쓰지 않는다 — 그쪽은
+  // 아래 ☰ 단추가 그대로 한다.
+  const [mega, setMega] = useState(false);
+  // 메뉴에서 판으로 마우스를 옮기는 사이에 잠깐 둘 다 벗어나는 순간이 있다.
+  // 그때 바로 닫으면 손이 따라갈 수가 없어서, 조금 기다렸다 닫는다.
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openMega = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setMega(true);
+  };
+  const closeMega = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setMega(false), 140);
+  };
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 8);
     onScroll();
@@ -140,11 +160,19 @@ export default function SiteHeader() {
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center justify-center gap-7">
+          <nav
+            className="hidden lg:flex items-center justify-center gap-7 h-full"
+            onMouseEnter={openMega}
+            onMouseLeave={closeMega}
+            onFocus={openMega}
+            onBlur={closeMega}
+          >
             {NAV.map((m) => (
               <Link
                 key={m.href}
                 href={m.href}
+                // 페이지를 옮기면 판은 닫는다. 안 그러면 새 화면 위에 남는다.
+                onClick={() => setMega(false)}
                 className={`relative text-[16px] no-underline transition-colors py-2 ${
                   active(m.href)
                     ? "text-[var(--c-main)] font-extrabold"
@@ -184,16 +212,78 @@ export default function SiteHeader() {
               상담 신청
             </Link>
 
+            {/* 좁은 화면 전용. 넓은 화면에서는 메뉴에 마우스를 올리면 판이
+                펼쳐지므로 이 단추가 할 일이 없다. 하지만 터치 화면에는
+                호버가 없고 가운데 메뉴도 숨겨져 있어서, 여기서는 이 단추가
+                사이트로 들어가는 유일한 문이다. 지우면 안 된다. */}
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="전체메뉴 열기"
-              className="w-11 h-11 inline-flex items-center justify-center text-[var(--c-text)] hover:bg-[var(--c-bg-2)] rounded-lg cursor-pointer bg-transparent border-0 transition-colors"
+              className="lg:hidden w-11 h-11 inline-flex items-center justify-center text-[var(--c-text)] hover:bg-[var(--c-bg-2)] rounded-lg cursor-pointer bg-transparent border-0 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
             </button>
+          </div>
+        </div>
+
+        {/* ── 넓은 화면용 펼침판 ──────────────────────────────────
+            남색 바탕을 쓴 것은 띠가 흰색이라 경계가 분명해지고, 펼쳐진
+            동안에는 이것이 화면의 주인공이기 때문이다. 쉬고 있을 때의
+            「상담 신청」 단추와 자리를 다투지 않는다 — 이 판은 마우스를
+            올렸을 때만 잠깐 존재한다. */}
+        <div
+          className={`hidden lg:block absolute left-0 right-0 top-full overflow-hidden transition-[max-height,opacity] duration-200 motion-reduce:transition-none ${
+            mega ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+          }`}
+          onMouseEnter={openMega}
+          onMouseLeave={closeMega}
+          aria-hidden={!mega}
+        >
+          <div
+            className="border-b border-black/10 shadow-[0_18px_40px_-20px_rgba(6,30,71,0.55)]"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--c-main) 0%, var(--c-main-d) 55%, #04142f 100%)",
+            }}
+          >
+            <div className="max-w-[1280px] mx-auto px-5 py-9 grid grid-cols-3 gap-10">
+              {PANEL_GROUPS.map((g) => (
+                <section key={g.key}>
+                  <p className="m-0 pb-2.5 mb-2 border-b border-white/20 text-[13px] font-bold text-white/60">
+                    {g.key}
+                  </p>
+                  <ul className="list-none m-0 p-0">
+                    {g.items.map((it) => (
+                      <li key={it.href}>
+                        <Link
+                          href={it.href}
+                          onClick={() => setMega(false)}
+                          className={`flex items-center gap-2.5 h-9 no-underline transition-colors ${
+                            active(it.href)
+                              ? "text-white font-bold"
+                              : "text-white/75 hover:text-white"
+                          }`}
+                        >
+                          <svg
+                            className="w-[17px] h-[17px] shrink-0 opacity-70"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d={it.icon} />
+                          </svg>
+                          <span className="text-[14px]">{it.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
           </div>
         </div>
       </header>
