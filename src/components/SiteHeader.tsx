@@ -148,7 +148,11 @@ export default function SiteHeader() {
             그보다 작게 만들 수 없다. 그래서 높이는 그 44 에 위아래 여백을
             더한 값으로 잡는다 — 모바일 60, 넓은 화면 72. 전에는 73/89 였는데
             빈 자리가 너무 많았다. */}
-        <div className="max-w-[1280px] mx-auto px-5 h-[60px] md:h-[72px] grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
+        {/* 메뉴를 가운데가 아니라 로고 바로 옆에 둔다. 마우스를 올리는 자리와
+            아래로 펼쳐지는 판의 첫 칸이 같은 선 위에 있어야 둘이 한 몸으로
+            읽힌다. 가운데에 두면 가운데를 눌렀는데 왼쪽 끝에서 열리는 꼴이
+            된다. */}
+        <div className="max-w-[1280px] mx-auto px-5 h-[60px] md:h-[72px] grid grid-cols-[1fr_auto] lg:grid-cols-[auto_1fr_auto] items-center gap-4">
           <Link href="/" className="inline-flex items-center no-underline" aria-label="하온 홈">
             <Image
               src="/brand/haon-wordmark.png"
@@ -161,7 +165,7 @@ export default function SiteHeader() {
           </Link>
 
           <nav
-            className="hidden lg:flex items-center justify-center gap-7 h-full"
+            className="hidden lg:flex items-center justify-start gap-7 h-full ml-10"
             onMouseEnter={openMega}
             onMouseLeave={closeMega}
             onFocus={openMega}
@@ -242,43 +246,38 @@ export default function SiteHeader() {
           onMouseLeave={closeMega}
           aria-hidden={!mega}
         >
-          <div
-            className="relative border-b border-black/10 shadow-[0_18px_40px_-20px_rgba(6,30,71,0.55)]"
-            style={{
-              background:
-                "linear-gradient(135deg, var(--c-main) 0%, var(--c-main-d) 55%, #04142f 100%)",
-            }}
-          >
-            {/* 평평한 남색 한 장은 인쇄물처럼 죽어 보인다. 왼쪽 위에서 빛이
-                드는 결을 아주 옅게 얹어 면에 깊이를 준다. */}
+          {/* 판은 띠가 아래로 자란 것이다. 그래서 바탕도 띠와 같은 흰색이다.
+              전에는 남색으로 칠했는데, 흰 띠 아래 남색 덩어리가 칼같이 붙고
+              그 아래는 또 다른 색의 본문이 와서 셋이 따로 놀았다. 무엇보다
+              띠에서 「남색은 누르는 것」으로 정해 놓고 판 전체를 남색으로
+              칠하면 그 약속이 깨진다. 이 판에서 남색은 오른쪽 제안 칸 하나뿐,
+              띠에서 남색이 「상담 신청」 하나뿐인 것과 같다. */}
+          <div className="relative bg-white border-b border-[var(--c-line-2)] shadow-[0_16px_28px_-22px_rgba(13,13,15,0.4)]">
+            {/* 띠와 판 사이를 가르는 선. 띠의 아래선과 겹치지 않게 안쪽에 둔다. */}
             <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(120% 150% at 8% -20%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 55%)",
-              }}
-            />
-
-            <div className="relative max-w-[1280px] mx-auto px-5 py-10 grid grid-cols-[1fr_1fr_1fr_minmax(250px,0.95fr)] gap-x-10 gap-y-0">
+              className="relative max-w-[1280px] mx-auto px-5 py-9
+                         grid grid-cols-[1.15fr_1.3fr_0.85fr_minmax(264px,0.9fr)] gap-x-9 items-stretch"
+            >
               {PANEL_GROUPS.map((g) => (
                 <section key={g.key}>
-                  {/* 묶음 이름은 길잡이일 뿐이라 작고 조용하게 둔다.
-                      눈이 머물러야 하는 것은 아래 항목들이다. */}
-                  <p className="m-0 mb-3.5 text-[12px] font-semibold text-white/45">{g.key}</p>
+                  {/* 묶음 이름 위에 짧은 남색 선을 넣었다가 뺐다. 세 칸 위에
+                      똑같은 선이 셋 있을 뿐 아무것도 알려 주지 않았고, 칸이
+                      어디서 시작하는지는 간격과 제목으로 이미 보인다. */}
+                  <p className="m-0 mb-2 text-[12.5px] font-bold text-[var(--c-sub)]">{g.key}</p>
                   <ul className="list-none m-0 p-0">
                     {g.items.map((it) => (
                       <li key={it.href}>
                         {/* 아이콘은 뺐다. 열아홉 개가 전부 같은 모양의 선
-                            그림이라 글자를 읽는 것을 방해하기만 했다.
-                            지금 자리를 찾는 표식은 왼쪽 세로 선 하나다. */}
+                            그림이라 항목을 구분해 주지도 못하면서 글 읽기를
+                            방해했다. 지금 자리를 가리키는 건 왼쪽 세로 선이다.
+                            줄 높이 36 은 띠 높이 72 의 절반이다. */}
                         <Link
                           href={it.href}
                           onClick={() => setMega(false)}
-                          className={`flex items-center h-[38px] pl-3 -ml-3 border-l-2 no-underline transition-colors ${
+                          className={`flex items-center h-9 pl-3 -ml-3 border-l-2 no-underline transition-colors ${
                             active(it.href)
-                              ? "border-white text-white font-bold"
-                              : "border-transparent text-white/70 hover:border-white/50 hover:text-white"
+                              ? "border-[var(--c-main)] text-[var(--c-main)] font-bold"
+                              : "border-transparent text-[var(--c-text-2)] hover:border-[var(--c-main-tint)] hover:text-[var(--c-main)]"
                           }`}
                         >
                           <span className="text-[15px] tracking-[-0.01em]">{it.label}</span>
@@ -292,29 +291,37 @@ export default function SiteHeader() {
               {/* 메뉴가 링크만 늘어놓고 끝나면 그 큰 자리가 아깝다. 여기까지
                   내려온 사람은 무엇을 맡길지 고르는 중이고, 그 다음에 할 일은
                   정해져 있다. 그래서 판의 마지막 칸은 길이 아니라 제안이다. */}
-              <aside className="rounded-xl border border-white/15 bg-white/[0.06] p-6 flex flex-col">
-                <p className="m-0 text-[17px] font-bold leading-[1.5] text-white">
-                  무엇을 만들지
-                  <br />
-                  아직 안 정하셨다면
-                </p>
-                <p className="m-0 mt-2.5 text-[13.5px] leading-[1.65] text-white/60">
-                  하시려는 일을 들어보고 어떤 방식이 맞는지 알려 드립니다. 견적도 같이
-                  보내 드립니다.
-                </p>
-                <Link
-                  href="/contact"
-                  onClick={() => setMega(false)}
-                  className="mt-5 inline-flex items-center justify-center h-11 rounded-lg bg-white text-[var(--c-main)] text-[14.5px] font-bold no-underline hover:bg-white/90 transition-colors"
-                >
-                  상담 신청
-                </Link>
-                <a
-                  href="tel:010-3319-2509"
-                  className="mt-3 text-center text-[13.5px] font-semibold text-white/55 no-underline hover:text-white transition-colors tnum"
-                >
-                  010-3319-2509
-                </a>
+              {/* 판에서 남색은 여기 하나뿐이다. 띠에서 남색이 「상담 신청」
+                  하나뿐인 것과 같은 규칙 — 남색은 누르는 자리다.
+                  세 칸이 길이가 제각각이라 바닥이 들쭉날쭉한데, 이 칸이
+                  끝까지 내려가 오른쪽을 닫아 준다. */}
+              <aside className="rounded-xl bg-[var(--c-main)] p-6 flex flex-col justify-between">
+                <div>
+                  <p className="m-0 text-[18px] font-bold leading-[1.45] text-white tracking-[-0.02em]">
+                    무엇을 만들지
+                    <br />
+                    아직 안 정하셨다면
+                  </p>
+                  <p className="m-0 mt-3 text-[13.5px] leading-[1.7] text-white/65">
+                    하시려는 일을 들어보고 어떤 방식이 맞는지 알려 드립니다. 견적도
+                    같이 보내 드립니다.
+                  </p>
+                </div>
+                <div className="mt-6">
+                  <Link
+                    href="/contact"
+                    onClick={() => setMega(false)}
+                    className="flex items-center justify-center h-11 rounded-lg bg-white text-[var(--c-main)] text-[14.5px] font-bold no-underline hover:bg-[var(--c-main-soft)] transition-colors"
+                  >
+                    상담 신청
+                  </Link>
+                  <a
+                    href="tel:010-3319-2509"
+                    className="mt-3 block text-center text-[13.5px] font-semibold text-white/60 no-underline hover:text-white transition-colors tnum"
+                  >
+                    010-3319-2509
+                  </a>
+                </div>
               </aside>
             </div>
           </div>
