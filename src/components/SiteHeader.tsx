@@ -105,7 +105,11 @@ export default function SiteHeader() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-[var(--c-line)]">
-        <div className="max-w-[1280px] mx-auto px-5 h-[72px] md:h-[88px] grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
+        {/* 띠 안에서 가장 큰 것은 44px 짜리 메뉴 단추다. 손으로 누르는 것이라
+            그보다 작게 만들 수 없다. 그래서 높이는 그 44 에 위아래 여백을
+            더한 값으로 잡는다 — 모바일 60, 넓은 화면 72. 전에는 73/89 였는데
+            빈 자리가 너무 많았다. */}
+        <div className="max-w-[1280px] mx-auto px-5 h-[60px] md:h-[72px] grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
           <Link href="/" className="inline-flex items-center no-underline" aria-label="하온 홈">
             <Image
               src="/brand/haon-wordmark.png"
