@@ -1,3 +1,23 @@
+# 승인 (2026-11-24 확인)
+
+**앱이 App Store 에 올라갔다.**
+
+| 항목 | 값 |
+|---|---|
+| 앱 | 하온 · `com.haonlabs.customer` · SKU `haon-customer-001` |
+| 버전 | 1.0 (빌드 5) |
+| 상태 | `READY_FOR_SALE` / `READY_FOR_DISTRIBUTION` |
+| 공개 설정 | `AFTER_APPROVAL` — 승인 즉시 공개 |
+| 심사건 | `443c5d4a` → `COMPLETE`, 항목 `APPROVED` |
+| 주소 | https://apps.apple.com/kr/app/id6832865615 (HTTP 200, 「하온 앱 - App Store」) |
+
+**재제출은 하지 않았다.** 2026-11-23 에 Resolution Center 회신(3,994자)만
+보냈고 애플이 그 심사건을 이어서 승인했다. 「재제출 안 함」 절의 판단이 맞았다.
+
+이로써 **push 금지가 풀린다.**
+
+---
+
 # 하온 iOS 1.0 — 심사 기록
 
 거부와 회신을 시간순으로 모아 둔다. 처음은 Guideline 5.6,
